@@ -11,7 +11,7 @@ export async function POST(request) {
     })
 
     // Build chat history (exclude last user message)
-    const history = messages.slice(0, -1).map(m => ({
+    const history = messages.slice(0, -1).filter(m => m.role !== 'assistant' || messages.indexOf(m) !== 0).map(m => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }],
     }))
