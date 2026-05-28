@@ -98,18 +98,18 @@ export default function Home() {
           <h2 style={styles.sectionTitle}>Simple. Fast. <span style={styles.heroCyan}>Secure.</span></h2>
           <div style={styles.stepsGrid}>
             {[
-              { icon: '🔍', title: 'Browse Listings', desc: 'Search properties by location, budget, and type across all 36 states.', color: '#00d9d9' },
-              { icon: '🤖', title: 'Ask Mr. Rent AI', desc: 'Chat with our AI assistant to find the perfect property for your needs.', color: '#ff2d78' },
-              { icon: '💳', title: 'Reveal Contact', desc: 'Pay ₦5,000 to instantly reveal the landlord\'s contact details.', color: '#00d9d9' },
-              { icon: '🏠', title: 'Move In', desc: 'Contact the landlord directly and arrange your inspection and move.', color: '#ff2d78' },
-            ].map((step, i) => (
-              <div key={i} style={{...styles.stepCard, borderColor: step.color + '33'}}>
-                <div style={{...styles.stepNumber, color: step.color}}>0{i + 1}</div>
-                <div style={{...styles.stepIcon, color: step.color}}>{step.icon}</div>
-                <h3 style={styles.stepTitle}>{step.title}</h3>
-                <p style={styles.stepDesc}>{step.desc}</p>
-              </div>
-            ))}
+  { icon: '🔍', title: 'Browse Listings', desc: 'Search properties by location, budget, and type across all 36 states.', color: '#00d9d9', link: '/browse' },
+  { icon: '🤖', title: 'Ask Mr. Rent AI', desc: 'Chat with our AI assistant to find the perfect property for your needs.', color: '#ff2d78', link: '/search' },
+  { icon: '💳', title: 'Reveal Contact', desc: 'Pay ₦5,000 to instantly reveal the landlord\'s contact details.', color: '#00d9d9', link: '/browse' },
+  { icon: '🏠', title: 'Move In', desc: 'Contact the landlord directly and arrange your inspection and move.', color: '#ff2d78', link: '/browse' },
+].map((step, i) => (
+  <a href={step.link} key={i} style={{...styles.stepCard, borderColor: step.color + '33', textDecoration: 'none', display: 'block', cursor: 'pointer'}}>
+    <div style={{...styles.stepNumber, color: step.color}}>0{i + 1}</div>
+    <div style={{...styles.stepIcon, color: step.color}}>{step.icon}</div>
+    <h3 style={styles.stepTitle}>{step.title}</h3>
+    <p style={styles.stepDesc}>{step.desc}</p>
+  </a>
+))}
           </div>
         </div>
       </section>
