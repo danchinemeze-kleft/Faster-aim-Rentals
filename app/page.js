@@ -378,7 +378,7 @@ const styles = {
   heroActions: {
     display: 'flex',
     gap: '1rem',
-    flexWrap: 'wrap',
+    flexWrap: 'no-wrap',
     marginBottom: '2.5rem',
   },
   btnCyan: {
