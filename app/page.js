@@ -36,6 +36,7 @@ export default function Home() {
                 <div style={styles.heroActions}>
                   <a href="/browse" style={styles.btnCyan}>Browse Listings</a>
                   <a href="/search" style={styles.btnPink}>Ask Mr. Rent AI 🤖</a>
+                 <a href="/list" style={styles.btnWhite}>Add Your Property 🏠</a> 
                 </div>
                 <div style={styles.heroStats}>
                   <div style={styles.heroStat}>
