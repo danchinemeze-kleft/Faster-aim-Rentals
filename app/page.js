@@ -63,16 +63,18 @@ export default function Home() {
                 {/* Inner glow ring - cyan */}
                 <div style={styles.ringCyan}></div>
                 {/* Avatar image */}
-                <div style={styles.avatarWrapper}>
-                  <Image
-                    src="/mr-rent-avatar.png"
-                    alt="Mr. Rent - Your Property Assistant"
-                    width={320}
-                    height={380}
-                    style={styles.avatarImage}
-                    priority
-                  />
-                </div>
+                <a href="/search" style={{display: 'block', borderRadius: '50%'}}>
+  <div style={styles.avatarWrapper}>
+    <Image
+      src="/mr-rent-avatar.png"
+      alt="Mr. Rent - Your Property Assistant"
+      width={320}
+      height={380}
+      style={styles.avatarImage}
+      priority
+    />
+  </div>
+</a>
                 {/* Floating badge */}
                 <div style={styles.floatingBadge}>
                   <span style={styles.floatingDot}></span>
