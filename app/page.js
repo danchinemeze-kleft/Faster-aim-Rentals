@@ -669,17 +669,14 @@ const styles = {
   },
   footerDesc: { color: '#333', fontSize: '0.8rem', textAlign: 'center', marginBottom: '0.5rem' },
   footerCopy: { color: '#2a2a3a', fontSize: '0.75rem', textAlign: 'center' },
-
-footerCopy: { color: '#2a2a3a', fontSize: '0.75rem', textAlign: 'center' },
-  btnWhite: {
-    background: '#ffffff',
-    color: '#050510',
-    padding: '0.875rem 2rem',
-    borderRadius: '10px',
-    fontWeight: '800',
-    fontSize: '0.9rem',
-    border: '2px solid #00d9d9',
-    boxShadow: '0 0 20px rgba(0,217,217,0.2)',
-  },
 }
-}
+btnWhite: {
+  background: '#ffffff',
+  color: '#050510',
+  padding: '0.875rem 2rem',
+  borderRadius: '10px',
+  fontWeight: '800',
+  fontSize: '0.9rem',
+  border: '2px solid #00d9d9',
+  boxShadow: '0 0 20px rgba(0,217,217,0.2)',
+},
