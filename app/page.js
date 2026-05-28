@@ -1,3 +1,7 @@
+'use client'
+
+import Image from 'next/image'
+
 export default function Home() {
   return (
     <main style={styles.main}>
@@ -7,39 +11,80 @@ export default function Home() {
         <div style={styles.navLinks}>
           <a href="/browse" style={styles.navLink}>Browse</a>
           <a href="/search" style={styles.navLink}>AI Chat</a>
+          <a href="/list" style={styles.navLink}>List Property</a>
           <a href="/account" style={styles.navBtn}>Login / Sign up</a>
         </div>
       </nav>
 
       {/* Hero */}
-      <section style={styles.hero}>
-        <div style={styles.heroContent}>
-          <div style={styles.heroBadge}>🇳🇬 Nigeria Nationwide</div>
-          <h1 style={styles.heroTitle}>
-            Find or List Property<br />
-            <span style={styles.heroAccent}>for Rent Quickly</span>
-          </h1>
-          <p style={styles.heroSubtitle}>
-            Connect with verified landlords across Nigeria. Browse listings, chat with Mr. Rent AI, and find your perfect home today.
-          </p>
-          <div style={styles.heroActions}>
-            <a href="/browse" style={styles.heroBtnPrimary}>Browse Listings</a>
-            <a href="/search" style={styles.heroBtnSecondary}>Ask Mr. Rent AI 🤖</a>
-          </div>
-          <div style={styles.heroStats}>
-            <div style={styles.heroStat}>
-              <span style={styles.heroStatValue}>100+</span>
-              <span style={styles.heroStatLabel}>Listings</span>
-            </div>
-            <div style={styles.heroStatDivider}></div>
-            <div style={styles.heroStat}>
-              <span style={styles.heroStatValue}>36</span>
-              <span style={styles.heroStatLabel}>States</span>
-            </div>
-            <div style={styles.heroStatDivider}></div>
-            <div style={styles.heroStat}>
-              <span style={styles.heroStatValue}>₦5k</span>
-              <span style={styles.heroStatLabel}>Per Reveal</span>
+      <section style={styles.heroSection}>
+        <div style={styles.heroOuter}>
+          <div style={styles.heroInner}>
+            <div style={styles.heroLayout}>
+
+              {/* Left: Text */}
+              <div style={styles.heroText}>
+                <div style={styles.heroBadge}>🇳🇬 Nigeria Nationwide</div>
+                <h1 style={styles.heroTitle}>
+                  Find or List<br />
+                  <span style={styles.heroCyan}>Property for Rent</span><br />
+                  <span style={styles.heroPink}>Quickly & Securely</span>
+                </h1>
+                <p style={styles.heroSubtitle}>
+                  Connect with verified landlords across Nigeria. Browse listings, chat with Mr. Rent AI, and find your perfect home today.
+                </p>
+                <div style={styles.heroActions}>
+                  <a href="/browse" style={styles.btnCyan}>Browse Listings</a>
+                  <a href="/search" style={styles.btnPink}>Ask Mr. Rent AI 🤖</a>
+                </div>
+                <div style={styles.heroStats}>
+                  <div style={styles.heroStat}>
+                    <span style={styles.statValueCyan}>100+</span>
+                    <span style={styles.statLabel}>Listings</span>
+                  </div>
+                  <div style={styles.statDivider}></div>
+                  <div style={styles.heroStat}>
+                    <span style={styles.statValuePink}>36</span>
+                    <span style={styles.statLabel}>States</span>
+                  </div>
+                  <div style={styles.statDivider}></div>
+                  <div style={styles.heroStat}>
+                    <span style={styles.statValueCyan}>₦5k</span>
+                    <span style={styles.statLabel}>Per Reveal</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Animated Mr. Rent Avatar */}
+              <div style={styles.avatarContainer}>
+                {/* Outer glow ring - pink */}
+                <div style={styles.ringPink}></div>
+                {/* Inner glow ring - cyan */}
+                <div style={styles.ringCyan}></div>
+                {/* Avatar image */}
+                <div style={styles.avatarWrapper}>
+                  <Image
+                    src="/mr-rent-avatar.png"
+                    alt="Mr. Rent - Your Property Assistant"
+                    width={320}
+                    height={380}
+                    style={styles.avatarImage}
+                    priority
+                  />
+                </div>
+                {/* Floating badge */}
+                <div style={styles.floatingBadge}>
+                  <span style={styles.floatingDot}></span>
+                  AI Powered
+                </div>
+                {/* Floating stats */}
+                <div style={styles.floatingCard1}>
+                  🏠 2 new listings
+                </div>
+                <div style={styles.floatingCard2}>
+                  ✓ Verified Landlord
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -47,76 +92,170 @@ export default function Home() {
 
       {/* How it works */}
       <section style={styles.section}>
-        <h2 style={styles.sectionTitle}>How it works</h2>
-        <p style={styles.sectionSubtitle}>Simple, fast, and secure</p>
-        <div style={styles.stepsGrid}>
-          {[
-            { icon: '🔍', title: 'Browse Listings', desc: 'Search properties by location, budget, and type across Nigeria.' },
-            { icon: '🤖', title: 'Ask Mr. Rent AI', desc: 'Chat with our AI assistant to find the perfect property for you.' },
-            { icon: '💳', title: 'Reveal Contact', desc: 'Pay ₦5,000 to reveal the landlord\'s contact details instantly.' },
-            { icon: '🏠', title: 'Move In', desc: 'Contact the landlord directly and arrange your inspection.' },
-          ].map((step, i) => (
-            <div key={i} style={styles.stepCard}>
-              <div style={styles.stepIcon}>{step.icon}</div>
-              <h3 style={styles.stepTitle}>{step.title}</h3>
-              <p style={styles.stepDesc}>{step.desc}</p>
-            </div>
-          ))}
+        <div style={styles.sectionInner}>
+          <p style={styles.sectionTag}>— HOW IT WORKS —</p>
+          <h2 style={styles.sectionTitle}>Simple. Fast. <span style={styles.heroCyan}>Secure.</span></h2>
+          <div style={styles.stepsGrid}>
+            {[
+              { icon: '🔍', title: 'Browse Listings', desc: 'Search properties by location, budget, and type across all 36 states.', color: '#00d9d9' },
+              { icon: '🤖', title: 'Ask Mr. Rent AI', desc: 'Chat with our AI assistant to find the perfect property for your needs.', color: '#ff2d78' },
+              { icon: '💳', title: 'Reveal Contact', desc: 'Pay ₦5,000 to instantly reveal the landlord\'s contact details.', color: '#00d9d9' },
+              { icon: '🏠', title: 'Move In', desc: 'Contact the landlord directly and arrange your inspection and move.', color: '#ff2d78' },
+            ].map((step, i) => (
+              <div key={i} style={{...styles.stepCard, borderColor: step.color + '33'}}>
+                <div style={{...styles.stepNumber, color: step.color}}>0{i + 1}</div>
+                <div style={{...styles.stepIcon, color: step.color}}>{step.icon}</div>
+                <h3 style={styles.stepTitle}>{step.title}</h3>
+                <p style={styles.stepDesc}>{step.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* For Landlords */}
       <section style={styles.landlordSection}>
-        <div style={styles.landlordContent}>
-          <div style={styles.landlordText}>
-            <h2 style={styles.landlordTitle}>Are you a Landlord?</h2>
-            <p style={styles.landlordDesc}>
-              List your property and reach thousands of verified tenants across Nigeria. Subscribe for just ₦10,000/month and list unlimited properties.
-            </p>
-            <ul style={styles.landlordFeatures}>
-              <li>✓ Unlimited property listings</li>
-              <li>✓ Appear in AI-powered searches</li>
-              <li>✓ Earn from contact reveals</li>
-              <li>✓ Professional dashboard</li>
-            </ul>
-            <a href="/account" style={styles.heroBtnPrimary}>List Your Property →</a>
-          </div>
-          <div style={styles.landlordCard}>
-            <div style={styles.landlordCardIcon}>🏘️</div>
-            <h3>₦10,000/month</h3>
-            <p>Unlimited listings</p>
-            <p>Cancel anytime</p>
+        <div style={styles.landlordOuter}>
+          <div style={styles.landlordInner}>
+            <div style={styles.landlordContent}>
+              <div style={styles.landlordText}>
+                <p style={styles.sectionTag}>— FOR LANDLORDS —</p>
+                <h2 style={styles.sectionTitle}>
+                  List Your Property.<br />
+                  <span style={styles.heroPink}>Reach Thousands.</span>
+                </h2>
+                <p style={styles.landlordDesc}>
+                  Subscribe for ₦10,000/month and list unlimited properties. Tenants pay ₦5,000 to reveal your contact — you earn from every serious inquiry.
+                </p>
+                <ul style={styles.featureList}>
+                  {[
+                    'Unlimited property listings',
+                    'Appear in AI-powered searches',
+                    'Earn from contact reveals',
+                    'Professional landlord dashboard',
+                    'Available/unavailable toggle',
+                  ].map((f, i) => (
+                    <li key={i} style={styles.featureItem}>
+                      <span style={styles.featureCheck}>✓</span> {f}
+                    </li>
+                  ))}
+                </ul>
+                <a href="/account" style={styles.btnCyan}>Get Started →</a>
+              </div>
+
+              <div style={styles.pricingCard}>
+                <div style={styles.pricingTop}>
+                  <p style={styles.pricingLabel}>LANDLORD PLAN</p>
+                  <div style={styles.pricingAmount}>
+                    <span style={styles.pricingCurrency}>₦</span>
+                    <span style={styles.pricingValue}>10,000</span>
+                  </div>
+                  <p style={styles.pricingPer}>/month</p>
+                </div>
+                <div style={styles.pricingFeatures}>
+                  <p>✓ Unlimited listings</p>
+                  <p>✓ Dashboard access</p>
+                  <p>✓ AI promotion</p>
+                  <p>✓ Cancel anytime</p>
+                </div>
+                <a href="/account" style={styles.btnPink}>Subscribe Now</a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA */}
       <section style={styles.ctaSection}>
-        <h2 style={styles.ctaTitle}>Ready to find your next home?</h2>
-        <p style={styles.ctaSubtitle}>Join thousands of Nigerians finding homes on Mr. Rent</p>
+        <p style={styles.sectionTag}>— JOIN MR. RENT —</p>
+        <h2 style={styles.ctaTitle}>
+          Your Next Home is<br />
+          <span style={styles.heroCyan}>One Click Away</span>
+        </h2>
+        <p style={styles.ctaSubtitle}>Join thousands of Nigerians finding and listing homes on Mr. Rent</p>
         <div style={styles.heroActions}>
-          <a href="/browse" style={styles.heroBtnPrimary}>Browse Listings</a>
-          <a href="/account" style={styles.heroBtnOutline}>Create Account</a>
+          <a href="/browse" style={styles.btnCyan}>Browse Listings</a>
+          <a href="/account" style={styles.btnOutlinePink}>Create Account</a>
         </div>
       </section>
 
       {/* Footer */}
       <footer style={styles.footer}>
-        <div style={styles.footerBrand}>🏠 Mr. Rent</div>
-        <p style={styles.footerDesc}>Nigerian property rental platform powered by AI</p>
-        <div style={styles.footerLinks}>
-          <a href="/browse" style={styles.footerLink}>Browse</a>
-          <a href="/search" style={styles.footerLink}>AI Chat</a>
-          <a href="/list" style={styles.footerLink}>List Property</a>
-          <a href="/account" style={styles.footerLink}>Login</a>
+        <div style={styles.footerTop}>
+          <div style={styles.footerBrand}>🏠 Mr. Rent</div>
+          <div style={styles.footerLinks}>
+            <a href="/browse" style={styles.footerLink}>Browse</a>
+            <a href="/search" style={styles.footerLink}>AI Chat</a>
+            <a href="/list" style={styles.footerLink}>List Property</a>
+            <a href="/account" style={styles.footerLink}>Login</a>
+          </div>
         </div>
+        <div style={styles.footerDivider}></div>
+        <p style={styles.footerDesc}>Nigerian property rental platform powered by AI</p>
         <p style={styles.footerCopy}>© 2026 Faster Aim Technology Limited. All rights reserved.</p>
       </footer>
 
       <style>{`
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0a0a1a; }
+        body { background: #050510; }
         a { text-decoration: none; }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-12px); }
+        }
+        @keyframes floatReverse {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(12px); }
+        }
+        @keyframes spinSlow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes spinSlowReverse {
+          from { transform: rotate(360deg); }
+          to { transform: rotate(0deg); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.7; transform: scale(0.95); }
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+
+        .avatar-float {
+          animation: float 4s ease-in-out infinite;
+        }
+        .ring-pink-spin {
+          animation: spinSlow 8s linear infinite;
+        }
+        .ring-cyan-spin {
+          animation: spinSlowReverse 6s linear infinite;
+        }
+        .floating-badge {
+          animation: floatReverse 3s ease-in-out infinite;
+        }
+        .floating-card1 {
+          animation: float 5s ease-in-out infinite;
+        }
+        .floating-card2 {
+          animation: floatReverse 4s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+          .hero-layout { flex-direction: column !important; }
+          .hero-title { font-size: 2rem !important; }
+          .steps-grid { grid-template-columns: 1fr 1fr !important; }
+          .landlord-content { flex-direction: column !important; }
+          .nav-links { gap: 0.5rem !important; }
+          .avatar-container { width: 280px !important; height: 320px !important; }
+        }
       `}</style>
     </main>
   )
@@ -125,26 +264,30 @@ export default function Home() {
 const styles = {
   main: {
     minHeight: '100vh',
-    background: '#0a0a1a',
+    background: '#050510',
     color: '#ffffff',
     fontFamily: "'Segoe UI', system-ui, sans-serif",
   },
+
+  // NAV
   nav: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '1.25rem 2rem',
-    background: 'rgba(10,10,26,0.95)',
-    backdropFilter: 'blur(10px)',
+    background: 'rgba(5,5,16,0.95)',
+    backdropFilter: 'blur(20px)',
     position: 'sticky',
     top: 0,
     zIndex: 100,
-    borderBottom: '1px solid rgba(255,255,255,0.05)',
+    borderBottom: '1px solid rgba(0,217,217,0.15)',
   },
   navBrand: {
-    fontSize: '1.3rem',
-    fontWeight: '700',
-    color: '#00d9d9',
+    fontSize: '1.4rem',
+    fontWeight: '800',
+    background: 'linear-gradient(90deg, #00d9d9, #ff2d78)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
   },
   navLinks: {
     display: 'flex',
@@ -152,255 +295,377 @@ const styles = {
     gap: '1.5rem',
   },
   navLink: {
-    color: '#aaa',
-    fontSize: '0.9rem',
-    transition: 'color 0.15s',
+    color: '#888',
+    fontSize: '0.88rem',
+    fontWeight: '500',
   },
   navBtn: {
-    background: '#e67e22',
+    background: 'linear-gradient(135deg, #ff2d78, #c0135a)',
     color: 'white',
-    padding: '0.5rem 1.25rem',
+    padding: '0.55rem 1.25rem',
     borderRadius: '8px',
     fontSize: '0.85rem',
-    fontWeight: '600',
+    fontWeight: '700',
   },
-  hero: {
-    padding: '5rem 2rem',
-    textAlign: 'center',
-    background: 'linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0a0a1a 100%)',
-    borderBottom: '1px solid rgba(255,255,255,0.05)',
+
+  // HERO
+  heroSection: {
+    padding: '3rem 2rem',
+    background: 'radial-gradient(ellipse at top left, rgba(0,217,217,0.08) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(255,45,120,0.08) 0%, transparent 50%)',
+    display: 'flex',
+    justifyContent: 'center',
   },
-  heroContent: {
-    maxWidth: '700px',
-    margin: '0 auto',
+  heroOuter: {
+    border: '1.5px solid #ff2d78',
+    borderRadius: '24px',
+    padding: '4px',
+    maxWidth: '1100px',
+    width: '100%',
+  },
+  heroInner: {
+    border: '1.5px solid #00d9d9',
+    borderRadius: '20px',
+    padding: '3.5rem 3rem',
+    background: 'linear-gradient(135deg, rgba(0,217,217,0.03), rgba(5,5,16,0.98))',
+  },
+  heroLayout: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4rem',
+    flexWrap: 'wrap',
+  },
+  heroText: {
+    flex: 1,
+    minWidth: '300px',
   },
   heroBadge: {
     display: 'inline-block',
-    background: 'rgba(0,217,217,0.1)',
-    border: '1px solid rgba(0,217,217,0.3)',
+    background: 'rgba(0,217,217,0.08)',
+    border: '1px solid rgba(0,217,217,0.25)',
     color: '#00d9d9',
-    padding: '0.4rem 1rem',
+    padding: '0.4rem 1.25rem',
     borderRadius: '20px',
-    fontSize: '0.82rem',
-    fontWeight: '600',
+    fontSize: '0.78rem',
+    fontWeight: '700',
+    letterSpacing: '0.05em',
     marginBottom: '1.5rem',
+    textTransform: 'uppercase',
   },
   heroTitle: {
     fontSize: '3rem',
-    fontWeight: '800',
-    lineHeight: '1.2',
+    fontWeight: '900',
+    lineHeight: '1.15',
     marginBottom: '1.25rem',
-    color: '#ffffff',
+    letterSpacing: '-1px',
   },
-  heroAccent: {
+  heroCyan: {
     color: '#00d9d9',
+    textShadow: '0 0 40px rgba(0,217,217,0.4)',
+  },
+  heroPink: {
+    color: '#ff2d78',
+    textShadow: '0 0 40px rgba(255,45,120,0.4)',
   },
   heroSubtitle: {
-    fontSize: '1.1rem',
-    color: '#aaa',
+    fontSize: '0.95rem',
+    color: '#888',
     lineHeight: '1.7',
     marginBottom: '2rem',
+    maxWidth: '480px',
   },
   heroActions: {
     display: 'flex',
     gap: '1rem',
-    justifyContent: 'center',
     flexWrap: 'wrap',
     marginBottom: '2.5rem',
   },
-  heroBtnPrimary: {
-    background: '#e67e22',
+  btnCyan: {
+    background: 'linear-gradient(135deg, #00d9d9, #00a8a8)',
+    color: '#050510',
+    padding: '0.875rem 2rem',
+    borderRadius: '10px',
+    fontWeight: '800',
+    fontSize: '0.9rem',
+    boxShadow: '0 0 30px rgba(0,217,217,0.3)',
+  },
+  btnPink: {
+    background: 'linear-gradient(135deg, #ff2d78, #c0135a)',
     color: 'white',
     padding: '0.875rem 2rem',
     borderRadius: '10px',
-    fontWeight: '700',
-    fontSize: '0.95rem',
-    transition: 'background 0.15s',
+    fontWeight: '800',
+    fontSize: '0.9rem',
+    boxShadow: '0 0 30px rgba(255,45,120,0.3)',
   },
-  heroBtnSecondary: {
-    background: 'rgba(0,217,217,0.1)',
-    border: '1.5px solid #00d9d9',
-    color: '#00d9d9',
-    padding: '0.875rem 2rem',
-    borderRadius: '10px',
-    fontWeight: '700',
-    fontSize: '0.95rem',
-  },
-  heroBtnOutline: {
+  btnOutlinePink: {
     background: 'transparent',
-    border: '1.5px solid #e67e22',
-    color: '#e67e22',
+    border: '1.5px solid #ff2d78',
+    color: '#ff2d78',
     padding: '0.875rem 2rem',
     borderRadius: '10px',
-    fontWeight: '700',
-    fontSize: '0.95rem',
+    fontWeight: '800',
+    fontSize: '0.9rem',
   },
   heroStats: {
     display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
     gap: '2rem',
   },
   heroStat: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
     gap: '4px',
   },
-  heroStatValue: {
+  statValueCyan: {
     fontSize: '1.5rem',
+    fontWeight: '800',
+    color: '#00d9d9',
+    textShadow: '0 0 20px rgba(0,217,217,0.5)',
+  },
+  statValuePink: {
+    fontSize: '1.5rem',
+    fontWeight: '800',
+    color: '#ff2d78',
+    textShadow: '0 0 20px rgba(255,45,120,0.5)',
+  },
+  statLabel: {
+    fontSize: '0.7rem',
+    color: '#555',
+    textTransform: 'uppercase',
+    letterSpacing: '0.08em',
+  },
+  statDivider: {
+    width: '1px',
+    height: '36px',
+    background: 'linear-gradient(to bottom, transparent, #333, transparent)',
+  },
+
+  // AVATAR
+  avatarContainer: {
+    position: 'relative',
+    width: '340px',
+    height: '400px',
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ringPink: {
+    position: 'absolute',
+    width: '320px',
+    height: '320px',
+    borderRadius: '50%',
+    border: '2px solid transparent',
+    borderTop: '2px solid #ff2d78',
+    borderRight: '2px solid #ff2d78',
+    animation: 'spinSlow 8s linear infinite',
+    boxShadow: '0 0 20px rgba(255,45,120,0.3)',
+  },
+  ringCyan: {
+    position: 'absolute',
+    width: '280px',
+    height: '280px',
+    borderRadius: '50%',
+    border: '2px solid transparent',
+    borderBottom: '2px solid #00d9d9',
+    borderLeft: '2px solid #00d9d9',
+    animation: 'spinSlowReverse 6s linear infinite',
+    boxShadow: '0 0 20px rgba(0,217,217,0.3)',
+  },
+  avatarWrapper: {
+    position: 'relative',
+    zIndex: 2,
+    animation: 'float 4s ease-in-out infinite',
+    borderRadius: '50%',
+    overflow: 'hidden',
+    width: '240px',
+    height: '240px',
+    border: '3px solid rgba(0,217,217,0.3)',
+    boxShadow: '0 0 40px rgba(0,217,217,0.2), 0 0 80px rgba(255,45,120,0.1)',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    objectPosition: 'top center',
+  },
+  floatingBadge: {
+    position: 'absolute',
+    bottom: '20px',
+    left: '-20px',
+    background: 'rgba(5,5,16,0.9)',
+    border: '1px solid rgba(0,217,217,0.4)',
+    borderRadius: '20px',
+    padding: '6px 14px',
+    fontSize: '0.75rem',
     fontWeight: '700',
     color: '#00d9d9',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    animation: 'floatReverse 3s ease-in-out infinite',
+    zIndex: 3,
+    backdropFilter: 'blur(10px)',
   },
-  heroStatLabel: {
-    fontSize: '0.78rem',
-    color: '#666',
+  floatingDot: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    background: '#00d9d9',
+    boxShadow: '0 0 8px #00d9d9',
+    animation: 'blink 1.5s ease-in-out infinite',
+    display: 'inline-block',
   },
-  heroStatDivider: {
-    width: '1px',
-    height: '40px',
-    background: 'rgba(255,255,255,0.1)',
+  floatingCard1: {
+    position: 'absolute',
+    top: '20px',
+    right: '-10px',
+    background: 'rgba(5,5,16,0.9)',
+    border: '1px solid rgba(255,45,120,0.4)',
+    borderRadius: '12px',
+    padding: '8px 14px',
+    fontSize: '0.75rem',
+    fontWeight: '700',
+    color: '#ff2d78',
+    animation: 'float 5s ease-in-out infinite',
+    zIndex: 3,
+    backdropFilter: 'blur(10px)',
   },
-  section: {
-    padding: '5rem 2rem',
-    maxWidth: '1100px',
-    margin: '0 auto',
+  floatingCard2: {
+    position: 'absolute',
+    bottom: '80px',
+    right: '-20px',
+    background: 'rgba(5,5,16,0.9)',
+    border: '1px solid rgba(0,217,217,0.4)',
+    borderRadius: '12px',
+    padding: '8px 14px',
+    fontSize: '0.75rem',
+    fontWeight: '700',
+    color: '#00d9d9',
+    animation: 'floatReverse 4s ease-in-out infinite',
+    zIndex: 3,
+    backdropFilter: 'blur(10px)',
+  },
+
+  // HOW IT WORKS
+  section: { padding: '5rem 2rem' },
+  sectionInner: { maxWidth: '1100px', margin: '0 auto' },
+  sectionTag: {
+    textAlign: 'center',
+    color: '#444',
+    fontSize: '0.7rem',
+    letterSpacing: '0.2em',
+    marginBottom: '1rem',
+    fontWeight: '700',
   },
   sectionTitle: {
-    fontSize: '2rem',
-    fontWeight: '700',
+    fontSize: '2.2rem',
+    fontWeight: '800',
     textAlign: 'center',
-    marginBottom: '0.5rem',
-    color: '#ffffff',
-  },
-  sectionSubtitle: {
-    textAlign: 'center',
-    color: '#aaa',
     marginBottom: '3rem',
+    color: '#ffffff',
+    letterSpacing: '-0.5px',
   },
   stepsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
     gap: '1.5rem',
   },
   stepCard: {
-    background: 'rgba(255,255,255,0.03)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    background: 'rgba(255,255,255,0.02)',
+    border: '1px solid',
     borderRadius: '16px',
     padding: '2rem 1.5rem',
-    textAlign: 'center',
-    transition: 'border-color 0.15s',
+    position: 'relative',
+    overflow: 'hidden',
   },
-  stepIcon: {
-    fontSize: '2.5rem',
-    marginBottom: '1rem',
+  stepNumber: {
+    fontSize: '4rem',
+    fontWeight: '900',
+    opacity: 0.06,
+    position: 'absolute',
+    top: '0.5rem',
+    right: '1rem',
+    lineHeight: 1,
   },
-  stepTitle: {
-    fontSize: '1rem',
-    fontWeight: '700',
-    color: '#ffffff',
-    marginBottom: '0.5rem',
-  },
-  stepDesc: {
-    fontSize: '0.85rem',
-    color: '#888',
-    lineHeight: '1.6',
-  },
+  stepIcon: { fontSize: '2rem', marginBottom: '0.75rem', display: 'block' },
+  stepTitle: { fontSize: '1rem', fontWeight: '700', color: '#fff', marginBottom: '0.5rem' },
+  stepDesc: { fontSize: '0.83rem', color: '#666', lineHeight: '1.6' },
+
+  // LANDLORD
   landlordSection: {
-    background: 'rgba(255,255,255,0.02)',
-    borderTop: '1px solid rgba(255,255,255,0.05)',
-    borderBottom: '1px solid rgba(255,255,255,0.05)',
     padding: '5rem 2rem',
+    borderTop: '1px solid rgba(255,45,120,0.1)',
+    borderBottom: '1px solid rgba(0,217,217,0.1)',
   },
-  landlordContent: {
+  landlordOuter: {
+    border: '1.5px solid #00d9d9',
+    borderRadius: '24px',
+    padding: '4px',
     maxWidth: '1000px',
     margin: '0 auto',
+  },
+  landlordInner: {
+    border: '1.5px solid #ff2d78',
+    borderRadius: '20px',
+    padding: '3rem',
+    background: 'rgba(5,5,16,0.98)',
+  },
+  landlordContent: {
     display: 'flex',
-    alignItems: 'center',
     gap: '4rem',
+    alignItems: 'center',
     flexWrap: 'wrap',
   },
-  landlordText: {
-    flex: 1,
-    minWidth: '280px',
-  },
-  landlordTitle: {
-    fontSize: '2rem',
-    fontWeight: '700',
-    marginBottom: '1rem',
-    color: '#ffffff',
-  },
-  landlordDesc: {
-    color: '#aaa',
-    lineHeight: '1.7',
-    marginBottom: '1.5rem',
-  },
-  landlordFeatures: {
-    listStyle: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-    marginBottom: '2rem',
-    color: '#ccc',
-    fontSize: '0.9rem',
-  },
-  landlordCard: {
-    background: '#1a1a2e',
-    border: '1px solid rgba(0,217,217,0.3)',
+  landlordText: { flex: 1, minWidth: '280px' },
+  landlordDesc: { color: '#777', lineHeight: '1.8', marginBottom: '1.75rem', fontSize: '0.92rem' },
+  featureList: { listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '2rem' },
+  featureItem: { color: '#aaa', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '0.5rem' },
+  featureCheck: { color: '#00d9d9', fontWeight: '700' },
+  pricingCard: {
+    background: 'linear-gradient(135deg, rgba(255,45,120,0.08), rgba(0,217,217,0.05))',
+    border: '1px solid rgba(255,45,120,0.2)',
     borderRadius: '16px',
     padding: '2rem',
+    minWidth: '220px',
     textAlign: 'center',
-    minWidth: '200px',
-    color: '#fff',
   },
-  landlordCardIcon: {
-    fontSize: '3rem',
-    marginBottom: '1rem',
-  },
+  pricingTop: { marginBottom: '1.5rem' },
+  pricingLabel: { color: '#555', fontSize: '0.7rem', letterSpacing: '0.15em', fontWeight: '700', marginBottom: '0.75rem' },
+  pricingAmount: { display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: '4px' },
+  pricingCurrency: { color: '#ff2d78', fontSize: '1.2rem', fontWeight: '700', marginTop: '8px' },
+  pricingValue: { color: '#ff2d78', fontSize: '2.8rem', fontWeight: '900', lineHeight: 1, textShadow: '0 0 30px rgba(255,45,120,0.4)' },
+  pricingPer: { color: '#555', fontSize: '0.8rem', marginTop: '4px' },
+  pricingFeatures: { display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '1.5rem', color: '#666', fontSize: '0.82rem' },
+
+  // CTA
   ctaSection: {
-    padding: '5rem 2rem',
+    padding: '6rem 2rem',
     textAlign: 'center',
-    background: 'linear-gradient(135deg, #1a1a2e 0%, #0a0a1a 100%)',
+    background: 'radial-gradient(ellipse at center, rgba(0,217,217,0.05) 0%, transparent 70%)',
   },
-  ctaTitle: {
-    fontSize: '2rem',
-    fontWeight: '700',
-    marginBottom: '0.75rem',
-    color: '#ffffff',
-  },
-  ctaSubtitle: {
-    color: '#aaa',
-    marginBottom: '2rem',
-  },
-  footer: {
-    padding: '3rem 2rem',
-    textAlign: 'center',
-    borderTop: '1px solid rgba(255,255,255,0.05)',
-    background: '#050510',
+  ctaTitle: { fontSize: '2.5rem', fontWeight: '900', marginBottom: '1rem', letterSpacing: '-1px' },
+  ctaSubtitle: { color: '#666', marginBottom: '2.5rem', fontSize: '0.95rem' },
+
+  // FOOTER
+  footer: { padding: '3rem 2rem', borderTop: '1px solid rgba(0,217,217,0.1)', background: '#030308' },
+  footerTop: {
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem',
+    maxWidth: '1000px', margin: '0 auto 1.5rem',
   },
   footerBrand: {
-    fontSize: '1.2rem',
-    fontWeight: '700',
-    color: '#00d9d9',
-    marginBottom: '0.5rem',
+    fontSize: '1.2rem', fontWeight: '800',
+    background: 'linear-gradient(90deg, #00d9d9, #ff2d78)',
+    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
   },
-  footerDesc: {
-    color: '#555',
-    fontSize: '0.85rem',
-    marginBottom: '1.5rem',
+  footerLinks: { display: 'flex', gap: '1.5rem' },
+  footerLink: { color: '#444', fontSize: '0.82rem' },
+  footerDivider: {
+    height: '1px',
+    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent)',
+    marginBottom: '1.5rem', maxWidth: '1000px', margin: '0 auto 1.5rem',
   },
-  footerLinks: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '1.5rem',
-    marginBottom: '1.5rem',
-  },
-  footerLink: {
-    color: '#666',
-    fontSize: '0.85rem',
-  },
-  footerCopy: {
-    color: '#444',
-    fontSize: '0.78rem',
-  },
+  footerDesc: { color: '#333', fontSize: '0.8rem', textAlign: 'center', marginBottom: '0.5rem' },
+  footerCopy: { color: '#2a2a3a', fontSize: '0.75rem', textAlign: 'center' },
 }
