@@ -105,6 +105,25 @@ export default function SearchPage() {
     "What is caution fee?",
   ]
 
+  const Avatar = ({ size = 40, fontSize = '1.2rem' }) => (
+    <div style={{
+      width: size,
+      height: size,
+      borderRadius: '50%',
+      overflow: 'hidden',
+      flexShrink: 0,
+      border: '2px solid #ff2d78',
+      outline: '1.5px solid #0ef6cc',
+      outlineOffset: '1px',
+    }}>
+      <img
+        src="/mr-rent-avatar.png"
+        alt="Mr. Rent"
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      />
+    </div>
+  )
+
   return (
     <div className="faim-search-page">
       {/* Header */}
@@ -115,7 +134,7 @@ export default function SearchPage() {
           </svg>
         </a>
         <div className="faim-header-info">
-          <div className="faim-avatar">🏠</div>
+          <Avatar size={40} />
           <div>
             <p className="faim-header-name">Mr. Rent</p>
             <p className="faim-header-status">Property Assistant • Online</p>
@@ -128,9 +147,7 @@ export default function SearchPage() {
       <div className="faim-messages">
         {messages.map((msg, i) => (
           <div key={i} className={`faim-message-row faim-message-row--${msg.role}`}>
-            {msg.role === 'assistant' && (
-              <div className="faim-msg-avatar">🏠</div>
-            )}
+            {msg.role === 'assistant' && <Avatar size={32} />}
             <div className={`faim-bubble faim-bubble--${msg.role}`}>
               {formatMessage(msg.content)}
             </div>
@@ -139,7 +156,7 @@ export default function SearchPage() {
 
         {loading && (
           <div className="faim-message-row faim-message-row--assistant">
-            <div className="faim-msg-avatar">🏠</div>
+            <Avatar size={32} />
             <div className="faim-bubble faim-bubble--assistant faim-typing">
               <span></span><span></span><span></span>
             </div>
@@ -192,16 +209,20 @@ export default function SearchPage() {
           margin: 0 auto;
         }
 
+        /* ── Header ── */
         .faim-search-header {
           display: flex;
           align-items: center;
           gap: 12px;
           padding: 12px 16px;
-          background: #1a1a2e;
+          background: #080a0f;
           color: white;
           position: sticky;
           top: 0;
           z-index: 10;
+          border-bottom: 2px solid #ff2d78;
+          outline: 1.5px solid #0ef6cc;
+          outline-offset: -4px;
         }
 
         .faim-back-btn {
@@ -221,20 +242,10 @@ export default function SearchPage() {
           flex: 1;
         }
 
-        .faim-avatar {
-          width: 40px;
-          height: 40px;
-          background: #e67e22;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.2rem;
-        }
-
         .faim-header-name {
           font-weight: 600;
           font-size: 0.95rem;
+          color: #0ef6cc;
         }
 
         .faim-header-status {
@@ -243,7 +254,7 @@ export default function SearchPage() {
         }
 
         .faim-browse-btn {
-          background: #e67e22;
+          background: #ff2d78;
           color: white;
           text-decoration: none;
           padding: 6px 14px;
@@ -253,8 +264,9 @@ export default function SearchPage() {
           white-space: nowrap;
           transition: background 0.15s;
         }
-        .faim-browse-btn:hover { background: #cf6d17; }
+        .faim-browse-btn:hover { background: #e0205f; }
 
+        /* ── Messages ── */
         .faim-messages {
           flex: 1;
           overflow-y: auto;
@@ -274,18 +286,6 @@ export default function SearchPage() {
           flex-direction: row-reverse;
         }
 
-        .faim-msg-avatar {
-          width: 32px;
-          height: 32px;
-          background: #e67e22;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 0.9rem;
-          flex-shrink: 0;
-        }
-
         .faim-bubble {
           max-width: 75%;
           padding: 10px 14px;
@@ -302,9 +302,10 @@ export default function SearchPage() {
         }
 
         .faim-bubble--user {
-          background: #e67e22;
-          color: white;
+          background: #080a0f;
+          color: #0ef6cc;
           border-bottom-right-radius: 4px;
+          border: 1.5px solid #ff2d78;
         }
 
         .faim-typing {
@@ -330,6 +331,7 @@ export default function SearchPage() {
           30% { transform: translateY(-6px); }
         }
 
+        /* ── Quick Prompts ── */
         .faim-quick-prompts {
           display: flex;
           flex-wrap: wrap;
@@ -348,23 +350,26 @@ export default function SearchPage() {
           transition: all 0.15s;
         }
         .faim-quick-btn:hover {
-          border-color: #e67e22;
-          color: #e67e22;
-          background: #fff8f2;
+          border-color: #ff2d78;
+          color: #ff2d78;
+          background: #fff8fa;
         }
 
+        /* ── Input bar — double border brand detail ── */
         .faim-input-bar {
           display: flex;
           align-items: flex-end;
           gap: 10px;
-          padding: 12px 16px;
-          background: white;
-          border-top: 1px solid #e5e5e5;
+          padding: 10px 14px;
+          background: #080a0f;
+          border-top: 2.5px solid #ff2d78;
+          outline: 1.5px solid #0ef6cc;
+          outline-offset: -5px;
         }
 
         .faim-input {
           flex: 1;
-          border: 1.5px solid #e0e0e0;
+          border: 1.5px solid #0ef6cc;
           border-radius: 22px;
           padding: 10px 16px;
           font-size: 0.9rem;
@@ -373,14 +378,23 @@ export default function SearchPage() {
           outline: none;
           max-height: 120px;
           line-height: 1.4;
-          transition: border-color 0.15s;
+          transition: border-color 0.15s, box-shadow 0.15s;
+          /* ✅ FIX: explicit text and background colors for legibility */
+          background: #1a1d26;
+          color: #ffffff;
         }
-        .faim-input:focus { border-color: #e67e22; }
+        .faim-input::placeholder {
+          color: #6b7280;
+        }
+        .faim-input:focus {
+          border-color: #ff2d78;
+          box-shadow: 0 0 0 2px rgba(255, 45, 120, 0.15);
+        }
 
         .faim-send-btn {
           width: 42px;
           height: 42px;
-          background: #e67e22;
+          background: #ff2d78;
           color: white;
           border: none;
           border-radius: 50%;
@@ -391,7 +405,7 @@ export default function SearchPage() {
           flex-shrink: 0;
           transition: background 0.15s, transform 0.1s;
         }
-        .faim-send-btn:hover { background: #cf6d17; }
+        .faim-send-btn:hover { background: #e0205f; }
         .faim-send-btn:active { transform: scale(0.95); }
         .faim-send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
