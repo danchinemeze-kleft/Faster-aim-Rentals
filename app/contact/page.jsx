@@ -19,7 +19,7 @@ export default function Contact() {
           </a>
 
           {/* WhatsApp */}
-          <a href="https://wa.me/2348000000000" target="_blank" rel="noopener noreferrer" className="faim-contact-card">
+          <a href="https://wa.me/2348032851976" target="_blank" rel="noopener noreferrer" className="faim-contact-card">
             <div className="faim-contact-icon">💬</div>
             <div>
               <strong>WhatsApp</strong>
