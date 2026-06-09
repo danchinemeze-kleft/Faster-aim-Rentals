@@ -42,6 +42,8 @@ export default function ListPage() {
   const [submitting, setSubmitting] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [successMsg, setSuccessMsg] = useState('')
+  const [videoFile, setVideoFile] = useState(null)
+  const [uploadProgress, setUploadProgress] = useState(0)
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -84,7 +86,26 @@ export default function ListPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitting(true)
+    setUploadProgress(0)
     try {
+      let video_url = null
+
+      if (videoFile) {
+        const ext = videoFile.name.split('.').pop()
+        const fileName = `${user.id}/${Date.now()}.${ext}`
+        setUploadProgress(30)
+        const { error: uploadError } = await supabase.storage
+          .from('property-video')
+          .upload(fileName, videoFile, { contentType: videoFile.type })
+        if (uploadError) throw uploadError
+        setUploadProgress(80)
+        const { data: urlData } = supabase.storage
+          .from('property-video')
+          .getPublicUrl(fileName)
+        video_url = urlData.publicUrl
+        setUploadProgress(100)
+      }
+
       const { error } = await supabase.from('listings').insert([{
         landlord_id: user.id,
         title: formData.title,
@@ -99,11 +120,14 @@ export default function ListPage() {
         amenities: formData.amenities,
         status: 'active',
         available: formData.available,
+        video_url,
       }])
       if (error) throw error
       setFormData(emptyForm)
+      setVideoFile(null)
       setPreview(false)
       setShowForm(false)
+      setUploadProgress(0)
       setSuccessMsg('Listing published successfully!')
       setTimeout(() => setSuccessMsg(''), 4000)
       fetchListings(user.id)
@@ -149,7 +173,6 @@ export default function ListPage() {
       {showForm && (
         <div className="faim-form-card">
           <h2>Create New Listing</h2>
-
           <div className="faim-form-grid">
             {/* Left: Form */}
             <form onSubmit={handleSubmit} className="faim-form">
@@ -229,6 +252,52 @@ export default function ListPage() {
                   placeholder="Describe your property in detail. Include information about the neighborhood, nearby facilities, condition of the property, terms and conditions etc." required />
               </div>
 
+              {/* Video Upload */}
+              <div className="faim-field">
+                <label>Property Video <span style={{fontWeight:400, color:'#888'}}>(max 15 seconds, phone recording)</span></label>
+                <div className="faim-video-upload">
+                  {videoFile ? (
+                    <div className="faim-video-preview">
+                      <video src={URL.createObjectURL(videoFile)} controls className="faim-video-player" />
+                      <div className="faim-video-info">
+                        <span>📹 {videoFile.name}</span>
+                        <span>{(videoFile.size / (1024*1024)).toFixed(1)} MB</span>
+                      </div>
+                      <button type="button" className="faim-remove-video" onClick={() => setVideoFile(null)}>
+                        ✕ Remove video
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="faim-video-drop">
+                      <input
+                        type="file"
+                        accept="video/mp4,video/quicktime,video/webm"
+                        style={{ display: 'none' }}
+                        onChange={(e) => {
+                          const file = e.target.files[0]
+                          if (!file) return
+                          if (file.size > 50 * 1024 * 1024) {
+                            alert('Video must be under 50MB')
+                            return
+                          }
+                          setVideoFile(file)
+                        }}
+                      />
+                      <span className="faim-video-icon">📹</span>
+                      <span>Tap to upload property video</span>
+                      <span className="faim-video-hint">MP4, MOV or WEBM · Max 50MB · 15 seconds</span>
+                    </label>
+                  )}
+                </div>
+                {submitting && videoFile && uploadProgress > 0 && (
+                  <div className="faim-progress-wrap">
+                    <div className="faim-progress-bar" style={{width: `${uploadProgress}%`}} />
+                    <span>{uploadProgress < 100 ? 'Uploading video...' : 'Video uploaded ✓'}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Amenities */}
               <div className="faim-field">
                 <label>Amenities</label>
                 <div className="faim-amenities-grid">
@@ -271,6 +340,11 @@ export default function ListPage() {
                       {formData.amenities.map(a => <span key={a}>✓ {a}</span>)}
                     </div>
                   )}
+                  {videoFile && (
+                    <div className="faim-preview-video">
+                      <video src={URL.createObjectURL(videoFile)} controls style={{width:'100%', borderRadius:'8px', marginBottom:'0.75rem'}} />
+                    </div>
+                  )}
                   <div className="faim-preview-cta">Contact Landlord — ₦5,000</div>
                 </div>
               </div>
@@ -297,6 +371,9 @@ export default function ListPage() {
                     {listing.available ? '● Available' : '● Unavailable'}
                   </span>
                 </div>
+                {listing.video_url && (
+                  <video src={listing.video_url} controls className="faim-listing-video" />
+                )}
                 <h3>{listing.title}</h3>
                 <p className="faim-listing-location">📍 {listing.location}, {listing.state}</p>
                 <p className="faim-listing-price">₦{listing.price?.toLocaleString()} / {listing.price_period}</p>
@@ -483,6 +560,77 @@ export default function ListPage() {
           border-radius: 10px;
           font-weight: 600;
           font-size: 0.9rem;
+        }
+        .faim-video-upload { width: 100%; }
+        .faim-video-drop {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          padding: 2rem;
+          border: 2px dashed #e0e0e0;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: border-color 0.15s;
+          text-align: center;
+          color: #888;
+          font-size: 0.9rem;
+        }
+        .faim-video-drop:hover { border-color: #e67e22; color: #e67e22; }
+        .faim-video-icon { font-size: 2rem; }
+        .faim-video-hint { font-size: 0.78rem; color: #aaa; }
+        .faim-video-preview { display: flex; flex-direction: column; gap: 0.75rem; }
+        .faim-video-player {
+          width: 100%;
+          border-radius: 10px;
+          max-height: 200px;
+          background: #000;
+        }
+        .faim-video-info {
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.82rem;
+          color: #666;
+        }
+        .faim-remove-video {
+          background: #fff0f0;
+          color: #e74c3c;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 0.85rem;
+          font-weight: 600;
+          align-self: flex-start;
+        }
+        .faim-remove-video:hover { background: #fcc; }
+        .faim-progress-wrap {
+          margin-top: 0.5rem;
+          background: #f0f0f0;
+          border-radius: 20px;
+          height: 6px;
+          overflow: hidden;
+          position: relative;
+        }
+        .faim-progress-bar {
+          height: 100%;
+          background: #e67e22;
+          border-radius: 20px;
+          transition: width 0.3s ease;
+        }
+        .faim-progress-wrap span {
+          display: block;
+          font-size: 0.78rem;
+          color: #888;
+          margin-top: 0.25rem;
+        }
+        .faim-listing-video {
+          width: 100%;
+          border-radius: 10px;
+          max-height: 180px;
+          background: #000;
+          margin-bottom: 0.75rem;
         }
         .faim-listings-section { max-width: 1200px; margin: 0 auto; }
         .faim-listings-section h2 { font-size: 1.3rem; color: #1a1a2e; margin-bottom: 1.5rem; }
