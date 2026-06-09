@@ -1,51 +1,40 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
+import { useSearchParams } from 'next/navigation'
 
 function RevealSuccessInner() {
-  const router = useRouter()
   const searchParams = useSearchParams()
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  )
-
-  const [status, setStatus] = useState('verifying') // verifying | success | failed
-  const [landlordContact, setLandlordContact] = useState(null)
-  const [listing, setListing] = useState(null)
 
   const reference = searchParams.get('reference') || searchParams.get('trxref')
 
+  // Derive initial status from URL — avoids calling setState inside the effect
+  const [status, setStatus] = useState(reference ? 'verifying' : 'failed')
+  const [landlordContact, setLandlordContact] = useState(null)
+  const [listing, setListing] = useState(null)
+
   useEffect(() => {
-    if (reference) {
-      verifyPayment(reference)
-    } else {
-      setStatus('failed')
-    }
-  }, [reference])
-
-  const verifyPayment = async (ref) => {
-    try {
-      const res = await fetch('/api/verify-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reference: ref })
+    if (!reference) return
+    let cancelled = false
+    fetch('/api/verify-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reference }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (cancelled) return
+        if (data.success) {
+          setLandlordContact(data.contact)
+          setListing(data.listing)
+          setStatus('success')
+        } else {
+          setStatus('failed')
+        }
       })
-      const data = await res.json()
-
-      if (data.success) {
-        setLandlordContact(data.contact)
-        setListing(data.listing)
-        setStatus('success')
-      } else {
-        setStatus('failed')
-      }
-    } catch {
-      setStatus('failed')
-    }
-  }
+      .catch(() => { if (!cancelled) setStatus('failed') })
+    return () => { cancelled = true }
+  }, [reference])
 
   if (status === 'verifying') return (
     <div className="faim-reveal-page">
@@ -63,7 +52,7 @@ function RevealSuccessInner() {
       <div className="faim-reveal-card faim-reveal-card--failed">
         <div className="faim-status-icon">❌</div>
         <h2>Payment Verification Failed</h2>
-        <p>We couldn't verify your payment. If you were charged, please contact support.</p>
+        <p>We couldn&apos;t verify your payment. If you were charged, please contact support.</p>
         <div className="faim-actions">
           <a href="/browse" className="faim-btn faim-btn--primary">Browse Listings</a>
           <a href="mailto:support@fasteraim.com" className="faim-btn faim-btn--outline">Contact Support</a>
@@ -81,7 +70,7 @@ function RevealSuccessInner() {
         <div className="faim-success-header">
           <div className="faim-success-icon">✅</div>
           <h1>Contact Revealed!</h1>
-          <p>Payment successful. Here are the landlord's contact details.</p>
+          <p>Payment successful. Here are the landlord&apos;s contact details.</p>
         </div>
 
         {/* Property Info */}

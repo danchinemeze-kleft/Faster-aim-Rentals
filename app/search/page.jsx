@@ -107,6 +107,7 @@ export default function SearchPage() {
 
   // Proactive: show trending listings on first load
   useEffect(() => {
+    let cancelled = false
     fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -114,7 +115,7 @@ export default function SearchPage() {
     })
       .then(r => r.json())
       .then(data => {
-        if (data.listings?.length) {
+        if (!cancelled && data.listings?.length) {
           setMessages(prev => [...prev, {
             role: 'assistant',
             content: 'Here are some recently listed properties — take a look:',
@@ -123,6 +124,7 @@ export default function SearchPage() {
         }
       })
       .catch(() => {})
+    return () => { cancelled = true }
   }, [])
 
   const sendMessage = async () => {
