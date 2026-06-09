@@ -29,7 +29,16 @@ export default function BrowsePage() {
   }, []);
 
   useEffect(() => {
-    filterListings();
+    let result = listings;
+    if (search) result = result.filter(l =>
+      (l.title || '').toLowerCase().includes(search.toLowerCase()) ||
+      (l.location || '').toLowerCase().includes(search.toLowerCase()) ||
+      (l.state || '').toLowerCase().includes(search.toLowerCase())
+    );
+    if (typeFilter) result = result.filter(l => l.property_type === typeFilter);
+    if (stateFilter) result = result.filter(l => l.state === stateFilter);
+    if (priceFilter) result = result.filter(l => Number(l.price) <= Number(priceFilter));
+    setFiltered(result);
   }, [search, typeFilter, stateFilter, priceFilter, listings]);
 
   async function loadUser() {
