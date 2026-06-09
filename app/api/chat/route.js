@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 import { createClient } from '@supabase/supabase-js'
 
 // ── Intent extraction ──────────────────────────────────────
@@ -164,17 +164,26 @@ export async function POST(request) {
 
     let reply
     try {
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-      const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash', systemInstruction: systemPrompt })
+      const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
 
       const history = messages
         .slice(0, -1)
         .filter((m, i) => !(i === 0 && m.role === 'assistant'))
-        .map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }))
+        .map(m => ({
+          role: m.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: m.content }],
+        }))
 
-      const chat = model.startChat({ history })
-      const result = await chat.sendMessage(messages[messages.length - 1].content)
-      reply = result.response.text()
+      const result = await genAI.models.generateContent({
+        model: 'gemini-2.5-flash-preview-05-20',
+        contents: [
+          ...history,
+          { role: 'user', parts: [{ text: messages[messages.length - 1].content }] },
+        ],
+        config: { systemInstruction: systemPrompt },
+      })
+
+      reply = result.text
     } catch {
       reply = await callDeepSeek(messages, systemPrompt)
     }
