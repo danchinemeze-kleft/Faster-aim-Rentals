@@ -26,16 +26,6 @@ function AccountPageInner() {
 
   const redirectTo = searchParams.get('redirect') || null
 
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        await handleRedirectAfterAuth(session.user)
-      }
-    }
-    checkSession()
-  }, [])
-
   const handleRedirectAfterAuth = async (user) => {
     if (redirectTo) {
       router.push(redirectTo)
@@ -50,6 +40,16 @@ function AccountPageInner() {
     const userRole = profile?.role || 'tenant'
     router.push(userRole === 'landlord' ? '/dashboard' : '/my-account')
   }
+useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        await handleRedirectAfterAuth(session.user)
+      }
+    }
+   checkSession()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleGoogleLogin = async () => {
     setGoogleLoading(true)
