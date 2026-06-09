@@ -165,7 +165,7 @@ export async function POST(request) {
     let reply
     try {
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash', systemInstruction: systemPrompt })
+      const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash', systemInstruction: systemPrompt })
 
       const history = messages
         .slice(0, -1)
