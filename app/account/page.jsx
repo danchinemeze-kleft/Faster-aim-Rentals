@@ -23,6 +23,7 @@ function AccountPageInner() {
   const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const redirectTo = searchParams.get('redirect') || null
 
@@ -40,14 +41,15 @@ function AccountPageInner() {
     const userRole = profile?.role || 'tenant'
     router.push(userRole === 'landlord' ? '/dashboard' : '/my-account')
   }
-useEffect(() => {
+
+  useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
         await handleRedirectAfterAuth(session.user)
       }
     }
-   checkSession()
+    checkSession()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -108,6 +110,13 @@ useEffect(() => {
       setLoading(false)
       return
     }
+    // Supabase returns identities: [] when email already exists
+    if (data.user && data.user.identities && data.user.identities.length === 0) {
+      setError('An account with this email already exists. Please log in instead.')
+      setMode('login')
+      setLoading(false)
+      return
+    }
     if (data.user && !data.session) {
       setSuccessMsg('Check your email to confirm your account, then log in.')
       setLoading(false)
@@ -124,6 +133,7 @@ useEffect(() => {
       })
       await handleRedirectAfterAuth(data.user)
     }
+    setLoading(false)
   }
 
   const handleForgotPassword = async () => {
@@ -156,14 +166,14 @@ useEffect(() => {
         <div className="faim-tab-toggle">
           <button
             className={`faim-tab ${mode === 'login' ? 'faim-tab--active' : ''}`}
-            onClick={() => { setMode('login'); setError(''); setSuccessMsg('') }}
+            onClick={() => { setMode('login'); setError(''); setSuccessMsg(''); setShowPassword(false) }}
             type="button"
           >
             Log in
           </button>
           <button
             className={`faim-tab ${mode === 'signup' ? 'faim-tab--active' : ''}`}
-            onClick={() => { setMode('signup'); setError(''); setSuccessMsg('') }}
+            onClick={() => { setMode('signup'); setError(''); setSuccessMsg(''); setShowPassword(false) }}
             type="button"
           >
             Sign up
@@ -206,15 +216,20 @@ useEffect(() => {
             </div>
             <div className="faim-field">
               <label htmlFor="login-password">Password</label>
-              <input
-                id="login-password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-              />
+              <div className="faim-password-wrap">
+                <input
+                  id="login-password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                />
+                <button type="button" className="faim-eye-btn" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
             <div className="faim-forgot">
               <button type="button" onClick={handleForgotPassword} disabled={loading}>
@@ -273,16 +288,21 @@ useEffect(() => {
             </div>
             <div className="faim-field">
               <label htmlFor="signup-password">Password</label>
-              <input
-                id="signup-password"
-                type="password"
-                placeholder="Min. 6 characters"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-                minLength={6}
-                autoComplete="new-password"
-              />
+              <div className="faim-password-wrap">
+                <input
+                  id="signup-password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Min. 6 characters"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                />
+                <button type="button" className="faim-eye-btn" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
             <div className="faim-field">
               <label>I am a</label>
@@ -379,8 +399,29 @@ useEffect(() => {
           padding: 0.65rem 0.875rem; border: 1.5px solid #e0e0e0; border-radius: 9px;
           font-size: 0.9rem; color: #1a1a2e; outline: none;
           transition: border-color 0.15s ease; background: #fff;
+          width: 100%;
         }
         .faim-field input:focus { border-color: #e67e22; }
+        .faim-password-wrap {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+        .faim-password-wrap input {
+          padding-right: 2.75rem;
+        }
+        .faim-eye-btn {
+          position: absolute;
+          right: 0.75rem;
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 1rem;
+          padding: 0;
+          line-height: 1;
+          color: #888;
+        }
+        .faim-eye-btn:hover { color: #e67e22; }
         .faim-forgot { text-align: right; margin-top: -0.25rem; }
         .faim-forgot button {
           background: none; border: none; color: #e67e22;
