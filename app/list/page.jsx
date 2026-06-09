@@ -45,29 +45,29 @@ export default function ListPage() {
   const [videoFile, setVideoFile] = useState(null)
   const [uploadProgress, setUploadProgress] = useState(0)
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        router.push('/account?redirect=/list')
-        return
-      }
-      setUser(session.user)
-      fetchListings(session.user.id)
-    }
-    checkAuth()
-  }, [])
-
   const fetchListings = async (userId) => {
-    setLoading(true)
-    const { data, error } = await supabase
-      .from('listings')
-      .select('*')
-      .eq('landlord_id', userId)
-      .order('created_at', { ascending: false })
-    if (!error) setListings(data || [])
-    setLoading(false)
+  setLoading(true)
+  const { data, error } = await supabase
+    .from('listings')
+    .select('*')
+    .eq('landlord_id', userId)
+    .order('created_at', { ascending: false })
+  if (!error) setListings(data || [])
+  setLoading(false)
+}
+
+useEffect(() => {
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      router.push('/account?redirect=/list')
+      return
+    }
+    setUser(session.user)
+    fetchListings(session.user.id)
   }
+  checkAuth()
+}, [])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
