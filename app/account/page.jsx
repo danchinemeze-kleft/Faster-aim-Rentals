@@ -74,7 +74,11 @@ function AccountPageInner() {
     setError('')
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
-      setError(error.message)
+      if (error.message.toLowerCase().includes('invalid login')) {
+        setError('Incorrect email or password. Please try again.')
+      } else {
+        setError(error.message)
+      }
       setLoading(false)
       return
     }
@@ -91,7 +95,16 @@ function AccountPageInner() {
       options: { data: { full_name: fullName, phone, role } },
     })
     if (error) {
-      setError(error.message)
+      if (
+        error.message.toLowerCase().includes('already registered') ||
+        error.message.toLowerCase().includes('already exists') ||
+        error.message.toLowerCase().includes('user already')
+      ) {
+        setError('An account with this email already exists. Please log in instead.')
+        setMode('login')
+      } else {
+        setError(error.message)
+      }
       setLoading(false)
       return
     }
@@ -111,6 +124,24 @@ function AccountPageInner() {
       })
       await handleRedirectAfterAuth(data.user)
     }
+  }
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError('Enter your email address above first, then click Forgot password.')
+      return
+    }
+    setLoading(true)
+    setError('')
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/account/reset-password`,
+    })
+    if (error) {
+      setError(error.message)
+    } else {
+      setSuccessMsg('Password reset link sent! Check your email inbox.')
+    }
+    setLoading(false)
   }
 
   return (
@@ -184,6 +215,11 @@ function AccountPageInner() {
                 required
                 autoComplete="current-password"
               />
+            </div>
+            <div className="faim-forgot">
+              <button type="button" onClick={handleForgotPassword} disabled={loading}>
+                Forgot password?
+              </button>
             </div>
             <button type="submit" className="faim-submit-btn" disabled={loading}>
               {loading ? 'Logging in...' : 'Log in'}
@@ -345,6 +381,12 @@ function AccountPageInner() {
           transition: border-color 0.15s ease; background: #fff;
         }
         .faim-field input:focus { border-color: #e67e22; }
+        .faim-forgot { text-align: right; margin-top: -0.25rem; }
+        .faim-forgot button {
+          background: none; border: none; color: #e67e22;
+          font-size: 0.82rem; cursor: pointer; padding: 0;
+        }
+        .faim-forgot button:hover { text-decoration: underline; }
         .faim-role-toggle { display: flex; gap: 8px; }
         .faim-role-btn {
           flex: 1; padding: 0.6rem; border: 1.5px solid #e0e0e0; border-radius: 9px;
