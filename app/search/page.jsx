@@ -14,12 +14,65 @@ Your capabilities:
 - Help users search for properties by location, budget, and type
 - Explain Nigerian rental terms (caution fee, agency fee, agreement fee)
 - Give advice on renting in Nigerian cities
-- When a user describes what they want, extract: location, property type, budget, bedrooms
-- Always encourage users to browse listings or create an account
+- When a user describes what they want, acknowledge the location and property type naturally
 
-When users describe what they want, respond helpfully and suggest they check the listings. Keep responses concise and conversational. Never make up specific property listings - instead guide them to browse.
+When the user describes what they want, real matching listings from our database will be automatically shown below your response — you do not need to describe or invent listings. Just respond conversationally, confirm what you understood about their search, and let them know they can tap a card to browse or click "Meet Landlord" to get in touch.
 
-Important: Always end your response with a helpful next step like "Would you like to browse available listings?" or "You can check our listings page for options in that area."`
+Keep responses concise and conversational. Never make up specific property listings.`
+
+function Avatar({ size = 40 }) {
+  return (
+    <div style={{
+      width: size,
+      height: size,
+      borderRadius: '50%',
+      overflow: 'hidden',
+      flexShrink: 0,
+      border: '2px solid #ff2d78',
+      outline: '1.5px solid #0ef6cc',
+      outlineOffset: '1px',
+    }}>
+      <img
+        src="/mr-rent-avatar.png"
+        alt="Mr. Rent"
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      />
+    </div>
+  )
+}
+
+function ListingCard({ listing: l, revealLoading, onReveal }) {
+  return (
+    <div className="faim-listing-card">
+      <div className="faim-lcard-img">
+        {l.images?.[0]
+          ? <img src={l.images[0]} alt={l.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          : <span style={{ fontSize: '1.8rem' }}>🏠</span>
+        }
+      </div>
+      <div className="faim-lcard-body">
+        <div className="faim-lcard-price">
+          ₦{Number(l.price).toLocaleString('en-NG')}
+          <span>/{l.price_period || 'yr'}</span>
+        </div>
+        <div className="faim-lcard-title">{l.title}</div>
+        <div className="faim-lcard-loc">📍 {l.location}, {l.state}</div>
+        {(l.bedrooms || l.property_type) && (
+          <div className="faim-lcard-meta">
+            {l.bedrooms ? `${l.bedrooms} bed` : ''}{l.bedrooms && l.property_type ? ' · ' : ''}{l.property_type || ''}
+          </div>
+        )}
+        <button
+          className="faim-lcard-reveal-btn"
+          disabled={revealLoading === l.id}
+          onClick={() => onReveal(l)}
+        >
+          {revealLoading === l.id ? 'Please wait...' : 'Reveal Contact • ₦5k'}
+        </button>
+      </div>
+    </div>
+  )
+}
 
 export default function SearchPage() {
   const [messages, setMessages] = useState([
@@ -31,6 +84,7 @@ export default function SearchPage() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState(null)
+  const [revealLoading, setRevealLoading] = useState(null)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
 
@@ -51,6 +105,26 @@ export default function SearchPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // Proactive: show trending listings on first load
+  useEffect(() => {
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ proactive: true }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.listings?.length) {
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: 'Here are some recently listed properties — take a look:',
+            listings: data.listings,
+          }])
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   const sendMessage = async () => {
     const text = input.trim()
     if (!text || loading) return
@@ -67,13 +141,14 @@ export default function SearchPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: newMessages.map(m => ({ role: m.role, content: m.content })),
-          systemPrompt: SYSTEM_PROMPT
+          systemPrompt: SYSTEM_PROMPT,
+          userId: user?.id,
         })
       })
 
       const data = await response.json()
       if (data.reply) {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.reply }])
+        setMessages(prev => [...prev, { role: 'assistant', content: data.reply, listings: data.listings || [] }])
       } else {
         setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I'm having trouble right now. Please try again in a moment." }])
       }
@@ -83,6 +158,31 @@ export default function SearchPage() {
       setLoading(false)
       inputRef.current?.focus()
     }
+  }
+
+  const handleReveal = async (listing) => {
+    if (!user) {
+      window.location.href = '/account#signup'
+      return
+    }
+    setRevealLoading(listing.id)
+    try {
+      const res = await fetch('/api/init-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: user.email,
+          type: 'reveal',
+          listing_id: listing.id,
+          user_id: user.id,
+        }),
+      })
+      const data = await res.json()
+      if (data.authorization_url) window.location.href = data.authorization_url
+    } catch {
+      // payment init failed silently; user can retry
+    }
+    setRevealLoading(null)
   }
 
   const handleKeyDown = (e) => {
@@ -104,25 +204,6 @@ export default function SearchPage() {
     "3 bedroom duplex in Abuja",
     "What is caution fee?",
   ]
-
-  const Avatar = ({ size = 40, fontSize = '1.2rem' }) => (
-    <div style={{
-      width: size,
-      height: size,
-      borderRadius: '50%',
-      overflow: 'hidden',
-      flexShrink: 0,
-      border: '2px solid #ff2d78',
-      outline: '1.5px solid #0ef6cc',
-      outlineOffset: '1px',
-    }}>
-      <img
-        src="/mr-rent-avatar.png"
-        alt="Mr. Rent"
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-      />
-    </div>
-  )
 
   return (
     <div className="faim-search-page">
@@ -146,11 +227,20 @@ export default function SearchPage() {
       {/* Messages */}
       <div className="faim-messages">
         {messages.map((msg, i) => (
-          <div key={i} className={`faim-message-row faim-message-row--${msg.role}`}>
-            {msg.role === 'assistant' && <Avatar size={32} />}
-            <div className={`faim-bubble faim-bubble--${msg.role}`}>
-              {formatMessage(msg.content)}
+          <div key={i}>
+            <div className={`faim-message-row faim-message-row--${msg.role}`}>
+              {msg.role === 'assistant' && <Avatar size={32} />}
+              <div className={`faim-bubble faim-bubble--${msg.role}`}>
+                {formatMessage(msg.content)}
+              </div>
             </div>
+            {msg.listings?.length > 0 && (
+              <div className="faim-listing-cards">
+                {msg.listings.map(l => (
+                  <ListingCard key={l.id} listing={l} revealLoading={revealLoading} onReveal={handleReveal} />
+                ))}
+              </div>
+            )}
           </div>
         ))}
 
@@ -185,7 +275,11 @@ export default function SearchPage() {
           className="faim-input"
           placeholder="Describe the property you're looking for..."
           value={input}
-          onChange={e => setInput(e.target.value)}
+          onChange={e => {
+            setInput(e.target.value)
+            e.target.style.height = 'auto'
+            e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
+          }}
           onKeyDown={handleKeyDown}
           rows={1}
         />
@@ -379,7 +473,6 @@ export default function SearchPage() {
           max-height: 120px;
           line-height: 1.4;
           transition: border-color 0.15s, box-shadow 0.15s;
-          /* ✅ FIX: explicit text and background colors for legibility */
           background: #1a1d26;
           color: #ffffff;
         }
@@ -409,8 +502,90 @@ export default function SearchPage() {
         .faim-send-btn:active { transform: scale(0.95); }
         .faim-send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
+        /* ── Listing Cards in Chat ── */
+        .faim-listing-cards {
+          display: flex;
+          gap: 10px;
+          padding: 6px 0 4px 40px;
+          overflow-x: auto;
+          scrollbar-width: none;
+        }
+        .faim-listing-cards::-webkit-scrollbar { display: none; }
+
+        .faim-listing-card {
+          background: white;
+          border: 1.5px solid #e8e8e8;
+          border-radius: 12px;
+          overflow: hidden;
+          min-width: 160px;
+          max-width: 180px;
+          flex-shrink: 0;
+          text-decoration: none;
+          display: block;
+          transition: border-color 0.15s, transform 0.1s;
+        }
+        .faim-listing-card:hover {
+          border-color: #ff2d78;
+          transform: translateY(-2px);
+        }
+
+        .faim-lcard-img {
+          height: 90px;
+          background: #f0f0f0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+
+        .faim-lcard-body { padding: 8px 10px; }
+
+        .faim-lcard-price {
+          font-size: 0.82rem;
+          font-weight: 800;
+          color: #111;
+          margin-bottom: 2px;
+        }
+        .faim-lcard-price span { font-size: 0.7rem; font-weight: 400; color: #999; }
+
+        .faim-lcard-title {
+          font-size: 0.78rem;
+          font-weight: 600;
+          color: #222;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 2px;
+        }
+
+        .faim-lcard-loc { font-size: 0.7rem; color: #888; margin-bottom: 4px; }
+
+        .faim-lcard-meta {
+          font-size: 0.68rem;
+          color: #aaa;
+          text-transform: capitalize;
+          margin-bottom: 8px;
+        }
+
+        .faim-lcard-reveal-btn {
+          width: 100%;
+          padding: 7px 6px;
+          background: #ff2d78;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 0.72rem;
+          font-weight: 700;
+          cursor: pointer;
+          font-family: inherit;
+          transition: background 0.15s;
+        }
+        .faim-lcard-reveal-btn:hover { background: #e0205f; }
+        .faim-lcard-reveal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
         @media (max-width: 480px) {
           .faim-bubble { max-width: 85%; }
+          .faim-listing-cards { padding-left: 8px; }
         }
       `}</style>
     </div>
