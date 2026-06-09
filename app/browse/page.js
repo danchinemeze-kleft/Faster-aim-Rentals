@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -9,9 +10,9 @@ const supabase = createClient(
 );
 
 export default function BrowsePage() {
+  const router = useRouter();
   const [listings, setListings] = useState([]);
-  const [filtered, setFiltered] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [stateFilter, setStateFilter] = useState('');
@@ -23,12 +24,7 @@ export default function BrowsePage() {
   const [paying, setPaying] = useState(false);
   const [revealPrice] = useState(5000);
 
-  useEffect(() => {
-    loadUser();
-    loadListings();
-  }, []);
-
-  useEffect(() => {
+  const filtered = useMemo(() => {
     let result = listings;
     if (search) result = result.filter(l =>
       (l.title || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -38,7 +34,7 @@ export default function BrowsePage() {
     if (typeFilter) result = result.filter(l => l.property_type === typeFilter);
     if (stateFilter) result = result.filter(l => l.state === stateFilter);
     if (priceFilter) result = result.filter(l => Number(l.price) <= Number(priceFilter));
-    setFiltered(result);
+    return result;
   }, [search, typeFilter, stateFilter, priceFilter, listings]);
 
   async function loadUser() {
@@ -57,23 +53,16 @@ export default function BrowsePage() {
     setLoading(false);
   }
 
-  function filterListings() {
-    let result = listings;
-    if (search) result = result.filter(l =>
-      (l.title || '').toLowerCase().includes(search.toLowerCase()) ||
-      (l.location || '').toLowerCase().includes(search.toLowerCase()) ||
-      (l.state || '').toLowerCase().includes(search.toLowerCase())
-    );
-    if (typeFilter) result = result.filter(l => l.property_type === typeFilter);
-    if (stateFilter) result = result.filter(l => l.state === stateFilter);
-    if (priceFilter) result = result.filter(l => Number(l.price) <= Number(priceFilter));
-    setFiltered(result);
-  }
+  useEffect(() => {
+    loadUser();
+    loadListings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handleReveal(listing) {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
-      window.location.href = '/account#signup';
+      router.push('/account#signup');
       return;
     }
     setCurrentListing(listing);
@@ -144,7 +133,7 @@ export default function BrowsePage() {
               <option value="duplex">Duplex</option>
               <option value="bungalow">Bungalow</option>
               <option value="mansion">Mansion</option>
-              <option value="room_and_parlour">Room & Parlour</option>
+              <option value="room_and_parlour">Room &amp; Parlour</option>
               <option value="shop">Shop / Office</option>
               <option value="land">Land</option>
             </select>
