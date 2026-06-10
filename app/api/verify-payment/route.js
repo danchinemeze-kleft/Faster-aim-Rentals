@@ -50,7 +50,7 @@ export async function POST(request) {
     // Get listing details
     const { data: listing } = await supabase
       .from('listings')
-      .select('*, Profiles(full_name, phone, email)')
+      .select('*')
       .eq('id', listingId)
       .single()
 
@@ -58,14 +58,21 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'Listing not found' })
     }
 
+    // Get landlord profile separately
+    const { data: landlord } = await supabase
+      .from('Profiles')
+      .select('full_name, phone, email')
+      .eq('id', listing.landlord_id)
+      .single()
+
     // Save contact reveal record
     await supabase.from('Contact_reveals').upsert({
       tenant_id: tenantId,
       landlord_id: listing.landlord_id,
       listing_id: listingId,
       paystack_reference: reference,
-      landlord_phone: listing.Profiles?.phone,
-      landlord_email: listing.Profiles?.email,
+      landlord_phone: landlord?.phone,
+      landlord_email: landlord?.email,
     }, { onConflict: 'tenant_id,listing_id' })
 
     return Response.json({
@@ -81,10 +88,10 @@ export async function POST(request) {
         property_type: listing.property_type,
       },
       contact: {
-        full_name: listing.Profiles?.full_name,
-        phone: listing.Profiles?.phone,
-        email: listing.Profiles?.email,
-        whatsapp: listing.Profiles?.phone,
+        full_name: landlord?.full_name,
+        phone: landlord?.phone,
+        email: landlord?.email,
+        whatsapp: landlord?.phone,
       }
     })
 
