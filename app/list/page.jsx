@@ -479,7 +479,13 @@ export default function ListPage() {
                 </div>
               </div>
 
-              <div className="faim-form-actions">
+              <div style={{background:'#fff8f2',border:'1px solid #f0d0b0',borderRadius:'8px',padding:'0.75rem 1rem',fontSize:'0.83rem',color:'#7a4a1a',lineHeight:'1.7'}}>
+  <label style={{display:'flex',alignItems:'flex-start',gap:'0.6rem',cursor:'pointer',fontWeight:600}}>
+    <input type="checkbox" required style={{marginTop:'3px',accentColor:'#e67e22',flexShrink:0}} />
+    I confirm that all photos and videos are real recordings of this property. I understand that AI-generated or fake media will result in immediate removal and account suspension.
+  </label>
+</div>
+<div className="faim-form-actions">
                 <button type="button" className="faim-preview-btn" onClick={() => setPreview(!preview)}>
                   {preview ? '🙈 Hide Preview' : '👁️ Preview Listing'}
                 </button>
