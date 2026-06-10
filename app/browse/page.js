@@ -18,11 +18,7 @@ export default function BrowsePage() {
   const [stateFilter, setStateFilter] = useState('');
   const [priceFilter, setPriceFilter] = useState('');
   const [user, setUser] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [currentListing, setCurrentListing] = useState(null);
-  const [email, setEmail] = useState('');
-  const [paying, setPaying] = useState(false);
-  const [revealPrice] = useState(5000);
+  const [paying, setPaying] = useState(null);
 
   const filtered = useMemo(() => {
     let result = listings;
@@ -59,40 +55,50 @@ export default function BrowsePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function handleReveal(listing) {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      router.push('/account#signup');
-      return;
-    }
-    setCurrentListing(listing);
-    setEmail(session.user.email || '');
-    setShowModal(true);
-  }
-
-  async function handlePayment() {
-    if (!email || !currentListing) return;
-    setPaying(true);
+  async function initiatePayment(userObj, listingId) {
+    setPaying(listingId);
     try {
       const res = await fetch('/api/init-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email,
+          email: userObj.email,
           type: 'reveal',
-          listing_id: currentListing.id,
-          user_id: user?.id || email,
+          listing_id: listingId,
+          user_id: userObj.id,
         }),
       });
       const data = await res.json();
       if (data.authorization_url) {
         window.location.href = data.authorization_url;
+      } else {
+        alert('Payment could not be started. Please try again.');
       }
-    } catch (e) {
+    } catch {
       alert('Payment could not be started. Please try again.');
     }
-    setPaying(false);
+    setPaying(null);
   }
+
+  async function handleReveal(listing) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      sessionStorage.setItem('pendingReveal', listing.id);
+      router.push('/account#login');
+      return;
+    }
+    await initiatePayment(session.user, listing.id);
+  }
+
+  // Resume pending payment after login redirect
+  useEffect(() => {
+    if (!user || loading) return;
+    const listingId = sessionStorage.getItem('pendingReveal');
+    if (!listingId) return;
+    sessionStorage.removeItem('pendingReveal');
+    initiatePayment(user, listingId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, loading]);
 
   return (
     <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: '40px 24px 80px', fontFamily: 'DM Sans, sans-serif' }}>
@@ -206,7 +212,7 @@ export default function BrowsePage() {
                   <div style={{ fontSize: '0.82rem', color: '#666', fontWeight: 600, marginBottom: '16px' }}>📍 {l.location}, {l.state}</div>
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
                     <a href="/search" style={{ flex: 1, padding: '11px 8px', borderRadius: '8px', border: '2px solid #e8e8e8', background: '#f8f8f8', color: '#444', fontSize: '0.78rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Ask Mr. Rent</a>
-                    <button onClick={() => handleReveal(l)} style={{ flex: 2, padding: '11px 8px', borderRadius: '8px', border: 'none', background: '#ff2d78', color: '#fff', fontSize: '0.82rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>Meet Landlord</button>
+                    <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '11px 8px', borderRadius: '8px', border: 'none', background: '#ff2d78', color: '#fff', fontSize: '0.82rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif' }}>{paying === l.id ? 'Please wait...' : 'Meet Landlord • ₦5k'}</button>
                   </div>
                 </div>
               </div>
@@ -215,29 +221,6 @@ export default function BrowsePage() {
         )}
       </div>
 
-      {/* Modal */}
-      {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.88)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-          <div style={{ background: '#fff', borderRadius: '20px', borderTop: '4px solid #ff2d78', padding: '36px 32px', width: '100%', maxWidth: '420px', textAlign: 'center' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>📞</div>
-            <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.3rem', fontWeight: 800, color: '#111', marginBottom: '8px' }}>Meet the Landlord</h3>
-            <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '14px' }}>Get direct WhatsApp access - no agent, no commission.</p>
-            {currentListing && (
-              <div style={{ background: '#f8f8f8', border: '1px solid #eee', borderRadius: '10px', padding: '12px 16px', marginBottom: '16px', textAlign: 'left' }}>
-                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#111' }}>{currentListing.title}</div>
-                <div style={{ fontSize: '0.78rem', color: '#666' }}>📍 {currentListing.location}, {currentListing.state}</div>
-              </div>
-            )}
-            <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '2rem', fontWeight: 800, color: '#ff2d78', marginBottom: '4px' }}>N{revealPrice.toLocaleString('en-NG')}</div>
-            <div style={{ fontSize: '0.75rem', color: '#aaa', marginBottom: '18px' }}>One-time contact reveal</div>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email address" style={{ width: '100%', background: '#f8f8f8', border: '2px solid #e8e8e8', borderRadius: '10px', padding: '14px 16px', color: '#111', fontSize: '0.88rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', marginBottom: '14px' }} />
-            <button onClick={handlePayment} disabled={paying} style={{ width: '100%', padding: '14px', borderRadius: '10px', border: 'none', background: '#ff2d78', color: '#fff', fontSize: '0.92rem', fontWeight: 800, cursor: 'pointer', marginBottom: '10px', fontFamily: 'DM Sans, sans-serif' }}>
-              {paying ? 'Redirecting...' : 'Pay N5,000 - Reveal Contact'}
-            </button>
-            <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', color: '#888', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>Maybe later</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
