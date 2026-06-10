@@ -396,7 +396,8 @@ export default function ListPage() {
                 <label>Property Video <span style={{fontWeight:400,color:'#c0392b'}}>* Required</span></label>
                 <div style={{background:'#fff8f2',border:'1px solid #f0d0b0',borderRadius:'8px',padding:'0.75rem 1rem',marginBottom:'0.5rem',fontSize:'0.83rem',color:'#7a4a1a',lineHeight:'1.7'}}>
                   📹 Record a <strong>15 to 60 second video</strong> showing both the <strong>interior and exterior</strong> of the property. The video must match your description.<br/>
-                  ⚠️ <strong>AI-generated videos will be rejected</strong> and your property will not be approved.
+📱 <strong>Use a video you recorded directly</strong> from your phone camera. If you received the video via WhatsApp or file transfer, <strong>rename the file</strong> to something simple like <code style={{background:'#f0e0c8',padding:'1px 5px',borderRadius:'4px'}}>property-video.mp4</code> before uploading.<br/>
+⚠️ <strong>AI-generated videos will be rejected</strong> and your property will not be approved.
                 </div>
 
                 <div className="faim-video-upload">
