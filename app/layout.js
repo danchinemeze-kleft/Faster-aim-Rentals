@@ -60,10 +60,11 @@ export const metadata = {
       "max-image-preview": "large",
     },
   },
- icons: {
-  icon: "/favicon.png",
-  shortcut: "/favicon.png",
-},
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+  },
+};
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -72,7 +73,7 @@ const jsonLd = {
   description:
     "AI-powered property rental platform serving Nigeria. Browse verified landlord listings, chat with Mr. Rent AI, and reveal contacts without agent fees.",
   url: "https://rent.fasteraim.com",
-  logo: "https://rent.fasteraim.com/favicon.ico",
+  logo: "https://rent.fasteraim.com/favicon.png",
   sameAs: ["https://fasteraim.com"],
   address: {
     "@type": "PostalAddress",
