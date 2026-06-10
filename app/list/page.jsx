@@ -44,7 +44,8 @@ export default function ListPage() {
   const [successMsg, setSuccessMsg] = useState('')
   const [videoFile, setVideoFile] = useState(null)
   const [uploadProgress, setUploadProgress] = useState(0)
-const [videoStatus, setVideoStatus] = useState('') // 'checking', 'ready', 'error'
+  const [videoStatus, setVideoStatus] = useState('') // 'checking', 'ready', 'error'
+
   const fetchListings = async (userId) => {
     const { data, error } = await supabase
       .from('listings')
@@ -84,12 +85,12 @@ const [videoStatus, setVideoStatus] = useState('') // 'checking', 'ready', 'erro
   }
 
   const handleSubmit = async (e) => {
-  e.preventDefault()
-  if (!videoFile) {
-    alert('Please add a video of your property before publishing.')
-    return
-  }
-  setSubmitting(true)
+    e.preventDefault()
+    if (!videoFile) {
+      alert('Please add a video of your property before publishing.')
+      return
+    }
+    setSubmitting(true)
     setUploadProgress(0)
     try {
       let video_url = null
@@ -129,6 +130,7 @@ const [videoStatus, setVideoStatus] = useState('') // 'checking', 'ready', 'erro
       if (error) throw error
       setFormData(emptyForm)
       setVideoFile(null)
+      setVideoStatus('')
       setPreview(false)
       setShowForm(false)
       setUploadProgress(0)
@@ -258,24 +260,30 @@ const [videoStatus, setVideoStatus] = useState('') // 'checking', 'ready', 'erro
 
               {/* Video Upload */}
               <div className="faim-field">
-               <label>Property Video <span style={{fontWeight:400, color:'#c0392b'}}>* Required</span></label>
-<div style={{background:'#fff8f2', border:'1px solid #f0d0b0', borderRadius:'8px', padding:'0.75rem 1rem', marginBottom:'0.5rem', fontSize:'0.83rem', color:'#7a4a1a', lineHeight:'1.7'}}>
-  📹 Record a <strong>15 to 60 second video</strong> showing both the <strong>interior and exterior</strong> of the property. The video must match your description.<br/>
-  ⚠️ <strong>AI-generated videos will be rejected</strong> and your property will not be approved.
-</div>
+                <label>Property Video <span style={{fontWeight:400, color:'#c0392b'}}>* Required</span></label>
+                <div style={{background:'#fff8f2', border:'1px solid #f0d0b0', borderRadius:'8px', padding:'0.75rem 1rem', marginBottom:'0.5rem', fontSize:'0.83rem', color:'#7a4a1a', lineHeight:'1.7'}}>
+                  📹 Record a <strong>15 to 60 second video</strong> showing both the <strong>interior and exterior</strong> of the property. The video must match your description.<br/>
+                  ⚠️ <strong>AI-generated videos will be rejected</strong> and your property will not be approved.
+                </div>
+
                 <div className="faim-video-upload">
+                  {/* Status: checking */}
                   {videoStatus === 'checking' && !videoFile && (
                     <div style={{display:'flex',alignItems:'center',gap:'0.75rem',padding:'1.25rem',background:'#fff8f2',border:'1.5px solid #e67e22',borderRadius:'12px',color:'#e67e22',fontWeight:600,fontSize:'0.9rem'}}>
                       <div style={{width:'20px',height:'20px',border:'3px solid #f0d0b0',borderTopColor:'#e67e22',borderRadius:'50%',animation:'spin 0.8s linear infinite',flexShrink:0}}></div>
                       Checking video duration...
                     </div>
                   )}
+
+                  {/* Status: error */}
                   {videoStatus === 'error' && !videoFile && (
-                    <div style={{padding:'1rem',background:'#fff0f0',border:'1.5px solid #e74c3c',borderRadius:'12px',color:'#e74c3c',fontWeight:600,fontSize:'0.85rem'}}>
+                    <div style={{padding:'1rem',background:'#fff0f0',border:'1.5px solid #e74c3c',borderRadius:'12px',color:'#e74c3c',fontWeight:600,fontSize:'0.85rem',marginBottom:'0.5rem'}}>
                       ❌ Video rejected. Please record a new one (15–60 seconds, MP4/MOV/WEBM, max 200MB).
                     </div>
                   )}
+
                   {videoFile ? (
+                    /* Video selected and valid */
                     <div className="faim-video-preview">
                       <div style={{background:'#f0fff4',border:'1.5px solid #27ae60',borderRadius:'10px',padding:'0.6rem 1rem',display:'flex',alignItems:'center',gap:'0.5rem',color:'#27ae60',fontWeight:700,fontSize:'0.85rem',marginBottom:'0.5rem'}}>
                         ✅ Video ready — looks good!
@@ -290,50 +298,58 @@ const [videoStatus, setVideoStatus] = useState('') // 'checking', 'ready', 'erro
                       </button>
                     </div>
                   ) : (
+                    /* Upload drop zone */
                     <label className="faim-video-drop">
                       <input
                         type="file"
                         accept="video/mp4,video/quicktime,video/webm"
                         style={{ display: 'none' }}
                         onChange={(e) => {
-  const file = e.target.files[0]
-  if (!file) return
-  if (file.size > 200 * 1024 * 1024) {
-    alert('Video must be under 200MB')
-    return
-  }
-  setVideoStatus('checking')
-  const videoEl = document.createElement('video')
-  videoEl.preload = 'metadata'
-  videoEl.onloadedmetadata = () => {
-    window.URL.revokeObjectURL(videoEl.src)
-    const dur = videoEl.duration
-    if (dur < 15) {
-      setVideoStatus('error')
-      alert('Video is too short. Minimum is 15 seconds.')
-      return
-    }
-    if (dur > 60) {
-      setVideoStatus('error')
-      alert('Video is too long. Maximum is 60 seconds.')
-      return
-    }
-    setVideoStatus('ready')
-    setVideoFile(file)
-  }
-  videoEl.src = URL.createObjectURL(file)
-}}
+                          const file = e.target.files[0]
+                          if (!file) return
+                          if (file.size > 200 * 1024 * 1024) {
+                            alert('Video must be under 200MB')
+                            return
+                          }
+                          setVideoStatus('checking')
+                          const videoEl = document.createElement('video')
+                          videoEl.preload = 'metadata'
+                          videoEl.onloadedmetadata = () => {
+                            window.URL.revokeObjectURL(videoEl.src)
+                            const dur = videoEl.duration
+                            if (dur < 15) {
+                              setVideoStatus('error')
+                              alert('Video is too short. Minimum is 15 seconds.')
+                              return
+                            }
+                            if (dur > 60) {
+                              setVideoStatus('error')
+                              alert('Video is too long. Maximum is 60 seconds.')
+                              return
+                            }
+                            setVideoStatus('ready')
+                            setVideoFile(file)
+                          }
+                          videoEl.src = URL.createObjectURL(file)
+                        }}
                       />
                       <span className="faim-video-icon">📹</span>
                       <span>Tap to upload property video</span>
-<span className="faim-video-hint">MP4, MOV or WEBM · 15–60 seconds · Max 200MB</span>
-                  )
-                  
+                      <span className="faim-video-hint">MP4, MOV or WEBM · 15–60 seconds · Max 200MB</span>
+                    </label>
+                  )}
                 </div>
+
+                {/* Upload progress */}
                 {submitting && videoFile && (
                   <div style={{marginTop:'0.75rem'}}>
                     <div style={{display:'flex',justifyContent:'space-between',fontSize:'0.8rem',color:'#888',marginBottom:'6px'}}>
-                      <span>{uploadProgress < 30 ? '⏳ Preparing upload...' : uploadProgress < 80 ? '📤 Uploading video...' : uploadProgress < 100 ? '🔗 Finalizing...' : '✅ Video uploaded!'}</span>
+                      <span>
+                        {uploadProgress < 30 ? '⏳ Preparing upload...' :
+                         uploadProgress < 80 ? '📤 Uploading video...' :
+                         uploadProgress < 100 ? '🔗 Finalizing...' :
+                         '✅ Video uploaded!'}
+                      </span>
                       <span>{uploadProgress}%</span>
                     </div>
                     <div className="faim-progress-wrap">
@@ -652,24 +668,16 @@ const [videoStatus, setVideoStatus] = useState('') // 'checking', 'ready', 'erro
         }
         .faim-remove-video:hover { background: #fcc; }
         .faim-progress-wrap {
-          margin-top: 0.5rem;
           background: #f0f0f0;
           border-radius: 20px;
-          height: 6px;
+          height: 8px;
           overflow: hidden;
-          position: relative;
         }
         .faim-progress-bar {
           height: 100%;
-          background: #e67e22;
+          background: linear-gradient(90deg, #e67e22, #f39c12);
           border-radius: 20px;
           transition: width 0.3s ease;
-        }
-        .faim-progress-wrap span {
-          display: block;
-          font-size: 0.78rem;
-          color: #888;
-          margin-top: 0.25rem;
         }
         .faim-listing-video {
           width: 100%;
