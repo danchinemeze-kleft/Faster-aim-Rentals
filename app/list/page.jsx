@@ -327,7 +327,8 @@ const [videoStatus, setVideoStatus] = useState('') // 'checking', 'ready', 'erro
                       <span className="faim-video-icon">📹</span>
                       <span>Tap to upload property video</span>
 <span className="faim-video-hint">MP4, MOV or WEBM · 15–60 seconds · Max 200MB</span>
-                  )}
+                  )
+                  
                 </div>
                 {submitting && videoFile && (
                   <div style={{marginTop:'0.75rem'}}>
