@@ -112,11 +112,34 @@ export default function ListPage() {
       setVideoStatus('ready')
       setVideoFile(file)
     }
-    videoEl.onerror = () => {
-      setVideoStatus('error')
-      alert('Could not read video file. Please try a different file.')
-    }
-    videoEl.src = URL.createObjectURL(file)
+   videoEl.onerror = () => {
+  setVideoStatus('ready')
+  setVideoFile(file)
+}
+const timeout = setTimeout(() => {
+  if (videoEl.duration === 0 || isNaN(videoEl.duration)) {
+    setVideoStatus('ready')
+    setVideoFile(file)
+  }
+}, 3000)
+videoEl.onloadedmetadata = () => {
+  clearTimeout(timeout)
+  window.URL.revokeObjectURL(videoEl.src)
+  const dur = videoEl.duration
+  if (dur < 15) {
+    setVideoStatus('error')
+    alert('Video is too short. Minimum is 15 seconds.')
+    return
+  }
+  if (dur > 60) {
+    setVideoStatus('error')
+    alert('Video is too long. Maximum is 60 seconds.')
+    return
+  }
+  setVideoStatus('ready')
+  setVideoFile(file)
+}
+videoEl.src = URL.createObjectURL(file)
   }
 
   const handlePhotoSelect = (e) => {
