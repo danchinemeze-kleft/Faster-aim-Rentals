@@ -60,11 +60,10 @@ export const metadata = {
       "max-image-preview": "large",
     },
   },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-  },
-};
+ icons: {
+  icon: "/favicon.png",
+  shortcut: "/favicon.png",
+},
 
 const jsonLd = {
   "@context": "https://schema.org",
