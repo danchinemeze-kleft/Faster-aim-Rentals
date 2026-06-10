@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import Breadcrumb from '../components/Breadcrumb'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -177,6 +178,7 @@ export default function DashboardPage() {
       </aside>
 
       <main className="faim-main">
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Dashboard', href: '/dashboard' }]} />
         <div className="faim-topbar">
           <div>
             <h1 className="faim-page-title">

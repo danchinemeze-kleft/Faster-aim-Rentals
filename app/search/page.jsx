@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
+import Breadcrumb from '../components/Breadcrumb'
 
 const SYSTEM_PROMPT = `You are Mr. Rent, a friendly and knowledgeable Nigerian property rental assistant for the FasterAIM Rentals platform. You help people find rental properties across Nigeria.
 
@@ -228,6 +229,9 @@ export default function SearchPage() {
 
       {/* Messages */}
       <div className="faim-messages">
+        <div style={{ padding: '4px 0 8px' }}>
+          <Breadcrumb theme="dark" items={[{ label: 'Home', href: '/' }, { label: 'Browse', href: '/browse' }, { label: 'Mr. Rent AI', href: '/search' }]} />
+        </div>
         {messages.map((msg, i) => (
           <div key={i}>
             <div className={`faim-message-row faim-message-row--${msg.role}`}>

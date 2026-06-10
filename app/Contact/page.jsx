@@ -1,10 +1,12 @@
 'use client'
 
+import Breadcrumb from '../components/Breadcrumb'
+
 export default function Contact() {
   return (
     <div className="faim-contact-page">
       <div className="faim-contact-container">
-        <a href="/" className="faim-back-link">← Back to Home</a>
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Contact', href: '/Contact' }]} />
         <h1>Contact Us</h1>
         <p className="faim-subtitle">Have a question, complaint, or partnership proposal? We'd love to hear from you.</p>
 

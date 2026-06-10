@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Breadcrumb from '../components/Breadcrumb'
 
 function RevealSuccessInner() {
   const searchParams = useSearchParams()
@@ -38,6 +39,9 @@ function RevealSuccessInner() {
 
   if (status === 'verifying') return (
     <div className="faim-reveal-page">
+      <div style={{ width: '100%', maxWidth: '480px', padding: '0 0 4px' }}>
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Browse', href: '/browse' }, { label: 'Verifying Payment', href: '/reveal-success' }]} />
+      </div>
       <div className="faim-reveal-card">
         <div className="faim-spinner"></div>
         <h2>Verifying your payment...</h2>
@@ -49,6 +53,9 @@ function RevealSuccessInner() {
 
   if (status === 'failed') return (
     <div className="faim-reveal-page">
+      <div style={{ width: '100%', maxWidth: '480px', padding: '0 0 4px' }}>
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Browse', href: '/browse' }, { label: 'Payment Failed', href: '/reveal-success' }]} />
+      </div>
       <div className="faim-reveal-card faim-reveal-card--failed">
         <div className="faim-status-icon">❌</div>
         <h2>Payment Verification Failed</h2>
@@ -64,6 +71,9 @@ function RevealSuccessInner() {
 
   return (
     <div className="faim-reveal-page">
+      <div style={{ width: '100%', maxWidth: '480px', padding: '0 0 4px' }}>
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Browse', href: '/browse' }, { label: 'Contact Revealed', href: '/reveal-success' }]} />
+      </div>
       <div className="faim-reveal-card faim-reveal-card--success">
 
         {/* Success Header */}

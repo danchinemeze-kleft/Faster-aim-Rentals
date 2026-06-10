@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
+import Breadcrumb from '../components/Breadcrumb';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -103,6 +104,8 @@ export default function BrowsePage() {
   return (
     <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: '40px 24px 80px', fontFamily: 'DM Sans, sans-serif' }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+
+        <Breadcrumb theme="dark" items={[{ label: 'Home', href: '/' }, { label: 'Browse Listings', href: '/browse' }]} />
 
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>

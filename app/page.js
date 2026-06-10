@@ -1,10 +1,12 @@
 'use client'
 
 import Image from 'next/image'
+import Breadcrumb from './components/Breadcrumb'
 
 export default function Home() {
   return (
     <main style={styles.main}>
+      <Breadcrumb theme="dark" items={[{ label: 'Mr. Rent', href: '/' }]} />
       {/* Navbar */}
       <nav style={styles.nav}>
         <div style={styles.navBrand}>🏠 Mr. Rent</div>

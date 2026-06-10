@@ -1,10 +1,12 @@
 'use client'
 
+import Breadcrumb from '../components/Breadcrumb'
+
 export default function TermsOfService() {
   return (
     <div className="faim-legal-page">
       <div className="faim-legal-container">
-        <a href="/" className="faim-back-link">← Back to Home</a>
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Browse', href: '/browse' }, { label: 'Terms of Service', href: '/terms-of-service' }]} />
         <h1>Terms of Service</h1>
         <p className="faim-last-updated">Last updated: June 2025</p>
 

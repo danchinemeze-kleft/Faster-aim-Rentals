@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import Breadcrumb from '../components/Breadcrumb'
 
 function AccountPageInner() {
   const router = useRouter()
@@ -156,6 +157,9 @@ function AccountPageInner() {
 
   return (
     <main className="faim-account-page">
+      <div style={{ width: '100%', maxWidth: '440px', padding: '0 0 4px' }}>
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Login / Sign Up', href: '/account' }]} />
+      </div>
       <div className="faim-account-card">
         <div className="faim-account-brand">
           <span className="faim-brand-icon">🏠</span>

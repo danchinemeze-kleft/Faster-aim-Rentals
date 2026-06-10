@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import Breadcrumb from '../components/Breadcrumb'
 
 const NIGERIAN_STATES = [
   'Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno',
@@ -267,6 +268,7 @@ videoEl.src = URL.createObjectURL(file)
 
   return (
     <div className="faim-list-page">
+      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Dashboard', href: '/dashboard' }, { label: 'List Property', href: '/list' }]} />
       <div className="faim-list-header">
         <div>
           <h1>🏠 My Listings</h1>

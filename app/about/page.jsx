@@ -1,10 +1,12 @@
 'use client'
 
+import Breadcrumb from '../components/Breadcrumb'
+
 export default function About() {
   return (
     <div className="faim-about-page">
       <div className="faim-about-container">
-        <a href="/" className="faim-back-link">← Back to Home</a>
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'About', href: '/about' }]} />
 
         {/* Hero */}
         <div className="faim-about-hero">

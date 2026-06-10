@@ -1,10 +1,12 @@
 'use client'
 
+import Breadcrumb from '../components/Breadcrumb'
+
 export default function RefundPolicy() {
   return (
     <div className="faim-legal-page">
       <div className="faim-legal-container">
-        <a href="/" className="faim-back-link">← Back to Home</a>
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Browse', href: '/browse' }, { label: 'Refund Policy', href: '/Refund-policy' }]} />
         <h1>Refund Policy</h1>
         <p className="faim-last-updated">Last updated: June 2025</p>
 
