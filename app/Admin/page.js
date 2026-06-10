@@ -8,12 +8,11 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'fasteraim2026';
-
 export default function AdminDashboard() {
   const [authed, setAuthed] = useState(false);
   const [pwInput, setPwInput] = useState('');
   const [pwError, setPwError] = useState('');
+  const [checkingSession, setCheckingSession] = useState(true);
 
   const [listings, setListings] = useState([]);
   const [landlords, setLandlords] = useState([]);
@@ -21,7 +20,6 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('listings');
   const [actionMsg, setActionMsg] = useState('');
 
-  // Stats
   const [stats, setStats] = useState({
     totalListings: 0,
     activeListings: 0,
@@ -31,9 +29,8 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const saved = sessionStorage.getItem('mr_rent_admin');
-    if (saved === 'true') {
-      setTimeout(() => setAuthed(true), 0);
-    }
+    if (saved === 'true') setAuthed(true);
+    setCheckingSession(false);
   }, []);
 
   useEffect(() => {
@@ -64,9 +61,9 @@ export default function AdminDashboard() {
       }
 
       if (!pe && profileData) {
-        const landlords = profileData.filter(p => p.role === 'landlord');
-        setLandlords(landlords);
-        setStats(s => ({ ...s, totalLandlords: landlords.length }));
+        const landlordList = profileData.filter(p => p.role === 'landlord');
+        setLandlords(landlordList);
+        setStats(s => ({ ...s, totalLandlords: landlordList.length }));
       }
     } catch (err) {
       console.error(err);
@@ -83,6 +80,11 @@ export default function AdminDashboard() {
     if (!error) {
       setListings(prev => prev.map(l => l.id === id ? { ...l, status } : l));
       showMsg(`Listing ${status === 'active' ? 'approved' : status === 'rejected' ? 'rejected' : 'updated'}.`);
+      setStats(s => ({
+        ...s,
+        activeListings: status === 'active' ? s.activeListings + 1 : s.activeListings,
+        pendingListings: s.pendingListings > 0 ? s.pendingListings - 1 : 0,
+      }));
     }
   }
 
@@ -105,14 +107,24 @@ export default function AdminDashboard() {
     setTimeout(() => setActionMsg(''), 3000);
   }
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
-    if (pwInput === ADMIN_PASSWORD) {
-      sessionStorage.setItem('mr_rent_admin', 'true');
-      setAuthed(true);
-      setPwError('');
-    } else {
-      setPwError('Incorrect password.');
+    setPwError('');
+    try {
+      const res = await fetch('/api/admin-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwInput }),
+      });
+      if (res.ok) {
+        sessionStorage.setItem('mr_rent_admin', 'true');
+        setAuthed(true);
+      } else {
+        const data = await res.json();
+        setPwError(data.error || 'Incorrect password.');
+      }
+    } catch {
+      setPwError('Something went wrong. Try again.');
     }
   }
 
@@ -153,6 +165,8 @@ export default function AdminDashboard() {
       }}>{s.label}</span>
     );
   }
+
+  if (checkingSession) return null;
 
   // LOGIN SCREEN
   if (!authed) {
@@ -207,10 +221,7 @@ export default function AdminDashboard() {
   const pendingListings = listings.filter(l => l.status === 'pending' || !l.status);
   const activeListings = listings.filter(l => l.status === 'active');
   const otherListings = listings.filter(l => l.status === 'rejected' || l.status === 'unavailable');
-
-  const tabListings = activeTab === 'listings'
-    ? [...pendingListings, ...activeListings, ...otherListings]
-    : listings;
+  const tabListings = [...pendingListings, ...activeListings, ...otherListings];
 
   return (
     <div style={{ minHeight: '100vh', background: '#080a0f', fontFamily: 'DM Sans, sans-serif', color: '#e8e8e8' }}>
@@ -282,7 +293,6 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Loading */}
         {loading && (
           <div style={{ color: '#555', fontSize: 14, padding: '2rem 0' }}>Loading data from Supabase…</div>
         )}
@@ -302,15 +312,9 @@ export default function AdminDashboard() {
             {tabListings.map(listing => (
               <div key={listing.id} style={{
                 background: '#111318',
-                border: (!listing.status || listing.status === 'pending')
-                  ? '0.5px solid #BA7517'
-                  : '0.5px solid #222',
-                borderRadius: 12, padding: '1.25rem',
-                marginBottom: 10,
-                display: 'grid',
-                gridTemplateColumns: '1fr auto',
-                gap: 16,
-                alignItems: 'start'
+                border: (!listing.status || listing.status === 'pending') ? '0.5px solid #BA7517' : '0.5px solid #222',
+                borderRadius: 12, padding: '1.25rem', marginBottom: 10,
+                display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'start'
               }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
@@ -333,41 +337,34 @@ export default function AdminDashboard() {
                     <span>🕐 {timeAgo(listing.created_at)}</span>
                   </div>
                 </div>
-
-                {/* Actions */}
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                   {(!listing.status || listing.status === 'pending') && (
                     <>
                       <button onClick={() => updateListingStatus(listing.id, 'active')} style={{
                         background: '#0ef6cc', color: '#080a0f', border: 'none',
-                        borderRadius: 8, padding: '5px 14px', fontSize: 12,
-                        fontWeight: 600, cursor: 'pointer'
+                        borderRadius: 8, padding: '5px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer'
                       }}>Approve</button>
                       <button onClick={() => updateListingStatus(listing.id, 'rejected')} style={{
-                        background: 'transparent', color: '#E24B4A',
-                        border: '0.5px solid #E24B4A', borderRadius: 8,
-                        padding: '5px 14px', fontSize: 12, cursor: 'pointer'
+                        background: 'transparent', color: '#E24B4A', border: '0.5px solid #E24B4A',
+                        borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer'
                       }}>Reject</button>
                     </>
                   )}
                   {listing.status === 'active' && (
                     <button onClick={() => toggleAvailability(listing.id, listing.status)} style={{
-                      background: 'transparent', color: '#888',
-                      border: '0.5px solid #333', borderRadius: 8,
-                      padding: '5px 14px', fontSize: 12, cursor: 'pointer'
+                      background: 'transparent', color: '#888', border: '0.5px solid #333',
+                      borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer'
                     }}>Mark unavailable</button>
                   )}
                   {listing.status === 'unavailable' && (
                     <button onClick={() => toggleAvailability(listing.id, listing.status)} style={{
-                      background: 'transparent', color: '#0ef6cc',
-                      border: '0.5px solid #0ef6cc', borderRadius: 8,
-                      padding: '5px 14px', fontSize: 12, cursor: 'pointer'
+                      background: 'transparent', color: '#0ef6cc', border: '0.5px solid #0ef6cc',
+                      borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer'
                     }}>Mark active</button>
                   )}
                   <button onClick={() => deleteListing(listing.id)} style={{
-                    background: 'transparent', color: '#555',
-                    border: '0.5px solid #333', borderRadius: 8,
-                    padding: '5px 10px', fontSize: 12, cursor: 'pointer'
+                    background: 'transparent', color: '#555', border: '0.5px solid #333',
+                    borderRadius: 8, padding: '5px 10px', fontSize: 12, cursor: 'pointer'
                   }}>🗑</button>
                 </div>
               </div>
@@ -388,15 +385,12 @@ export default function AdminDashboard() {
               </div>
             )}
             {landlords.map(lp => {
-              const landlordListings = listings.filter(l =>
-                l.user_id === lp.id || l.landlord_id === lp.id
-              );
+              const landlordListings = listings.filter(l => l.user_id === lp.id || l.landlord_id === lp.id);
               return (
                 <div key={lp.id} style={{
                   background: '#111318', border: '0.5px solid #222',
                   borderRadius: 12, padding: '1.25rem', marginBottom: 10,
-                  display: 'grid', gridTemplateColumns: '1fr auto',
-                  gap: 16, alignItems: 'center'
+                  display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'center'
                 }}>
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 15, color: '#e8e8e8', marginBottom: 4 }}>
@@ -409,16 +403,14 @@ export default function AdminDashboard() {
                       <span>🏠 {landlordListings.length} listing{landlordListings.length !== 1 ? 's' : ''}</span>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <span style={{
-                      background: lp.subscribed ? '#E1F5EE' : '#1a1d24',
-                      color: lp.subscribed ? '#0F6E56' : '#555',
-                      fontSize: 11, fontWeight: 500, padding: '4px 10px',
-                      borderRadius: 20, border: lp.subscribed ? 'none' : '0.5px solid #333'
-                    }}>
-                      {lp.subscribed ? '✓ Subscribed' : 'No subscription'}
-                    </span>
-                  </div>
+                  <span style={{
+                    background: lp.subscribed ? '#E1F5EE' : '#1a1d24',
+                    color: lp.subscribed ? '#0F6E56' : '#555',
+                    fontSize: 11, fontWeight: 500, padding: '4px 10px',
+                    borderRadius: 20, border: lp.subscribed ? 'none' : '0.5px solid #333'
+                  }}>
+                    {lp.subscribed ? '✓ Subscribed' : 'No subscription'}
+                  </span>
                 </div>
               );
             })}
