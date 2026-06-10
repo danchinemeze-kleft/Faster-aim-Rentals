@@ -1,121 +1,23 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+export async function GET(request) {
+  const { searchParams, origin } = new URL(request.url);
+  const code = searchParams.get("code");
+  const next = searchParams.get("next") ?? "/account";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  if (code) {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    );
 
-export const metadata = {
-  metadataBase: new URL("https://rent.fasteraim.com"),
-  title: {
-    default: "Mr. Rent – Find Verified Rentals in Nigeria",
-    template: "%s | Mr. Rent",
-  },
-  description:
-    "AI-powered property rental platform for Nigeria. Browse verified listings in Awka, Onitsha, Anambra and beyond. No agent fees — pay only to reveal landlord contacts.",
-  keywords: [
-    "rentals Nigeria",
-    "property rental Awka",
-    "rent house Onitsha",
-    "Anambra rentals",
-    "Nigeria property listing",
-    "rent apartment Nigeria",
-    "Mr Rent",
-    "Faster Aim Rentals",
-  ],
-  authors: [{ name: "Faster Aim Technology Limited" }],
-  creator: "Faster Aim Technology Limited",
-  publisher: "Faster Aim Technology Limited",
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    type: "website",
-    url: "https://rent.fasteraim.com",
-    siteName: "Mr. Rent",
-    title: "Mr. Rent – Find Verified Rentals in Nigeria",
-    description:
-      "Browse verified property listings across Nigeria. Use Mr. Rent AI to find your perfect home — no agent fees.",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Mr. Rent – AI-Powered Property Rentals in Nigeria",
-      },
-    ],
-    locale: "en_NG",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Mr. Rent – Find Verified Rentals in Nigeria",
-    description:
-      "AI-powered rentals platform. Browse listings in Awka, Onitsha and beyond. No agent fees.",
-    images: ["/og-image.png"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-    },
-  },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
-};
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "RealEstateAgent",
-  name: "Mr. Rent",
-  description:
-    "AI-powered property rental platform serving Nigeria. Browse verified landlord listings, chat with Mr. Rent AI, and reveal contacts without agent fees.",
-  url: "https://rent.fasteraim.com",
-  logo: "https://rent.fasteraim.com/favicon.ico",
-  sameAs: ["https://fasteraim.com"],
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Awka",
-    addressRegion: "Anambra State",
-    addressCountry: "NG",
-  },
-  parentOrganization: {
-    "@type": "Organization",
-    name: "Faster Aim Technology Limited",
-    url: "https://fasteraim.com",
-  },
-  areaServed: {
-    "@type": "Country",
-    name: "Nigeria",
-  },
-  serviceType: "Property Rental Marketplace",
-};
+    if (!error) {
+      return NextResponse.redirect(`${origin}${next}`);
+    }
+  }
 
-export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+  return NextResponse.redirect(`${origin}/account?error=auth_callback_failed`);
 }
