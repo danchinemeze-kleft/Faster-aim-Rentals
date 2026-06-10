@@ -19,6 +19,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
   const [togglingId, setTogglingId] = useState(null)
+  const [profileForm, setProfileForm] = useState({ full_name: '', phone: '' })
+  const [savingProfile, setSavingProfile] = useState(false)
+  const [profileMsg, setProfileMsg] = useState('')
 
   async function fetchProfile(userId) {
     const { data } = await supabase.from('Profiles').select('*').eq('id', userId).single()
@@ -102,6 +105,29 @@ export default function DashboardPage() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     router.push('/')
+  }
+
+  const handleProfileSave = async (e) => {
+    e.preventDefault()
+    if (profileForm.phone && !/^\+?[0-9]{10,14}$/.test(profileForm.phone)) {
+      setProfileMsg('Phone must be 10–14 digits only.')
+      return
+    }
+    setSavingProfile(true)
+    setProfileMsg('')
+    const updates = {}
+    if (profileForm.full_name.trim()) updates.full_name = profileForm.full_name.trim()
+    if (profileForm.phone.trim()) updates.phone = profileForm.phone.trim()
+    const { error } = await supabase.from('Profiles').update(updates).eq('id', user.id)
+    if (error) {
+      setProfileMsg('Failed to save. Please try again.')
+    } else {
+      await fetchProfile(user.id)
+      setProfileForm({ full_name: '', phone: '' })
+      setProfileMsg('Profile updated successfully.')
+      setTimeout(() => setProfileMsg(''), 3000)
+    }
+    setSavingProfile(false)
   }
 
   const isSubscriptionActive = () => {
@@ -329,16 +355,62 @@ export default function DashboardPage() {
               <div className="faim-profile-avatar">{profile?.full_name?.[0] || user?.email?.[0] || '?'}</div>
               <h2>{profile?.full_name || 'Landlord'}</h2>
               <p>{user?.email}</p>
-              <p>{profile?.phone || 'No phone added'}</p>
+              <p style={{ color: profile?.phone ? '#27ae60' : '#e74c3c', fontWeight: 600 }}>
+                {profile?.phone || '⚠️ No phone added'}
+              </p>
               <span className="faim-role-tag">🏠 Landlord</span>
             </div>
-            <div className="faim-profile-info">
-              <div className="faim-info-row"><span>Full Name</span><span>{profile?.full_name || '—'}</span></div>
-              <div className="faim-info-row"><span>Email</span><span>{user?.email}</span></div>
-              <div className="faim-info-row"><span>Phone</span><span>{profile?.phone || '—'}</span></div>
-              <div className="faim-info-row"><span>Member Since</span><span>{user?.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}</span></div>
-              <div className="faim-info-row"><span>Total Listings</span><span>{stats.total}</span></div>
-              <div className="faim-info-row"><span>Contact Reveals</span><span>{stats.reveals}</span></div>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div className="faim-profile-info">
+                <div className="faim-info-row"><span>Full Name</span><span>{profile?.full_name || '—'}</span></div>
+                <div className="faim-info-row"><span>Email</span><span>{user?.email}</span></div>
+                <div className="faim-info-row"><span>Phone</span><span>{profile?.phone || '—'}</span></div>
+                <div className="faim-info-row"><span>Member Since</span><span>{user?.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}</span></div>
+                <div className="faim-info-row"><span>Total Listings</span><span>{stats.total}</span></div>
+                <div className="faim-info-row"><span>Contact Reveals</span><span>{stats.reveals}</span></div>
+              </div>
+
+              <div className="faim-profile-info">
+                <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1a1a2e', marginBottom: '1rem' }}>Update Profile</h3>
+                {!profile?.phone && (
+                  <div style={{ background: '#fff8f2', border: '1.5px solid #e67e22', borderRadius: '10px', padding: '0.75rem 1rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#7a4a1a' }}>
+                    ⚠️ Tenants cannot see your contact details until you add your phone number.
+                  </div>
+                )}
+                <form onSubmit={handleProfileSave} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#444' }}>Full Name</label>
+                    <input
+                      type="text"
+                      placeholder={profile?.full_name || 'Enter your full name'}
+                      value={profileForm.full_name}
+                      onChange={e => setProfileForm(prev => ({ ...prev, full_name: e.target.value }))}
+                      style={{ padding: '0.65rem 0.875rem', border: '1.5px solid #e0e0e0', borderRadius: '9px', fontSize: '0.9rem', outline: 'none', fontFamily: 'inherit' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#444' }}>Phone Number <span style={{ color: '#e74c3c' }}>*</span></label>
+                    <input
+                      type="tel"
+                      placeholder="e.g. 08012345678"
+                      value={profileForm.phone}
+                      onChange={e => setProfileForm(prev => ({ ...prev, phone: e.target.value.replace(/[^+0-9]/g, '') }))}
+                      style={{ padding: '0.65rem 0.875rem', border: '1.5px solid #e0e0e0', borderRadius: '9px', fontSize: '0.9rem', outline: 'none', fontFamily: 'inherit' }}
+                    />
+                    <span style={{ fontSize: '0.78rem', color: '#888' }}>Digits only. This is what tenants see after paying.</span>
+                  </div>
+                  {profileMsg && (
+                    <p style={{ fontSize: '0.85rem', fontWeight: 600, color: profileMsg.includes('success') ? '#27ae60' : '#e74c3c' }}>{profileMsg}</p>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={savingProfile}
+                    style={{ padding: '0.75rem', background: '#e67e22', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 600, fontSize: '0.95rem', cursor: savingProfile ? 'not-allowed' : 'pointer', opacity: savingProfile ? 0.7 : 1 }}
+                  >
+                    {savingProfile ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         )}
