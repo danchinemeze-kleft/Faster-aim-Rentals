@@ -30,11 +30,11 @@ export async function POST(request) {
       email,
       amount,
       callback_url,
-      metadata: {
-        payment_type,
-        listing_id,
-        user_id,
-      },
+     metadata: {
+  payment_type,
+  listing_id,
+  tenant_id: user_id,
+},
     }),
   });
 
