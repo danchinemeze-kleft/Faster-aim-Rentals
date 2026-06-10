@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import Image from 'next/image'
 import Breadcrumb from '../components/Breadcrumb'
 
 const NIGERIAN_STATES = [
@@ -13,6 +14,13 @@ const NIGERIAN_STATES = [
 ]
 
 const AMENITIES = ['WiFi', 'Parking', 'Security', 'Generator', 'Water Supply', 'Furnished', 'AC', 'Kitchen', 'Pool', 'Gym', 'Garden', 'Balcony']
+
+const FREE_MONTHLY_LIMIT = 2
+
+const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
 
 const emptyForm = {
   title: '',
@@ -30,14 +38,12 @@ const emptyForm = {
 
 export default function ListPage() {
   const router = useRouter()
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  )
 
   const [user, setUser] = useState(null)
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isSubscribed, setIsSubscribed] = useState(false)
+  const [monthlyCount, setMonthlyCount] = useState(0)
   const [formData, setFormData] = useState(emptyForm)
   const [preview, setPreview] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -65,8 +71,31 @@ export default function ListPage() {
         router.push('/account?redirect=/list')
         return
       }
+      const userId = session.user.id
       setUser(session.user)
-      await fetchListings(session.user.id)
+
+      const startOfMonth = new Date()
+      startOfMonth.setDate(1)
+      startOfMonth.setHours(0, 0, 0, 0)
+
+      const [, { data: sub }, { data: monthListings }] = await Promise.all([
+        fetchListings(userId),
+        supabase
+          .from('Subscription')
+          .select('expiry_date')
+          .eq('landlord_id', userId)
+          .gte('expiry_date', new Date().toISOString())
+          .limit(1)
+          .single(),
+        supabase
+          .from('listings')
+          .select('id')
+          .eq('landlord_id', userId)
+          .gte('created_at', startOfMonth.toISOString()),
+      ])
+
+      setIsSubscribed(!!sub)
+      setMonthlyCount(monthListings?.length || 0)
       setLoading(false)
     }
     checkAuth()
@@ -169,6 +198,10 @@ videoEl.src = URL.createObjectURL(file)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) {
+      alert('You have reached your free listing limit for this month. Subscribe to list more properties.')
+      return
+    }
     if (!videoFile) {
       alert('Please add a video of your property before publishing.')
       return
@@ -274,10 +307,44 @@ videoEl.src = URL.createObjectURL(file)
           <h1>🏠 My Listings</h1>
           <p>Manage your rental properties</p>
         </div>
-        <button className="faim-new-btn" onClick={() => { setShowForm(!showForm); setPreview(false) }}>
+        <button
+          className="faim-new-btn"
+          onClick={() => {
+            if (!isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) return
+            setShowForm(!showForm)
+            setPreview(false)
+          }}
+          style={{ opacity: (!isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) ? 0.45 : 1, cursor: (!isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) ? 'not-allowed' : 'pointer' }}
+        >
           {showForm ? '✕ Cancel' : '+ New Listing'}
         </button>
       </div>
+
+      {/* Free tier usage indicator */}
+      {!isSubscribed && (
+        <div style={{ maxWidth: 1200, margin: '0 auto 1.5rem', background: monthlyCount >= FREE_MONTHLY_LIMIT ? '#fff0f0' : '#fff8f2', border: `1.5px solid ${monthlyCount >= FREE_MONTHLY_LIMIT ? '#e74c3c' : '#e67e22'}`, borderRadius: 12, padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ fontWeight: 600, fontSize: '0.9rem', color: monthlyCount >= FREE_MONTHLY_LIMIT ? '#e74c3c' : '#7a4a1a', marginBottom: 2 }}>
+              {monthlyCount >= FREE_MONTHLY_LIMIT
+                ? '🔒 Free listing limit reached for this month'
+                : `📋 Free tier: ${monthlyCount} of ${FREE_MONTHLY_LIMIT} listings used this month`}
+            </div>
+            <div style={{ fontSize: '0.82rem', color: '#888' }}>
+              {monthlyCount >= FREE_MONTHLY_LIMIT
+                ? 'Subscribe for ₦10,000/month to list unlimited properties.'
+                : `You have ${FREE_MONTHLY_LIMIT - monthlyCount} free listing${FREE_MONTHLY_LIMIT - monthlyCount === 1 ? '' : 's'} remaining this month.`}
+            </div>
+          </div>
+          {monthlyCount >= FREE_MONTHLY_LIMIT && (
+            <button
+              onClick={() => router.push('/subscribe')}
+              style={{ background: '#e67e22', color: 'white', border: 'none', padding: '0.6rem 1.25rem', borderRadius: 8, fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer', whiteSpace: 'nowrap' }}
+            >
+              Subscribe Now →
+            </button>
+          )}
+        </div>
+      )}
 
       {successMsg && <div className="faim-success">{successMsg}</div>}
 
@@ -373,10 +440,12 @@ videoEl.src = URL.createObjectURL(file)
                   <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(90px,1fr))',gap:'8px',marginBottom:'0.75rem'}}>
                     {photoFiles.map((photo, i) => (
                       <div key={i} style={{position:'relative',borderRadius:'8px',overflow:'hidden',height:'80px',background:'#eee'}}>
-                        <img
+                        <Image
                           src={URL.createObjectURL(photo)}
                           alt={`photo ${i+1}`}
-                          style={{width:'100%',height:'100%',objectFit:'cover'}}
+                          fill
+                          unoptimized
+                          style={{objectFit:'cover'}}
                         />
                         <button
                           type="button"
@@ -537,7 +606,9 @@ videoEl.src = URL.createObjectURL(file)
                   {photoFiles.length > 0 && (
                     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'6px',marginBottom:'0.75rem'}}>
                       {photoFiles.slice(0,4).map((p,i) => (
-                        <img key={i} src={URL.createObjectURL(p)} alt="" style={{width:'100%',height:'70px',objectFit:'cover',borderRadius:'6px'}} />
+                        <div key={i} style={{position:'relative',height:'70px',borderRadius:'6px',overflow:'hidden'}}>
+                          <Image src={URL.createObjectURL(p)} alt="" fill unoptimized style={{objectFit:'cover'}} />
+                        </div>
                       ))}
                     </div>
                   )}
@@ -576,7 +647,9 @@ videoEl.src = URL.createObjectURL(file)
                   </span>
                 </div>
                 {listing.images && listing.images.length > 0 && (
-                  <img src={listing.images[0]} alt={listing.title} style={{width:'100%',height:'160px',objectFit:'cover',borderRadius:'10px',marginBottom:'0.75rem'}} />
+                  <div style={{position:'relative',height:'160px',borderRadius:'10px',overflow:'hidden',marginBottom:'0.75rem'}}>
+                    <Image src={listing.images[0]} alt={listing.title} fill unoptimized style={{objectFit:'cover'}} />
+                  </div>
                 )}
                 {listing.video_url && (
                   <video src={listing.video_url} controls className="faim-listing-video" />

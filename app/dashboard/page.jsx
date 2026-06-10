@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from '../components/Breadcrumb'
 
+const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
+
 export default function DashboardPage() {
   const router = useRouter()
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  )
-
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [listings, setListings] = useState([])
@@ -29,27 +29,27 @@ export default function DashboardPage() {
     setProfile(data)
   }
 
-  async function fetchListings(userId) {
-    const { data } = await supabase.from('listings').select('*').eq('landlord_id', userId).order('created_at', { ascending: false })
-    setListings(data || [])
-  }
-
-  async function fetchSubscription(userId) {
-    const { data } = await supabase.from('Subscription').select('*').eq('landlord_id', userId).order('created_at', { ascending: false }).limit(1).single()
-    setSubscription(data)
-  }
-
-  async function fetchStats(userId) {
-    const { data: listingsData } = await supabase.from('listings').select('id, available').eq('landlord_id', userId)
-    const { data: revealsData } = await supabase.from('Contact_reveals').select('id').eq('landlord_id', userId)
-    setStats({
-      total: listingsData?.length || 0,
-      available: listingsData?.filter(l => l.available).length || 0,
-      reveals: revealsData?.length || 0,
-    })
-  }
-
   useEffect(() => {
+    async function fetchListings(userId) {
+      const { data } = await supabase.from('listings').select('*').eq('landlord_id', userId).order('created_at', { ascending: false })
+      setListings(data || [])
+    }
+
+    async function fetchSubscription(userId) {
+      const { data } = await supabase.from('Subscription').select('*').eq('landlord_id', userId).order('created_at', { ascending: false }).limit(1).single()
+      setSubscription(data)
+    }
+
+    async function fetchStats(userId) {
+      const { data: listingsData } = await supabase.from('listings').select('id, available').eq('landlord_id', userId)
+      const { data: revealsData } = await supabase.from('Contact_reveals').select('id').eq('landlord_id', userId)
+      setStats({
+        total: listingsData?.length || 0,
+        available: listingsData?.filter(l => l.available).length || 0,
+        reveals: revealsData?.length || 0,
+      })
+    }
+
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { router.push('/account?redirect=/dashboard'); return }
@@ -63,7 +63,7 @@ export default function DashboardPage() {
       setLoading(false)
     }
     init()
-  }, [])
+  }, [router])
 
   const toggleAvailability = async (listing) => {
     setTogglingId(listing.id)

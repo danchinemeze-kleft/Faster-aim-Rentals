@@ -8,7 +8,7 @@ export default function Contact() {
       <div className="faim-contact-container">
         <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Contact', href: '/Contact' }]} />
         <h1>Contact Us</h1>
-        <p className="faim-subtitle">Have a question, complaint, or partnership proposal? We'd love to hear from you.</p>
+        <p className="faim-subtitle">Have a question, complaint, or partnership proposal? We&apos;d love to hear from you.</p>
 
         <div className="faim-contact-grid">
           {/* Email */}

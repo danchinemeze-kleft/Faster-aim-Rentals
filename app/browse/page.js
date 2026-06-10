@@ -43,7 +43,7 @@ export default function BrowsePage() {
     const { data, error } = await supabase
       .from('listings')
       .select('*')
-      .eq('status', 'approved')
+      .eq('status', 'active')
       .order('created_at', { ascending: false })
       .limit(500);
     if (!error && data) setListings(data);
