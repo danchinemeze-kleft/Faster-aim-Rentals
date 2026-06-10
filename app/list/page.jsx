@@ -201,7 +201,7 @@ export default function ListPage() {
         bedrooms: parseInt(formData.bedrooms),
         bathrooms: parseInt(formData.bathrooms),
         amenities: formData.amenities,
-        status: 'active',
+       status: 'pending',
         available: formData.available,
         video_url,
         images: photo_urls,
@@ -216,7 +216,7 @@ export default function ListPage() {
       setShowForm(false)
       setUploadProgress(0)
       setPhotoUploadProgress(0)
-      setSuccessMsg('🎉 Listing published successfully!')
+     setSuccessMsg('✅ Listing submitted! It will go live after admin review (usually within 24 hours).')
       setTimeout(() => setSuccessMsg(''), 5000)
       fetchListings(user.id)
     } catch (err) {
