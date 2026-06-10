@@ -43,8 +43,10 @@ export default function ListPage() {
   const [showForm, setShowForm] = useState(false)
   const [successMsg, setSuccessMsg] = useState('')
   const [videoFile, setVideoFile] = useState(null)
+  const [videoStatus, setVideoStatus] = useState('idle') // 'idle', 'checking', 'ready', 'error'
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [videoStatus, setVideoStatus] = useState('') // 'checking', 'ready', 'error'
+  const [photoFiles, setPhotoFiles] = useState([]) // array of File objects
+  const [photoUploadProgress, setPhotoUploadProgress] = useState(0)
 
   const fetchListings = async (userId) => {
     const { data, error } = await supabase
@@ -84,6 +86,63 @@ export default function ListPage() {
     }))
   }
 
+  const handleVideoSelect = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    if (file.size > 200 * 1024 * 1024) {
+      alert('Video must be under 200MB')
+      return
+    }
+    setVideoStatus('checking')
+    const videoEl = document.createElement('video')
+    videoEl.preload = 'metadata'
+    videoEl.onloadedmetadata = () => {
+      window.URL.revokeObjectURL(videoEl.src)
+      const dur = videoEl.duration
+      if (dur < 15) {
+        setVideoStatus('error')
+        alert('Video is too short. Minimum is 15 seconds.')
+        return
+      }
+      if (dur > 60) {
+        setVideoStatus('error')
+        alert('Video is too long. Maximum is 60 seconds.')
+        return
+      }
+      setVideoStatus('ready')
+      setVideoFile(file)
+    }
+    videoEl.onerror = () => {
+      setVideoStatus('error')
+      alert('Could not read video file. Please try a different file.')
+    }
+    videoEl.src = URL.createObjectURL(file)
+  }
+
+  const handlePhotoSelect = (e) => {
+    const files = Array.from(e.target.files)
+    if (!files.length) return
+    const valid = files.filter(f => {
+      if (f.size > 10 * 1024 * 1024) {
+        alert(`${f.name} is over 10MB and was skipped.`)
+        return false
+      }
+      return true
+    })
+    setPhotoFiles(prev => {
+      const combined = [...prev, ...valid]
+      if (combined.length > 10) {
+        alert('Maximum 10 photos allowed.')
+        return combined.slice(0, 10)
+      }
+      return combined
+    })
+  }
+
+  const removePhoto = (index) => {
+    setPhotoFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!videoFile) {
@@ -92,24 +151,43 @@ export default function ListPage() {
     }
     setSubmitting(true)
     setUploadProgress(0)
-    try {
-      let video_url = null
+    setPhotoUploadProgress(0)
 
-      if (videoFile) {
-        const ext = videoFile.name.split('.').pop()
-        const fileName = `${user.id}/${Date.now()}.${ext}`
-        setUploadProgress(30)
-        const { error: uploadError } = await supabase.storage
-          .from('property-video')
-          .upload(fileName, videoFile, { contentType: videoFile.type })
-        if (uploadError) throw uploadError
-        setUploadProgress(80)
-        const { data: urlData } = supabase.storage
-          .from('property-video')
-          .getPublicUrl(fileName)
-        video_url = urlData.publicUrl
-        setUploadProgress(100)
+    try {
+      // Upload photos
+      const photo_urls = []
+      if (photoFiles.length > 0) {
+        for (let i = 0; i < photoFiles.length; i++) {
+          const photo = photoFiles[i]
+          const ext = photo.name.split('.').pop()
+          const fileName = `${user.id}/${Date.now()}-${i}.${ext}`
+          const { error: photoError } = await supabase.storage
+            .from('property-images')
+            .upload(fileName, photo, { contentType: photo.type })
+          if (photoError) throw photoError
+          const { data: urlData } = supabase.storage
+            .from('property-images')
+            .getPublicUrl(fileName)
+          photo_urls.push(urlData.publicUrl)
+          setPhotoUploadProgress(Math.round(((i + 1) / photoFiles.length) * 100))
+        }
       }
+
+      // Upload video
+      let video_url = null
+      const ext = videoFile.name.split('.').pop()
+      const fileName = `${user.id}/${Date.now()}.${ext}`
+      setUploadProgress(30)
+      const { error: uploadError } = await supabase.storage
+        .from('property-video')
+        .upload(fileName, videoFile, { contentType: videoFile.type })
+      if (uploadError) throw uploadError
+      setUploadProgress(80)
+      const { data: urlData } = supabase.storage
+        .from('property-video')
+        .getPublicUrl(fileName)
+      video_url = urlData.publicUrl
+      setUploadProgress(100)
 
       const { error } = await supabase.from('listings').insert([{
         landlord_id: user.id,
@@ -126,16 +204,20 @@ export default function ListPage() {
         status: 'active',
         available: formData.available,
         video_url,
+        images: photo_urls,
       }])
       if (error) throw error
+
       setFormData(emptyForm)
       setVideoFile(null)
-      setVideoStatus('')
+      setVideoStatus('idle')
+      setPhotoFiles([])
       setPreview(false)
       setShowForm(false)
       setUploadProgress(0)
-      setSuccessMsg('Listing published successfully!')
-      setTimeout(() => setSuccessMsg(''), 4000)
+      setPhotoUploadProgress(0)
+      setSuccessMsg('🎉 Listing published successfully!')
+      setTimeout(() => setSuccessMsg(''), 5000)
       fetchListings(user.id)
     } catch (err) {
       alert('Error: ' + err.message)
@@ -162,7 +244,6 @@ export default function ListPage() {
 
   return (
     <div className="faim-list-page">
-      {/* Header */}
       <div className="faim-list-header">
         <div>
           <h1>🏠 My Listings</h1>
@@ -175,12 +256,10 @@ export default function ListPage() {
 
       {successMsg && <div className="faim-success">{successMsg}</div>}
 
-      {/* Create Form */}
       {showForm && (
         <div className="faim-form-card">
           <h2>Create New Listing</h2>
           <div className="faim-form-grid">
-            {/* Left: Form */}
             <form onSubmit={handleSubmit} className="faim-form">
 
               <div className="faim-field">
@@ -258,34 +337,89 @@ export default function ListPage() {
                   placeholder="Describe your property in detail. Include information about the neighborhood, nearby facilities, condition of the property, terms and conditions etc." required />
               </div>
 
-              {/* Video Upload */}
+              {/* ── PHOTO UPLOAD ── */}
               <div className="faim-field">
-                <label>Property Video <span style={{fontWeight:400, color:'#c0392b'}}>* Required</span></label>
-                <div style={{background:'#fff8f2', border:'1px solid #f0d0b0', borderRadius:'8px', padding:'0.75rem 1rem', marginBottom:'0.5rem', fontSize:'0.83rem', color:'#7a4a1a', lineHeight:'1.7'}}>
+                <label>Property Photos <span style={{fontWeight:400,color:'#888'}}>(up to 10, optional)</span></label>
+                <div style={{background:'#f8f8ff',border:'1px solid #dde',borderRadius:'8px',padding:'0.6rem 0.9rem',marginBottom:'0.5rem',fontSize:'0.82rem',color:'#555',lineHeight:'1.6'}}>
+                  📸 Upload clear photos of the interior and exterior. Max 10MB per photo.
+                </div>
+
+                {photoFiles.length > 0 && (
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(90px,1fr))',gap:'8px',marginBottom:'0.75rem'}}>
+                    {photoFiles.map((photo, i) => (
+                      <div key={i} style={{position:'relative',borderRadius:'8px',overflow:'hidden',height:'80px',background:'#eee'}}>
+                        <img
+                          src={URL.createObjectURL(photo)}
+                          alt={`photo ${i+1}`}
+                          style={{width:'100%',height:'100%',objectFit:'cover'}}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removePhoto(i)}
+                          style={{position:'absolute',top:'3px',right:'3px',background:'rgba(0,0,0,0.6)',color:'white',border:'none',borderRadius:'50%',width:'20px',height:'20px',cursor:'pointer',fontSize:'0.7rem',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1}}
+                        >✕</button>
+                      </div>
+                    ))}
+                    {photoFiles.length < 10 && (
+                      <label style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'80px',border:'2px dashed #ccc',borderRadius:'8px',cursor:'pointer',color:'#aaa',fontSize:'1.3rem'}}>
+                        <input type="file" accept="image/*" multiple style={{display:'none'}} onChange={handlePhotoSelect} />
+                        +
+                      </label>
+                    )}
+                  </div>
+                )}
+
+                {photoFiles.length === 0 && (
+                  <label className="faim-video-drop" style={{padding:'1.5rem'}}>
+                    <input type="file" accept="image/*" multiple style={{display:'none'}} onChange={handlePhotoSelect} />
+                    <span style={{fontSize:'1.8rem'}}>📸</span>
+                    <span>Tap to upload photos</span>
+                    <span className="faim-video-hint">JPG, PNG, WEBP · Max 10MB each · Up to 10 photos</span>
+                  </label>
+                )}
+
+                {submitting && photoFiles.length > 0 && photoUploadProgress > 0 && (
+                  <div style={{marginTop:'0.5rem'}}>
+                    <div style={{display:'flex',justifyContent:'space-between',fontSize:'0.8rem',color:'#888',marginBottom:'4px'}}>
+                      <span>{photoUploadProgress < 100 ? '📸 Uploading photos...' : '✅ Photos uploaded!'}</span>
+                      <span>{photoUploadProgress}%</span>
+                    </div>
+                    <div className="faim-progress-wrap">
+                      <div className="faim-progress-bar" style={{width:`${photoUploadProgress}%`,background:'linear-gradient(90deg,#3498db,#2980b9)'}} />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ── VIDEO UPLOAD ── */}
+              <div className="faim-field">
+                <label>Property Video <span style={{fontWeight:400,color:'#c0392b'}}>* Required</span></label>
+                <div style={{background:'#fff8f2',border:'1px solid #f0d0b0',borderRadius:'8px',padding:'0.75rem 1rem',marginBottom:'0.5rem',fontSize:'0.83rem',color:'#7a4a1a',lineHeight:'1.7'}}>
                   📹 Record a <strong>15 to 60 second video</strong> showing both the <strong>interior and exterior</strong> of the property. The video must match your description.<br/>
                   ⚠️ <strong>AI-generated videos will be rejected</strong> and your property will not be approved.
                 </div>
 
                 <div className="faim-video-upload">
-                  {/* Status: checking */}
-                  {videoStatus === 'checking' && !videoFile && (
-                    <div style={{display:'flex',alignItems:'center',gap:'0.75rem',padding:'1.25rem',background:'#fff8f2',border:'1.5px solid #e67e22',borderRadius:'12px',color:'#e67e22',fontWeight:600,fontSize:'0.9rem'}}>
+                  {videoStatus === 'checking' && (
+                    <div style={{display:'flex',alignItems:'center',gap:'0.75rem',padding:'1.25rem',background:'#fff8f2',border:'1.5px solid #e67e22',borderRadius:'12px',color:'#e67e22',fontWeight:600,fontSize:'0.9rem',marginBottom:'0.5rem'}}>
                       <div style={{width:'20px',height:'20px',border:'3px solid #f0d0b0',borderTopColor:'#e67e22',borderRadius:'50%',animation:'spin 0.8s linear infinite',flexShrink:0}}></div>
                       Checking video duration...
                     </div>
                   )}
 
-                  {/* Status: error */}
-                  {videoStatus === 'error' && !videoFile && (
+                  {videoStatus === 'error' && (
                     <div style={{padding:'1rem',background:'#fff0f0',border:'1.5px solid #e74c3c',borderRadius:'12px',color:'#e74c3c',fontWeight:600,fontSize:'0.85rem',marginBottom:'0.5rem'}}>
                       ❌ Video rejected. Please record a new one (15–60 seconds, MP4/MOV/WEBM, max 200MB).
+                      <label style={{display:'block',marginTop:'0.5rem',cursor:'pointer',textDecoration:'underline',fontWeight:400,fontSize:'0.82rem'}}>
+                        <input type="file" accept="video/mp4,video/quicktime,video/webm" style={{display:'none'}} onChange={handleVideoSelect} />
+                        Try another video →
+                      </label>
                     </div>
                   )}
 
-                  {videoFile ? (
-                    /* Video selected and valid */
+                  {videoStatus === 'ready' && videoFile && (
                     <div className="faim-video-preview">
-                      <div style={{background:'#f0fff4',border:'1.5px solid #27ae60',borderRadius:'10px',padding:'0.6rem 1rem',display:'flex',alignItems:'center',gap:'0.5rem',color:'#27ae60',fontWeight:700,fontSize:'0.85rem',marginBottom:'0.5rem'}}>
+                      <div style={{background:'#f0fff4',border:'1.5px solid #27ae60',borderRadius:'10px',padding:'0.6rem 1rem',display:'flex',alignItems:'center',gap:'0.5rem',color:'#27ae60',fontWeight:700,fontSize:'0.85rem'}}>
                         ✅ Video ready — looks good!
                       </div>
                       <video src={URL.createObjectURL(videoFile)} controls className="faim-video-player" />
@@ -293,45 +427,19 @@ export default function ListPage() {
                         <span>📹 {videoFile.name}</span>
                         <span>{(videoFile.size / (1024*1024)).toFixed(1)} MB</span>
                       </div>
-                      <button type="button" className="faim-remove-video" onClick={() => { setVideoFile(null); setVideoStatus('') }}>
+                      <button type="button" className="faim-remove-video" onClick={() => { setVideoFile(null); setVideoStatus('idle') }}>
                         ✕ Remove video
                       </button>
                     </div>
-                  ) : (
-                    /* Upload drop zone */
+                  )}
+
+                  {videoStatus === 'idle' && (
                     <label className="faim-video-drop">
                       <input
                         type="file"
                         accept="video/mp4,video/quicktime,video/webm"
                         style={{ display: 'none' }}
-                        onChange={(e) => {
-                          const file = e.target.files[0]
-                          if (!file) return
-                          if (file.size > 200 * 1024 * 1024) {
-                            alert('Video must be under 200MB')
-                            return
-                          }
-                          setVideoStatus('checking')
-                          const videoEl = document.createElement('video')
-                          videoEl.preload = 'metadata'
-                          videoEl.onloadedmetadata = () => {
-                            window.URL.revokeObjectURL(videoEl.src)
-                            const dur = videoEl.duration
-                            if (dur < 15) {
-                              setVideoStatus('error')
-                              alert('Video is too short. Minimum is 15 seconds.')
-                              return
-                            }
-                            if (dur > 60) {
-                              setVideoStatus('error')
-                              alert('Video is too long. Maximum is 60 seconds.')
-                              return
-                            }
-                            setVideoStatus('ready')
-                            setVideoFile(file)
-                          }
-                          videoEl.src = URL.createObjectURL(file)
-                        }}
+                        onChange={handleVideoSelect}
                       />
                       <span className="faim-video-icon">📹</span>
                       <span>Tap to upload property video</span>
@@ -340,7 +448,6 @@ export default function ListPage() {
                   )}
                 </div>
 
-                {/* Upload progress */}
                 {submitting && videoFile && (
                   <div style={{marginTop:'0.75rem'}}>
                     <div style={{display:'flex',justifyContent:'space-between',fontSize:'0.8rem',color:'#888',marginBottom:'6px'}}>
@@ -382,7 +489,6 @@ export default function ListPage() {
               </div>
             </form>
 
-            {/* Right: Preview */}
             {preview && (
               <div className="faim-preview">
                 <h3>How tenants will see it</h3>
@@ -396,6 +502,13 @@ export default function ListPage() {
                     <span>🚿 {formData.bathrooms} Bath</span>
                     <span>{formData.available ? '✅ Available' : '❌ Not Available'}</span>
                   </div>
+                  {photoFiles.length > 0 && (
+                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'6px',marginBottom:'0.75rem'}}>
+                      {photoFiles.slice(0,4).map((p,i) => (
+                        <img key={i} src={URL.createObjectURL(p)} alt="" style={{width:'100%',height:'70px',objectFit:'cover',borderRadius:'6px'}} />
+                      ))}
+                    </div>
+                  )}
                   <p className="faim-preview-desc">{formData.description || 'Your description will appear here...'}</p>
                   {formData.amenities.length > 0 && (
                     <div className="faim-preview-amenities">
@@ -403,9 +516,7 @@ export default function ListPage() {
                     </div>
                   )}
                   {videoFile && (
-                    <div className="faim-preview-video">
-                      <video src={URL.createObjectURL(videoFile)} controls style={{width:'100%', borderRadius:'8px', marginBottom:'0.75rem'}} />
-                    </div>
+                    <video src={URL.createObjectURL(videoFile)} controls style={{width:'100%',borderRadius:'8px',marginBottom:'0.75rem'}} />
                   )}
                   <div className="faim-preview-cta">Contact Landlord — ₦5,000</div>
                 </div>
@@ -415,7 +526,6 @@ export default function ListPage() {
         </div>
       )}
 
-      {/* Listings Grid */}
       <div className="faim-listings-section">
         <h2>Your Properties ({listings.length})</h2>
         {listings.length === 0 ? (
@@ -433,6 +543,9 @@ export default function ListPage() {
                     {listing.available ? '● Available' : '● Unavailable'}
                   </span>
                 </div>
+                {listing.images && listing.images.length > 0 && (
+                  <img src={listing.images[0]} alt={listing.title} style={{width:'100%',height:'160px',objectFit:'cover',borderRadius:'10px',marginBottom:'0.75rem'}} />
+                )}
                 {listing.video_url && (
                   <video src={listing.video_url} controls className="faim-listing-video" />
                 )}
@@ -458,312 +571,81 @@ export default function ListPage() {
       </div>
 
       <style>{`
-        .faim-list-page {
-          min-height: 100vh;
-          background: #f5f4f0;
-          font-family: 'Segoe UI', system-ui, sans-serif;
-          padding: 2rem;
-        }
-        .faim-list-loading {
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 1rem;
-          color: #666;
-        }
-        .faim-spinner {
-          width: 40px;
-          height: 40px;
-          border: 3px solid #e0e0e0;
-          border-top-color: #e67e22;
-          border-radius: 50%;
-          animation: spin 0.8s linear infinite;
-        }
+        .faim-list-page { min-height:100vh; background:#f5f4f0; font-family:'Segoe UI',system-ui,sans-serif; padding:2rem; }
+        .faim-list-loading { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem; color:#666; }
+        .faim-spinner { width:40px; height:40px; border:3px solid #e0e0e0; border-top-color:#e67e22; border-radius:50%; animation:spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .faim-list-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 1.5rem;
-          max-width: 1200px;
-          margin-left: auto;
-          margin-right: auto;
-        }
-        .faim-list-header h1 { font-size: 1.8rem; font-weight: 700; color: #1a1a2e; }
-        .faim-list-header p { color: #666; font-size: 0.9rem; }
-        .faim-new-btn {
-          background: #e67e22;
-          color: white;
-          border: none;
-          padding: 0.75rem 1.5rem;
-          border-radius: 10px;
-          font-weight: 600;
-          cursor: pointer;
-          font-size: 0.95rem;
-          transition: background 0.15s;
-        }
-        .faim-new-btn:hover { background: #cf6d17; }
-        .faim-success {
-          background: #f0fff4;
-          color: #27ae60;
-          border: 1px solid #b2f0c8;
-          padding: 0.75rem 1rem;
-          border-radius: 8px;
-          margin-bottom: 1.5rem;
-          max-width: 1200px;
-          margin-left: auto;
-          margin-right: auto;
-        }
-        .faim-form-card {
-          background: white;
-          border-radius: 16px;
-          padding: 2rem;
-          margin-bottom: 2rem;
-          box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-          max-width: 1200px;
-          margin-left: auto;
-          margin-right: auto;
-        }
-        .faim-form-card h2 { font-size: 1.3rem; color: #1a1a2e; margin-bottom: 1.5rem; }
-        .faim-form-grid {
-          display: grid;
-          grid-template-columns: 1fr 380px;
-          gap: 2rem;
-        }
-        .faim-form { display: flex; flex-direction: column; gap: 1.25rem; }
-        .faim-field { display: flex; flex-direction: column; gap: 6px; }
-        .faim-field label { font-size: 0.85rem; font-weight: 600; color: #444; }
-        .faim-field input, .faim-field select, .faim-field textarea {
-          padding: 0.65rem 0.875rem;
-          border: 1.5px solid #e0e0e0;
-          border-radius: 9px;
-          font-size: 0.9rem;
-          color: #1a1a2e;
-          outline: none;
-          transition: border-color 0.15s;
-          background: #fff;
-          font-family: inherit;
-        }
-        .faim-field input:focus, .faim-field select:focus, .faim-field textarea:focus { border-color: #e67e22; }
-        .faim-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; }
-        .faim-amenities-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-        .faim-amenity {
-          padding: 6px 14px;
-          border: 1.5px solid #e0e0e0;
-          border-radius: 20px;
-          font-size: 0.82rem;
-          cursor: pointer;
-          transition: all 0.15s;
-          color: #555;
-          user-select: none;
-        }
-        .faim-amenity--active { border-color: #e67e22; background: #fff8f2; color: #e67e22; font-weight: 600; }
-        .faim-form-actions { display: flex; gap: 1rem; margin-top: 0.5rem; }
-        .faim-preview-btn {
-          flex: 1;
-          padding: 0.75rem;
-          border: 1.5px solid #e67e22;
-          border-radius: 10px;
-          background: white;
-          color: #e67e22;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.15s;
-        }
-        .faim-preview-btn:hover { background: #fff8f2; }
-        .faim-submit-btn {
-          flex: 2;
-          padding: 0.75rem;
-          background: #e67e22;
-          color: white;
-          border: none;
-          border-radius: 10px;
-          font-weight: 600;
-          cursor: pointer;
-          font-size: 0.95rem;
-          transition: background 0.15s;
-        }
-        .faim-submit-btn:hover { background: #cf6d17; }
-        .faim-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .faim-preview h3 { font-size: 0.9rem; color: #888; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
-        .faim-preview-card {
-          background: #1a1a2e;
-          border-radius: 14px;
-          padding: 1.5rem;
-          color: white;
-          position: sticky;
-          top: 1rem;
-        }
-        .faim-preview-badge {
-          display: inline-block;
-          background: #e67e22;
-          color: white;
-          padding: 3px 12px;
-          border-radius: 20px;
-          font-size: 0.75rem;
-          font-weight: 600;
-          text-transform: capitalize;
-          margin-bottom: 0.75rem;
-        }
-        .faim-preview-card h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
-        .faim-preview-location { color: #aaa; font-size: 0.85rem; margin-bottom: 0.5rem; }
-        .faim-preview-price { font-size: 1.3rem; font-weight: 700; color: #e67e22; margin-bottom: 0.75rem; }
-        .faim-preview-specs { display: flex; gap: 1rem; font-size: 0.85rem; margin-bottom: 1rem; color: #ccc; }
-        .faim-preview-desc { font-size: 0.85rem; color: #ccc; line-height: 1.6; margin-bottom: 1rem; }
-        .faim-preview-amenities { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
-        .faim-preview-amenities span { font-size: 0.78rem; color: #aaa; }
-        .faim-preview-cta {
-          background: #e67e22;
-          color: white;
-          text-align: center;
-          padding: 0.75rem;
-          border-radius: 10px;
-          font-weight: 600;
-          font-size: 0.9rem;
-        }
-        .faim-video-upload { width: 100%; }
-        .faim-video-drop {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          padding: 2rem;
-          border: 2px dashed #e0e0e0;
-          border-radius: 12px;
-          cursor: pointer;
-          transition: border-color 0.15s;
-          text-align: center;
-          color: #888;
-          font-size: 0.9rem;
-        }
-        .faim-video-drop:hover { border-color: #e67e22; color: #e67e22; }
-        .faim-video-icon { font-size: 2rem; }
-        .faim-video-hint { font-size: 0.78rem; color: #aaa; }
-        .faim-video-preview { display: flex; flex-direction: column; gap: 0.75rem; }
-        .faim-video-player {
-          width: 100%;
-          border-radius: 10px;
-          max-height: 200px;
-          background: #000;
-        }
-        .faim-video-info {
-          display: flex;
-          justify-content: space-between;
-          font-size: 0.82rem;
-          color: #666;
-        }
-        .faim-remove-video {
-          background: #fff0f0;
-          color: #e74c3c;
-          border: none;
-          padding: 0.5rem 1rem;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 0.85rem;
-          font-weight: 600;
-          align-self: flex-start;
-        }
-        .faim-remove-video:hover { background: #fcc; }
-        .faim-progress-wrap {
-          background: #f0f0f0;
-          border-radius: 20px;
-          height: 8px;
-          overflow: hidden;
-        }
-        .faim-progress-bar {
-          height: 100%;
-          background: linear-gradient(90deg, #e67e22, #f39c12);
-          border-radius: 20px;
-          transition: width 0.3s ease;
-        }
-        .faim-listing-video {
-          width: 100%;
-          border-radius: 10px;
-          max-height: 180px;
-          background: #000;
-          margin-bottom: 0.75rem;
-        }
-        .faim-listings-section { max-width: 1200px; margin: 0 auto; }
-        .faim-listings-section h2 { font-size: 1.3rem; color: #1a1a2e; margin-bottom: 1.5rem; }
-        .faim-empty {
-          text-align: center;
-          padding: 3rem;
-          background: white;
-          border-radius: 16px;
-          color: #666;
-          line-height: 2;
-        }
-        .faim-listings-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-          gap: 1.5rem;
-        }
-        .faim-listing-card {
-          background: white;
-          border-radius: 14px;
-          padding: 1.5rem;
-          box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        }
-        .faim-listing-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-        .faim-type-badge {
-          background: #f0ede8;
-          color: #666;
-          padding: 3px 10px;
-          border-radius: 20px;
-          font-size: 0.75rem;
-          font-weight: 600;
-          text-transform: capitalize;
-        }
-        .faim-status-badge { font-size: 0.78rem; font-weight: 600; }
-        .faim-status-badge--available { color: #27ae60; }
-        .faim-status-badge--unavailable { color: #e74c3c; }
-        .faim-listing-card h3 { font-size: 1.05rem; font-weight: 700; color: #1a1a2e; margin-bottom: 0.4rem; }
-        .faim-listing-location { font-size: 0.82rem; color: #888; margin-bottom: 0.4rem; }
-        .faim-listing-price { font-size: 1.1rem; font-weight: 700; color: #e67e22; margin-bottom: 0.4rem; }
-        .faim-listing-specs { font-size: 0.82rem; color: #666; margin-bottom: 0.5rem; }
-        .faim-listing-desc { font-size: 0.82rem; color: #888; line-height: 1.5; margin-bottom: 0.75rem; }
-        .faim-listing-amenities { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
-        .faim-listing-amenities span {
-          background: #f0ede8;
-          color: #666;
-          padding: 3px 10px;
-          border-radius: 20px;
-          font-size: 0.75rem;
-        }
-        .faim-listing-actions { display: flex; gap: 0.75rem; }
-        .faim-edit-btn {
-          flex: 1;
-          padding: 0.6rem;
-          border: 1.5px solid #e67e22;
-          border-radius: 8px;
-          background: white;
-          color: #e67e22;
-          font-weight: 600;
-          cursor: pointer;
-          font-size: 0.85rem;
-          transition: all 0.15s;
-        }
-        .faim-edit-btn:hover { background: #fff8f2; }
-        .faim-delete-btn {
-          flex: 1;
-          padding: 0.6rem;
-          border: none;
-          border-radius: 8px;
-          background: #fff0f0;
-          color: #e74c3c;
-          font-weight: 600;
-          cursor: pointer;
-          font-size: 0.85rem;
-          transition: all 0.15s;
-        }
-        .faim-delete-btn:hover { background: #fcc; }
-        @media (max-width: 768px) {
-          .faim-form-grid { grid-template-columns: 1fr; }
-          .faim-list-page { padding: 1rem; }
-        }
+        .faim-list-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; max-width:1200px; margin-left:auto; margin-right:auto; }
+        .faim-list-header h1 { font-size:1.8rem; font-weight:700; color:#1a1a2e; }
+        .faim-list-header p { color:#666; font-size:0.9rem; }
+        .faim-new-btn { background:#e67e22; color:white; border:none; padding:0.75rem 1.5rem; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.95rem; transition:background 0.15s; }
+        .faim-new-btn:hover { background:#cf6d17; }
+        .faim-success { background:#f0fff4; color:#27ae60; border:1px solid #b2f0c8; padding:0.75rem 1rem; border-radius:8px; margin-bottom:1.5rem; max-width:1200px; margin-left:auto; margin-right:auto; font-weight:600; }
+        .faim-form-card { background:white; border-radius:16px; padding:2rem; margin-bottom:2rem; box-shadow:0 4px 24px rgba(0,0,0,0.08); max-width:1200px; margin-left:auto; margin-right:auto; }
+        .faim-form-card h2 { font-size:1.3rem; color:#1a1a2e; margin-bottom:1.5rem; }
+        .faim-form-grid { display:grid; grid-template-columns:1fr 380px; gap:2rem; }
+        .faim-form { display:flex; flex-direction:column; gap:1.25rem; }
+        .faim-field { display:flex; flex-direction:column; gap:6px; }
+        .faim-field label { font-size:0.85rem; font-weight:600; color:#444; }
+        .faim-field input, .faim-field select, .faim-field textarea { padding:0.65rem 0.875rem; border:1.5px solid #e0e0e0; border-radius:9px; font-size:0.9rem; color:#1a1a2e; outline:none; transition:border-color 0.15s; background:#fff; font-family:inherit; }
+        .faim-field input:focus, .faim-field select:focus, .faim-field textarea:focus { border-color:#e67e22; }
+        .faim-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; }
+        .faim-amenities-grid { display:flex; flex-wrap:wrap; gap:8px; }
+        .faim-amenity { padding:6px 14px; border:1.5px solid #e0e0e0; border-radius:20px; font-size:0.82rem; cursor:pointer; transition:all 0.15s; color:#555; user-select:none; }
+        .faim-amenity--active { border-color:#e67e22; background:#fff8f2; color:#e67e22; font-weight:600; }
+        .faim-form-actions { display:flex; gap:1rem; margin-top:0.5rem; }
+        .faim-preview-btn { flex:1; padding:0.75rem; border:1.5px solid #e67e22; border-radius:10px; background:white; color:#e67e22; font-weight:600; cursor:pointer; transition:all 0.15s; }
+        .faim-preview-btn:hover { background:#fff8f2; }
+        .faim-submit-btn { flex:2; padding:0.75rem; background:#e67e22; color:white; border:none; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.95rem; transition:background 0.15s; }
+        .faim-submit-btn:hover { background:#cf6d17; }
+        .faim-submit-btn:disabled { opacity:0.6; cursor:not-allowed; }
+        .faim-preview h3 { font-size:0.9rem; color:#888; margin-bottom:1rem; text-transform:uppercase; letter-spacing:0.05em; }
+        .faim-preview-card { background:#1a1a2e; border-radius:14px; padding:1.5rem; color:white; position:sticky; top:1rem; }
+        .faim-preview-badge { display:inline-block; background:#e67e22; color:white; padding:3px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; text-transform:capitalize; margin-bottom:0.75rem; }
+        .faim-preview-card h2 { font-size:1.2rem; margin-bottom:0.5rem; }
+        .faim-preview-location { color:#aaa; font-size:0.85rem; margin-bottom:0.5rem; }
+        .faim-preview-price { font-size:1.3rem; font-weight:700; color:#e67e22; margin-bottom:0.75rem; }
+        .faim-preview-specs { display:flex; gap:1rem; font-size:0.85rem; margin-bottom:1rem; color:#ccc; }
+        .faim-preview-desc { font-size:0.85rem; color:#ccc; line-height:1.6; margin-bottom:1rem; }
+        .faim-preview-amenities { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:1rem; }
+        .faim-preview-amenities span { font-size:0.78rem; color:#aaa; }
+        .faim-preview-cta { background:#e67e22; color:white; text-align:center; padding:0.75rem; border-radius:10px; font-weight:600; font-size:0.9rem; }
+        .faim-video-upload { width:100%; }
+        .faim-video-drop { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; padding:2rem; border:2px dashed #e0e0e0; border-radius:12px; cursor:pointer; transition:border-color 0.15s; text-align:center; color:#888; font-size:0.9rem; }
+        .faim-video-drop:hover { border-color:#e67e22; color:#e67e22; }
+        .faim-video-icon { font-size:2rem; }
+        .faim-video-hint { font-size:0.78rem; color:#aaa; }
+        .faim-video-preview { display:flex; flex-direction:column; gap:0.75rem; }
+        .faim-video-player { width:100%; border-radius:10px; max-height:200px; background:#000; }
+        .faim-video-info { display:flex; justify-content:space-between; font-size:0.82rem; color:#666; }
+        .faim-remove-video { background:#fff0f0; color:#e74c3c; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600; align-self:flex-start; }
+        .faim-remove-video:hover { background:#fcc; }
+        .faim-progress-wrap { background:#f0f0f0; border-radius:20px; height:8px; overflow:hidden; }
+        .faim-progress-bar { height:100%; background:linear-gradient(90deg,#e67e22,#f39c12); border-radius:20px; transition:width 0.3s ease; }
+        .faim-listing-video { width:100%; border-radius:10px; max-height:180px; background:#000; margin-bottom:0.75rem; }
+        .faim-listings-section { max-width:1200px; margin:0 auto; }
+        .faim-listings-section h2 { font-size:1.3rem; color:#1a1a2e; margin-bottom:1.5rem; }
+        .faim-empty { text-align:center; padding:3rem; background:white; border-radius:16px; color:#666; line-height:2; }
+        .faim-listings-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1.5rem; }
+        .faim-listing-card { background:white; border-radius:14px; padding:1.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+        .faim-listing-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; }
+        .faim-type-badge { background:#f0ede8; color:#666; padding:3px 10px; border-radius:20px; font-size:0.75rem; font-weight:600; text-transform:capitalize; }
+        .faim-status-badge { font-size:0.78rem; font-weight:600; }
+        .faim-status-badge--available { color:#27ae60; }
+        .faim-status-badge--unavailable { color:#e74c3c; }
+        .faim-listing-card h3 { font-size:1.05rem; font-weight:700; color:#1a1a2e; margin-bottom:0.4rem; }
+        .faim-listing-location { font-size:0.82rem; color:#888; margin-bottom:0.4rem; }
+        .faim-listing-price { font-size:1.1rem; font-weight:700; color:#e67e22; margin-bottom:0.4rem; }
+        .faim-listing-specs { font-size:0.82rem; color:#666; margin-bottom:0.5rem; }
+        .faim-listing-desc { font-size:0.82rem; color:#888; line-height:1.5; margin-bottom:0.75rem; }
+        .faim-listing-amenities { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:1rem; }
+        .faim-listing-amenities span { background:#f0ede8; color:#666; padding:3px 10px; border-radius:20px; font-size:0.75rem; }
+        .faim-listing-actions { display:flex; gap:0.75rem; }
+        .faim-edit-btn { flex:1; padding:0.6rem; border:1.5px solid #e67e22; border-radius:8px; background:white; color:#e67e22; font-weight:600; cursor:pointer; font-size:0.85rem; transition:all 0.15s; }
+        .faim-edit-btn:hover { background:#fff8f2; }
+        .faim-delete-btn { flex:1; padding:0.6rem; border:none; border-radius:8px; background:#fff0f0; color:#e74c3c; font-weight:600; cursor:pointer; font-size:0.85rem; transition:all 0.15s; }
+        .faim-delete-btn:hover { background:#fcc; }
+        @media (max-width:768px) { .faim-form-grid { grid-template-columns:1fr; } .faim-list-page { padding:1rem; } }
       `}</style>
     </div>
   )
