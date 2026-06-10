@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 
-export default function PaySuccessPage() {
+function PaySuccessInner() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [status, setStatus] = useState('verifying') // 'verifying' | 'success' | 'error'
@@ -117,5 +117,13 @@ export default function PaySuccessPage() {
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
     </div>
+  )
+}
+
+export default function PaySuccessPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#080a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>Loading...</div>}>
+      <PaySuccessInner />
+    </Suspense>
   )
 }
