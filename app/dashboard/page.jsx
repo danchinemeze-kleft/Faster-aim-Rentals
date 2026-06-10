@@ -4,9 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 
-const ADMIN_EMAIL = 'danchinemeze@gmail.com' // change to your login email
-const ADMIN_PIN = '7393' // change to your own secret PIN
-
 export default function DashboardPage() {
   const router = useRouter()
   const supabase = createBrowserClient(
@@ -23,13 +20,30 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('overview')
   const [togglingId, setTogglingId] = useState(null)
 
-  // Admin state
-  const [pendingListings, setPendingListings] = useState([])
-  const [pendingLoading, setPendingLoading] = useState(false)
-  const [reviewingId, setReviewingId] = useState(null)
-  const [adminUnlocked, setAdminUnlocked] = useState(false)
-  const [pinInput, setPinInput] = useState('')
-  const [pinError, setPinError] = useState(false)
+  async function fetchProfile(userId) {
+    const { data } = await supabase.from('Profiles').select('*').eq('id', userId).single()
+    setProfile(data)
+  }
+
+  async function fetchListings(userId) {
+    const { data } = await supabase.from('listings').select('*').eq('landlord_id', userId).order('created_at', { ascending: false })
+    setListings(data || [])
+  }
+
+  async function fetchSubscription(userId) {
+    const { data } = await supabase.from('Subscription').select('*').eq('landlord_id', userId).order('created_at', { ascending: false }).limit(1).single()
+    setSubscription(data)
+  }
+
+  async function fetchStats(userId) {
+    const { data: listingsData } = await supabase.from('listings').select('id, available').eq('landlord_id', userId)
+    const { data: revealsData } = await supabase.from('Contact_reveals').select('id').eq('landlord_id', userId)
+    setStats({
+      total: listingsData?.length || 0,
+      available: listingsData?.filter(l => l.available).length || 0,
+      reveals: revealsData?.length || 0,
+    })
+  }
 
   useEffect(() => {
     const init = async () => {
@@ -46,76 +60,6 @@ export default function DashboardPage() {
     }
     init()
   }, [])
-
-  useEffect(() => {
-    if (activeTab === 'admin' && adminUnlocked) {
-      fetchPendingListings()
-    }
-  }, [activeTab, adminUnlocked])
-
-  const fetchPendingListings = async () => {
-    setPendingLoading(true)
-    const { data, error } = await supabase
-      .from('listings')
-      .select('*')
-      .eq('status', 'pending')
-      .order('created_at', { ascending: true })
-    if (!error) setPendingListings(data || [])
-    setPendingLoading(false)
-  }
-
-  const handleApprove = async (id) => {
-    setReviewingId(id)
-    const { error } = await supabase.from('listings').update({ status: 'active' }).eq('id', id)
-    if (!error) setPendingListings(prev => prev.filter(l => l.id !== id))
-    else alert('Error: ' + error.message)
-    setReviewingId(null)
-  }
-
-  const handleReject = async (id) => {
-    if (!window.confirm('Reject and permanently delete this listing?')) return
-    setReviewingId(id)
-    const { error } = await supabase.from('listings').delete().eq('id', id)
-    if (!error) setPendingListings(prev => prev.filter(l => l.id !== id))
-    else alert('Error: ' + error.message)
-    setReviewingId(null)
-  }
-
-  const checkPin = () => {
-    if (pinInput === ADMIN_PIN) {
-      setAdminUnlocked(true)
-      setPinInput('')
-      setPinError(false)
-    } else {
-      setPinError(true)
-      setPinInput('')
-    }
-  }
-
-  const fetchProfile = async (userId) => {
-    const { data } = await supabase.from('Profiles').select('*').eq('id', userId).single()
-    setProfile(data)
-  }
-
-  const fetchListings = async (userId) => {
-    const { data } = await supabase.from('listings').select('*').eq('landlord_id', userId).order('created_at', { ascending: false })
-    setListings(data || [])
-  }
-
-  const fetchSubscription = async (userId) => {
-    const { data } = await supabase.from('Subscription').select('*').eq('landlord_id', userId).order('created_at', { ascending: false }).limit(1).single()
-    setSubscription(data)
-  }
-
-  const fetchStats = async (userId) => {
-    const { data: listingsData } = await supabase.from('listings').select('id, available').eq('landlord_id', userId)
-    const { data: revealsData } = await supabase.from('Contact_reveals').select('id').eq('landlord_id', userId)
-    setStats({
-      total: listingsData?.length || 0,
-      available: listingsData?.filter(l => l.available).length || 0,
-      reveals: revealsData?.length || 0,
-    })
-  }
 
   const toggleAvailability = async (listing) => {
     setTogglingId(listing.id)
@@ -171,8 +115,6 @@ export default function DashboardPage() {
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
   }
 
-  const isAdmin = user?.email === ADMIN_EMAIL
-
   if (loading) return (
     <div className="faim-dash-loading">
       <div className="faim-spinner"></div>
@@ -182,7 +124,6 @@ export default function DashboardPage() {
 
   return (
     <div className="faim-dashboard">
-      {/* Sidebar */}
       <aside className="faim-sidebar">
         <div className="faim-sidebar-brand">
           <span>🏠</span>
@@ -194,7 +135,6 @@ export default function DashboardPage() {
             { id: 'listings', icon: '🏘️', label: 'My Listings' },
             { id: 'subscription', icon: '💳', label: 'Subscription' },
             { id: 'profile', icon: '👤', label: 'Profile' },
-            ...(isAdmin ? [{ id: 'admin', icon: '🛡️', label: 'Admin Review' }] : []),
           ].map(tab => (
             <button key={tab.id}
               className={`faim-nav-item ${activeTab === tab.id ? 'faim-nav-item--active' : ''}`}
@@ -210,7 +150,6 @@ export default function DashboardPage() {
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="faim-main">
         <div className="faim-topbar">
           <div>
@@ -219,7 +158,6 @@ export default function DashboardPage() {
               {activeTab === 'listings' && 'My Listings'}
               {activeTab === 'subscription' && 'Subscription'}
               {activeTab === 'profile' && 'My Profile'}
-              {activeTab === 'admin' && '🛡️ Admin Review'}
             </h1>
             <p className="faim-welcome">Welcome back, {profile?.full_name?.split(' ')[0] || 'Landlord'} 👋</p>
           </div>
@@ -228,7 +166,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* OVERVIEW */}
         {activeTab === 'overview' && (
           <div className="faim-overview">
             <div className="faim-stats-grid">
@@ -299,7 +236,6 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* LISTINGS */}
         {activeTab === 'listings' && (
           <div className="faim-listings-tab">
             <div className="faim-section-header">
@@ -351,7 +287,6 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* SUBSCRIPTION */}
         {activeTab === 'subscription' && (
           <div className="faim-sub-tab">
             <div className="faim-sub-status-card">
@@ -388,7 +323,6 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* PROFILE */}
         {activeTab === 'profile' && (
           <div className="faim-profile-tab">
             <div className="faim-profile-card">
@@ -409,128 +343,6 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* ADMIN */}
-        {activeTab === 'admin' && isAdmin && (
-          <div>
-            {!adminUnlocked ? (
-              <div style={{maxWidth:'320px',margin:'4rem auto',background:'white',borderRadius:'16px',padding:'2rem',boxShadow:'0 4px 24px rgba(0,0,0,0.1)',textAlign:'center'}}>
-                <div style={{fontSize:'2.5rem',marginBottom:'1rem'}}>🛡️</div>
-                <h2 style={{fontSize:'1.1rem',fontWeight:700,color:'#1a1a2e',marginBottom:'0.5rem'}}>Admin Access</h2>
-                <p style={{fontSize:'0.85rem',color:'#888',marginBottom:'1.5rem'}}>Enter your PIN to continue</p>
-                <input
-                  type="password"
-                  maxLength={6}
-                  value={pinInput}
-                  onChange={e => { setPinInput(e.target.value); setPinError(false) }}
-                  onKeyDown={e => { if (e.key === 'Enter') checkPin() }}
-                  placeholder="Enter PIN"
-                  style={{width:'100%',padding:'0.75rem',border:`1.5px solid ${pinError?'#e74c3c':'#e0e0e0'}`,borderRadius:'10px',fontSize:'1.1rem',textAlign:'center',letterSpacing:'0.3em',outline:'none',marginBottom:'0.5rem',fontFamily:'inherit'}}
-                />
-                {pinError && <p style={{color:'#e74c3c',fontSize:'0.82rem',marginBottom:'0.5rem'}}>❌ Incorrect PIN. Try again.</p>}
-                <button onClick={checkPin}
-                  style={{width:'100%',background:'#e67e22',color:'white',border:'none',padding:'0.75rem',borderRadius:'10px',fontWeight:700,cursor:'pointer',fontSize:'0.95rem',marginTop:'0.5rem'}}>
-                  Unlock
-                </button>
-              </div>
-            ) : (
-              <div>
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1.5rem',flexWrap:'wrap',gap:'0.75rem'}}>
-                  <div>
-                    <h2 style={{fontSize:'1.1rem',fontWeight:700,color:'#1a1a2e'}}>Pending Listings ({pendingListings.length})</h2>
-                    <p style={{fontSize:'0.82rem',color:'#888',marginTop:'2px'}}>Watch the video and check photos before approving.</p>
-                  </div>
-                  <div style={{display:'flex',gap:'0.5rem'}}>
-                    <button onClick={fetchPendingListings}
-                      style={{background:'#f0ede8',border:'none',padding:'0.5rem 1rem',borderRadius:'8px',cursor:'pointer',fontSize:'0.85rem',fontWeight:600,color:'#666'}}>
-                      🔄 Refresh
-                    </button>
-                    <button onClick={() => { setAdminUnlocked(false); setPinInput('') }}
-                      style={{background:'#fff0f0',border:'none',padding:'0.5rem 1rem',borderRadius:'8px',cursor:'pointer',fontSize:'0.85rem',fontWeight:600,color:'#e74c3c'}}>
-                      🔒 Lock
-                    </button>
-                  </div>
-                </div>
-
-                {pendingLoading ? (
-                  <div style={{display:'flex',alignItems:'center',gap:'1rem',padding:'2rem',color:'#888'}}>
-                    <div className="faim-spinner"></div>
-                    Loading pending listings...
-                  </div>
-                ) : pendingListings.length === 0 ? (
-                  <div style={{background:'white',borderRadius:'14px',padding:'3rem',textAlign:'center',color:'#888'}}>
-                    <p style={{fontSize:'2rem',marginBottom:'0.5rem'}}>🎉</p>
-                    <p style={{fontWeight:600}}>All clear! No pending listings to review.</p>
-                  </div>
-                ) : (
-                  <div style={{display:'flex',flexDirection:'column',gap:'1.5rem'}}>
-                    {pendingListings.map(listing => (
-                      <div key={listing.id} style={{background:'white',borderRadius:'16px',padding:'1.5rem',boxShadow:'0 2px 12px rgba(0,0,0,0.07)',border:'1.5px solid #f0e0c8'}}>
-
-                        {/* Header row */}
-                        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'1rem',flexWrap:'wrap',gap:'0.75rem'}}>
-                          <div>
-                            <span style={{background:'#fff3e0',color:'#e67e22',padding:'3px 10px',borderRadius:'20px',fontSize:'0.72rem',fontWeight:700,textTransform:'uppercase'}}>⏳ Pending Review</span>
-                            <h3 style={{fontSize:'1.05rem',fontWeight:700,color:'#1a1a2e',marginTop:'0.5rem'}}>{listing.title}</h3>
-                            <p style={{fontSize:'0.82rem',color:'#888'}}>📍 {listing.location}, {listing.state} • {listing.bedrooms} bed • {listing.bathrooms} bath</p>
-                            <p style={{fontSize:'0.95rem',fontWeight:700,color:'#e67e22',marginTop:'2px'}}>₦{listing.price?.toLocaleString()} / {listing.price_period}</p>
-                            <p style={{fontSize:'0.75rem',color:'#aaa',marginTop:'4px'}}>Submitted: {new Date(listing.created_at).toLocaleString()}</p>
-                          </div>
-                          <div style={{display:'flex',gap:'0.5rem',flexShrink:0}}>
-                            <button onClick={() => handleApprove(listing.id)} disabled={reviewingId === listing.id}
-                              style={{background:'#27ae60',color:'white',border:'none',padding:'0.65rem 1.5rem',borderRadius:'8px',fontWeight:700,cursor:'pointer',fontSize:'0.9rem',opacity:reviewingId===listing.id?0.6:1}}>
-                              ✅ Approve
-                            </button>
-                            <button onClick={() => handleReject(listing.id)} disabled={reviewingId === listing.id}
-                              style={{background:'#fff0f0',color:'#e74c3c',border:'1.5px solid #e74c3c',padding:'0.65rem 1.5rem',borderRadius:'8px',fontWeight:700,cursor:'pointer',fontSize:'0.9rem',opacity:reviewingId===listing.id?0.6:1}}>
-                              ❌ Reject
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Photos */}
-                        {listing.images && listing.images.length > 0 && (
-                          <div style={{marginBottom:'1rem'}}>
-                            <p style={{fontSize:'0.8rem',fontWeight:600,color:'#666',marginBottom:'0.5rem'}}>📸 Photos ({listing.images.length})</p>
-                            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(120px,1fr))',gap:'8px'}}>
-                              {listing.images.map((url, i) => (
-                                <a key={i} href={url} target="_blank" rel="noreferrer">
-                                  <img src={url} alt={`photo ${i+1}`} style={{width:'100%',height:'90px',objectFit:'cover',borderRadius:'8px',cursor:'pointer'}} />
-                                </a>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Video */}
-                        {listing.video_url && (
-                          <div style={{marginBottom:'1rem'}}>
-                            <p style={{fontSize:'0.8rem',fontWeight:600,color:'#666',marginBottom:'0.5rem'}}>📹 Property Video</p>
-                            <video src={listing.video_url} controls style={{width:'100%',maxHeight:'320px',borderRadius:'10px',background:'#000'}} />
-                          </div>
-                        )}
-
-                        {/* Description */}
-                        <div style={{background:'#f9f9f9',borderRadius:'8px',padding:'0.875rem',marginBottom:'1rem'}}>
-                          <p style={{fontSize:'0.8rem',fontWeight:600,color:'#666',marginBottom:'4px'}}>📝 Description</p>
-                          <p style={{fontSize:'0.85rem',color:'#444',lineHeight:'1.6'}}>{listing.description}</p>
-                        </div>
-
-                        {/* Amenities */}
-                        {listing.amenities?.length > 0 && (
-                          <div style={{display:'flex',flexWrap:'wrap',gap:'6px'}}>
-                            {listing.amenities.map(a => (
-                              <span key={a} style={{background:'#f0ede8',color:'#666',padding:'3px 10px',borderRadius:'20px',fontSize:'0.75rem'}}>{a}</span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
       </main>
 
       <style>{`
