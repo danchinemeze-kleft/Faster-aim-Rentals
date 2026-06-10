@@ -31,7 +31,9 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const saved = sessionStorage.getItem('mr_rent_admin');
-    if (saved === 'true') setAuthed(true);
+    if (saved === 'true') {
+      setTimeout(() => setAuthed(true), 0);
+    }
   }, []);
 
   useEffect(() => {
