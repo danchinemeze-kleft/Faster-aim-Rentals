@@ -36,7 +36,7 @@ export default function Home() {
                 <div style={styles.heroActions}>
                   <a href="/browse" style={styles.btnCyan}>Browse Listings</a>
                   <a href="/search" style={styles.btnPink}>Ask Mr. Rent AI 🤖</a>
-                 <a href="/list" style={styles.btnWhite}>Add Your Property 🏠</a> 
+                  <a href="/list" style={styles.btnWhite}>Add Your Property 🏠</a>
                 </div>
                 <div style={styles.heroStats}>
                   <div style={styles.heroStat}>
@@ -58,29 +58,24 @@ export default function Home() {
 
               {/* Right: Animated Mr. Rent Avatar */}
               <div style={styles.avatarContainer}>
-                {/* Outer glow ring - pink */}
                 <div style={styles.ringPink}></div>
-                {/* Inner glow ring - cyan */}
                 <div style={styles.ringCyan}></div>
-                {/* Avatar image */}
                 <a href="/search" style={{display: 'block', borderRadius: '50%'}}>
-  <div style={styles.avatarWrapper}>
-    <Image
-      src="/mr-rent-avatar.png"
-      alt="Mr. Rent - Your Property Assistant"
-      width={320}
-      height={380}
-      style={styles.avatarImage}
-      priority
-    />
-  </div>
-</a>
-                {/* Floating badge */}
+                  <div style={styles.avatarWrapper}>
+                    <Image
+                      src="/mr-rent-avatar.png"
+                      alt="Mr. Rent - Your Property Assistant"
+                      width={320}
+                      height={380}
+                      style={styles.avatarImage}
+                      priority
+                    />
+                  </div>
+                </a>
                 <div style={styles.floatingBadge}>
                   <span style={styles.floatingDot}></span>
                   AI Powered
                 </div>
-                {/* Floating stats */}
                 <div style={styles.floatingCard1}>
                   🏠 2 new listings
                 </div>
@@ -100,18 +95,18 @@ export default function Home() {
           <h2 style={styles.sectionTitle}>Simple. Fast. <span style={styles.heroCyan}>Secure.</span></h2>
           <div style={styles.stepsGrid}>
             {[
-  { icon: '🔍', title: 'Browse Listings', desc: 'Search properties by location, budget, and type across all 36 states.', color: '#00d9d9', link: '/browse' },
-  { icon: '🤖', title: 'Ask Mr. Rent AI', desc: 'Chat with our AI assistant to find the perfect property for your needs.', color: '#ff2d78', link: '/search' },
-  { icon: '💳', title: 'Reveal Contact', desc: 'Pay ₦5,000 to instantly reveal the landlord\'s contact details.', color: '#00d9d9', link: '/browse' },
-  { icon: '🏠', title: 'Move In', desc: 'Contact the landlord directly and arrange your inspection and move.', color: '#ff2d78', link: '/browse' },
-].map((step, i) => (
-  <a href={step.link} key={i} style={{...styles.stepCard, borderColor: step.color + '33', textDecoration: 'none', display: 'block', cursor: 'pointer'}}>
-    <div style={{...styles.stepNumber, color: step.color}}>0{i + 1}</div>
-    <div style={{...styles.stepIcon, color: step.color}}>{step.icon}</div>
-    <h3 style={styles.stepTitle}>{step.title}</h3>
-    <p style={styles.stepDesc}>{step.desc}</p>
-  </a>
-))}
+              { icon: '🔍', title: 'Browse Listings', desc: 'Search properties by location, budget, and type across all 36 states.', color: '#00d9d9', link: '/browse' },
+              { icon: '🤖', title: 'Ask Mr. Rent AI', desc: 'Chat with our AI assistant to find the perfect property for your needs.', color: '#ff2d78', link: '/search' },
+              { icon: '💳', title: 'Reveal Contact', desc: 'Pay ₦5,000 to instantly reveal the landlord\'s contact details.', color: '#00d9d9', link: '/browse' },
+              { icon: '🏠', title: 'Move In', desc: 'Contact the landlord directly and arrange your inspection and move.', color: '#ff2d78', link: '/browse' },
+            ].map((step, i) => (
+              <a href={step.link} key={i} style={{...styles.stepCard, borderColor: step.color + '33', textDecoration: 'none', display: 'block', cursor: 'pointer'}}>
+                <div style={{...styles.stepNumber, color: step.color}}>0{i + 1}</div>
+                <div style={{...styles.stepIcon, color: step.color}}>{step.icon}</div>
+                <h3 style={styles.stepTitle}>{step.title}</h3>
+                <p style={styles.stepDesc}>{step.desc}</p>
+              </a>
+            ))}
           </div>
         </div>
       </section>
@@ -177,10 +172,10 @@ export default function Home() {
         </h2>
         <p style={styles.ctaSubtitle}>Join thousands of Nigerians finding and listing homes on Mr. Rent</p>
         <div style={styles.heroActions}>
-  <a href="/browse" style={styles.btnCyan}>Browse Listings</a>
-  <a href="/search" style={styles.btnPink}>Ask Mr. Rent AI 🤖</a>
-  <a href="/list" style={styles.btnWhite}>Add Your Property 🏠</a>
-</div>
+          <a href="/browse" style={styles.btnCyan}>Browse Listings</a>
+          <a href="/search" style={styles.btnPink}>Ask Mr. Rent AI 🤖</a>
+          <a href="/list" style={styles.btnWhite}>Add Your Property 🏠</a>
+        </div>
       </section>
 
       {/* Footer */}
@@ -192,6 +187,7 @@ export default function Home() {
             <a href="/search" style={styles.footerLink}>AI Chat</a>
             <a href="/list" style={styles.footerLink}>List Property</a>
             <a href="/account" style={styles.footerLink}>Login</a>
+            <a href="/admin" style={styles.footerAdminLink}>⚙ Admin</a>
           </div>
         </div>
         <div style={styles.footerDivider}></div>
@@ -233,24 +229,12 @@ export default function Home() {
           50% { opacity: 0; }
         }
 
-        .avatar-float {
-          animation: float 4s ease-in-out infinite;
-        }
-        .ring-pink-spin {
-          animation: spinSlow 8s linear infinite;
-        }
-        .ring-cyan-spin {
-          animation: spinSlowReverse 6s linear infinite;
-        }
-        .floating-badge {
-          animation: floatReverse 3s ease-in-out infinite;
-        }
-        .floating-card1 {
-          animation: float 5s ease-in-out infinite;
-        }
-        .floating-card2 {
-          animation: floatReverse 4s ease-in-out infinite;
-        }
+        .avatar-float { animation: float 4s ease-in-out infinite; }
+        .ring-pink-spin { animation: spinSlow 8s linear infinite; }
+        .ring-cyan-spin { animation: spinSlowReverse 6s linear infinite; }
+        .floating-badge { animation: floatReverse 3s ease-in-out infinite; }
+        .floating-card1 { animation: float 5s ease-in-out infinite; }
+        .floating-card2 { animation: floatReverse 4s ease-in-out infinite; }
 
         @media (max-width: 768px) {
           .hero-layout { flex-direction: column !important; }
@@ -299,9 +283,9 @@ const styles = {
     gap: '1.5rem',
   },
   navLink: {
-    color: '#888',
+    color: '#cccccc',
     fontSize: '0.88rem',
-    fontWeight: '500',
+    fontWeight: '700',
   },
   navBtn: {
     background: 'linear-gradient(135deg, #ff2d78, #c0135a)',
@@ -372,7 +356,8 @@ const styles = {
   },
   heroSubtitle: {
     fontSize: '0.95rem',
-    color: '#888',
+    color: '#cccccc',
+    fontWeight: '600',
     lineHeight: '1.7',
     marginBottom: '2rem',
     maxWidth: '480px',
@@ -401,14 +386,15 @@ const styles = {
     fontSize: '0.9rem',
     boxShadow: '0 0 30px rgba(255,45,120,0.3)',
   },
-  btnOutlinePink: {
-    background: 'transparent',
-    border: '1.5px solid #ff2d78',
-    color: '#ff2d78',
+  btnWhite: {
+    background: '#ffffff',
+    color: '#050510',
     padding: '0.875rem 2rem',
     borderRadius: '10px',
     fontWeight: '800',
     fontSize: '0.9rem',
+    border: '2px solid #00d9d9',
+    boxShadow: '0 0 20px rgba(0,217,217,0.2)',
   },
   heroStats: {
     display: 'flex',
@@ -434,7 +420,8 @@ const styles = {
   },
   statLabel: {
     fontSize: '0.7rem',
-    color: '#555',
+    color: '#ffffff',
+    fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
   },
@@ -556,11 +543,11 @@ const styles = {
   sectionInner: { maxWidth: '1100px', margin: '0 auto' },
   sectionTag: {
     textAlign: 'center',
-    color: '#444',
+    color: '#aaaaaa',
     fontSize: '0.7rem',
     letterSpacing: '0.2em',
     marginBottom: '1rem',
-    fontWeight: '700',
+    fontWeight: '800',
   },
   sectionTitle: {
     fontSize: '2.2rem',
@@ -593,8 +580,8 @@ const styles = {
     lineHeight: 1,
   },
   stepIcon: { fontSize: '2rem', marginBottom: '0.75rem', display: 'block' },
-  stepTitle: { fontSize: '1rem', fontWeight: '700', color: '#fff', marginBottom: '0.5rem' },
-  stepDesc: { fontSize: '0.83rem', color: '#666', lineHeight: '1.6' },
+  stepTitle: { fontSize: '1rem', fontWeight: '700', color: '#ffffff', marginBottom: '0.5rem' },
+  stepDesc: { fontSize: '0.83rem', color: '#cccccc', fontWeight: '600', lineHeight: '1.6' },
 
   // LANDLORD
   landlordSection: {
@@ -622,10 +609,10 @@ const styles = {
     flexWrap: 'wrap',
   },
   landlordText: { flex: 1, minWidth: '280px' },
-  landlordDesc: { color: '#777', lineHeight: '1.8', marginBottom: '1.75rem', fontSize: '0.92rem' },
+  landlordDesc: { color: '#cccccc', fontWeight: '600', lineHeight: '1.8', marginBottom: '1.75rem', fontSize: '0.92rem' },
   featureList: { listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '2rem' },
-  featureItem: { color: '#aaa', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '0.5rem' },
-  featureCheck: { color: '#00d9d9', fontWeight: '700' },
+  featureItem: { color: '#ffffff', fontWeight: '600', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '0.5rem' },
+  featureCheck: { color: '#00d9d9', fontWeight: '800' },
   pricingCard: {
     background: 'linear-gradient(135deg, rgba(255,45,120,0.08), rgba(0,217,217,0.05))',
     border: '1px solid rgba(255,45,120,0.2)',
@@ -635,12 +622,12 @@ const styles = {
     textAlign: 'center',
   },
   pricingTop: { marginBottom: '1.5rem' },
-  pricingLabel: { color: '#555', fontSize: '0.7rem', letterSpacing: '0.15em', fontWeight: '700', marginBottom: '0.75rem' },
+  pricingLabel: { color: '#ffffff', fontSize: '0.7rem', letterSpacing: '0.15em', fontWeight: '800', marginBottom: '0.75rem' },
   pricingAmount: { display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: '4px' },
   pricingCurrency: { color: '#ff2d78', fontSize: '1.2rem', fontWeight: '700', marginTop: '8px' },
   pricingValue: { color: '#ff2d78', fontSize: '2.8rem', fontWeight: '900', lineHeight: 1, textShadow: '0 0 30px rgba(255,45,120,0.4)' },
-  pricingPer: { color: '#555', fontSize: '0.8rem', marginTop: '4px' },
-  pricingFeatures: { display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '1.5rem', color: '#666', fontSize: '0.82rem' },
+  pricingPer: { color: '#ffffff', fontSize: '0.8rem', fontWeight: '700', marginTop: '4px' },
+  pricingFeatures: { display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '1.5rem', color: '#cccccc', fontSize: '0.82rem', fontWeight: '600' },
 
   // CTA
   ctaSection: {
@@ -649,7 +636,7 @@ const styles = {
     background: 'radial-gradient(ellipse at center, rgba(0,217,217,0.05) 0%, transparent 70%)',
   },
   ctaTitle: { fontSize: '2.5rem', fontWeight: '900', marginBottom: '1rem', letterSpacing: '-1px' },
-  ctaSubtitle: { color: '#666', marginBottom: '2.5rem', fontSize: '0.95rem' },
+  ctaSubtitle: { color: '#cccccc', fontWeight: '600', marginBottom: '2.5rem', fontSize: '0.95rem' },
 
   // FOOTER
   footer: { padding: '3rem 2rem', borderTop: '1px solid rgba(0,217,217,0.1)', background: '#030308' },
@@ -663,23 +650,21 @@ const styles = {
     background: 'linear-gradient(90deg, #00d9d9, #ff2d78)',
     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
   },
-  footerLinks: { display: 'flex', gap: '1.5rem' },
-  footerLink: { color: '#444', fontSize: '0.82rem' },
+  footerLinks: { display: 'flex', gap: '1.5rem', alignItems: 'center' },
+  footerLink: { color: '#aaaaaa', fontSize: '0.82rem', fontWeight: '600' },
+  footerAdminLink: {
+    color: '#555555',
+    fontSize: '0.75rem',
+    fontWeight: '600',
+    border: '1px solid #222',
+    padding: '3px 10px',
+    borderRadius: '6px',
+  },
   footerDivider: {
     height: '1px',
     background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent)',
     marginBottom: '1.5rem', maxWidth: '1000px', margin: '0 auto 1.5rem',
   },
-  footerDesc: { color: '#333', fontSize: '0.8rem', textAlign: 'center', marginBottom: '0.5rem' },
-  footerCopy: { color: '#2a2a3a', fontSize: '0.75rem', textAlign: 'center' },
-btnWhite: {
-  background: '#ffffff',
-  color: '#050510',
-  padding: '0.875rem 2rem',
-  borderRadius: '10px',
-  fontWeight: '800',
-  fontSize: '0.9rem',
-  border: '2px solid #00d9d9',
-  boxShadow: '0 0 20px rgba(0,217,217,0.2)',
-},
+  footerDesc: { color: '#aaaaaa', fontWeight: '600', fontSize: '0.8rem', textAlign: 'center', marginBottom: '0.5rem' },
+  footerCopy: { color: '#666666', fontWeight: '600', fontSize: '0.75rem', textAlign: 'center' },
 }
