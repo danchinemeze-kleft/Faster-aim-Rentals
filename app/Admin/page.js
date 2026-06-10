@@ -28,10 +28,10 @@ export default function AdminDashboard() {
   });
 
   useEffect(() => {
-    const saved = sessionStorage.getItem('mr_rent_admin');
-    if (saved === 'true') setAuthed(true);
-    setCheckingSession(false);
-  }, []);
+  const saved = sessionStorage.getItem('mr_rent_admin');
+  if (saved === 'true') setAuthed(true);
+  setTimeout(() => setCheckingSession(false), 0);
+}, []);
 
   useEffect(() => {
     if (authed) fetchAll();
