@@ -84,8 +84,12 @@ export default function ListPage() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setSubmitting(true)
+  e.preventDefault()
+  if (!videoFile) {
+    alert('Please add a video of your property before publishing.')
+    return
+  }
+  setSubmitting(true)
     setUploadProgress(0)
     try {
       let video_url = null
@@ -254,7 +258,11 @@ export default function ListPage() {
 
               {/* Video Upload */}
               <div className="faim-field">
-                <label>Property Video <span style={{fontWeight:400, color:'#888'}}>(max 15 seconds, phone recording)</span></label>
+               <label>Property Video <span style={{fontWeight:400, color:'#c0392b'}}>* Required</span></label>
+<div style={{background:'#fff8f2', border:'1px solid #f0d0b0', borderRadius:'8px', padding:'0.75rem 1rem', marginBottom:'0.5rem', fontSize:'0.83rem', color:'#7a4a1a', lineHeight:'1.7'}}>
+  📹 Record a <strong>45 to 60 second video</strong> showing both the <strong>interior and exterior</strong> of the property. The video must match your description.<br/>
+  ⚠️ <strong>AI-generated videos will be rejected</strong> and your property will not be approved.
+</div>
                 <div className="faim-video-upload">
                   {videoFile ? (
                     <div className="faim-video-preview">
@@ -276,16 +284,31 @@ export default function ListPage() {
                         onChange={(e) => {
                           const file = e.target.files[0]
                           if (!file) return
-                          if (file.size > 50 * 1024 * 1024) {
-                            alert('Video must be under 50MB')
-                            return
-                          }
-                          setVideoFile(file)
+                         if (file.size > 200 * 1024 * 1024) {
+  alert('Video must be under 200MB')
+  return
+}
+const videoEl = document.createElement('video')
+videoEl.preload = 'metadata'
+videoEl.onloadedmetadata = () => {
+  window.URL.revokeObjectURL(videoEl.src)
+  const dur = videoEl.duration
+  if (dur < 45) {
+    alert('Video is too short. Minimum is 45 seconds.')
+    return
+  }
+  if (dur > 60) {
+    alert('Video is too long. Maximum is 60 seconds.')
+    return
+  }
+  setVideoFile(file)
+}
+videoEl.src = URL.createObjectURL(file)
                         }}
                       />
                       <span className="faim-video-icon">📹</span>
                       <span>Tap to upload property video</span>
-                      <span className="faim-video-hint">MP4, MOV or WEBM · Max 50MB · 15 seconds</span>
+<span className="faim-video-hint">MP4, MOV or WEBM · 45–60 seconds · Max 200MB</span>
                     </label>
                   )}
                 </div>
