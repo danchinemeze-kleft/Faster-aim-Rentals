@@ -1,9 +1,28 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { createClient } from '@supabase/supabase-js'
 import Breadcrumb from './components/Breadcrumb'
 
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
+
 export default function Home() {
+  const [listingCount, setListingCount] = useState(null)
+
+  useEffect(() => {
+    supabase
+      .from('listings')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'active')
+      .then(({ count }) => { if (count !== null) setListingCount(count) })
+  }, [])
+
+  const displayCount = listingCount === null ? '...' : listingCount > 0 ? `${listingCount}+` : 'New'
+
   return (
     <main style={styles.main}>
       <Breadcrumb theme="dark" items={[{ label: 'Mr. Rent', href: '/' }]} />
@@ -42,7 +61,7 @@ export default function Home() {
                 </div>
                 <div style={styles.heroStats}>
                   <div style={styles.heroStat}>
-                    <span style={styles.statValueCyan}>100+</span>
+                    <span style={styles.statValueCyan}>{displayCount}</span>
                     <span style={styles.statLabel}>Listings</span>
                   </div>
                   <div style={styles.statDivider}></div>

@@ -68,6 +68,14 @@ const nextConfig = {
     ]
   },
 
+  // Redirects for common auth path aliases
+  async redirects() {
+    return [
+      { source: '/login', destination: '/account', permanent: true },
+      { source: '/signup', destination: '/account', permanent: true },
+    ]
+  },
+
   // Image optimization
   images: {
     remotePatterns: [
