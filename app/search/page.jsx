@@ -1,8 +1,14 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from '../components/Breadcrumb'
+
+const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
 
 const SYSTEM_PROMPT = `You are Mr. Rent, a friendly and knowledgeable Nigerian property rental assistant for the FasterAIM Rentals platform. You help people find rental properties across Nigeria.
 
@@ -33,10 +39,12 @@ function Avatar({ size = 40 }) {
       outline: '1.5px solid #0ef6cc',
       outlineOffset: '1px',
     }}>
-      <img
+      <Image
         src="/mr-rent-avatar.png"
         alt="Mr. Rent"
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        width={size}
+        height={size}
+        style={{ objectFit: 'cover', display: 'block' }}
       />
     </div>
   )
@@ -47,7 +55,7 @@ function ListingCard({ listing: l, revealLoading, onReveal }) {
     <div className="faim-listing-card">
       <div className="faim-lcard-img">
         {l.images?.[0]
-          ? <img src={l.images[0]} alt={l.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ? <Image src={l.images[0]} alt={l.title} fill style={{ objectFit: 'cover' }} />
           : <span style={{ fontSize: '1.8rem' }}>🏠</span>
         }
       </div>
@@ -88,11 +96,6 @@ export default function SearchPage() {
   const [revealLoading, setRevealLoading] = useState(null)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
-
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  )
 
   useEffect(() => {
     const getUser = async () => {
@@ -536,6 +539,7 @@ export default function SearchPage() {
         }
 
         .faim-lcard-img {
+          position: relative;
           height: 90px;
           background: #f0f0f0;
           display: flex;
