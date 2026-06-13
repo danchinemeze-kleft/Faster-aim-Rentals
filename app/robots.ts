@@ -1,20 +1,16 @@
-import { MetadataRoute } from 'next'
-
-export default function robots(): MetadataRoute.Robots {
+export default function robots() {
   return {
-    rules: [
-      {
-        userAgent: '*',
-        allow: '/',
-        disallow: [
-          '/account',
-          '/my-account',
-          '/dashboard',
-          '/reveal-success',
-          '/api/',
-        ],
-      },
-    ],
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: [
+        '/account',
+        '/dashboard',
+        '/my-account',
+        '/reveal-success',  // ← add this
+        '/api/',
+      ],
+    },
     sitemap: 'https://rent.fasteraim.com/sitemap.xml',
   }
 }
