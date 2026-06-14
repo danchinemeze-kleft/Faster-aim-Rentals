@@ -6,6 +6,40 @@ import { createClient } from '@supabase/supabase-js'
 import Image from 'next/image'
 import Breadcrumb from '../components/Breadcrumb'
 
+function ListingVideoPlayer({ src }) {
+  const [state, setState] = useState('loading')
+  if (!src) return null
+  return (
+    <div style={{ background: '#000', borderRadius: 10, overflow: 'hidden', marginBottom: '0.75rem', position: 'relative' }}>
+      {state === 'loading' && (
+        <div style={{ height: 140, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, background: '#111' }}>
+          <div style={{ width: 28, height: 28, borderRadius: '50%', border: '3px solid #ddd', borderTopColor: '#e67e22', animation: 'spin 0.8s linear infinite' }} />
+          <span style={{ fontSize: 11, color: '#999' }}>Loading video…</span>
+        </div>
+      )}
+      {state === 'error' && (
+        <div style={{ height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, background: '#111' }}>
+          <span style={{ fontSize: 22 }}>🎬</span>
+          <a href={src} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: '#e67e22', fontWeight: 700, textDecoration: 'none' }}>Open video directly →</a>
+        </div>
+      )}
+      <video
+        controls
+        playsInline
+        preload="metadata"
+        onLoadedMetadata={() => setState('ready')}
+        onCanPlay={() => setState('ready')}
+        onError={() => setState('error')}
+        style={{ width: '100%', maxHeight: 180, display: state === 'error' ? 'none' : 'block', background: '#000' }}
+      >
+        <source src={src} type="video/mp4" />
+        <source src={src} type="video/webm" />
+        <source src={src} type="video/quicktime" />
+      </video>
+    </div>
+  )
+}
+
 const NIGERIAN_STATES = [
   'Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno',
   'Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','Gombe','Imo','Jigawa',
@@ -683,7 +717,7 @@ videoEl.src = URL.createObjectURL(file)
                   {editingListing && existingVideoUrl && !videoFile && (
                     <div style={{marginBottom:'0.75rem'}}>
                       <div style={{fontSize:'0.8rem',color:'#888',marginBottom:'6px'}}>Current video:</div>
-                      <video src={existingVideoUrl} controls style={{width:'100%',borderRadius:'10px',maxHeight:'200px',background:'#000'}} />
+                      <ListingVideoPlayer src={existingVideoUrl} />
                       <button
                         type="button"
                         onClick={() => setExistingVideoUrl(null)}
@@ -849,9 +883,7 @@ videoEl.src = URL.createObjectURL(file)
                     <Image src={listing.images[0]} alt={listing.title} fill unoptimized style={{objectFit:'cover'}} />
                   </div>
                 )}
-                {listing.video_url && (
-                  <video src={listing.video_url} controls className="faim-listing-video" />
-                )}
+                {listing.video_url && <ListingVideoPlayer src={listing.video_url} />}
                 <h3>{listing.title}</h3>
                 <p className="faim-listing-location">📍 {listing.location}, {listing.state}</p>
                 <p className="faim-listing-price">₦{listing.price?.toLocaleString()} / {listing.price_period}</p>
