@@ -57,7 +57,7 @@ Starting with Southeast Nigeria (Anambra, Enugu, Imo, Abia, Delta), expanding na
 | Database | Supabase (Postgres) |
 | Auth | Supabase SSR auth |
 | Payments | Paystack |
-| AI Primary | Gemini 2.5 Flash (Daniel calls it "gemini-3.5-flash" — always use his name in conversation but use correct API string `gemini-2.5-flash-preview-05-20` in code) |
+| AI Primary | Gemini 3.5 Flash — API string `gemini-3.5-flash` |
 | AI Fallback | DeepSeek |
 | Styling | Inline styles (no Tailwind, no CSS modules) |
 | Brand Colors | Cyan #0ef6cc, Pink #ff2d78, Dark #080a0f / #050510 |
