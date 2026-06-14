@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useRef } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import Image from 'next/image'
 import Breadcrumb from '../components/Breadcrumb'
@@ -38,6 +38,8 @@ const emptyForm = {
 
 export default function ListPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const autoOpenRef = useRef(false)
 
   const [user, setUser] = useState(null)
   const [listings, setListings] = useState([])
@@ -121,9 +123,19 @@ export default function ListPage() {
           .gte('created_at', startOfMonth.toISOString()),
       ])
 
-      setIsSubscribed(!!sub)
+      const subscribed = !!sub
+      setIsSubscribed(subscribed)
       setMonthlyCount(monthListings?.length || 0)
       setLoading(false)
+
+      // Auto-open form if ?new=1 and landlord can list
+      if (!autoOpenRef.current && searchParams.get('new') === '1') {
+        autoOpenRef.current = true
+        const count = monthListings?.length || 0
+        if (subscribed || count < FREE_MONTHLY_LIMIT) {
+          setShowForm(true)
+        }
+      }
     }
     checkAuth()
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -402,13 +414,32 @@ videoEl.src = URL.createObjectURL(file)
         </div>
         <button
           className="faim-new-btn"
-          onClick={() => {
+          onClick={async () => {
             if (editingListing) { handleCancelEdit(); return }
-            if (!isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) return
-            setShowForm(!showForm)
-            setPreview(false)
+            if (showForm) { setShowForm(false); setPreview(false); return }
+
+            // If already confirmed subscribed or under limit, open form
+            if (isSubscribed || monthlyCount < FREE_MONTHLY_LIMIT) {
+              setShowForm(true); setPreview(false); return
+            }
+
+            // Live subscription check before blocking
+            const { data: freshSub } = await supabase
+              .from('Subscription')
+              .select('expiry_date')
+              .eq('landlord_id', user.id)
+              .gte('expiry_date', new Date().toISOString())
+              .limit(1)
+              .maybeSingle()
+
+            if (freshSub) {
+              setIsSubscribed(true)
+              setShowForm(true)
+              setPreview(false)
+            } else {
+              router.push('/subscribe')
+            }
           }}
-          style={{ opacity: (!editingListing && !isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) ? 0.45 : 1, cursor: (!editingListing && !isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) ? 'not-allowed' : 'pointer' }}
         >
           {showForm ? (editingListing ? '✕ Cancel Edit' : '✕ Cancel') : '+ New Listing'}
         </button>
