@@ -1,9 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
 export async function POST(request) {
   try {
@@ -32,18 +28,53 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'Missing landlord ID in payment metadata' })
     }
 
+    // Use service role key if available, otherwise use session-authenticated client
+    const cookieStore = await cookies()
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      supabaseKey,
+      {
+        cookies: {
+          getAll() { return cookieStore.getAll() },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          }
+        }
+      }
+    )
+
+    // Prevent duplicate activations for the same Paystack reference
+    const { data: duplicate } = await supabase
+      .from('Subscription')
+      .select('id')
+      .eq('paystack_reference', reference)
+      .maybeSingle()
+
+    if (duplicate) {
+      // Already activated — return success with existing expiry
+      const { data: existing } = await supabase
+        .from('Subscription')
+        .select('expiry_date')
+        .eq('paystack_reference', reference)
+        .maybeSingle()
+      return Response.json({ success: true, expiry_date: existing?.expiry_date, already_activated: true })
+    }
+
     // Check for existing active subscription to extend from
-    const { data: existing } = await supabase
+    const { data: activeSub } = await supabase
       .from('Subscription')
       .select('expiry_date')
       .eq('landlord_id', landlordId)
-      .eq('status', 'active')
+      .gte('expiry_date', new Date().toISOString())
       .order('expiry_date', { ascending: false })
       .limit(1)
       .maybeSingle()
 
-    const baseDate = existing?.expiry_date && new Date(existing.expiry_date) > new Date()
-      ? new Date(existing.expiry_date)
+    const baseDate = activeSub?.expiry_date && new Date(activeSub.expiry_date) > new Date()
+      ? new Date(activeSub.expiry_date)
       : new Date()
 
     const expiryDate = new Date(baseDate)
@@ -51,7 +82,6 @@ export async function POST(request) {
 
     const now = new Date().toISOString()
 
-    // Insert new subscription row with all fields
     const { error: subError } = await supabase.from('Subscription').insert({
       landlord_id: landlordId,
       status: 'active',
@@ -60,7 +90,11 @@ export async function POST(request) {
       paystack_reference: reference,
       amount: 10000,
     })
-    if (subError) throw subError
+
+    if (subError) {
+      console.error('Subscription insert error:', subError)
+      return Response.json({ success: false, error: 'Failed to save subscription: ' + subError.message }, { status: 500 })
+    }
 
     return Response.json({
       success: true,
@@ -68,6 +102,6 @@ export async function POST(request) {
     })
   } catch (error) {
     console.error('Verify subscription error:', error)
-    return Response.json({ success: false, error: 'Server error' }, { status: 500 })
+    return Response.json({ success: false, error: 'Server error: ' + error.message }, { status: 500 })
   }
 }
