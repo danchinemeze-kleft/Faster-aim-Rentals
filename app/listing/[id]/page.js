@@ -99,6 +99,19 @@ export default function ListingPage() {
     if (!user) { router.push(`/account?redirect=/listing/${id}`); return }
     setRevealing(true)
     try {
+      // Guard: never charge twice for the same reveal
+      const { data: existing } = await supabase
+        .from('Contact_reveals')
+        .select('landlord_phone, landlord_email')
+        .eq('tenant_id', user.id)
+        .eq('listing_id', id)
+        .maybeSingle()
+      if (existing) {
+        setRevealedContact(existing)
+        setRevealing(false)
+        return
+      }
+
       const res = await fetch('/api/init-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

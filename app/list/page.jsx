@@ -85,11 +85,12 @@ export default function ListPage() {
         fetchListings(userId),
         supabase
           .from('Subscription')
-          .select('expiry_date')
+          .select('expiry_date, status')
           .eq('landlord_id', userId)
+          .eq('status', 'active')
           .gte('expiry_date', new Date().toISOString())
           .limit(1)
-          .single(),
+          .maybeSingle(),
         supabase
           .from('listings')
           .select('id')
