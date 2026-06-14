@@ -1,5 +1,4 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
 
 export async function POST(request) {
   try {
@@ -8,7 +7,7 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'No reference provided' }, { status: 400 })
     }
 
-    // Verify with Paystack
+    // Verify with Paystack first (always server-side with secret key)
     const paystackRes = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
       headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` },
     })
@@ -28,39 +27,30 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'Missing landlord ID in payment metadata' })
     }
 
-    // Use service role key if available, otherwise use session-authenticated client
-    const cookieStore = await cookies()
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    const supabase = createServerClient(
+    // Authenticate Supabase using the user's access token passed from the client.
+    // This satisfies the RLS policy: auth.uid() = landlord_id
+    const authHeader = request.headers.get('Authorization') || ''
+    const accessToken = authHeader.replace('Bearer ', '').trim()
+
+    const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
-      supabaseKey,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       {
-        cookies: {
-          getAll() { return cookieStore.getAll() },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          }
-        }
+        global: {
+          headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+        },
       }
     )
 
     // Prevent duplicate activations for the same Paystack reference
     const { data: duplicate } = await supabase
       .from('Subscription')
-      .select('id')
+      .select('id, expiry_date')
       .eq('paystack_reference', reference)
       .maybeSingle()
 
     if (duplicate) {
-      // Already activated — return success with existing expiry
-      const { data: existing } = await supabase
-        .from('Subscription')
-        .select('expiry_date')
-        .eq('paystack_reference', reference)
-        .maybeSingle()
-      return Response.json({ success: true, expiry_date: existing?.expiry_date, already_activated: true })
+      return Response.json({ success: true, expiry_date: duplicate.expiry_date, already_activated: true })
     }
 
     // Check for existing active subscription to extend from
@@ -80,12 +70,10 @@ export async function POST(request) {
     const expiryDate = new Date(baseDate)
     expiryDate.setDate(expiryDate.getDate() + 30)
 
-    const now = new Date().toISOString()
-
     const { error: subError } = await supabase.from('Subscription').insert({
       landlord_id: landlordId,
       status: 'active',
-      start_date: now,
+      start_date: new Date().toISOString(),
       expiry_date: expiryDate.toISOString(),
       paystack_reference: reference,
       amount: 10000,
@@ -96,10 +84,8 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'Failed to save subscription: ' + subError.message }, { status: 500 })
     }
 
-    return Response.json({
-      success: true,
-      expiry_date: expiryDate.toISOString(),
-    })
+    return Response.json({ success: true, expiry_date: expiryDate.toISOString() })
+
   } catch (error) {
     console.error('Verify subscription error:', error)
     return Response.json({ success: false, error: 'Server error: ' + error.message }, { status: 500 })

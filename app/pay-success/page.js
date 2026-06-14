@@ -2,6 +2,12 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
 
 function PaySuccessInner() {
   const searchParams = useSearchParams()
@@ -24,9 +30,16 @@ function PaySuccessInner() {
 
     async function verify() {
       try {
+        // Get the user's access token so the server route can authenticate the Supabase INSERT
+        const { data: { session } } = await supabase.auth.getSession()
+        const accessToken = session?.access_token || ''
+
         const res = await fetch('/api/verify-subscription', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
           body: JSON.stringify({ reference }),
         })
         const data = await res.json()
