@@ -54,6 +54,9 @@ export default function ListPage() {
   const [uploadProgress, setUploadProgress] = useState(0)
   const [photoFiles, setPhotoFiles] = useState([]) // array of File objects
   const [photoUploadProgress, setPhotoUploadProgress] = useState(0)
+  const [editingListing, setEditingListing] = useState(null)
+  const [existingPhotos, setExistingPhotos] = useState([])
+  const [existingVideoUrl, setExistingVideoUrl] = useState(null)
 
   const fetchListings = async (userId) => {
     const { data, error } = await supabase
@@ -101,6 +104,43 @@ export default function ListPage() {
     checkAuth()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const handleEdit = (listing) => {
+    setEditingListing(listing)
+    setFormData({
+      title: listing.title || '',
+      description: listing.description || '',
+      location: listing.location || '',
+      state: listing.state || '',
+      price: listing.price || '',
+      price_period: listing.price_period || 'yearly',
+      property_type: listing.property_type || 'apartment',
+      bedrooms: listing.bedrooms || 1,
+      bathrooms: listing.bathrooms || 1,
+      amenities: listing.amenities || [],
+      available: listing.available ?? true,
+    })
+    setExistingPhotos(listing.images || [])
+    setExistingVideoUrl(listing.video_url || null)
+    setPhotoFiles([])
+    setVideoFile(null)
+    setVideoStatus('idle')
+    setShowForm(true)
+    setPreview(false)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleCancelEdit = () => {
+    setEditingListing(null)
+    setExistingPhotos([])
+    setExistingVideoUrl(null)
+    setFormData(emptyForm)
+    setPhotoFiles([])
+    setVideoFile(null)
+    setVideoStatus('idle')
+    setShowForm(false)
+    setPreview(false)
+  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -198,11 +238,11 @@ videoEl.src = URL.createObjectURL(file)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) {
+    if (!editingListing && !isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) {
       alert('You have reached your free listing limit for this month. Subscribe to list more properties.')
       return
     }
-    if (!videoFile) {
+    if (!videoFile && !existingVideoUrl) {
       alert('Please add a video of your property before publishing.')
       return
     }
@@ -211,8 +251,8 @@ videoEl.src = URL.createObjectURL(file)
     setPhotoUploadProgress(0)
 
     try {
-      // Upload photos
-      const photo_urls = []
+      // Upload new photos
+      const new_photo_urls = []
       if (photoFiles.length > 0) {
         for (let i = 0; i < photoFiles.length; i++) {
           const photo = photoFiles[i]
@@ -225,29 +265,30 @@ videoEl.src = URL.createObjectURL(file)
           const { data: urlData } = supabase.storage
             .from('property-images')
             .getPublicUrl(fileName)
-          photo_urls.push(urlData.publicUrl)
+          new_photo_urls.push(urlData.publicUrl)
           setPhotoUploadProgress(Math.round(((i + 1) / photoFiles.length) * 100))
         }
       }
 
-      // Upload video
-      let video_url = null
-      const ext = videoFile.name.split('.').pop()
-      const fileName = `${user.id}/${Date.now()}.${ext}`
-      setUploadProgress(30)
-      const { error: uploadError } = await supabase.storage
-        .from('property-video')
-        .upload(fileName, videoFile, { contentType: videoFile.type })
-      if (uploadError) throw uploadError
-      setUploadProgress(80)
-      const { data: urlData } = supabase.storage
-        .from('property-video')
-        .getPublicUrl(fileName)
-      video_url = urlData.publicUrl
-      setUploadProgress(100)
+      // Upload new video only if a new file was selected
+      let video_url = existingVideoUrl
+      if (videoFile) {
+        const ext = videoFile.name.split('.').pop()
+        const fileName = `${user.id}/${Date.now()}.${ext}`
+        setUploadProgress(30)
+        const { error: uploadError } = await supabase.storage
+          .from('property-video')
+          .upload(fileName, videoFile, { contentType: videoFile.type })
+        if (uploadError) throw uploadError
+        setUploadProgress(80)
+        const { data: urlData } = supabase.storage
+          .from('property-video')
+          .getPublicUrl(fileName)
+        video_url = urlData.publicUrl
+        setUploadProgress(100)
+      }
 
-      const { error } = await supabase.from('listings').insert([{
-        landlord_id: user.id,
+      const payload = {
         title: formData.title,
         description: formData.description,
         location: formData.location,
@@ -258,13 +299,24 @@ videoEl.src = URL.createObjectURL(file)
         bedrooms: parseInt(formData.bedrooms),
         bathrooms: parseInt(formData.bathrooms),
         amenities: formData.amenities,
-        status: 'pending',
         available: formData.available,
         is_available: formData.available,
         video_url,
-        images: photo_urls,
-      }])
-      if (error) throw error
+        images: [...existingPhotos, ...new_photo_urls],
+      }
+
+      const wasEditing = !!editingListing
+      if (editingListing) {
+        const { error } = await supabase.from('listings').update(payload).eq('id', editingListing.id)
+        if (error) throw error
+      } else {
+        const { error } = await supabase.from('listings').insert([{
+          landlord_id: user.id,
+          ...payload,
+          status: 'pending',
+        }])
+        if (error) throw error
+      }
 
       setFormData(emptyForm)
       setVideoFile(null)
@@ -274,7 +326,12 @@ videoEl.src = URL.createObjectURL(file)
       setShowForm(false)
       setUploadProgress(0)
       setPhotoUploadProgress(0)
-     setSuccessMsg('✅ Listing submitted! It will go live after admin review (usually within 24 hours).')
+      setEditingListing(null)
+      setExistingPhotos([])
+      setExistingVideoUrl(null)
+      setSuccessMsg(wasEditing
+        ? '✅ Listing updated successfully!'
+        : '✅ Listing submitted! It will go live after admin review (usually within 24 hours).')
       setTimeout(() => setSuccessMsg(''), 5000)
       fetchListings(user.id)
     } catch (err) {
@@ -311,13 +368,14 @@ videoEl.src = URL.createObjectURL(file)
         <button
           className="faim-new-btn"
           onClick={() => {
+            if (editingListing) { handleCancelEdit(); return }
             if (!isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) return
             setShowForm(!showForm)
             setPreview(false)
           }}
-          style={{ opacity: (!isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) ? 0.45 : 1, cursor: (!isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) ? 'not-allowed' : 'pointer' }}
+          style={{ opacity: (!editingListing && !isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) ? 0.45 : 1, cursor: (!editingListing && !isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) ? 'not-allowed' : 'pointer' }}
         >
-          {showForm ? '✕ Cancel' : '+ New Listing'}
+          {showForm ? (editingListing ? '✕ Cancel Edit' : '✕ Cancel') : '+ New Listing'}
         </button>
       </div>
 
@@ -351,7 +409,7 @@ videoEl.src = URL.createObjectURL(file)
 
       {showForm && (
         <div className="faim-form-card">
-          <h2>Create New Listing</h2>
+          <h2>{editingListing ? 'Edit Listing' : 'Create New Listing'}</h2>
           <div className="faim-form-grid">
             <form onSubmit={handleSubmit} className="faim-form">
 
@@ -437,6 +495,24 @@ videoEl.src = URL.createObjectURL(file)
                   📸 Upload clear photos of the interior and exterior. Max 10MB per photo.
                 </div>
 
+                {editingListing && existingPhotos.length > 0 && (
+                  <div style={{marginBottom:'0.75rem'}}>
+                    <div style={{fontSize:'0.8rem',color:'#888',marginBottom:'6px'}}>Current photos — click ✕ to remove:</div>
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(90px,1fr))',gap:'8px'}}>
+                      {existingPhotos.map((url, i) => (
+                        <div key={i} style={{position:'relative',borderRadius:'8px',overflow:'hidden',height:'80px',background:'#eee'}}>
+                          <Image src={url} alt={`current ${i+1}`} fill unoptimized style={{objectFit:'cover'}} />
+                          <button
+                            type="button"
+                            onClick={() => setExistingPhotos(prev => prev.filter((_, idx) => idx !== i))}
+                            style={{position:'absolute',top:'3px',right:'3px',background:'rgba(0,0,0,0.6)',color:'white',border:'none',borderRadius:'50%',width:'20px',height:'20px',cursor:'pointer',fontSize:'0.7rem',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1}}
+                          >✕</button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {photoFiles.length > 0 && (
                   <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(90px,1fr))',gap:'8px',marginBottom:'0.75rem'}}>
                     {photoFiles.map((photo, i) => (
@@ -496,6 +572,17 @@ videoEl.src = URL.createObjectURL(file)
                 </div>
 
                 <div className="faim-video-upload">
+                  {editingListing && existingVideoUrl && !videoFile && (
+                    <div style={{marginBottom:'0.75rem'}}>
+                      <div style={{fontSize:'0.8rem',color:'#888',marginBottom:'6px'}}>Current video:</div>
+                      <video src={existingVideoUrl} controls style={{width:'100%',borderRadius:'10px',maxHeight:'200px',background:'#000'}} />
+                      <button
+                        type="button"
+                        onClick={() => setExistingVideoUrl(null)}
+                        style={{marginTop:'0.5rem',background:'#fff0f0',color:'#e74c3c',border:'none',padding:'0.4rem 0.8rem',borderRadius:'8px',cursor:'pointer',fontSize:'0.82rem',fontWeight:600}}
+                      >✕ Remove & upload new video</button>
+                    </div>
+                  )}
                   {videoStatus === 'checking' && (
                     <div style={{display:'flex',alignItems:'center',gap:'0.75rem',padding:'1.25rem',background:'#fff8f2',border:'1.5px solid #e67e22',borderRadius:'12px',color:'#e67e22',fontWeight:600,fontSize:'0.9rem',marginBottom:'0.5rem'}}>
                       <div style={{width:'20px',height:'20px',border:'3px solid #f0d0b0',borderTopColor:'#e67e22',borderRadius:'50%',animation:'spin 0.8s linear infinite',flexShrink:0}}></div>
@@ -586,7 +673,9 @@ videoEl.src = URL.createObjectURL(file)
                   {preview ? '🙈 Hide Preview' : '👁️ Preview Listing'}
                 </button>
                 <button type="submit" className="faim-submit-btn" disabled={submitting}>
-                  {submitting ? 'Publishing...' : '✨ Publish Listing'}
+                  {submitting
+                    ? (editingListing ? 'Updating...' : 'Publishing...')
+                    : (editingListing ? '✏️ Update Listing' : '✨ Publish Listing')}
                 </button>
               </div>
             </form>
@@ -667,7 +756,7 @@ videoEl.src = URL.createObjectURL(file)
                   </div>
                 )}
                 <div className="faim-listing-actions">
-                  <button className="faim-edit-btn">✏️ Edit</button>
+                  <button className="faim-edit-btn" onClick={() => handleEdit(listing)}>✏️ Edit</button>
                   <button className="faim-delete-btn" onClick={() => handleDelete(listing.id)}>🗑️ Delete</button>
                 </div>
               </div>
