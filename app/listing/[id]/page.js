@@ -34,6 +34,7 @@ export default function ListingPage() {
   const [likes, setLikes] = useState(0)
   const [revealing, setRevealing] = useState(false)
   const [user, setUser] = useState(null)
+  const [revealedContact, setRevealedContact] = useState(null)
 
   useEffect(() => {
     async function load() {
@@ -46,7 +47,17 @@ export default function ListingPage() {
 
       setListing(listingData)
       setLikes(listingData.likes || 0)
-      if (session) setUser(session.user)
+
+      if (session) {
+        setUser(session.user)
+        const { data: reveal } = await supabase
+          .from('Contact_reveals')
+          .select('landlord_phone, landlord_email')
+          .eq('tenant_id', session.user.id)
+          .eq('listing_id', id)
+          .maybeSingle()
+        if (reveal) setRevealedContact(reveal)
+      }
 
       const saved = JSON.parse(localStorage.getItem('mr_rent_liked') || '[]')
       setLiked(saved.includes(id))
@@ -374,24 +385,42 @@ export default function ListingPage() {
                 </div>
 
                 {/* Reveal CTA */}
-                <button
-                  onClick={handleReveal}
-                  disabled={revealing}
-                  style={{
-                    width: '100%', padding: '14px',
-                    background: revealing ? '#0a5c50' : '#0ef6cc',
-                    color: '#080a0f', border: 'none', borderRadius: 10,
-                    fontWeight: 700, fontSize: 15, cursor: revealing ? 'not-allowed' : 'pointer',
-                    marginBottom: 10, transition: 'background 0.15s',
-                    letterSpacing: '0.2px',
-                  }}
-                >
-                  {revealing ? 'Redirecting…' : '📞 Reveal Contact — ₦5,000'}
-                </button>
-                <p style={{ fontSize: 11, color: '#444', textAlign: 'center', lineHeight: 1.6 }}>
-                  One-time secure payment via Paystack.<br />
-                  Landlord phone number revealed instantly after payment.
-                </p>
+                {revealedContact ? (
+                  <div style={{ background: '#0e1c19', border: '0.5px solid #0ef6cc55', borderRadius: 10, padding: '1.25rem', marginBottom: 10 }}>
+                    <div style={{ fontSize: 11, color: '#0ef6cc', fontWeight: 700, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.5px' }}>✅ Contact Revealed</div>
+                    {revealedContact.landlord_phone && (
+                      <a href={`tel:${revealedContact.landlord_phone}`} style={{ display: 'block', fontSize: 20, fontWeight: 700, color: '#e8e8e8', textDecoration: 'none', marginBottom: 8 }}>
+                        📞 {revealedContact.landlord_phone}
+                      </a>
+                    )}
+                    {revealedContact.landlord_email && (
+                      <a href={`mailto:${revealedContact.landlord_email}`} style={{ display: 'block', fontSize: 13, color: '#666', textDecoration: 'none' }}>
+                        ✉️ {revealedContact.landlord_email}
+                      </a>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleReveal}
+                      disabled={revealing}
+                      style={{
+                        width: '100%', padding: '14px',
+                        background: revealing ? '#0a5c50' : '#0ef6cc',
+                        color: '#080a0f', border: 'none', borderRadius: 10,
+                        fontWeight: 700, fontSize: 15, cursor: revealing ? 'not-allowed' : 'pointer',
+                        marginBottom: 10, transition: 'background 0.15s',
+                        letterSpacing: '0.2px',
+                      }}
+                    >
+                      {revealing ? 'Redirecting…' : '📞 Reveal Contact — ₦5,000'}
+                    </button>
+                    <p style={{ fontSize: 11, color: '#444', textAlign: 'center', lineHeight: 1.6 }}>
+                      One-time secure payment via Paystack.<br />
+                      Landlord phone number revealed instantly after payment.
+                    </p>
+                  </>
+                )}
               </div>
 
               {/* Like / Save button */}

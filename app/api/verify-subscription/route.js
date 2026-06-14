@@ -32,14 +32,15 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'Missing landlord ID in payment metadata' })
     }
 
-    // Check if there's an existing active subscription to extend from
+    // Check for existing active subscription to extend from
     const { data: existing } = await supabase
       .from('Subscription')
       .select('expiry_date')
       .eq('landlord_id', landlordId)
+      .eq('status', 'active')
       .order('expiry_date', { ascending: false })
       .limit(1)
-      .single()
+      .maybeSingle()
 
     const baseDate = existing?.expiry_date && new Date(existing.expiry_date) > new Date()
       ? new Date(existing.expiry_date)
@@ -48,16 +49,18 @@ export async function POST(request) {
     const expiryDate = new Date(baseDate)
     expiryDate.setDate(expiryDate.getDate() + 30)
 
-    // Insert new subscription row
+    const now = new Date().toISOString()
+
+    // Insert new subscription row with all fields
     const { error: subError } = await supabase.from('Subscription').insert({
       landlord_id: landlordId,
+      status: 'active',
+      start_date: now,
       expiry_date: expiryDate.toISOString(),
       paystack_reference: reference,
+      amount: 10000,
     })
     if (subError) throw subError
-
-    // Mark profile as subscribed
-    await supabase.from('Profiles').update({ subscribed: true }).eq('id', landlordId)
 
     return Response.json({
       success: true,

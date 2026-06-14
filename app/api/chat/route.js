@@ -98,7 +98,7 @@ async function fetchListings(supabase, intent, prefs) {
   if (state) query = query.eq('state', state)
   if (propertyType) query = query.eq('property_type', propertyType)
   if (maxPrice) query = query.lte('price', maxPrice)
-  if (bedrooms) query = query.eq('bedrooms', bedrooms)
+  if (bedrooms) query = query.eq('bedrooms', String(bedrooms))
 
   const { data } = await query
   if (!data?.length) return []

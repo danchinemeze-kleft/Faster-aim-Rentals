@@ -71,6 +71,7 @@ export async function POST(request) {
       landlord_id: listing.landlord_id,
       listing_id: listingId,
       paystack_reference: reference,
+      tenant_email: paystackData.data.customer?.email || null,
       landlord_phone: landlord?.phone,
       landlord_email: landlord?.email,
     }, { onConflict: 'tenant_id,listing_id' })

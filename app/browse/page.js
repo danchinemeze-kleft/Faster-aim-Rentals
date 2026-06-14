@@ -88,6 +88,19 @@ export default function BrowsePage() {
       router.push('/account#login');
       return;
     }
+
+    // If already paid, go straight to listing detail which shows the contact
+    const { data: existing } = await supabase
+      .from('Contact_reveals')
+      .select('id')
+      .eq('tenant_id', session.user.id)
+      .eq('listing_id', listing.id)
+      .maybeSingle();
+    if (existing) {
+      router.push(`/listing/${listing.id}`);
+      return;
+    }
+
     await initiatePayment(session.user, listing.id);
   }
 

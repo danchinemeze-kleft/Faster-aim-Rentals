@@ -258,8 +258,9 @@ videoEl.src = URL.createObjectURL(file)
         bedrooms: parseInt(formData.bedrooms),
         bathrooms: parseInt(formData.bathrooms),
         amenities: formData.amenities,
-       status: 'pending',
+        status: 'pending',
         available: formData.available,
+        is_available: formData.available,
         video_url,
         images: photo_urls,
       }])

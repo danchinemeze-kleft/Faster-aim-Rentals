@@ -67,7 +67,7 @@ export default function DashboardPage() {
 
   const toggleAvailability = async (listing) => {
     setTogglingId(listing.id)
-    const { error } = await supabase.from('listings').update({ available: !listing.available }).eq('id', listing.id)
+    const { error } = await supabase.from('listings').update({ available: !listing.available, is_available: !listing.available }).eq('id', listing.id)
     if (!error) {
       setListings(prev => prev.map(l => l.id === listing.id ? { ...l, available: !l.available } : l))
       setStats(prev => ({ ...prev, available: !listing.available ? prev.available + 1 : prev.available - 1 }))
