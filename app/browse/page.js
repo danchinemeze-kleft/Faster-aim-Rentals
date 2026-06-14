@@ -220,6 +220,19 @@ export default function BrowsePage() {
                   <span style={{ position: 'absolute', top: '14px', left: '14px', background: '#0ef6cc', color: '#0a0a0a', padding: '5px 12px', fontSize: '0.68rem', fontWeight: 800, borderRadius: '4px', textTransform: 'uppercase' }}>Verified</span>
                   <span style={{ position: 'absolute', top: '14px', right: '14px', background: 'rgba(10,10,10,0.82)', color: '#fff', padding: '5px 12px', fontSize: '0.68rem', fontWeight: 700, borderRadius: '4px', textTransform: 'uppercase' }}>{l.property_type || 'Property'}</span>
                 </a>
+                {l.video_url && (
+                  <div style={{ background: '#0a0a0a', borderTop: '2px solid #0ef6cc' }}>
+                    <div style={{ padding: '6px 12px 4px', display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#0ef6cc', textTransform: 'uppercase', letterSpacing: '1px' }}>▶ Property Video</span>
+                    </div>
+                    <video
+                      src={l.video_url}
+                      controls
+                      preload="metadata"
+                      style={{ width: '100%', maxHeight: '200px', display: 'block', background: '#000' }}
+                    />
+                  </div>
+                )}
                 <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.35rem', fontWeight: 800, color: '#111', marginBottom: '4px' }}>
                     N{Number(l.price).toLocaleString('en-NG')} <span style={{ fontSize: '0.82rem', fontWeight: 400, color: '#999', fontFamily: 'DM Sans, sans-serif' }}>/ {l.price_period || 'year'}</span>
