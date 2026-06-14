@@ -57,7 +57,7 @@ export default function AdminDashboard() {
         setStats(s => ({
           ...s,
           totalListings: listingData.length,
-          activeListings: listingData.filter(l => l.status === 'active').length,
+          activeListings: listingData.filter(l => l.status === 'approved').length,
           pendingListings: listingData.filter(l => l.status === 'pending' || !l.status).length,
         }));
       }
@@ -81,10 +81,10 @@ export default function AdminDashboard() {
 
     if (!error) {
       setListings(prev => prev.map(l => l.id === id ? { ...l, status } : l));
-      showMsg(`Listing ${status === 'active' ? 'approved' : status === 'rejected' ? 'rejected' : 'updated'}.`);
+      showMsg(`Listing ${status === 'approved' ? 'approved' : status === 'rejected' ? 'rejected' : 'updated'}.`);
       setStats(s => ({
         ...s,
-        activeListings: status === 'active' ? s.activeListings + 1 : s.activeListings,
+        activeListings: status === 'approved' ? s.activeListings + 1 : s.activeListings,
         pendingListings: s.pendingListings > 0 ? s.pendingListings - 1 : 0,
       }));
     }
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
   }
 
   async function toggleAvailability(id, current) {
-    const newStatus = current === 'active' ? 'unavailable' : 'active';
+    const newStatus = current === 'approved' ? 'unavailable' : 'approved';
     await updateListingStatus(id, newStatus);
   }
 
@@ -153,7 +153,8 @@ export default function AdminDashboard() {
 
   function statusBadge(status) {
     const map = {
-      active: { bg: '#E1F5EE', color: '#0F6E56', label: 'Active' },
+      approved: { bg: '#E1F5EE', color: '#0F6E56', label: 'Approved' },
+      active: { bg: '#E1F5EE', color: '#0F6E56', label: 'Approved' },
       pending: { bg: '#FAEEDA', color: '#854F0B', label: 'Pending' },
       rejected: { bg: '#FCEBEB', color: '#A32D2D', label: 'Rejected' },
       unavailable: { bg: '#F1EFE8', color: '#5F5E5A', label: 'Unavailable' },
@@ -221,7 +222,7 @@ export default function AdminDashboard() {
 
   // DASHBOARD
   const pendingListings = listings.filter(l => l.status === 'pending' || !l.status);
-  const activeListings = listings.filter(l => l.status === 'active');
+  const activeListings = listings.filter(l => l.status === 'approved');
   const otherListings = listings.filter(l => l.status === 'rejected' || l.status === 'unavailable');
   const tabListings = [...pendingListings, ...activeListings, ...otherListings];
 
@@ -340,19 +341,24 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <a href={`/listing/${listing.id}`} target="_blank" rel="noreferrer" style={{
+                    background: 'transparent', color: '#888', border: '0.5px solid #333',
+                    borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer',
+                    textDecoration: 'none', display: 'inline-flex', alignItems: 'center'
+                  }}>👁 Preview</a>
                   {(!listing.status || listing.status === 'pending') && (
                     <>
-                      <button onClick={() => updateListingStatus(listing.id, 'active')} style={{
+                      <button onClick={() => updateListingStatus(listing.id, 'approved')} style={{
                         background: '#0ef6cc', color: '#080a0f', border: 'none',
                         borderRadius: 8, padding: '5px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer'
-                      }}>Approve</button>
+                      }}>✓ Approve</button>
                       <button onClick={() => updateListingStatus(listing.id, 'rejected')} style={{
                         background: 'transparent', color: '#E24B4A', border: '0.5px solid #E24B4A',
                         borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer'
-                      }}>Reject</button>
+                      }}>✕ Reject</button>
                     </>
                   )}
-                  {listing.status === 'active' && (
+                  {listing.status === 'approved' && (
                     <button onClick={() => toggleAvailability(listing.id, listing.status)} style={{
                       background: 'transparent', color: '#888', border: '0.5px solid #333',
                       borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer'
@@ -362,7 +368,7 @@ export default function AdminDashboard() {
                     <button onClick={() => toggleAvailability(listing.id, listing.status)} style={{
                       background: 'transparent', color: '#0ef6cc', border: '0.5px solid #0ef6cc',
                       borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer'
-                    }}>Mark active</button>
+                    }}>Mark approved</button>
                   )}
                   <button onClick={() => deleteListing(listing.id)} style={{
                     background: 'transparent', color: '#555', border: '0.5px solid #333',
