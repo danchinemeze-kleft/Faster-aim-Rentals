@@ -39,7 +39,7 @@ const emptyForm = {
 function ListPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const autoOpenRef = useRef(false)
+  const userClosedFormRef = useRef(false)
 
   const [user, setUser] = useState(null)
   const [listings, setListings] = useState([])
@@ -124,22 +124,46 @@ function ListPageInner() {
       ])
 
       const subscribed = !!sub
+      const count = monthListings?.length || 0
       setIsSubscribed(subscribed)
-      setMonthlyCount(monthListings?.length || 0)
+      setMonthlyCount(count)
       setLoading(false)
 
-      // Auto-open form if ?new=1 and landlord can list
-      if (!autoOpenRef.current && searchParams.get('new') === '1') {
-        autoOpenRef.current = true
-        const count = monthListings?.length || 0
+      // If ?new=1: open form immediately if possible, otherwise do a fresh recheck.
+      // The parallel query above can miss the subscription due to auth cookie timing.
+      if (searchParams.get('new') === '1' && !userClosedFormRef.current) {
         if (subscribed || count < FREE_MONTHLY_LIMIT) {
           setShowForm(true)
+        } else {
+          // Subscription not found in initial parallel query — retry once after auth settles
+          const { data: freshSub } = await supabase
+            .from('Subscription')
+            .select('expiry_date')
+            .eq('landlord_id', userId)
+            .gte('expiry_date', new Date().toISOString())
+            .maybeSingle()
+          if (freshSub) {
+            setIsSubscribed(true)
+            setShowForm(true)
+          }
         }
       }
     }
     checkAuth()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Reactive auto-open: if subscription state updates (e.g. after recheck) and ?new=1, open form
+  useEffect(() => {
+    if (loading) return
+    if (searchParams.get('new') !== '1') return
+    if (showForm) return
+    if (userClosedFormRef.current) return
+    if (isSubscribed || monthlyCount < FREE_MONTHLY_LIMIT) {
+      setShowForm(true)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSubscribed, loading, monthlyCount])
 
   // Re-check subscription when user returns to this tab (e.g. after subscribing)
   useEffect(() => {
@@ -178,6 +202,7 @@ function ListPageInner() {
   }
 
   const handleCancelEdit = () => {
+    userClosedFormRef.current = true
     setEditingListing(null)
     setExistingPhotos([])
     setExistingVideoUrl(null)
@@ -416,7 +441,7 @@ videoEl.src = URL.createObjectURL(file)
           className="faim-new-btn"
           onClick={async () => {
             if (editingListing) { handleCancelEdit(); return }
-            if (showForm) { setShowForm(false); setPreview(false); return }
+            if (showForm) { userClosedFormRef.current = true; setShowForm(false); setPreview(false); return }
 
             // If already confirmed subscribed or under limit, open form
             if (isSubscribed || monthlyCount < FREE_MONTHLY_LIMIT) {
