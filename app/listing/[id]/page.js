@@ -336,19 +336,21 @@ export default function ListingPage() {
                 <h2 style={{ fontSize: 14, fontWeight: 600, color: '#e8e8e8', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Property Video
                 </h2>
-                <div style={{ borderRadius: 12, overflow: 'hidden', background: '#000', lineHeight: 0 }}>
+                <div style={{ borderRadius: 12, overflow: 'hidden', background: '#000' }}>
                   {isYouTube(listing.video_url) ? (
                     <iframe
                       src={youtubeEmbedUrl(listing.video_url)}
-                      style={{ width: '100%', height: 340, border: 'none' }}
+                      style={{ width: '100%', height: 340, border: 'none', display: 'block' }}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     />
                   ) : (
                     <video
                       controls
+                      preload="metadata"
+                      playsInline
                       src={listing.video_url}
-                      style={{ width: '100%', maxHeight: 340 }}
+                      style={{ width: '100%', maxHeight: 400, display: 'block', background: '#000' }}
                     />
                   )}
                 </div>
