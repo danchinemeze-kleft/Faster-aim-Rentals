@@ -198,7 +198,7 @@ export default function BrowsePage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
             {filtered.map(l => (
               <div key={l.id} style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e8e8e8', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ position: 'relative', height: '220px', background: '#f0f0f0' }}>
+                <a href={`/listing/${l.id}`} style={{ display: 'block', position: 'relative', height: '220px', background: '#f0f0f0', textDecoration: 'none' }}>
                   {l.images && l.images.length > 0 ? (
                     <img src={l.images[0]} alt={l.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
@@ -206,15 +206,15 @@ export default function BrowsePage() {
                   )}
                   <span style={{ position: 'absolute', top: '14px', left: '14px', background: '#0ef6cc', color: '#0a0a0a', padding: '5px 12px', fontSize: '0.68rem', fontWeight: 800, borderRadius: '4px', textTransform: 'uppercase' }}>Verified</span>
                   <span style={{ position: 'absolute', top: '14px', right: '14px', background: 'rgba(10,10,10,0.82)', color: '#fff', padding: '5px 12px', fontSize: '0.68rem', fontWeight: 700, borderRadius: '4px', textTransform: 'uppercase' }}>{l.property_type || 'Property'}</span>
-                </div>
+                </a>
                 <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.35rem', fontWeight: 800, color: '#111', marginBottom: '4px' }}>
                     N{Number(l.price).toLocaleString('en-NG')} <span style={{ fontSize: '0.82rem', fontWeight: 400, color: '#999', fontFamily: 'DM Sans, sans-serif' }}>/ {l.price_period || 'year'}</span>
                   </div>
-                  <div style={{ fontSize: '1rem', fontWeight: 700, color: '#111', marginBottom: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.title}</div>
+                  <a href={`/listing/${l.id}`} style={{ fontSize: '1rem', fontWeight: 700, color: '#111', marginBottom: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textDecoration: 'none', display: 'block' }}>{l.title}</a>
                   <div style={{ fontSize: '0.82rem', color: '#666', fontWeight: 600, marginBottom: '16px' }}>📍 {l.location}, {l.state}</div>
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
-                    <a href="/search" style={{ flex: 1, padding: '11px 8px', borderRadius: '8px', border: '2px solid #e8e8e8', background: '#f8f8f8', color: '#444', fontSize: '0.78rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Ask Mr. Rent</a>
+                    <a href={`/listing/${l.id}`} style={{ flex: 1, padding: '11px 8px', borderRadius: '8px', border: '2px solid #e8e8e8', background: '#f8f8f8', color: '#444', fontSize: '0.78rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>View Details</a>
                     <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '11px 8px', borderRadius: '8px', border: 'none', background: '#ff2d78', color: '#fff', fontSize: '0.82rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif' }}>{paying === l.id ? 'Please wait...' : 'Meet Landlord • ₦5k'}</button>
                   </div>
                 </div>

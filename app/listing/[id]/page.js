@@ -260,7 +260,7 @@ export default function ListingPage() {
                     {listing.property_type}
                   </span>
                 )}
-                {listing.status === 'active' && (
+                {listing.available && (
                   <span style={{ background: '#0e1c19', color: '#0ef6cc', fontSize: 11, fontWeight: 600, padding: '3px 12px', borderRadius: 20 }}>
                     ● Available
                   </span>

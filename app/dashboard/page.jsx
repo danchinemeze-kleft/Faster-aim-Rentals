@@ -91,13 +91,13 @@ export default function DashboardPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: user.email,
-          amount: 1000000,
-          metadata: { type: 'subscription', landlord_id: user.id },
-          callback_url: `${window.location.origin}/dashboard?subscribed=true`,
+          type: 'landlord',
+          user_id: user.id,
         })
       })
       const data = await res.json()
       if (data.authorization_url) window.location.href = data.authorization_url
+      else alert(data.error || 'Could not start payment. Please try again.')
     } catch (err) {
       alert('Payment error: ' + err.message)
     }
