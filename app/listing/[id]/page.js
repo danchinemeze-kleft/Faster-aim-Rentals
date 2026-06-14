@@ -21,6 +21,84 @@ function youtubeEmbedUrl(url) {
   return m ? `https://www.youtube.com/embed/${m[1]}` : null
 }
 
+function VideoPlayer({ src }) {
+  const [state, setState] = useState('loading') // 'loading' | 'ready' | 'error'
+
+  if (!src) return null
+
+  return (
+    <div style={{ borderRadius: 12, overflow: 'hidden', background: '#0a0a0a', position: 'relative' }}>
+
+      {/* Loading overlay */}
+      {state === 'loading' && (
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 2,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          background: '#0a0a0a', gap: 12,
+        }}>
+          <div style={{
+            width: 36, height: 36, borderRadius: '50%',
+            border: '3px solid #1a1d24', borderTopColor: '#0ef6cc',
+            animation: 'spin 0.8s linear infinite',
+          }} />
+          <span style={{ color: '#555', fontSize: 13 }}>Loading video…</span>
+        </div>
+      )}
+
+      {/* Error state */}
+      {state === 'error' && (
+        <div style={{
+          padding: '2.5rem 1.5rem', textAlign: 'center', background: '#0a0a0a',
+        }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>🎬</div>
+          <div style={{ color: '#666', fontSize: 14, marginBottom: 16, lineHeight: 1.6 }}>
+            Video could not be played in the browser.<br />
+            You can still open it directly.
+          </div>
+          <a
+            href={src}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-block', padding: '10px 24px',
+              background: '#0ef6cc', color: '#080a0f',
+              borderRadius: 8, fontWeight: 700, fontSize: 13,
+              textDecoration: 'none',
+            }}
+          >
+            Open Video →
+          </a>
+        </div>
+      )}
+
+      {/* Actual video — always rendered so browser can attempt load */}
+      <video
+        controls
+        playsInline
+        preload="metadata"
+        onLoadStart={() => setState('loading')}
+        onLoadedMetadata={() => setState('ready')}
+        onCanPlay={() => setState('ready')}
+        onError={() => setState('error')}
+        style={{
+          width: '100%',
+          maxHeight: 420,
+          display: state === 'error' ? 'none' : 'block',
+          background: '#000',
+        }}
+      >
+        <source src={src} type="video/mp4" />
+        <source src={src} type="video/webm" />
+        <source src={src} type="video/quicktime" />
+        Your browser does not support video playback.{' '}
+        <a href={src} target="_blank" rel="noopener noreferrer">Open video</a>
+      </video>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  )
+}
+
 export default function ListingPage() {
   const { id } = useParams()
   const router = useRouter()
@@ -336,24 +414,18 @@ export default function ListingPage() {
                 <h2 style={{ fontSize: 14, fontWeight: 600, color: '#e8e8e8', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Property Video
                 </h2>
-                <div style={{ borderRadius: 12, overflow: 'hidden', background: '#000' }}>
-                  {isYouTube(listing.video_url) ? (
+                {isYouTube(listing.video_url) ? (
+                  <div style={{ borderRadius: 12, overflow: 'hidden', background: '#000' }}>
                     <iframe
                       src={youtubeEmbedUrl(listing.video_url)}
-                      style={{ width: '100%', height: 340, border: 'none', display: 'block' }}
+                      style={{ width: '100%', height: 380, border: 'none', display: 'block' }}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     />
-                  ) : (
-                    <video
-                      controls
-                      preload="metadata"
-                      playsInline
-                      src={listing.video_url}
-                      style={{ width: '100%', maxHeight: 400, display: 'block', background: '#000' }}
-                    />
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <VideoPlayer src={listing.video_url} />
+                )}
               </div>
             )}
           </div>

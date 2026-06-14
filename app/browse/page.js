@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import Breadcrumb from '../components/Breadcrumb';
@@ -9,6 +9,50 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
+
+function BrowseVideoPlayer({ src }) {
+  const [state, setState] = useState('loading')
+  if (!src) return null
+  return (
+    <div style={{ background: '#0a0a0a', borderTop: '2px solid #0ef6cc', position: 'relative' }}>
+      <div style={{ padding: '5px 12px 3px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#0ef6cc', textTransform: 'uppercase', letterSpacing: '1px' }}>▶ Property Video</span>
+        {state === 'error' && (
+          <a href={src} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.65rem', color: '#0ef6cc', fontWeight: 700 }}>Open →</a>
+        )}
+      </div>
+
+      {state === 'loading' && (
+        <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 8 }}>
+          <div style={{ width: 28, height: 28, borderRadius: '50%', border: '3px solid #1a1d24', borderTopColor: '#0ef6cc', animation: 'spin 0.8s linear infinite' }} />
+          <span style={{ color: '#444', fontSize: 11 }}>Loading…</span>
+        </div>
+      )}
+
+      {state === 'error' && (
+        <div style={{ height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <span style={{ fontSize: 24 }}>🎬</span>
+          <a href={src} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: '#0ef6cc', fontWeight: 700, textDecoration: 'none' }}>Tap to watch video →</a>
+        </div>
+      )}
+
+      <video
+        controls
+        playsInline
+        preload="metadata"
+        onLoadedMetadata={() => setState('ready')}
+        onCanPlay={() => setState('ready')}
+        onError={() => setState('error')}
+        style={{ width: '100%', maxHeight: 200, display: state === 'error' ? 'none' : 'block', background: '#000' }}
+      >
+        <source src={src} type="video/mp4" />
+        <source src={src} type="video/webm" />
+        <source src={src} type="video/quicktime" />
+      </video>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  )
+}
 
 export default function BrowsePage() {
   const router = useRouter();
@@ -220,19 +264,7 @@ export default function BrowsePage() {
                   <span style={{ position: 'absolute', top: '14px', left: '14px', background: '#0ef6cc', color: '#0a0a0a', padding: '5px 12px', fontSize: '0.68rem', fontWeight: 800, borderRadius: '4px', textTransform: 'uppercase' }}>Verified</span>
                   <span style={{ position: 'absolute', top: '14px', right: '14px', background: 'rgba(10,10,10,0.82)', color: '#fff', padding: '5px 12px', fontSize: '0.68rem', fontWeight: 700, borderRadius: '4px', textTransform: 'uppercase' }}>{l.property_type || 'Property'}</span>
                 </a>
-                {l.video_url && (
-                  <div style={{ background: '#0a0a0a', borderTop: '2px solid #0ef6cc' }}>
-                    <div style={{ padding: '6px 12px 4px', display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#0ef6cc', textTransform: 'uppercase', letterSpacing: '1px' }}>▶ Property Video</span>
-                    </div>
-                    <video
-                      src={l.video_url}
-                      controls
-                      preload="metadata"
-                      style={{ width: '100%', maxHeight: '200px', display: 'block', background: '#000' }}
-                    />
-                  </div>
-                )}
+                {l.video_url && <BrowseVideoPlayer src={l.video_url} />}
                 <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.35rem', fontWeight: 800, color: '#111', marginBottom: '4px' }}>
                     N{Number(l.price).toLocaleString('en-NG')} <span style={{ fontSize: '0.82rem', fontWeight: 400, color: '#999', fontFamily: 'DM Sans, sans-serif' }}>/ {l.price_period || 'year'}</span>
