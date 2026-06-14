@@ -172,7 +172,7 @@ export default function DashboardPage() {
           ))}
         </nav>
         <div className="faim-sidebar-actions">
-          <a href="/list?new=1" className="faim-add-listing-btn">+ Add Listing</a>
+          <a href={isSubscriptionActive() ? '/list?subscribed=1' : '/list?free=1'} className="faim-add-listing-btn">+ Add Listing</a>
           <button onClick={handleLogout} className="faim-logout-btn">Sign Out</button>
         </div>
       </aside>
@@ -258,7 +258,7 @@ export default function DashboardPage() {
                 </div>
               ))}
               {listings.length === 0 && (
-                <p className="faim-empty-text">No listings yet. <a href="/list?new=1">Create your first listing →</a></p>
+                <p className="faim-empty-text">No listings yet. <a href={isSubscriptionActive() ? '/list?subscribed=1' : '/list?free=1'}>Create your first listing →</a></p>
               )}
             </div>
           </div>
@@ -268,12 +268,12 @@ export default function DashboardPage() {
           <div className="faim-listings-tab">
             <div className="faim-section-header">
               <h2>All Listings ({listings.length})</h2>
-              <a href="/list?new=1" className="faim-subscribe-btn" style={{textDecoration:'none'}}>+ New Listing</a>
+              <a href={isSubscriptionActive() ? '/list?subscribed=1' : '/list?free=1'} className="faim-subscribe-btn" style={{textDecoration:'none'}}>+ New Listing</a>
             </div>
             {listings.length === 0 ? (
               <div className="faim-empty-state">
                 <p>🏠 No listings yet.</p>
-                <a href="/list?new=1">Create your first listing</a>
+                <a href={isSubscriptionActive() ? '/list?subscribed=1' : '/list?free=1'}>Create your first listing</a>
               </div>
             ) : (
               <div className="faim-listings-full">

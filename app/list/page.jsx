@@ -129,13 +129,27 @@ function ListPageInner() {
       setMonthlyCount(count)
       setLoading(false)
 
-      // If ?new=1: open form immediately if possible, otherwise do a fresh recheck.
-      // The parallel query above can miss the subscription due to auth cookie timing.
-      if (searchParams.get('new') === '1' && !userClosedFormRef.current) {
-        if (subscribed || count < FREE_MONTHLY_LIMIT) {
+      // URL signals from pages that already verified subscription status:
+      // ?subscribed=1 → trusted subscribed landlord (from subscribe/dashboard pages)
+      // ?free=1       → free-tier landlord with slots remaining
+      // ?new=1        → generic, still check Supabase
+      const urlSignal = searchParams.get('subscribed') === '1'
+        ? 'subscribed'
+        : searchParams.get('free') === '1'
+          ? 'free'
+          : searchParams.get('new') === '1'
+            ? 'new'
+            : null
+
+      if (urlSignal && !userClosedFormRef.current) {
+        if (urlSignal === 'subscribed') {
+          // Trust the signal — open form immediately, mark subscribed
+          setIsSubscribed(true)
           setShowForm(true)
-        } else {
-          // Subscription not found in initial parallel query — retry once after auth settles
+        } else if (urlSignal === 'free' || (urlSignal === 'new' && (subscribed || count < FREE_MONTHLY_LIMIT))) {
+          setShowForm(true)
+        } else if (urlSignal === 'new' && !subscribed && count >= FREE_MONTHLY_LIMIT) {
+          // Generic ?new=1 and initial check missed subscription — retry once
           const { data: freshSub } = await supabase
             .from('Subscription')
             .select('expiry_date')
@@ -153,12 +167,15 @@ function ListPageInner() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Reactive auto-open: if subscription state updates (e.g. after recheck) and ?new=1, open form
+  // Reactive auto-open: fires if subscription state updates after initial load
   useEffect(() => {
     if (loading) return
-    if (searchParams.get('new') !== '1') return
     if (showForm) return
     if (userClosedFormRef.current) return
+    const hasSignal = searchParams.get('subscribed') === '1'
+      || searchParams.get('free') === '1'
+      || searchParams.get('new') === '1'
+    if (!hasSignal) return
     if (isSubscribed || monthlyCount < FREE_MONTHLY_LIMIT) {
       setShowForm(true)
     }

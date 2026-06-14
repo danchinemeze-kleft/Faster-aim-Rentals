@@ -123,7 +123,7 @@ export default function SubscribePage() {
               </div>
             </div>
             <a
-              href="/list?new=1"
+              href="/list?subscribed=1"
               style={{
                 display: 'block', width: '100%', padding: '15px',
                 background: '#0ef6cc', color: '#080a0f',
