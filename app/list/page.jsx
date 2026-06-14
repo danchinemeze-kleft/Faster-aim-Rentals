@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
 import Image from 'next/image'
 import Breadcrumb from '../components/Breadcrumb'
 
@@ -17,7 +17,7 @@ const AMENITIES = ['WiFi', 'Parking', 'Security', 'Generator', 'Water Supply', '
 
 const FREE_MONTHLY_LIMIT = 2
 
-const supabase = createBrowserClient(
+const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
