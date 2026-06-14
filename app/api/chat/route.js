@@ -175,7 +175,7 @@ export async function POST(request) {
         }))
 
       const result = await genAI.models.generateContent({
-        model: 'gemini-2.5-flash-preview-05-20',
+        model: 'gemini-2.5-flash',
         contents: [
           ...history,
           { role: 'user', parts: [{ text: messages[messages.length - 1].content }] },
