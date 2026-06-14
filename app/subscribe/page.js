@@ -110,17 +110,32 @@ export default function SubscribePage() {
           </p>
         </div>
 
-        {/* Active subscription banner */}
+        {/* Active subscription banner + List Property CTA */}
         {subscription && (
-          <div style={{ background: '#0e1c19', border: '0.5px solid #0ef6cc33', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ fontSize: 22 }}>✅</span>
-            <div>
-              <div style={{ fontWeight: 600, fontSize: 14, color: '#0ef6cc', marginBottom: 2 }}>Subscription Active</div>
-              <div style={{ fontSize: 13, color: '#666' }}>
-                Expires {new Date(subscription.expiry_date).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })} · {daysLeft} day{daysLeft !== 1 ? 's' : ''} remaining
+          <>
+            <div style={{ background: '#0e1c19', border: '0.5px solid #0ef6cc33', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span style={{ fontSize: 22 }}>✅</span>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 14, color: '#0ef6cc', marginBottom: 2 }}>Subscription Active</div>
+                <div style={{ fontSize: 13, color: '#666' }}>
+                  Expires {new Date(subscription.expiry_date).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })} · {daysLeft} day{daysLeft !== 1 ? 's' : ''} remaining
+                </div>
               </div>
             </div>
-          </div>
+            <a
+              href="/list"
+              style={{
+                display: 'block', width: '100%', padding: '15px',
+                background: '#0ef6cc', color: '#080a0f',
+                borderRadius: 12, fontWeight: 700, fontSize: 15,
+                textAlign: 'center', textDecoration: 'none',
+                marginBottom: '1.5rem', letterSpacing: '0.2px',
+                boxSizing: 'border-box',
+              }}
+            >
+              + List a Property Now →
+            </a>
+          </>
         )}
 
         {/* Plan card */}

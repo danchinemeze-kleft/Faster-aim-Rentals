@@ -36,7 +36,7 @@ export default function DashboardPage() {
     }
 
     async function fetchSubscription(userId) {
-      const { data } = await supabase.from('Subscription').select('*').eq('landlord_id', userId).eq('status', 'active').order('expiry_date', { ascending: false }).limit(1).maybeSingle()
+      const { data } = await supabase.from('Subscription').select('*').eq('landlord_id', userId).gte('expiry_date', new Date().toISOString()).order('expiry_date', { ascending: false }).limit(1).maybeSingle()
       setSubscription(data)
     }
 
@@ -133,7 +133,6 @@ export default function DashboardPage() {
 
   const isSubscriptionActive = () => {
     if (!subscription) return false
-    if (subscription.status !== 'active') return false
     return new Date(subscription.expiry_date) > new Date()
   }
 

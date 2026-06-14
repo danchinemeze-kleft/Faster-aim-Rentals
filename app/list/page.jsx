@@ -58,6 +58,29 @@ export default function ListPage() {
   const [existingPhotos, setExistingPhotos] = useState([])
   const [existingVideoUrl, setExistingVideoUrl] = useState(null)
 
+  const recheckSubscription = async (userId) => {
+    if (!userId) return
+    const now = new Date()
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    const [{ data: sub }, { data: monthListings }] = await Promise.all([
+      supabase
+        .from('Subscription')
+        .select('expiry_date')
+        .eq('landlord_id', userId)
+        .gte('expiry_date', now.toISOString())
+        .order('expiry_date', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from('listings')
+        .select('id')
+        .eq('landlord_id', userId)
+        .gte('created_at', startOfMonth.toISOString()),
+    ])
+    setIsSubscribed(!!sub)
+    setMonthlyCount(monthListings?.length || 0)
+  }
+
   const fetchListings = async (userId) => {
     const { data, error } = await supabase
       .from('listings')
@@ -85,10 +108,10 @@ export default function ListPage() {
         fetchListings(userId),
         supabase
           .from('Subscription')
-          .select('expiry_date, status')
+          .select('expiry_date')
           .eq('landlord_id', userId)
-          .eq('status', 'active')
           .gte('expiry_date', new Date().toISOString())
+          .order('expiry_date', { ascending: false })
           .limit(1)
           .maybeSingle(),
         supabase
@@ -105,6 +128,17 @@ export default function ListPage() {
     checkAuth()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Re-check subscription when user returns to this tab (e.g. after subscribing)
+  useEffect(() => {
+    if (!user) return
+    const handleVisibility = () => {
+      if (!document.hidden) recheckSubscription(user.id)
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => document.removeEventListener('visibilitychange', handleVisibility)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
 
   const handleEdit = (listing) => {
     setEditingListing(listing)
