@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import Image from 'next/image'
@@ -36,7 +36,7 @@ const emptyForm = {
   available: true,
 }
 
-export default function ListPage() {
+function ListPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const autoOpenRef = useRef(false)
@@ -909,5 +909,13 @@ videoEl.src = URL.createObjectURL(file)
         @media (max-width:768px) { .faim-form-grid { grid-template-columns:1fr; } .faim-list-page { padding:1rem; } }
       `}</style>
     </div>
+  )
+}
+
+export default function ListPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#f5f4f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>Loading…</div>}>
+      <ListPageInner />
+    </Suspense>
   )
 }
