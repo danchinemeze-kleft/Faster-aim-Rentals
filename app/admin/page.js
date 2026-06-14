@@ -12,6 +12,7 @@ export default function AdminDashboard() {
   const [authed, setAuthed] = useState(false);
   const [pwInput, setPwInput] = useState('');
   const [pwError, setPwError] = useState('');
+  const [showPw, setShowPw] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
 
   const [listings, setListings] = useState([]);
@@ -193,18 +194,32 @@ export default function AdminDashboard() {
               <label style={{ fontSize: 12, color: '#888', display: 'block', marginBottom: 6 }}>
                 Admin password
               </label>
-              <input
-                type="password"
-                value={pwInput}
-                onChange={e => setPwInput(e.target.value)}
-                placeholder="Enter password"
-                autoFocus
-                style={{
-                  width: '100%', padding: '10px 14px', background: '#1a1d24',
-                  border: pwError ? '1px solid #E24B4A' : '0.5px solid #333',
-                  borderRadius: 8, color: '#fff', fontSize: 14, boxSizing: 'border-box', outline: 'none'
-                }}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  value={pwInput}
+                  onChange={e => setPwInput(e.target.value)}
+                  placeholder="Enter password"
+                  autoFocus
+                  style={{
+                    width: '100%', padding: '10px 44px 10px 14px', background: '#1a1d24',
+                    border: pwError ? '1px solid #E24B4A' : '0.5px solid #333',
+                    borderRadius: 8, color: '#fff', fontSize: 14, boxSizing: 'border-box', outline: 'none'
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(v => !v)}
+                  style={{
+                    position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: '#555', fontSize: 16, padding: '2px 4px', lineHeight: 1,
+                  }}
+                  title={showPw ? 'Hide password' : 'Show password'}
+                >
+                  {showPw ? '🙈' : '👁️'}
+                </button>
+              </div>
               {pwError && <p style={{ color: '#E24B4A', fontSize: 12, marginTop: 4 }}>{pwError}</p>}
             </div>
             <button type="submit" style={{
