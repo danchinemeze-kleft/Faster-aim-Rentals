@@ -116,6 +116,7 @@ export default function ListingLightPage() {
       <div style={{ background: '#ffffff', borderBottom: '1px solid #e2e8f0', padding: '0 1.5rem', height: 54, display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
         <button onClick={() => router.back()} style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 20, padding: '0 4px' }}>←</button>
         <a href="/light" style={{ color: '#0ea5e9', fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>Mr. Rent</a>
+        <a href={`/listing/${id}`} title="Switch to dark mode" style={{ marginLeft: 'auto', fontSize: '1.1rem', background: 'rgba(0,0,0,0.06)', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '5px 9px', textDecoration: 'none' }}>🌙</a>
         <span style={{ color: '#cbd5e1' }}>/</span>
         <a href="/light/browse" style={{ color: '#64748b', fontSize: 13, textDecoration: 'none' }}>Browse</a>
         <span style={{ color: '#cbd5e1' }}>/</span>

@@ -70,6 +70,7 @@ export default function BrowseLightPage() {
           <a href="/account" style={{ background: 'linear-gradient(135deg,#ff2d78,#c0135a)', color: '#fff', padding: '0.5rem 1.25rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>
             {user ? (user.user_metadata?.full_name?.split(' ')[0] || 'Account') : 'Login / Sign up'}
           </a>
+          <a href="/browse" title="Switch to dark mode" style={{ fontSize: '1.1rem', background: 'rgba(0,0,0,0.06)', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '6px 10px', textDecoration: 'none' }}>🌙</a>
         </div>
       </nav>
 

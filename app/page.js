@@ -34,6 +34,7 @@ export default function Home() {
           <a href="/search" style={styles.navLink}>AI Chat</a>
           <a href="/list" style={styles.navLink}>List Property</a>
           <a href="/account" style={styles.navBtn}>Login / Sign up</a>
+          <a href="/light" title="Switch to light mode" style={{ fontSize: '1.1rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', padding: '6px 10px', cursor: 'pointer', textDecoration: 'none' }}>☀️</a>
         </div>
       </nav>
 
