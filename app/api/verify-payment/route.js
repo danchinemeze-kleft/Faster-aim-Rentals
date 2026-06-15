@@ -92,6 +92,7 @@ export async function POST(request) {
         full_name: contactName,
         phone: contactPhone,
         email: contactEmail,
+        whatsapp: contactPhone,
       }
     })
 

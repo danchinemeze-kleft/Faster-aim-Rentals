@@ -114,17 +114,15 @@ function RevealSuccessInner() {
             </div>
           )}
           {landlordContact?.whatsapp && (
-            <div className="faim-contact-item">
-              <span className="faim-contact-label">💬 WhatsApp</span>
-              <a
-                href={`https://wa.me/${landlordContact.whatsapp.replace(/\D/g, '')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="faim-contact-value faim-whatsapp"
-              >
-                {landlordContact.whatsapp}
-              </a>
-            </div>
+            <a
+              href={`https://wa.me/${landlordContact.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi, I'm interested in your property "${listing?.title}" listed on Mr. Rent (rent.fasteraim.com). Is it still available?`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="faim-whatsapp-btn"
+            >
+              <span>💬</span>
+              <span>WhatsApp Landlord</span>
+            </a>
           )}
           {landlordContact?.full_name && (
             <div className="faim-contact-item">
@@ -243,6 +241,23 @@ function Styles() {
       }
       .faim-contact-value:hover { color: #e67e22; }
       .faim-whatsapp:hover { color: #25d366 !important; }
+      .faim-whatsapp-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 0.85rem;
+        background: #25d366;
+        color: white;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-decoration: none;
+        margin-top: 1rem;
+        transition: background 0.15s;
+      }
+      .faim-whatsapp-btn:hover { background: #1ebe5b; }
       .faim-tips {
         background: #fff8f2;
         border: 1.5px solid #e67e22;
