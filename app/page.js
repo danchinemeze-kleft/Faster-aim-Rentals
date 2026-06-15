@@ -428,28 +428,29 @@ const styles = {
     gap: '4px',
   },
   statValueCyan: {
-    fontSize: '1.5rem',
-    fontWeight: '800',
-    color: '#00d9d9',
-    textShadow: '0 0 20px rgba(0,217,217,0.5)',
+    fontSize: '2rem',
+    fontWeight: '900',
+    color: '#00ffff',
+    textShadow: '0 0 24px rgba(0,255,255,0.9), 0 0 8px rgba(0,255,255,0.6)',
   },
   statValuePink: {
-    fontSize: '1.5rem',
-    fontWeight: '800',
+    fontSize: '2rem',
+    fontWeight: '900',
     color: '#ff2d78',
-    textShadow: '0 0 20px rgba(255,45,120,0.5)',
+    textShadow: '0 0 24px rgba(255,45,120,0.9), 0 0 8px rgba(255,45,120,0.6)',
   },
   statLabel: {
-    fontSize: '0.7rem',
+    fontSize: '0.72rem',
     color: '#ffffff',
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
+    opacity: 1,
   },
   statDivider: {
     width: '1px',
     height: '36px',
-    background: 'linear-gradient(to bottom, transparent, #333, transparent)',
+    background: 'linear-gradient(to bottom, transparent, #555, transparent)',
   },
 
   // AVATAR
