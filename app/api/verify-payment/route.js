@@ -1,5 +1,4 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
 
 export async function POST(request) {
   try {
@@ -30,51 +29,68 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'Missing metadata' })
     }
 
-    // Create Supabase client
-    const cookieStore = await cookies()
-    const supabase = createServerClient(
+    // Service role client bypasses RLS — required for reading another user's profile
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      serviceKey
+    )
+
+    // User JWT client — used only for the authenticated INSERT into Contact_reveals
+    const authHeader = request.headers.get('Authorization') || ''
+    const accessToken = authHeader.replace('Bearer ', '').trim()
+    const supabaseUser = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       {
-        cookies: {
-          getAll() { return cookieStore.getAll() },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          }
+        global: {
+          headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {}
         }
       }
     )
 
+    // Check for duplicate reveal (use admin to avoid RLS blocking the check)
+    const { data: existing } = await supabaseAdmin
+      .from('Contact_reveals')
+      .select('id, landlord_phone, landlord_email')
+      .eq('tenant_id', tenantId)
+      .eq('listing_id', listingId)
+      .maybeSingle()
+
     // Get listing details
-    const { data: listing } = await supabase
+    const { data: listing, error: listingError } = await supabaseAdmin
       .from('listings')
       .select('*')
       .eq('id', listingId)
       .single()
 
-    if (!listing) {
+    if (listingError || !listing) {
       return Response.json({ success: false, error: 'Listing not found' })
     }
 
-    // Get landlord profile separately
-    const { data: landlord } = await supabase
+    // Get landlord profile (admin key bypasses RLS to read another user's row)
+    const { data: landlord } = await supabaseAdmin
       .from('Profiles')
       .select('full_name, phone, email')
       .eq('id', listing.landlord_id)
       .single()
 
-    // Save contact reveal record
-    await supabase.from('Contact_reveals').upsert({
-      tenant_id: tenantId,
-      landlord_id: listing.landlord_id,
-      listing_id: listingId,
-      paystack_reference: reference,
-      tenant_email: paystackData.data.customer?.email || null,
-      landlord_phone: landlord?.phone,
-      landlord_email: landlord?.email,
-    }, { onConflict: 'tenant_id,listing_id' })
+    // Save contact reveal if this is the first time
+    if (!existing) {
+      await supabaseUser.from('Contact_reveals').insert({
+        tenant_id: tenantId,
+        landlord_id: listing.landlord_id,
+        listing_id: listingId,
+        paystack_reference: reference,
+        tenant_email: paystackData.data.customer?.email || null,
+        landlord_phone: landlord?.phone || null,
+        landlord_email: landlord?.email || null,
+      })
+    }
+
+    const contactPhone = landlord?.phone || existing?.landlord_phone || null
+    const contactEmail = landlord?.email || existing?.landlord_email || null
+    const contactName = landlord?.full_name || null
 
     return Response.json({
       success: true,
@@ -89,10 +105,10 @@ export async function POST(request) {
         property_type: listing.property_type,
       },
       contact: {
-        full_name: landlord?.full_name,
-        phone: landlord?.phone,
-        email: landlord?.email,
-        whatsapp: landlord?.phone,
+        full_name: contactName,
+        phone: contactPhone,
+        email: contactEmail,
+        whatsapp: contactPhone,
       }
     })
 
