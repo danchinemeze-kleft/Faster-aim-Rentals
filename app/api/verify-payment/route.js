@@ -8,7 +8,7 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'No reference provided' }, { status: 400 })
     }
 
-    // Verify with Paystack
+    // Verify with Paystack — this IS the authorization for the reveal
     const paystackRes = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
       headers: {
         Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
@@ -26,39 +26,26 @@ export async function POST(request) {
     const tenantId = metadata?.tenant_id
 
     if (!listingId || !tenantId) {
-      return Response.json({ success: false, error: 'Missing metadata' })
+      return Response.json({ success: false, error: 'Missing payment metadata' })
     }
 
-    // Service role client bypasses RLS — required for reading another user's profile
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    const supabaseAdmin = createClient(
+    // Use service role key — bypasses RLS for all server-side DB operations.
+    // The Paystack verification above is the authorization proof; no client JWT needed.
+    const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
-      serviceKey
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     )
 
-    // User JWT client — used only for the authenticated INSERT into Contact_reveals
-    const authHeader = request.headers.get('Authorization') || ''
-    const accessToken = authHeader.replace('Bearer ', '').trim()
-    const supabaseUser = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      {
-        global: {
-          headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {}
-        }
-      }
-    )
-
-    // Check for duplicate reveal (use admin to avoid RLS blocking the check)
-    const { data: existing } = await supabaseAdmin
+    // Check for duplicate reveal (prevents double-charging)
+    const { data: existing } = await supabase
       .from('Contact_reveals')
-      .select('id, landlord_phone, landlord_email')
+      .select('id, landlord_phone, landlord_email, landlord_id')
       .eq('tenant_id', tenantId)
       .eq('listing_id', listingId)
       .maybeSingle()
 
     // Get listing details
-    const { data: listing, error: listingError } = await supabaseAdmin
+    const { data: listing, error: listingError } = await supabase
       .from('listings')
       .select('*')
       .eq('id', listingId)
@@ -68,16 +55,16 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'Listing not found' })
     }
 
-    // Get landlord profile (admin key bypasses RLS to read another user's row)
-    const { data: landlord } = await supabaseAdmin
+    // Get landlord profile (service role key bypasses RLS to read another user's row)
+    const { data: landlord } = await supabase
       .from('Profiles')
       .select('full_name, phone, email')
       .eq('id', listing.landlord_id)
       .single()
 
-    // Save contact reveal if this is the first time
+    // Save reveal record if first time — service role key allows insert regardless of JWT
     if (!existing) {
-      await supabaseUser.from('Contact_reveals').insert({
+      await supabase.from('Contact_reveals').insert({
         tenant_id: tenantId,
         landlord_id: listing.landlord_id,
         listing_id: listingId,
@@ -100,15 +87,11 @@ export async function POST(request) {
         state: listing.state,
         price: listing.price,
         price_period: listing.price_period,
-        bedrooms: listing.bedrooms,
-        bathrooms: listing.bathrooms,
-        property_type: listing.property_type,
       },
       contact: {
         full_name: contactName,
         phone: contactPhone,
         email: contactEmail,
-        whatsapp: contactPhone,
       }
     })
 
