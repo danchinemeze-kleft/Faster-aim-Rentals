@@ -218,7 +218,7 @@ export default function Home() {
 
       <style>{`
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #050510; }
+        body { background: #000; }
         a { text-decoration: none; }
 
         @keyframes float {
@@ -273,7 +273,7 @@ export default function Home() {
 const styles = {
   main: {
     minHeight: '100vh',
-    background: '#050510',
+    background: '#000000',
     color: '#ffffff',
     fontFamily: "'Segoe UI', system-ui, sans-serif",
   },
@@ -284,7 +284,7 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '1.25rem 2rem',
-    background: 'rgba(5,5,16,0.95)',
+    background: 'rgba(0,0,0,0.95)',
     backdropFilter: 'blur(20px)',
     position: 'sticky',
     top: 0,
@@ -335,7 +335,7 @@ const styles = {
     border: '1.5px solid #00d9d9',
     borderRadius: '20px',
     padding: '3.5rem 3rem',
-    background: 'linear-gradient(135deg, rgba(0,217,217,0.03), rgba(5,5,16,0.98))',
+    background: 'linear-gradient(135deg, rgba(0,217,217,0.03), rgba(0,0,0,0.98))',
   },
   heroLayout: {
     display: 'flex',
@@ -391,7 +391,7 @@ const styles = {
   },
   btnCyan: {
     background: 'linear-gradient(135deg, #00d9d9, #00a8a8)',
-    color: '#050510',
+    color: '#000000',
     padding: '0.875rem 2rem',
     borderRadius: '10px',
     fontWeight: '800',
@@ -409,7 +409,7 @@ const styles = {
   },
   btnWhite: {
     background: '#ffffff',
-    color: '#050510',
+    color: '#000000',
     padding: '0.875rem 2rem',
     borderRadius: '10px',
     fontWeight: '800',
@@ -505,7 +505,7 @@ const styles = {
     position: 'absolute',
     bottom: '20px',
     left: '-20px',
-    background: 'rgba(5,5,16,0.9)',
+    background: 'rgba(0,0,0,0.9)',
     border: '1px solid rgba(0,217,217,0.4)',
     borderRadius: '20px',
     padding: '6px 14px',
@@ -532,7 +532,7 @@ const styles = {
     position: 'absolute',
     top: '20px',
     right: '-10px',
-    background: 'rgba(5,5,16,0.9)',
+    background: 'rgba(0,0,0,0.9)',
     border: '1px solid rgba(255,45,120,0.4)',
     borderRadius: '12px',
     padding: '8px 14px',
@@ -547,7 +547,7 @@ const styles = {
     position: 'absolute',
     bottom: '80px',
     right: '-20px',
-    background: 'rgba(5,5,16,0.9)',
+    background: 'rgba(0,0,0,0.9)',
     border: '1px solid rgba(0,217,217,0.4)',
     borderRadius: '12px',
     padding: '8px 14px',
@@ -621,7 +621,7 @@ const styles = {
     border: '1.5px solid #ff2d78',
     borderRadius: '20px',
     padding: '3rem',
-    background: 'rgba(5,5,16,0.98)',
+    background: 'rgba(0,0,0,0.98)',
   },
   landlordContent: {
     display: 'flex',
@@ -660,7 +660,7 @@ const styles = {
   ctaSubtitle: { color: '#cccccc', fontWeight: '600', marginBottom: '2.5rem', fontSize: '0.95rem' },
 
   // FOOTER
-  footer: { padding: '3rem 2rem', borderTop: '1px solid rgba(0,217,217,0.1)', background: '#030308' },
+  footer: { padding: '3rem 2rem', borderTop: '1px solid rgba(0,217,217,0.1)', background: '#000000' },
   footerTop: {
     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
     marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem',
