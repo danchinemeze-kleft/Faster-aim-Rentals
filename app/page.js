@@ -428,29 +428,28 @@ const styles = {
     gap: '4px',
   },
   statValueCyan: {
-    fontSize: '2rem',
-    fontWeight: '900',
-    color: '#00ffff',
-    textShadow: '0 0 24px rgba(0,255,255,0.9), 0 0 8px rgba(0,255,255,0.6)',
+    fontSize: '1.5rem',
+    fontWeight: '800',
+    color: '#00d9d9',
+    textShadow: '0 0 20px rgba(0,217,217,0.5)',
   },
   statValuePink: {
-    fontSize: '2rem',
-    fontWeight: '900',
+    fontSize: '1.5rem',
+    fontWeight: '800',
     color: '#ff2d78',
-    textShadow: '0 0 24px rgba(255,45,120,0.9), 0 0 8px rgba(255,45,120,0.6)',
+    textShadow: '0 0 20px rgba(255,45,120,0.5)',
   },
   statLabel: {
-    fontSize: '0.72rem',
+    fontSize: '0.7rem',
     color: '#ffffff',
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
-    opacity: 1,
   },
   statDivider: {
     width: '1px',
     height: '36px',
-    background: 'linear-gradient(to bottom, transparent, #555, transparent)',
+    background: 'linear-gradient(to bottom, transparent, #333, transparent)',
   },
 
   // AVATAR
@@ -595,7 +594,7 @@ const styles = {
   stepNumber: {
     fontSize: '4rem',
     fontWeight: '900',
-    opacity: 0.06,
+    opacity: 0.45,
     position: 'absolute',
     top: '0.5rem',
     right: '1rem',
