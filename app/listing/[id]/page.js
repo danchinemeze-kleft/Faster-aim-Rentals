@@ -476,8 +476,19 @@ export default function ListingPage() {
                   <div style={{ background: '#0e1c19', border: '0.5px solid #0ef6cc55', borderRadius: 10, padding: '1.25rem', marginBottom: 10 }}>
                     <div style={{ fontSize: 11, color: '#0ef6cc', fontWeight: 700, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.5px' }}>✅ Contact Revealed</div>
                     {revealedContact.landlord_phone && (
-                      <a href={`tel:${revealedContact.landlord_phone}`} style={{ display: 'block', fontSize: 20, fontWeight: 700, color: '#e8e8e8', textDecoration: 'none', marginBottom: 8 }}>
+                      <a href={`tel:${revealedContact.landlord_phone}`} style={{ display: 'block', fontSize: 20, fontWeight: 700, color: '#e8e8e8', textDecoration: 'none', marginBottom: 10 }}>
                         📞 {revealedContact.landlord_phone}
+                      </a>
+                    )}
+                    {revealedContact.landlord_phone && (
+                      <a
+                        href={`https://wa.me/${revealedContact.landlord_phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I'm interested in your property "${listing?.title}" listed on Mr. Rent (rent.fasteraim.com). Is it still available?`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#0d1f0d', border: '0.5px solid #25D36633', borderRadius: 8, padding: '9px 12px', textDecoration: 'none', marginBottom: 10 }}
+                      >
+                        <span style={{ fontSize: 16 }}>💬</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: '#25D366' }}>WhatsApp Landlord</span>
                       </a>
                     )}
                     {revealedContact.landlord_email && (

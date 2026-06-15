@@ -88,7 +88,7 @@ function RevealSuccessInner() {
 
             {contact.phone && (
               <a
-                href={`https://wa.me/${contact.phone.replace(/[^0-9]/g, '')}`}
+                href={`https://wa.me/${contact.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I'm interested in your property "${listing?.title}" listed on Mr. Rent (rent.fasteraim.com). Is it still available?`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#0d1f0d', border: '0.5px solid #25D36633', borderRadius: 8, padding: '10px 14px', textDecoration: 'none', marginBottom: 12 }}
