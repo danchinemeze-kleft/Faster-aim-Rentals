@@ -134,7 +134,23 @@ export default function ListingPage() {
           .eq('tenant_id', session.user.id)
           .eq('listing_id', id)
           .maybeSingle()
-        if (reveal) setRevealedContact(reveal)
+        if (reveal) {
+          // If phone is missing in the saved record (old reveal before fix),
+          // fetch it live from Profiles
+          if (!reveal.landlord_phone && listingData.landlord_id) {
+            const { data: profile } = await supabase
+              .from('Profiles')
+              .select('phone, email')
+              .eq('id', listingData.landlord_id)
+              .single()
+            setRevealedContact({
+              landlord_phone: profile?.phone || null,
+              landlord_email: reveal.landlord_email || profile?.email || null,
+            })
+          } else {
+            setRevealedContact(reveal)
+          }
+        }
       }
 
       const saved = JSON.parse(localStorage.getItem('mr_rent_liked') || '[]')
