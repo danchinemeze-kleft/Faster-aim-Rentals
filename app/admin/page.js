@@ -348,7 +348,7 @@ export default function AdminDashboard() {
                     )}
                   </div>
                   <div style={{ fontSize: 13, color: '#888', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-                    <span>📍 {listing.location || '—'}{listing.state ? `, ${listing.state}` : ''}</span>
+                    <span>📍 {listing.location || '—'}{listing.city ? `, ${listing.city}` : ''}{listing.state ? `, ${listing.state}` : ''}</span>
                     <span>🏠 {listing.property_type || '—'}</span>
                     {listing.bedrooms && <span>🛏 {listing.bedrooms} bed</span>}
                     <span>💰 {formatPrice(listing.price, listing.price_period)}</span>

@@ -391,7 +391,7 @@ export default function ListingPage() {
               </h1>
 
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, color: '#888', fontSize: 13 }}>
-                <span>📍 {listing.location}{listing.state ? `, ${listing.state}` : ''}</span>
+                <span>📍 {listing.location}{listing.city ? `, ${listing.city}` : ''}{listing.state ? `, ${listing.state}` : ''}</span>
                 {listing.bedrooms && <span>🛏 {listing.bedrooms} bedroom{listing.bedrooms > 1 ? 's' : ''}</span>}
                 {listing.bathrooms && <span>🚿 {listing.bathrooms} bathroom{listing.bathrooms > 1 ? 's' : ''}</span>}
               </div>
@@ -484,7 +484,7 @@ export default function ListingPage() {
                   )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
                     <span style={{ color: '#555' }}>Location</span>
-                    <span style={{ color: '#e8e8e8', textAlign: 'right', maxWidth: 170 }}>{listing.location}{listing.state ? `, ${listing.state}` : ''}</span>
+                    <span style={{ color: '#e8e8e8', textAlign: 'right', maxWidth: 170 }}>{listing.location}{listing.city ? `, ${listing.city}` : ''}{listing.state ? `, ${listing.state}` : ''}</span>
                   </div>
                 </div>
 

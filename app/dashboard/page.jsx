@@ -244,7 +244,7 @@ export default function DashboardPage() {
                 <div key={listing.id} className="faim-listing-row">
                   <div className="faim-listing-row-info">
                     <p className="faim-listing-row-title">{listing.title}</p>
-                    <p className="faim-listing-row-sub">📍 {listing.location} • ₦{listing.price?.toLocaleString()}/{listing.price_period}</p>
+                    <p className="faim-listing-row-sub">📍 {listing.location}{listing.city ? `, ${listing.city}` : ''}, {listing.state} • ₦{listing.price?.toLocaleString()}/{listing.price_period}</p>
                   </div>
                   <div className="faim-toggle-wrap">
                     <span className={`faim-avail-label ${listing.available ? 'faim-avail-label--yes' : 'faim-avail-label--no'}`}>
@@ -283,7 +283,7 @@ export default function DashboardPage() {
                       <div>
                         <span className="faim-type-pill">{listing.property_type}</span>
                         <h3>{listing.title}</h3>
-                        <p className="faim-listing-meta">📍 {listing.location}, {listing.state} • {listing.bedrooms} bed • {listing.bathrooms} bath</p>
+                        <p className="faim-listing-meta">📍 {listing.location}{listing.city ? `, ${listing.city}` : ''}, {listing.state} • {listing.bedrooms} bed • {listing.bathrooms} bath</p>
                         <p className="faim-listing-price-tag">₦{listing.price?.toLocaleString()} / {listing.price_period}</p>
                       </div>
                       <div className="faim-listing-controls">

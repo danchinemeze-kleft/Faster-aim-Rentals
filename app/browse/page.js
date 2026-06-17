@@ -70,6 +70,7 @@ export default function BrowsePage() {
     if (search) result = result.filter(l =>
       (l.title || '').toLowerCase().includes(search.toLowerCase()) ||
       (l.location || '').toLowerCase().includes(search.toLowerCase()) ||
+      (l.city || '').toLowerCase().includes(search.toLowerCase()) ||
       (l.state || '').toLowerCase().includes(search.toLowerCase())
     );
     if (typeFilter) result = result.filter(l => l.property_type === typeFilter);
@@ -271,7 +272,7 @@ export default function BrowsePage() {
                     N{Number(l.price).toLocaleString('en-NG')} <span style={{ fontSize: '0.82rem', fontWeight: 400, color: '#999', fontFamily: 'DM Sans, sans-serif' }}>/ {l.price_period || 'year'}</span>
                   </div>
                   <a href={`/listing/${l.id}`} style={{ fontSize: '1rem', fontWeight: 700, color: '#111', marginBottom: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textDecoration: 'none', display: 'block' }}>{l.title}</a>
-                  <div style={{ fontSize: '0.82rem', color: '#666', fontWeight: 600, marginBottom: '16px' }}>📍 {l.location}, {l.state}</div>
+                  <div style={{ fontSize: '0.82rem', color: '#666', fontWeight: 600, marginBottom: '16px' }}>📍 {l.location}{l.city ? `, ${l.city}` : ''}, {l.state}</div>
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
                     <a href={`/listing/${l.id}`} style={{ flex: 1, padding: '11px 8px', borderRadius: '8px', border: '2px solid #e8e8e8', background: '#f8f8f8', color: '#444', fontSize: '0.78rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>View Details</a>
                     <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '11px 8px', borderRadius: '8px', border: 'none', background: '#ff2d78', color: '#fff', fontSize: '0.82rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif' }}>{paying === l.id ? 'Please wait...' : 'Meet Landlord • ₦5k'}</button>

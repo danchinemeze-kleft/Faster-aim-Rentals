@@ -58,8 +58,10 @@ const supabase = createClient(
 
 const emptyForm = {
   title: '',
+  property_number: '',
   description: '',
   location: '',
+  city: '',
   state: '',
   price: '',
   price_period: 'yearly',
@@ -231,8 +233,10 @@ function ListPageInner() {
     setEditingListing(listing)
     setFormData({
       title: listing.title || '',
+      property_number: listing.property_number || '',
       description: listing.description || '',
       location: listing.location || '',
+      city: listing.city || '',
       state: listing.state || '',
       price: listing.price || '',
       price_period: listing.price_period || 'yearly',
@@ -413,8 +417,10 @@ videoEl.src = URL.createObjectURL(file)
 
       const payload = {
         title: formData.title,
+        property_number: formData.property_number || null,
         description: formData.description,
         location: formData.location,
+        city: formData.city || null,
         state: formData.state,
         price: parseInt(formData.price),
         price_period: formData.price_period,
@@ -561,11 +567,22 @@ videoEl.src = URL.createObjectURL(file)
                   placeholder="e.g., Modern 2-Bedroom Flat in Lekki" required />
               </div>
 
+              <div className="faim-field">
+                <label>Property Number <span style={{fontWeight:400,color:'#888'}}>(optional)</span></label>
+                <input type="text" name="property_number" value={formData.property_number} onChange={handleChange}
+                  placeholder="e.g., Shop 2 / Room 2" />
+              </div>
+
               <div className="faim-row">
                 <div className="faim-field">
-                  <label>Location *</label>
+                  <label>Address *</label>
                   <input type="text" name="location" value={formData.location} onChange={handleChange}
-                    placeholder="e.g., Awka South" required />
+                    placeholder="e.g., 5 Zik Avenue, Awka South" required />
+                </div>
+                <div className="faim-field">
+                  <label>City *</label>
+                  <input type="text" name="city" value={formData.city} onChange={handleChange}
+                    placeholder="e.g., Awka" required />
                 </div>
                 <div className="faim-field">
                   <label>State *</label>
@@ -828,7 +845,7 @@ videoEl.src = URL.createObjectURL(file)
                 <div className="faim-preview-card">
                   <div className="faim-preview-badge">{formData.property_type}</div>
                   <h2>{formData.title || 'Your property title'}</h2>
-                  <p className="faim-preview-location">📍 {formData.location || 'Location'}, {formData.state || 'State'}</p>
+                  <p className="faim-preview-location">📍 {formData.location || 'Address'}{formData.city ? `, ${formData.city}` : ''}, {formData.state || 'State'}</p>
                   <p className="faim-preview-price">{formData.price ? formatPrice(formData.price, formData.price_period) : '₦0'}</p>
                   <div className="faim-preview-specs">
                     <span>🛏 {formData.bedrooms} Bed</span>
@@ -885,7 +902,7 @@ videoEl.src = URL.createObjectURL(file)
                 )}
                 {listing.video_url && <ListingVideoPlayer src={listing.video_url} />}
                 <h3>{listing.title}</h3>
-                <p className="faim-listing-location">📍 {listing.location}, {listing.state}</p>
+                <p className="faim-listing-location">📍 {listing.location}{listing.city ? `, ${listing.city}` : ''}, {listing.state}</p>
                 <p className="faim-listing-price">₦{listing.price?.toLocaleString()} / {listing.price_period}</p>
                 <p className="faim-listing-specs">{listing.bedrooms} bed • {listing.bathrooms} bath</p>
                 <p className="faim-listing-desc">{listing.description?.substring(0, 120)}...</p>

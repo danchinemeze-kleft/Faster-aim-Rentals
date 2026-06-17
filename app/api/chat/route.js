@@ -90,7 +90,7 @@ async function fetchListings(supabase, intent, prefs) {
 
   let query = supabase
     .from('listings')
-    .select('id, title, location, state, price, price_period, property_type, bedrooms, images')
+    .select('id, title, location, city, state, price, price_period, property_type, bedrooms, images')
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
     .limit(10)
@@ -117,7 +117,7 @@ async function fetchListings(supabase, intent, prefs) {
 async function fetchTrending(supabase) {
   const { data } = await supabase
     .from('listings')
-    .select('id, title, location, state, price, price_period, property_type, bedrooms, images')
+    .select('id, title, location, city, state, price, price_period, property_type, bedrooms, images')
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
     .limit(3)
