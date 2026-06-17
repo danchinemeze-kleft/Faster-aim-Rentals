@@ -283,7 +283,7 @@ export default function DashboardPage() {
                       <div>
                         <span className="faim-type-pill">{listing.property_type}</span>
                         <h3>{listing.title}</h3>
-                        <p className="faim-listing-meta">📍 {listing.location}{listing.city ? `, ${listing.city}` : ''}, {listing.state} • {listing.bedrooms} bed • {listing.bathrooms} bath</p>
+                        <p className="faim-listing-meta">📍 {listing.location}{listing.city ? `, ${listing.city}` : ''}, {listing.state}{listing.bedrooms ? ` • ${listing.bedrooms} bed • ${listing.bathrooms} bath` : listing.size ? ` • ${listing.size}` : ''}</p>
                         <p className="faim-listing-price-tag">₦{listing.price?.toLocaleString()} / {listing.price_period}</p>
                       </div>
                       <div className="faim-listing-controls">

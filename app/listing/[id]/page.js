@@ -394,6 +394,7 @@ export default function ListingPage() {
                 <span>📍 {listing.location}{listing.city ? `, ${listing.city}` : ''}{listing.state ? `, ${listing.state}` : ''}</span>
                 {listing.bedrooms && <span>🛏 {listing.bedrooms} bedroom{listing.bedrooms > 1 ? 's' : ''}</span>}
                 {listing.bathrooms && <span>🚿 {listing.bathrooms} bathroom{listing.bathrooms > 1 ? 's' : ''}</span>}
+                {listing.size && <span>📐 {listing.size}</span>}
               </div>
             </div>
 
@@ -480,6 +481,12 @@ export default function ListingPage() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
                       <span style={{ color: '#555' }}>Bathrooms</span>
                       <span style={{ color: '#e8e8e8' }}>{listing.bathrooms}</span>
+                    </div>
+                  )}
+                  {listing.size && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+                      <span style={{ color: '#555' }}>Size</span>
+                      <span style={{ color: '#e8e8e8' }}>{listing.size}</span>
                     </div>
                   )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>

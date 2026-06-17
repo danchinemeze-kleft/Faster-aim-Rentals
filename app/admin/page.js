@@ -351,6 +351,7 @@ export default function AdminDashboard() {
                     <span>📍 {listing.location || '—'}{listing.city ? `, ${listing.city}` : ''}{listing.state ? `, ${listing.state}` : ''}</span>
                     <span>🏠 {listing.property_type || '—'}</span>
                     {listing.bedrooms && <span>🛏 {listing.bedrooms} bed</span>}
+                    {listing.size && <span>📐 {listing.size}</span>}
                     <span>💰 {formatPrice(listing.price, listing.price_period)}</span>
                     <span>🕐 {timeAgo(listing.created_at)}</span>
                   </div>

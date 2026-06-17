@@ -49,6 +49,33 @@ const NIGERIAN_STATES = [
 
 const AMENITIES = ['WiFi', 'Parking', 'Security', 'Generator', 'Water Supply', 'Furnished', 'AC', 'Kitchen', 'Pool', 'Gym', 'Garden', 'Balcony']
 
+const PROPERTY_TYPES = [
+  // Residential
+  { value: 'apartment',   label: 'Apartment / Flat',           group: 'Residential' },
+  { value: 'house',       label: 'House',                      group: 'Residential' },
+  { value: 'duplex',      label: 'Duplex',                     group: 'Residential' },
+  { value: 'bungalow',    label: 'Bungalow / Terrace',         group: 'Residential' },
+  { value: 'studio',      label: 'Self-Contain / Studio',      group: 'Residential' },
+  { value: 'room',        label: 'Single Room',                group: 'Residential' },
+  { value: 'shortlet',    label: 'Shortlet (Short-stay)',      group: 'Residential' },
+  // Commercial
+  { value: 'office',      label: 'Office Space',               group: 'Commercial' },
+  { value: 'shop',        label: 'Shop / Store',               group: 'Commercial' },
+  { value: 'warehouse',   label: 'Warehouse / Storage',        group: 'Commercial' },
+  { value: 'billboard',   label: 'Billboard / Signage',        group: 'Commercial' },
+  { value: 'open_space',  label: 'Open Space / Yard',          group: 'Commercial' },
+  // Event & Community
+  { value: 'event_hall',  label: 'Event Hall / Church Hall',   group: 'Event & Community' },
+  { value: 'conference',  label: 'Conference / Meeting Room',  group: 'Event & Community' },
+  { value: 'coworking',   label: 'Co-working Space',           group: 'Event & Community' },
+  // Land
+  { value: 'land',        label: 'Land / Plot',                group: 'Land' },
+]
+
+const RESIDENTIAL_TYPES = ['apartment', 'house', 'duplex', 'bungalow', 'studio', 'room', 'shortlet']
+
+const PT_GROUPS = ['Residential', 'Commercial', 'Event & Community', 'Land']
+
 const FREE_MONTHLY_LIMIT = 2
 
 const supabase = createClient(
@@ -68,6 +95,7 @@ const emptyForm = {
   property_type: 'apartment',
   bedrooms: 1,
   bathrooms: 1,
+  size: '',
   amenities: [],
   available: true,
 }
@@ -243,6 +271,7 @@ function ListPageInner() {
       property_type: listing.property_type || 'apartment',
       bedrooms: listing.bedrooms || 1,
       bathrooms: listing.bathrooms || 1,
+      size: listing.size || '',
       amenities: listing.amenities || [],
       available: listing.available ?? true,
     })
@@ -415,6 +444,7 @@ videoEl.src = URL.createObjectURL(file)
         setUploadProgress(100)
       }
 
+      const residential = RESIDENTIAL_TYPES.includes(formData.property_type)
       const payload = {
         title: formData.title,
         property_number: formData.property_number || null,
@@ -425,8 +455,9 @@ videoEl.src = URL.createObjectURL(file)
         price: parseInt(formData.price),
         price_period: formData.price_period,
         property_type: formData.property_type,
-        bedrooms: parseInt(formData.bedrooms),
-        bathrooms: parseInt(formData.bathrooms),
+        bedrooms: residential ? parseInt(formData.bedrooms) : null,
+        bathrooms: residential ? parseInt(formData.bathrooms) : null,
+        size: formData.size || null,
         amenities: formData.amenities,
         available: formData.available,
         is_available: formData.available,
@@ -478,6 +509,8 @@ videoEl.src = URL.createObjectURL(file)
   }
 
   const formatPrice = (price, period) => `₦${parseInt(price).toLocaleString()} / ${period}`
+
+  const isResidential = RESIDENTIAL_TYPES.includes(formData.property_type)
 
   if (loading) return (
     <div className="faim-list-loading">
@@ -597,15 +630,13 @@ videoEl.src = URL.createObjectURL(file)
                 <div className="faim-field">
                   <label>Property Type *</label>
                   <select name="property_type" value={formData.property_type} onChange={handleChange}>
-                    <option value="apartment">Apartment / Flat</option>
-                    <option value="house">House</option>
-                    <option value="duplex">Duplex</option>
-                    <option value="bungalow">Bungalow</option>
-                    <option value="studio">Self-Contain / Studio</option>
-                    <option value="room">Single Room</option>
-                    <option value="office">Office Space</option>
-                    <option value="shop">Shop / Store</option>
-                    <option value="land">Land</option>
+                    {PT_GROUPS.map(group => (
+                      <optgroup key={group} label={`— ${group} —`}>
+                        {PROPERTY_TYPES.filter(p => p.group === group).map(p => (
+                          <option key={p.value} value={p.value}>{p.label}</option>
+                        ))}
+                      </optgroup>
+                    ))}
                   </select>
                 </div>
                 <div className="faim-field">
@@ -617,29 +648,52 @@ videoEl.src = URL.createObjectURL(file)
                 </div>
               </div>
 
-              <div className="faim-row">
-                <div className="faim-field">
-                  <label>Bedrooms *</label>
-                  <input type="number" name="bedrooms" min="1" max="20" value={formData.bedrooms} onChange={handleChange} required />
+              {isResidential ? (
+                <div className="faim-row">
+                  <div className="faim-field">
+                    <label>Bedrooms *</label>
+                    <input type="number" name="bedrooms" min="1" max="20" value={formData.bedrooms} onChange={handleChange} required />
+                  </div>
+                  <div className="faim-field">
+                    <label>Bathrooms *</label>
+                    <input type="number" name="bathrooms" min="1" max="20" value={formData.bathrooms} onChange={handleChange} required />
+                  </div>
+                  <div className="faim-field">
+                    <label>Price (₦) *</label>
+                    <input type="number" name="price" value={formData.price} onChange={handleChange} placeholder="500000" required />
+                  </div>
+                  <div className="faim-field">
+                    <label>Per</label>
+                    <select name="price_period" value={formData.price_period} onChange={handleChange}>
+                      <option value="yearly">Year</option>
+                      <option value="monthly">Month</option>
+                      <option value="weekly">Week</option>
+                      <option value="daily">Day</option>
+                    </select>
+                  </div>
                 </div>
-                <div className="faim-field">
-                  <label>Bathrooms *</label>
-                  <input type="number" name="bathrooms" min="1" max="20" value={formData.bathrooms} onChange={handleChange} required />
+              ) : (
+                <div className="faim-row">
+                  <div className="faim-field">
+                    <label>Size <span style={{fontWeight:400,color:'#888'}}>(optional)</span></label>
+                    <input type="text" name="size" value={formData.size} onChange={handleChange} placeholder="e.g., 150 sqm, 3 plots, 200 ft²" />
+                  </div>
+                  <div className="faim-field">
+                    <label>Price (₦) *</label>
+                    <input type="number" name="price" value={formData.price} onChange={handleChange} placeholder="500000" required />
+                  </div>
+                  <div className="faim-field">
+                    <label>Per</label>
+                    <select name="price_period" value={formData.price_period} onChange={handleChange}>
+                      <option value="yearly">Year</option>
+                      <option value="monthly">Month</option>
+                      <option value="weekly">Week</option>
+                      <option value="daily">Day</option>
+                      <option value="event">Event / Per Use</option>
+                    </select>
+                  </div>
                 </div>
-                <div className="faim-field">
-                  <label>Price (₦) *</label>
-                  <input type="number" name="price" value={formData.price} onChange={handleChange}
-                    placeholder="500000" required />
-                </div>
-                <div className="faim-field">
-                  <label>Per</label>
-                  <select name="price_period" value={formData.price_period} onChange={handleChange}>
-                    <option value="yearly">Year</option>
-                    <option value="monthly">Month</option>
-                    <option value="weekly">Week</option>
-                  </select>
-                </div>
-              </div>
+              )}
 
               <div className="faim-field">
                 <label>Description *</label>
@@ -848,8 +902,14 @@ videoEl.src = URL.createObjectURL(file)
                   <p className="faim-preview-location">📍 {formData.location || 'Address'}{formData.city ? `, ${formData.city}` : ''}, {formData.state || 'State'}</p>
                   <p className="faim-preview-price">{formData.price ? formatPrice(formData.price, formData.price_period) : '₦0'}</p>
                   <div className="faim-preview-specs">
-                    <span>🛏 {formData.bedrooms} Bed</span>
-                    <span>🚿 {formData.bathrooms} Bath</span>
+                    {isResidential ? (
+                      <>
+                        <span>🛏 {formData.bedrooms} Bed</span>
+                        <span>🚿 {formData.bathrooms} Bath</span>
+                      </>
+                    ) : formData.size ? (
+                      <span>📐 {formData.size}</span>
+                    ) : null}
                     <span>{formData.available ? '✅ Available' : '❌ Not Available'}</span>
                   </div>
                   {photoFiles.length > 0 && (
@@ -904,7 +964,11 @@ videoEl.src = URL.createObjectURL(file)
                 <h3>{listing.title}</h3>
                 <p className="faim-listing-location">📍 {listing.location}{listing.city ? `, ${listing.city}` : ''}, {listing.state}</p>
                 <p className="faim-listing-price">₦{listing.price?.toLocaleString()} / {listing.price_period}</p>
-                <p className="faim-listing-specs">{listing.bedrooms} bed • {listing.bathrooms} bath</p>
+                <p className="faim-listing-specs">
+                  {RESIDENTIAL_TYPES.includes(listing.property_type)
+                    ? `${listing.bedrooms} bed • ${listing.bathrooms} bath`
+                    : listing.size || '—'}
+                </p>
                 <p className="faim-listing-desc">{listing.description?.substring(0, 120)}...</p>
                 {listing.amenities && listing.amenities.length > 0 && (
                   <div className="faim-listing-amenities">
