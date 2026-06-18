@@ -206,6 +206,7 @@ export default function ListingPage() {
         return
       }
 
+      const refCode = document.cookie.match(/mrrent_ref=([^;]+)/)?.[1] || null
       const res = await fetch('/api/init-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -214,6 +215,7 @@ export default function ListingPage() {
           type: 'reveal',
           listing_id: id,
           user_id: user.id,
+          ref_code: refCode,
         }),
       })
       const data = await res.json()

@@ -187,6 +187,7 @@ export default function Home() {
             <a href="/browse" style={s.footerLink}>Browse</a>
             <a href="/search" style={s.footerLink}>AI Chat</a>
             <a href="/list" style={s.footerLink}>List Property</a>
+            <a href="/affiliate" style={{ ...s.footerLink, color: '#7c3aed', fontWeight: 700 }}>💰 Earn — Affiliate</a>
             <a href="/account" style={s.footerLink}>Login</a>
             <a href="/admin" style={s.footerAdminLink}>⚙ Admin</a>
           </div>

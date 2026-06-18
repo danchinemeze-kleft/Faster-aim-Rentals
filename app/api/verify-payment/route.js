@@ -73,6 +73,26 @@ export async function POST(request) {
         landlord_phone: landlord?.phone || null,
         landlord_email: landlord?.email || null,
       })
+
+      // Credit affiliate commission if a ref_code was attached
+      const refCode = metadata?.ref_code
+      if (refCode) {
+        const { data: affiliate } = await supabase
+          .from('affiliates').select('id').eq('ref_code', refCode).eq('status', 'active').maybeSingle()
+        // Prevent self-referral
+        if (affiliate && affiliate.id !== tenantId) {
+          await supabase.from('affiliate_commissions').insert({
+            affiliate_id: affiliate.id,
+            ref_code: refCode,
+            transaction_type: 'reveal',
+            transaction_amount: 5000,
+            commission_amount: 500,
+            paystack_reference: reference,
+            referred_user_id: tenantId,
+            status: 'pending',
+          })
+        }
+      }
     }
 
     const contactPhone = landlord?.phone || existing?.landlord_phone || null

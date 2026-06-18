@@ -84,6 +84,29 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'Failed to save subscription: ' + subError.message }, { status: 500 })
     }
 
+    // Credit affiliate commission if a ref_code was attached
+    const refCode = metadata?.ref_code
+    if (refCode) {
+      const serviceSupabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      )
+      const { data: affiliate } = await serviceSupabase
+        .from('affiliates').select('id').eq('ref_code', refCode).eq('status', 'active').maybeSingle()
+      if (affiliate && affiliate.id !== landlordId) {
+        await serviceSupabase.from('affiliate_commissions').insert({
+          affiliate_id: affiliate.id,
+          ref_code: refCode,
+          transaction_type: 'subscription',
+          transaction_amount: 10000,
+          commission_amount: 2000,
+          paystack_reference: reference,
+          referred_user_id: landlordId,
+          status: 'pending',
+        })
+      }
+    }
+
     return Response.json({ success: true, expiry_date: expiryDate.toISOString() })
 
   } catch (error) {

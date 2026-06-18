@@ -1,6 +1,6 @@
 export async function POST(request) {
   const body = await request.json();
-  const { email, type, listing_id, user_id } = body;
+  const { email, type, listing_id, user_id, ref_code } = body;
 
   if (!email || !type) {
     return Response.json({ error: 'Missing email or type' }, { status: 400 });
@@ -34,6 +34,7 @@ export async function POST(request) {
   payment_type,
   listing_id,
   tenant_id: user_id,
+  ref_code: ref_code || null,
 },
     }),
   });
