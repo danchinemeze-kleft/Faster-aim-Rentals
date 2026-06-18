@@ -54,25 +54,21 @@ export default function Home() {
                   Connect with verified landlords across Nigeria. Browse listings, chat with Mr. Rent AI, and find your perfect home today.
                 </p>
                 <div style={s.heroActions}>
-                  <a href="/browse" style={s.btnCyan}>Browse Listings</a>
-                  <a href="/search" style={s.btnPink}>Ask Mr. Rent AI 🤖</a>
-                  <a href="/list" style={s.btnOutline}>Add Your Property 🏠</a>
+                  <a href="/browse" style={s.btnCyan}>Browse (free)</a>
+                  <a href="/search" style={s.btnPink}>AI Chat (free) 🤖</a>
+                  <a href="/list" style={s.btnOutline}>Add Property (free) 🏠</a>
                   <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={s.btnPurple}>Learn AI Skills 🎓</a>
+                  <a href="/affiliate" style={s.btnAffiliate}>💰 Join Associate — Earn Commission</a>
                 </div>
                 <div style={s.heroStats}>
                   <div style={s.heroStat}>
                     <span style={s.statValueCyan}>{displayCount}</span>
-                    <span style={s.statLabel}>Listings</span>
+                    <span style={s.statLabel}>Active Homes</span>
                   </div>
                   <div style={s.statDivider}></div>
                   <div style={s.heroStat}>
                     <span style={s.statValuePink}>36</span>
                     <span style={s.statLabel}>States</span>
-                  </div>
-                  <div style={s.statDivider}></div>
-                  <div style={s.heroStat}>
-                    <span style={s.statValueCyan}>₦5k</span>
-                    <span style={s.statLabel}>Per Reveal</span>
                   </div>
                 </div>
               </div>
@@ -276,6 +272,13 @@ const s = {
     gap: '0.75rem',
     marginBottom: '2.5rem',
     maxWidth: '480px',
+  },
+  btnAffiliate: {
+    gridColumn: '1 / -1',
+    background: 'linear-gradient(135deg, #16a34a, #15803d)',
+    color: 'white', padding: '0.75rem 1.25rem',
+    borderRadius: '10px', fontWeight: '800', fontSize: '0.85rem',
+    boxShadow: '0 4px 16px rgba(22,163,74,0.3)', textAlign: 'center',
   },
 
   btnCyan: {
