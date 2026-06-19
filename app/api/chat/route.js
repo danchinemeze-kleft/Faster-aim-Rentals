@@ -26,7 +26,7 @@ Contact reveal: Tenants pay ₦5,000 to unlock a verified landlord phone number 
 
 Scam warnings (share when relevant): Never pay before inspection. Insist on a written agreement. Be wary of agents charging "form fees". On Mr. Rent, landlords are verified.
 
-Rules: Keep replies to 3–5 sentences. No markdown headers or bullet lists in chat replies — write in natural flowing sentences. Never make up listings. If asked something unrelated to property, politely redirect.`
+Rules: Keep replies to 3–5 sentences — always finish your thought completely, never cut off mid-sentence. Be witty and warm: a light touch of humour makes the experience memorable, but stay professional. No markdown headers or bullet lists in chat replies — write in natural flowing sentences. Never make up listings. If asked something unrelated to property, politely redirect.`
 
 // ── Intent extraction ──────────────────────────────────────
 
@@ -190,7 +190,7 @@ export async function POST(request) {
           ...history,
           { role: 'user', parts: [{ text: messages[messages.length - 1].content }] },
         ],
-        config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 500 },
+        config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 1024 },
       })
 
       reply = result.text
