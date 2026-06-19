@@ -23,6 +23,7 @@ export default function ListingLightPage() {
   const [notFound, setNotFound] = useState(false)
   const [activeImage, setActiveImage] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [videoOpen, setVideoOpen] = useState(false)
   const [liked, setLiked] = useState(false)
   const [likes, setLikes] = useState(0)
   const [revealing, setRevealing] = useState(false)
@@ -60,7 +61,7 @@ export default function ListingLightPage() {
     const handler = e => {
       if (e.key === 'ArrowRight') setActiveImage(i => (i + 1) % imgs.length)
       if (e.key === 'ArrowLeft') setActiveImage(i => (i - 1 + imgs.length) % imgs.length)
-      if (e.key === 'Escape') setLightboxOpen(false)
+      if (e.key === 'Escape') { setLightboxOpen(false); setVideoOpen(false) }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
@@ -109,6 +110,39 @@ export default function ListingLightPage() {
           <button onClick={e => { e.stopPropagation(); setActiveImage(i => (i + 1) % images.length) }} style={{ position: 'fixed', right: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', fontSize: 26, width: 48, height: 48, borderRadius: '50%', cursor: 'pointer' }}>›</button>
           <button onClick={() => setLightboxOpen(false)} style={{ position: 'fixed', top: 18, right: 18, background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', fontSize: 18, width: 38, height: 38, borderRadius: '50%', cursor: 'pointer' }}>✕</button>
           <div style={{ position: 'fixed', bottom: 22, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>{activeImage + 1} / {images.length} · ← → to navigate · Esc to close</div>
+        </div>
+      )}
+
+      {/* Video overlay */}
+      {videoOpen && listing.video_url && (
+        <div
+          onClick={() => setVideoOpen(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <button
+            onClick={() => setVideoOpen(false)}
+            style={{ position: 'fixed', top: 18, left: 18, background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', fontSize: 13, fontWeight: 700, padding: '9px 16px', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'inherit', zIndex: 1 }}
+          >
+            ← Back
+          </button>
+          <div onClick={e => e.stopPropagation()} style={{ width: '90vw', maxWidth: 860 }}>
+            {isYouTube(listing.video_url) ? (
+              <div style={{ borderRadius: 14, overflow: 'hidden', background: '#000', aspectRatio: '16/9' }}>
+                <iframe
+                  src={youtubeEmbedUrl(listing.video_url) + '?autoplay=1'}
+                  style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <video controls autoPlay playsInline preload="auto" style={{ width: '100%', maxHeight: '80vh', borderRadius: 12, background: '#000', display: 'block' }}>
+                <source src={listing.video_url} type="video/mp4" />
+                <source src={listing.video_url} type="video/webm" />
+              </video>
+            )}
+          </div>
+          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, marginTop: 16 }}>Tap outside or press Esc to close</p>
         </div>
       )}
 
@@ -187,16 +221,21 @@ export default function ListingLightPage() {
             {listing.video_url && (
               <div style={{ marginBottom: '2rem' }}>
                 <h2 style={{ fontSize: 13, fontWeight: 700, color: '#374151', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Property Video</h2>
-                {isYouTube(listing.video_url) ? (
-                  <div style={{ borderRadius: 12, overflow: 'hidden', background: '#000' }}>
-                    <iframe src={youtubeEmbedUrl(listing.video_url)} style={{ width: '100%', height: 380, border: 'none', display: 'block' }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                <button
+                  onClick={() => setVideoOpen(true)}
+                  style={{ width: '100%', position: 'relative', borderRadius: 12, overflow: 'hidden', background: '#0f172a', border: '1px solid #e2e8f0', cursor: 'pointer', padding: 0, display: 'block' }}
+                >
+                  {images[0]
+                    ? <img src={images[0]} alt="Video thumbnail" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block', filter: 'brightness(0.4)' }} />
+                    : <div style={{ height: 200, background: '#1e293b' }} />
+                  }
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+                    <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'rgba(14,165,233,0.2)', border: '2px solid #0ea5e9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontSize: 24, color: '#fff', marginLeft: 4 }}>▶</span>
+                    </div>
+                    <span style={{ color: '#fff', fontSize: 13, fontWeight: 600 }}>Watch Property Video</span>
                   </div>
-                ) : (
-                  <video controls playsInline preload="metadata" style={{ width: '100%', maxHeight: 380, borderRadius: 12, background: '#000', display: 'block' }}>
-                    <source src={listing.video_url} type="video/mp4" />
-                    <source src={listing.video_url} type="video/webm" />
-                  </video>
-                )}
+                </button>
               </div>
             )}
           </div>
