@@ -131,6 +131,8 @@ export default function SearchPage() {
     setInput('')
     setLoading(true)
 
+    let hasReply = false
+
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -138,17 +140,68 @@ export default function SearchPage() {
         body: JSON.stringify({
           messages: newMessages.map(m => ({ role: m.role, content: m.content })),
           userId: user?.id,
-        })
+        }),
       })
 
-      const data = await response.json()
-      if (data.reply) {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.reply, listings: data.listings || [] }])
-      } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I'm having trouble right now. Please try again in a moment." }])
+      if (!response.ok || !response.body) throw new Error()
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop()
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue
+          const raw = line.slice(6).trim()
+          if (raw === '[DONE]') continue
+
+          try {
+            const event = JSON.parse(raw)
+
+            if (event.t === 'chunk' && event.v) {
+              if (!hasReply) {
+                hasReply = true
+                setLoading(false)
+                setMessages(prev => [...prev, { role: 'assistant', content: event.v, listings: [] }])
+              } else {
+                setMessages(prev => {
+                  const updated = [...prev]
+                  const last = { ...updated[updated.length - 1] }
+                  last.content += event.v
+                  updated[updated.length - 1] = last
+                  return updated
+                })
+              }
+            } else if (event.t === 'listings') {
+              setMessages(prev => {
+                const updated = [...prev]
+                const last = { ...updated[updated.length - 1] }
+                last.listings = event.v || []
+                updated[updated.length - 1] = last
+                return updated
+              })
+            } else if (event.t === 'error' && !hasReply) {
+              hasReply = true
+              setMessages(prev => [...prev, { role: 'assistant', content: "No wahala — I just need a moment. Please send your message again! 🏠" }])
+            }
+          } catch {}
+        }
+      }
+
+      if (!hasReply) {
+        setMessages(prev => [...prev, { role: 'assistant', content: "No wahala — I just need a moment. Please send your message again! 🏠" }])
       }
     } catch {
-      setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, something went wrong. Please try again." }])
+      if (!hasReply) {
+        setMessages(prev => [...prev, { role: 'assistant', content: "Something went wrong on my end. Please try again." }])
+      }
     } finally {
       setLoading(false)
       inputRef.current?.focus()

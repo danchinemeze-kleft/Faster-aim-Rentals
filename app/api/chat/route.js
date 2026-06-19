@@ -170,39 +170,61 @@ export async function POST(request) {
       return Response.json({ listings })
     }
 
-    let reply
-    try {
-      const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
+    const lastMessage = messages[messages.length - 1].content
+    const encoder = new TextEncoder()
 
-      // Keep only the last 6 messages as history to minimise token load
-      const history = messages
-        .slice(0, -1)
-        .filter((m, i) => !(i === 0 && m.role === 'assistant'))
-        .slice(-6)
-        .map(m => ({
-          role: m.role === 'assistant' ? 'model' : 'user',
-          parts: [{ text: m.content }],
-        }))
+    const stream = new ReadableStream({
+      async start(controller) {
+        const send = (data) =>
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
 
-      const result = await genAI.models.generateContent({
-        model: 'gemini-3.5-flash',
-        contents: [
-          ...history,
-          { role: 'user', parts: [{ text: messages[messages.length - 1].content }] },
-        ],
-        config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 1024 },
-      })
+        try {
+          const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
 
-      reply = result.text
-    } catch {
-      reply = "I'm taking a bit longer than usual to respond — please send your message again and I'll get right on it! 🏠"
-    }
+          const history = messages
+            .slice(0, -1)
+            .filter((m, i) => !(i === 0 && m.role === 'assistant'))
+            .slice(-6)
+            .map(m => ({
+              role: m.role === 'assistant' ? 'model' : 'user',
+              parts: [{ text: m.content }],
+            }))
 
-    const intent = extractIntent(messages[messages.length - 1].content)
-    const prefs = await getUserPreferences(supabase, userId)
-    const listings = await fetchListings(supabase, intent, prefs)
+          const result = await genAI.models.generateContentStream({
+            model: 'gemini-3.5-flash',
+            contents: [
+              ...history,
+              { role: 'user', parts: [{ text: lastMessage }] },
+            ],
+            config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 1024 },
+          })
 
-    return Response.json({ reply, listings })
+          for await (const chunk of result) {
+            if (chunk.text) send({ t: 'chunk', v: chunk.text })
+          }
+        } catch {
+          send({ t: 'error' })
+        }
+
+        try {
+          const intent = extractIntent(lastMessage)
+          const prefs = await getUserPreferences(supabase, userId)
+          const listings = await fetchListings(supabase, intent, prefs)
+          send({ t: 'listings', v: listings })
+        } catch {}
+
+        controller.enqueue(encoder.encode('data: [DONE]\n\n'))
+        controller.close()
+      },
+    })
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    })
   } catch (error) {
     console.error('Chat API error:', error)
     return Response.json({ error: 'Failed to get response' }, { status: 500 })
