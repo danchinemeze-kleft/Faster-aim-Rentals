@@ -55,6 +55,12 @@ function ListingCard({ listing: l, revealLoading, onReveal }) {
             {l.bedrooms ? `${l.bedrooms} bed` : ''}{l.bedrooms && l.property_type ? ' · ' : ''}{l.property_type || ''}
           </div>
         )}
+        <a
+          href={`/listing/${l.id}`}
+          className="faim-lcard-view-btn"
+        >
+          View Details →
+        </a>
         <button
           className="faim-lcard-reveal-btn"
           disabled={revealLoading === l.id}
@@ -559,6 +565,25 @@ export default function SearchPage() {
           text-transform: capitalize;
           margin-bottom: 8px;
         }
+
+        .faim-lcard-view-btn {
+          display: block;
+          width: 100%;
+          padding: 6px 6px;
+          background: transparent;
+          color: #0ef6cc;
+          border: 1px solid #0ef6cc55;
+          border-radius: 8px;
+          font-size: 0.72rem;
+          font-weight: 600;
+          text-align: center;
+          text-decoration: none;
+          margin-bottom: 5px;
+          transition: background 0.15s, border-color 0.15s;
+          font-family: inherit;
+          box-sizing: border-box;
+        }
+        .faim-lcard-view-btn:hover { background: #0ef6cc15; border-color: #0ef6cc; }
 
         .faim-lcard-reveal-btn {
           width: 100%;
