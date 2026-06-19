@@ -151,36 +151,6 @@ async function fetchTrending(supabase) {
   return data || []
 }
 
-// ── DeepSeek fallback ──────────────────────────────────────
-
-async function callDeepSeek(messages, SYSTEM_PROMPT) {
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), 10000)
-  try {
-    const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          ...messages.slice(-6).map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content })),
-        ],
-        max_tokens: 400,
-      }),
-    })
-    const data = await res.json()
-    return data.choices?.[0]?.message?.content || null
-  } catch {
-    return null
-  } finally {
-    clearTimeout(timer)
-  }
-}
 
 // ── Route handler ──────────────────────────────────────────
 
@@ -225,8 +195,7 @@ export async function POST(request) {
 
       reply = result.text
     } catch {
-      reply = await callDeepSeek(messages, SYSTEM_PROMPT)
-      if (!reply) reply = "I'm taking a bit longer than usual to respond — please send your message again and I'll get right on it! 🏠"
+      reply = "I'm taking a bit longer than usual to respond — please send your message again and I'll get right on it! 🏠"
     }
 
     const intent = extractIntent(messages[messages.length - 1].content)
