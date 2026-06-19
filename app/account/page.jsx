@@ -180,10 +180,11 @@ function AccountPageInner() {
   }
 
   return (
-    <main className="faim-account-page">
-      <div style={{ width: '100%', maxWidth: '440px', padding: '0 0 4px' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#f5f4f0', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+      <div style={{ width: '100%', padding: '12px 24px', boxSizing: 'border-box' }}>
         <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Login / Sign Up', href: '/account' }]} />
       </div>
+      <main className="faim-account-page">
       <div className="faim-account-card">
         <div className="faim-account-brand">
           <span className="faim-brand-icon">🏠</span>
@@ -428,13 +429,11 @@ function AccountPageInner() {
 
       <style>{`
         .faim-account-page {
-          min-height: 100vh;
+          flex: 1;
           display: flex;
           align-items: center;
           justify-content: center;
           padding: 2rem 1rem;
-          background: #f5f4f0;
-          font-family: 'Segoe UI', system-ui, sans-serif;
         }
         .faim-account-card {
           background: #ffffff;
@@ -536,6 +535,7 @@ function AccountPageInner() {
         @media (max-width: 480px) { .faim-account-card { padding: 2rem 1.25rem; } }
       `}</style>
     </main>
+    </div>
   )
 }
 

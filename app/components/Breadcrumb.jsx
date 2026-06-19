@@ -1,27 +1,34 @@
 'use client'
 
+import { useEffect } from 'react'
+
 const BASE_URL = 'https://rent.fasteraim.com'
 
 export default function Breadcrumb({ items, theme = 'light' }) {
   const isDark = theme === 'dark'
 
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: item.label,
-      item: BASE_URL + item.href,
-    })),
-  }
+  useEffect(() => {
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: items.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.label,
+        item: BASE_URL + item.href,
+      })),
+    }
+    document.head.querySelector('#breadcrumb-jsonld')?.remove()
+    const script = document.createElement('script')
+    script.id = 'breadcrumb-jsonld'
+    script.type = 'application/ld+json'
+    script.textContent = JSON.stringify(schema)
+    document.head.appendChild(script)
+    return () => { document.head.querySelector('#breadcrumb-jsonld')?.remove() }
+  }, [items])
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-      />
       <nav aria-label="Breadcrumb" style={{ padding: '8px 0', marginBottom: '4px' }}>
         <ol style={{
           display: 'flex',
