@@ -136,9 +136,16 @@ export default function ListingLightPage() {
                 />
               </div>
             ) : (
-              <video controls autoPlay playsInline preload="auto" style={{ width: '100%', maxHeight: '80vh', borderRadius: 12, background: '#000', display: 'block' }}>
+              <video
+                key={videoOpen ? 'open' : 'closed'}
+                autoPlay
+                controls
+                playsInline
+                style={{ width: '100%', maxHeight: '80vh', borderRadius: 12, background: '#000', display: 'block' }}
+              >
                 <source src={listing.video_url} type="video/mp4" />
                 <source src={listing.video_url} type="video/webm" />
+                <source src={listing.video_url} type="video/quicktime" />
               </video>
             )}
           </div>
