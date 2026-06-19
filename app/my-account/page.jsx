@@ -1,36 +1,22 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from '../components/Breadcrumb'
 
 export default function MyAccountPage() {
   const router = useRouter()
-  const supabase = createBrowserClient(
+  const supabase = useMemo(() => createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  )
+  ), [])
 
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [reveals, setReveals] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
-
-  useEffect(() => {
-    const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { router.push('/account?redirect=/my-account'); return }
-      setUser(session.user)
-      await Promise.all([
-        fetchProfile(session.user.id),
-        fetchReveals(session.user.id),
-      ])
-      setLoading(false)
-    }
-    init()
-  }, [])
 
   const fetchProfile = async (userId) => {
     const { data } = await supabase.from('Profiles').select('*').eq('id', userId).single()
@@ -45,6 +31,31 @@ export default function MyAccountPage() {
       .order('created_at', { ascending: false })
     setReveals(data || [])
   }
+
+  useEffect(() => {
+    let settled = false
+
+    const init = async (session) => {
+      if (settled) return
+      settled = true
+      if (!session) { router.push('/account?redirect=/my-account'); return }
+      setUser(session.user)
+      await Promise.all([
+        fetchProfile(session.user.id),
+        fetchReveals(session.user.id),
+      ])
+      setLoading(false)
+    }
+
+    // onAuthStateChange fires INITIAL_SESSION immediately with the real session
+    // state, avoiding the race where getSession() resolves before cookies hydrate
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!settled) init(session)
+    })
+
+    return () => subscription.unsubscribe()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()

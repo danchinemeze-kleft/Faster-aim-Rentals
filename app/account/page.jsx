@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useMemo, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from '../components/Breadcrumb'
@@ -8,11 +8,12 @@ import Breadcrumb from '../components/Breadcrumb'
 function AccountPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const redirectHandled = useRef(false)
 
-  const supabase = createBrowserClient(
+  const supabase = useMemo(() => createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  )
+  ), [])
 
   const [mode, setMode] = useState('login') // 'login' | 'signup' | 'onboarding'
   const [email, setEmail] = useState('')
@@ -28,10 +29,14 @@ function AccountPageInner() {
   const [onboardingUser, setOnboardingUser] = useState(null)
   const [onboardingRole, setOnboardingRole] = useState('')
   const [onboardingPhone, setOnboardingPhone] = useState('')
+  const [sessionChecking, setSessionChecking] = useState(true)
 
   const redirectTo = searchParams.get('redirect') || null
 
   const handleRedirectAfterAuth = async (user) => {
+    if (redirectHandled.current) return
+    redirectHandled.current = true
+
     const { data: profile } = await supabase
       .from('Profiles')
       .select('role, full_name')
@@ -42,6 +47,8 @@ function AccountPageInner() {
     if (!profile?.role) {
       setOnboardingUser({ ...user, full_name: profile?.full_name })
       setMode('onboarding')
+      setSessionChecking(false)
+      redirectHandled.current = false
       return
     }
 
@@ -54,6 +61,8 @@ function AccountPageInner() {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
         await handleRedirectAfterAuth(session.user)
+      } else {
+        setSessionChecking(false)
       }
     }
     checkSession()
@@ -177,6 +186,18 @@ function AccountPageInner() {
     if (error) { setError(error.message); setLoading(false); return }
     if (redirectTo) { router.push(redirectTo); return }
     router.push(onboardingRole === 'landlord' ? '/dashboard' : '/my-account')
+  }
+
+  if (sessionChecking) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f4f0', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ width: 40, height: 40, border: '3px solid #e0e0e0', borderTopColor: '#e67e22', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 1rem' }} />
+          <p style={{ color: '#888', fontSize: '0.9rem' }}>Checking your session...</p>
+        </div>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    )
   }
 
   return (
