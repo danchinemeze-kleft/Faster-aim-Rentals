@@ -207,7 +207,7 @@ export async function POST(request) {
           ...history,
           { role: 'user', parts: [{ text: messages[messages.length - 1].content }] },
         ],
-        config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 300 },
+        config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 500 },
       })
 
       reply = result.text
