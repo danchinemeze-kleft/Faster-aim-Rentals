@@ -21,30 +21,13 @@ function youtubeEmbedUrl(url) {
   return m ? `https://www.youtube.com/embed/${m[1]}` : null
 }
 
-function VideoPlayer({ src, onBack }) {
+function VideoPlayer({ src }) {
   const [state, setState] = useState('loading') // 'loading' | 'ready' | 'error'
 
   if (!src) return null
 
   return (
     <div style={{ borderRadius: 12, overflow: 'hidden', background: '#0a0a0a', position: 'relative' }}>
-
-      {/* Back button — always visible, middle-left of the video */}
-      {onBack && (
-        <button
-          onClick={onBack}
-          style={{
-            position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
-            zIndex: 10, background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)',
-            border: '1px solid rgba(255,255,255,0.2)', color: '#fff',
-            borderRadius: 10, padding: '10px 14px', cursor: 'pointer',
-            fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6,
-            fontFamily: 'inherit', lineHeight: 1,
-          }}
-        >
-          ← Back
-        </button>
-      )}
 
       {/* Loading overlay */}
       {state === 'loading' && (
@@ -125,6 +108,7 @@ export default function ListingPage() {
   const [notFound, setNotFound] = useState(false)
   const [activeImage, setActiveImage] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [videoOpen, setVideoOpen] = useState(false)
   const [liked, setLiked] = useState(false)
   const [likes, setLikes] = useState(0)
   const [revealing, setRevealing] = useState(false)
@@ -185,7 +169,7 @@ export default function ListingPage() {
     const handler = (e) => {
       if (e.key === 'ArrowRight') setActiveImage(i => (i + 1) % imgs.length)
       if (e.key === 'ArrowLeft') setActiveImage(i => (i - 1 + imgs.length) % imgs.length)
-      if (e.key === 'Escape') setLightboxOpen(false)
+      if (e.key === 'Escape') { setLightboxOpen(false); setVideoOpen(false) }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
@@ -307,6 +291,40 @@ export default function ListingPage() {
           <div style={{ position: 'fixed', bottom: 22, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.5)', fontSize: 12, textAlign: 'center', whiteSpace: 'nowrap' }}>
             {activeImage + 1} / {images.length} &nbsp;·&nbsp; ← → to navigate &nbsp;·&nbsp; Esc to close
           </div>
+        </div>
+      )}
+
+      {/* Video overlay */}
+      {videoOpen && hasVideo && (
+        <div
+          onClick={() => setVideoOpen(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.97)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
+        >
+          {/* Close / back button */}
+          <button
+            onClick={() => setVideoOpen(false)}
+            style={{ position: 'fixed', top: 18, left: 18, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', fontSize: 13, fontWeight: 700, padding: '9px 16px', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'inherit', zIndex: 1 }}
+          >
+            ← Back
+          </button>
+
+          {/* Video */}
+          <div onClick={e => e.stopPropagation()} style={{ width: '90vw', maxWidth: 860 }}>
+            {isYouTube(listing.video_url) ? (
+              <div style={{ borderRadius: 14, overflow: 'hidden', background: '#000', aspectRatio: '16/9' }}>
+                <iframe
+                  src={youtubeEmbedUrl(listing.video_url) + '?autoplay=1'}
+                  style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <VideoPlayer src={listing.video_url} />
+            )}
+          </div>
+
+          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, marginTop: 16 }}>Tap outside or press Esc to close</p>
         </div>
       )}
 
@@ -453,18 +471,34 @@ export default function ListingPage() {
                 <h2 style={{ fontSize: 14, fontWeight: 600, color: '#e8e8e8', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Property Video
                 </h2>
-                {isYouTube(listing.video_url) ? (
-                  <div style={{ borderRadius: 12, overflow: 'hidden', background: '#000' }}>
-                    <iframe
-                      src={youtubeEmbedUrl(listing.video_url)}
-                      style={{ width: '100%', height: 380, border: 'none', display: 'block' }}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
+                <button
+                  onClick={() => setVideoOpen(true)}
+                  style={{
+                    width: '100%', position: 'relative', borderRadius: 12, overflow: 'hidden',
+                    background: '#0a0a0a', border: '0.5px solid #222', cursor: 'pointer',
+                    padding: 0, display: 'block',
+                  }}
+                >
+                  {/* Thumbnail — use first listing image or dark placeholder */}
+                  {images[0]
+                    ? <img src={images[0]} alt="Video thumbnail" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block', filter: 'brightness(0.45)' }} />
+                    : <div style={{ height: 200, background: '#0d0d0d' }} />
+                  }
+                  {/* Play icon */}
+                  <div style={{
+                    position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center', gap: 10,
+                  }}>
+                    <div style={{
+                      width: 60, height: 60, borderRadius: '50%',
+                      background: 'rgba(14,246,204,0.15)', border: '2px solid #0ef6cc',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <span style={{ fontSize: 24, marginLeft: 4 }}>▶</span>
+                    </div>
+                    <span style={{ color: '#e8e8e8', fontSize: 13, fontWeight: 600 }}>Watch Property Video</span>
                   </div>
-                ) : (
-                  <VideoPlayer src={listing.video_url} onBack={() => router.back()} />
-                )}
+                </button>
               </div>
             )}
           </div>
