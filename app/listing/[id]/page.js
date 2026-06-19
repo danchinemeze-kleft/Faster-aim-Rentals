@@ -21,13 +21,30 @@ function youtubeEmbedUrl(url) {
   return m ? `https://www.youtube.com/embed/${m[1]}` : null
 }
 
-function VideoPlayer({ src }) {
+function VideoPlayer({ src, onBack }) {
   const [state, setState] = useState('loading') // 'loading' | 'ready' | 'error'
 
   if (!src) return null
 
   return (
     <div style={{ borderRadius: 12, overflow: 'hidden', background: '#0a0a0a', position: 'relative' }}>
+
+      {/* Back button — always visible, middle-left of the video */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          style={{
+            position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
+            zIndex: 10, background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)',
+            border: '1px solid rgba(255,255,255,0.2)', color: '#fff',
+            borderRadius: 10, padding: '10px 14px', cursor: 'pointer',
+            fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6,
+            fontFamily: 'inherit', lineHeight: 1,
+          }}
+        >
+          ← Back
+        </button>
+      )}
 
       {/* Loading overlay */}
       {state === 'loading' && (
@@ -446,7 +463,7 @@ export default function ListingPage() {
                     />
                   </div>
                 ) : (
-                  <VideoPlayer src={listing.video_url} />
+                  <VideoPlayer src={listing.video_url} onBack={() => router.back()} />
                 )}
               </div>
             )}
