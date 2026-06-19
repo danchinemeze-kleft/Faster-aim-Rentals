@@ -56,27 +56,24 @@ export default function HomeDarkPage() {
                   Connect with verified landlords across Nigeria. Browse listings, chat with Mr. Rent AI, and find your perfect home today.
                 </p>
                 <div style={styles.heroActions}>
-                  <a href="/browse" style={styles.btnCyan}>Browse Listings</a>
-                  <a href="/search" style={styles.btnPink}>Ask Mr. Rent AI 🤖</a>
-                  <a href="/list" style={styles.btnWhite}>Add Your Property 🏠</a>
+                  <a href="/browse" style={styles.btnCyan}>Browse (free)</a>
+                  <a href="/search" style={styles.btnPink}>AI Chat (free) 🤖</a>
+                  <a href="/list" style={styles.btnWhite}>Add Property (free) 🏠</a>
                   <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={styles.btnPurple}>Learn AI Skills 🎓</a>
+                  <a href="/affiliate" style={styles.btnAffiliate}>💰 Join Associate — Earn Commission</a>
                 </div>
                 <div style={styles.heroStats}>
                   <div style={styles.heroStat}>
                     <span style={styles.statValueCyan}>{displayCount}</span>
-                    <span style={styles.statLabel}>Listings</span>
+                    <span style={styles.statLabel}>Active Homes</span>
                   </div>
                   <div style={styles.statDivider}></div>
                   <div style={styles.heroStat}>
                     <span style={styles.statValuePink}>36</span>
                     <span style={styles.statLabel}>States</span>
                   </div>
-                  <div style={styles.statDivider}></div>
-                  <div style={styles.heroStat}>
-                    <span style={styles.statValueCyan}>₦5k</span>
-                    <span style={styles.statLabel}>Per Reveal</span>
-                  </div>
                 </div>
+                <p style={{ fontSize: '0.75rem', color: '#aaaaaa', fontWeight: '600', marginTop: '0.75rem' }}>🌍 Available in every city across Nigeria</p>
               </div>
 
               {/* Right: Animated Mr. Rent Avatar */}
@@ -199,6 +196,7 @@ export default function HomeDarkPage() {
           <a href="/search" style={styles.btnPink}>Ask Mr. Rent AI 🤖</a>
           <a href="/list" style={styles.btnWhite}>Add Your Property 🏠</a>
           <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={styles.btnPurple}>Learn AI Skills 🎓</a>
+          <a href="/affiliate" style={styles.btnAffiliate}>💰 Join Associate — Earn Commission</a>
         </div>
       </section>
 
@@ -425,6 +423,17 @@ const styles = {
     fontWeight: '800',
     fontSize: '0.85rem',
     boxShadow: '0 0 30px rgba(124,58,237,0.3)',
+    textAlign: 'center',
+  },
+  btnAffiliate: {
+    gridColumn: '1 / -1',
+    background: 'linear-gradient(135deg, #16a34a, #15803d)',
+    color: 'white',
+    padding: '0.75rem 1.25rem',
+    borderRadius: '10px',
+    fontWeight: '800',
+    fontSize: '0.85rem',
+    boxShadow: '0 0 30px rgba(22,163,74,0.3)',
     textAlign: 'center',
   },
   heroStats: {

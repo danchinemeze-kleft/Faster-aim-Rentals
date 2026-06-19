@@ -5,7 +5,7 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#080a0f",
+  "background_color": "#ffffff",
   "theme_color": "#0ef6cc",
   "orientation": "portrait-primary",
   "categories": ["lifestyle", "real-estate"],
@@ -15,7 +15,25 @@
       "src": "/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
@@ -23,19 +41,22 @@
       "name": "Browse Listings",
       "short_name": "Browse",
       "description": "Browse all verified rental properties",
-      "url": "/browse"
+      "url": "/browse",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "List a Property",
       "short_name": "List",
       "description": "List your property for rent",
-      "url": "/list"
+      "url": "/list",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "AI Property Search",
       "short_name": "Mr. Rent AI",
       "description": "Chat with Mr. Rent AI to find your ideal home",
-      "url": "/search"
+      "url": "/search",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
