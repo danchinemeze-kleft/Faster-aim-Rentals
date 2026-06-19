@@ -1,17 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from '../components/Breadcrumb'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
 
 export default function DashboardPage() {
   const router = useRouter()
+  const supabase = useMemo(() => createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ), [])
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [listings, setListings] = useState([])
@@ -50,8 +49,11 @@ export default function DashboardPage() {
       })
     }
 
-    const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
+    let settled = false
+
+    const init = async (session) => {
+      if (settled) return
+      settled = true
       if (!session) { router.push('/account?redirect=/dashboard'); return }
       setUser(session.user)
       await Promise.all([
@@ -62,8 +64,14 @@ export default function DashboardPage() {
       ])
       setLoading(false)
     }
-    init()
-  }, [router])
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!settled) init(session)
+    })
+
+    return () => subscription.unsubscribe()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const toggleAvailability = async (listing) => {
     setTogglingId(listing.id)
