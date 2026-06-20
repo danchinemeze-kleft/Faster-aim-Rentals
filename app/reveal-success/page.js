@@ -48,7 +48,7 @@ function RevealSuccessInner() {
   }, [searchParams])
 
   return (
-    <div style={{ minHeight: '100vh', background: '#080a0f', fontFamily: 'Segoe UI, system-ui, sans-serif', color: '#e8e8e8', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: 'Segoe UI, system-ui, sans-serif', color: 'var(--text-1)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
 
       {status === 'verifying' && (
         <div style={{ textAlign: 'center' }}>

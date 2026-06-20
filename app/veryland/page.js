@@ -61,21 +61,21 @@ function BadgeIcon({ fill, check, size = 48 }) {
 
 export default function VerylandPage() {
   return (
-    <div style={{ minHeight: '100vh', background: '#ffffff', color: '#111827', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', color: 'var(--text-1)', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
 
       {/* Nav */}
       <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)' }} />
-      <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60, position: 'sticky', top: 3, background: '#fff', zIndex: 100 }}>
+      <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60, position: 'sticky', top: 3, background: 'var(--card-bg)', zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <a href="/" style={{ color: '#6b7280', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Mr. Rent</a>
-          <span style={{ color: '#d1d5db' }}>/</span>
+          <a href="/" style={{ color: 'var(--text-3)', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Mr. Rent</a>
+          <span style={{ color: 'var(--border-2)' }}>/</span>
           <span style={{ color: GREEN, fontSize: 14, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 5 }}>
             Veryland
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#1d4ed8"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <a href="/account" style={{ color: '#374151', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Sign in</a>
+          <a href="/account" style={{ color: 'var(--text-2)', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Sign in</a>
           <a href="/veryland/submit" style={{ background: GREEN, color: '#fff', padding: '8px 20px', borderRadius: 8, fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>Get started</a>
         </div>
       </nav>
@@ -91,12 +91,12 @@ export default function VerylandPage() {
           A Faster Aim Technology Product
         </div>
 
-        <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.2rem)', fontWeight: 900, color: '#0f172a', margin: '0 0 20px', lineHeight: 1.15, letterSpacing: '-1px' }}>
+        <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.2rem)', fontWeight: 900, color: 'var(--text-1)', margin: '0 0 20px', lineHeight: 1.15, letterSpacing: '-1px' }}>
           Verify Nigerian Land Title Documents<br />
           <span style={{ color: GREEN }}>Before You Buy</span>
         </h1>
 
-        <p style={{ fontSize: 'clamp(0.95rem, 2vw, 1.1rem)', color: '#4b5563', fontWeight: 500, maxWidth: 540, margin: '0 auto 40px', lineHeight: 1.75 }}>
+        <p style={{ fontSize: 'clamp(0.95rem, 2vw, 1.1rem)', color: 'var(--text-2)', fontWeight: 500, maxWidth: 540, margin: '0 auto 40px', lineHeight: 1.75 }}>
           AI-powered document forensics + physical registry verification.<br />
           Know the truth before you pay.
         </p>
@@ -110,8 +110,8 @@ export default function VerylandPage() {
             Start Verification
           </a>
           <a href="#how-it-works" style={{
-            background: 'transparent', color: '#374151',
-            border: '1.5px solid #d1d5db', padding: '14px 34px',
+            background: 'transparent', color: 'var(--text-2)',
+            border: '1.5px solid var(--border-2)', padding: '14px 34px',
             borderRadius: 10, fontWeight: 700, fontSize: 15, textDecoration: 'none',
           }}>
             How It Works
@@ -120,7 +120,7 @@ export default function VerylandPage() {
       </div>
 
       {/* Trust bar */}
-      <div style={{ background: '#f9fafb', borderTop: '1px solid #f3f4f6', borderBottom: '1px solid #f3f4f6', padding: '1.25rem 2rem' }}>
+      <div style={{ background: 'var(--page-bg)', borderTop: '1px solid var(--border-1)', borderBottom: '1px solid var(--border-1)', padding: '1.25rem 2rem' }}>
         <div style={{ maxWidth: 860, margin: '0 auto', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '3rem', flexWrap: 'wrap' }}>
           {[
             { icon: '🏛️', text: 'CAC-Registered Verification' },
@@ -128,7 +128,7 @@ export default function VerylandPage() {
             { icon: '👨‍⚖️', text: 'Human Expert Review' },
             { icon: '🛡️', text: 'Fraud Prevention' },
           ].map((item, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#374151', fontSize: 13, fontWeight: 600 }}>
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-2)', fontSize: 13, fontWeight: 600 }}>
               <span>{item.icon}</span> {item.text}
             </div>
           ))}
@@ -138,17 +138,17 @@ export default function VerylandPage() {
       {/* Badge Tiers */}
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '5rem 2rem 4rem' }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0f172a', margin: '0 0 12px', letterSpacing: '-0.5px' }}>
+          <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-1)', margin: '0 0 12px', letterSpacing: '-0.5px' }}>
             Four Levels of Trust
           </h2>
-          <p style={{ color: '#6b7280', fontSize: 15, fontWeight: 500, maxWidth: 480, margin: '0 auto' }}>
+          <p style={{ color: 'var(--text-3)', fontSize: 15, fontWeight: 500, maxWidth: 480, margin: '0 auto' }}>
             Every verified property earns a badge. The colour tells you exactly how much has been confirmed.
           </p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(195px, 1fr))', gap: 18 }}>
           {BADGE_TIERS.map(tier => (
             <div key={tier.level} style={{
-              background: '#ffffff',
+              background: 'var(--card-bg)',
               border: `1.5px solid ${tier.border}`,
               borderRadius: 16, padding: '1.75rem 1.5rem', textAlign: 'center',
               boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
@@ -157,25 +157,25 @@ export default function VerylandPage() {
                 <BadgeIcon fill={tier.fill} check={tier.check} size={48} />
               </div>
               <div style={{ fontWeight: 700, fontSize: 15, color: tier.color, marginBottom: 8 }}>{tier.title}</div>
-              <div style={{ fontSize: 13, color: '#6b7280', fontWeight: 500, lineHeight: 1.6 }}>{tier.desc}</div>
+              <div style={{ fontSize: 13, color: 'var(--text-3)', fontWeight: 500, lineHeight: 1.6 }}>{tier.desc}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Two Service Cards */}
-      <div style={{ background: '#f9fafb', borderTop: '1px solid #f3f4f6', padding: '4rem 2rem' }}>
+      <div style={{ background: 'var(--page-bg)', borderTop: '1px solid var(--border-1)', padding: '4rem 2rem' }}>
         <div style={{ maxWidth: 900, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
           <div style={{
-            background: '#ffffff', border: `1.5px solid ${GREEN}33`,
+            background: 'var(--card-bg)', border: `1.5px solid ${GREEN}33`,
             borderRadius: 20, padding: '2.25rem',
             boxShadow: '0 4px 16px rgba(5,150,105,0.08)',
           }}>
             <div style={{ width: 52, height: 52, background: GREEN_LIGHT, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, marginBottom: 20 }}>🏠</div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 12px' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-1)', margin: '0 0 12px' }}>
               For Property Owners
             </h3>
-            <p style={{ color: '#4b5563', fontSize: 14, fontWeight: 500, lineHeight: 1.8, marginBottom: 24 }}>
+            <p style={{ color: 'var(--text-2)', fontSize: 14, fontWeight: 500, lineHeight: 1.8, marginBottom: 24 }}>
               Submit your documents — C of O, Survey Plan, Deed of Assignment and more. Our team manually reviews every submission. Once approved, your listing earns a coloured Veryland badge that signals trust to buyers and tenants.
             </p>
             <a href="/veryland/submit" style={{
@@ -188,15 +188,15 @@ export default function VerylandPage() {
           </div>
 
           <div style={{
-            background: '#ffffff', border: '1.5px solid #fecdd3',
+            background: 'var(--card-bg)', border: '1.5px solid #fecdd3',
             borderRadius: 20, padding: '2.25rem',
             boxShadow: '0 4px 16px rgba(239,68,68,0.06)',
           }}>
             <div style={{ width: 52, height: 52, background: '#fff1f2', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, marginBottom: 20 }}>🔍</div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 12px' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-1)', margin: '0 0 12px' }}>
               For Buyers &amp; Tenants
             </h3>
-            <p style={{ color: '#4b5563', fontSize: 14, fontWeight: 500, lineHeight: 1.8, marginBottom: 24 }}>
+            <p style={{ color: 'var(--text-2)', fontSize: 14, fontWeight: 500, lineHeight: 1.8, marginBottom: 24 }}>
               Before you pay for any property, check if the documents you were given are authentic. Cross-check our verified database and optionally upload the document for an AI-powered authenticity scan.
             </p>
             <a href="/veryland/check" style={{
@@ -212,7 +212,7 @@ export default function VerylandPage() {
 
       {/* How It Works */}
       <div id="how-it-works" style={{ maxWidth: 900, margin: '0 auto', padding: '5rem 2rem 6rem' }}>
-        <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0f172a', textAlign: 'center', margin: '0 0 56px', letterSpacing: '-0.5px' }}>
+        <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-1)', textAlign: 'center', margin: '0 0 56px', letterSpacing: '-0.5px' }}>
           How Verification Works
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 40 }}>
@@ -230,8 +230,8 @@ export default function VerylandPage() {
                 {item.step}
               </div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 16, color: '#0f172a', marginBottom: 8 }}>{item.title}</div>
-                <div style={{ fontSize: 14, color: '#4b5563', fontWeight: 500, lineHeight: 1.75 }}>{item.desc}</div>
+                <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--text-1)', marginBottom: 8 }}>{item.title}</div>
+                <div style={{ fontSize: 14, color: 'var(--text-2)', fontWeight: 500, lineHeight: 1.75 }}>{item.desc}</div>
               </div>
             </div>
           ))}
@@ -257,13 +257,13 @@ export default function VerylandPage() {
       </div>
 
       {/* Footer */}
-      <div style={{ borderTop: '1px solid #e5e7eb', padding: '1.75rem 2rem', textAlign: 'center', background: '#f9fafb' }}>
-        <span style={{ color: '#6b7280', fontSize: 13, fontWeight: 500 }}>Veryland is a product of </span>
+      <div style={{ borderTop: '1px solid var(--border-1)', padding: '1.75rem 2rem', textAlign: 'center', background: 'var(--page-bg)' }}>
+        <span style={{ color: 'var(--text-3)', fontSize: 13, fontWeight: 500 }}>Veryland is a product of </span>
         <a href="https://fasteraim.com" style={{ color: GREEN_DARK, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>Faster Aim Technology Limited</a>
-        <span style={{ color: '#d1d5db', fontSize: 13 }}> · </span>
-        <a href="/privacy-policy" style={{ color: '#9ca3af', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>Privacy Policy</a>
-        <span style={{ color: '#d1d5db', fontSize: 13 }}> · </span>
-        <a href="/browse" style={{ color: '#9ca3af', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>Browse Listings</a>
+        <span style={{ color: 'var(--border-2)', fontSize: 13 }}> · </span>
+        <a href="/privacy-policy" style={{ color: 'var(--text-3)', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>Privacy Policy</a>
+        <span style={{ color: 'var(--border-2)', fontSize: 13 }}> · </span>
+        <a href="/browse" style={{ color: 'var(--text-3)', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>Browse Listings</a>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { Suspense } from "react";
 import RefCapture from "./components/RefCapture";
+import ThemeToggle from "./components/ThemeToggle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -121,6 +122,13 @@ export default function RootLayout({ children }) {
             });
           }
         ` }} />
+        <script dangerouslySetInnerHTML={{ __html: `
+          try {
+            if (localStorage.getItem('faim-theme') === 'light') {
+              document.documentElement.classList.add('light-mode');
+            }
+          } catch(e) {}
+        ` }} />
       </head>
       <body className="min-h-full flex flex-col">
         {/* Cyan/Pink brand frame — top */}
@@ -132,6 +140,7 @@ export default function RootLayout({ children }) {
         {/* right */}
         <div style={{ position: 'fixed', top: 0, bottom: 0, right: 0, width: 4, background: 'linear-gradient(180deg, #ff2d78 0%, #0ef6cc 100%)', zIndex: 99999, pointerEvents: 'none' }} />
         <Suspense fallback={null}><RefCapture /></Suspense>
+        <ThemeToggle />
         {children}
       </body>
       <Analytics />

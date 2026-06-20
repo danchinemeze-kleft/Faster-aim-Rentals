@@ -184,7 +184,7 @@ export default function BrowsePage() {
   }, [user, loading]);
 
   return (
-    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: '40px 24px 80px', fontFamily: 'DM Sans, sans-serif' }}>
+    <div style={{ background: 'var(--page-bg)', color: 'var(--text-1)', minHeight: '100vh', padding: '40px 24px 80px', fontFamily: 'DM Sans, sans-serif' }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
         <Breadcrumb theme="dark" items={[{ label: 'Home', href: '/' }, { label: 'Browse Listings', href: '/browse' }]} />
@@ -193,11 +193,11 @@ export default function BrowsePage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
           <div>
             <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '3px', textTransform: 'uppercase', color: '#0ef6cc', marginBottom: '8px' }}>Available Properties</div>
-            <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 800, color: '#ffffff', margin: 0 }}>Browse All Listings</h1>
-            <p style={{ fontSize: '0.95rem', color: '#ffffff', fontWeight: 700, marginTop: '6px' }}>Verified rental properties across Nigeria.</p>
+            <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 800, color: 'var(--text-1)', margin: 0 }}>Browse All Listings</h1>
+            <p style={{ fontSize: '0.95rem', color: 'var(--text-2)', fontWeight: 700, marginTop: '6px' }}>Verified rental properties across Nigeria.</p>
           </div>
           <a href={user ? '/account' : '/account#login'} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#1a1a1a', border: '2px solid #0ef6cc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0ef6cc', fontWeight: 800, fontSize: '1rem', overflow: 'hidden' }}>
+            <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'var(--input-bg)', border: '2px solid #0ef6cc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0ef6cc', fontWeight: 800, fontSize: '1rem', overflow: 'hidden' }}>
               {user ? (user.user_metadata?.full_name?.[0] || user.email?.[0] || '?').toUpperCase() : (
                 <svg viewBox="0 0 24 24" fill="none" stroke="#0ef6cc" strokeWidth="1.5" style={{ width: '26px', height: '26px' }}>
                   <circle cx="12" cy="8" r="4" />
@@ -205,20 +205,20 @@ export default function BrowsePage() {
                 </svg>
               )}
             </div>
-            <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#aaaaaa', textTransform: 'uppercase', letterSpacing: '1px' }}>{user ? 'Account' : 'Login'}</span>
+            <span style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '1px' }}>{user ? 'Account' : 'Login'}</span>
           </a>
           <a href="/light/browse" title="Switch to light mode" style={{ fontSize: '1.1rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', padding: '6px 10px', textDecoration: 'none' }}>☀️</a>
         </div>
 
         {/* Filters */}
-        <div style={{ background: '#141414', border: '2px solid #0ef6cc', borderRadius: '16px', padding: '28px', marginBottom: '36px', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '18px', alignItems: 'flex-end' }}>
+        <div style={{ background: 'var(--card-bg)', border: '2px solid #0ef6cc', borderRadius: '16px', padding: '28px', marginBottom: '36px', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '18px', alignItems: 'flex-end' }}>
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#ffffff', marginBottom: '10px', letterSpacing: '1px' }}>Search</label>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Location, area or title..." style={{ width: '100%', background: '#1a1a1a', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: '#ffffff', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }} />
+            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-1)', marginBottom: '10px', letterSpacing: '1px' }}>Search</label>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Location, area or title..." style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }} />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#ffffff', marginBottom: '10px', letterSpacing: '1px' }}>Type</label>
-            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} style={{ width: '100%', background: '#1a1a1a', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: '#ffffff', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
+            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-1)', marginBottom: '10px', letterSpacing: '1px' }}>Type</label>
+            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
               <option value="">All Types</option>
               <option value="flat">Flat / Apartment</option>
               <option value="self_contain">Self Contain</option>
@@ -231,8 +231,8 @@ export default function BrowsePage() {
             </select>
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#ffffff', marginBottom: '10px', letterSpacing: '1px' }}>State</label>
-            <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} style={{ width: '100%', background: '#1a1a1a', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: '#ffffff', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
+            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-1)', marginBottom: '10px', letterSpacing: '1px' }}>State</label>
+            <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
               <option value="">All States</option>
               <option value="Anambra">Anambra</option>
               <option value="Lagos">Lagos</option>
@@ -246,8 +246,8 @@ export default function BrowsePage() {
             </select>
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#ffffff', marginBottom: '10px', letterSpacing: '1px' }}>Budget</label>
-            <select value={priceFilter} onChange={e => setPriceFilter(e.target.value)} style={{ width: '100%', background: '#1a1a1a', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: '#ffffff', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
+            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-1)', marginBottom: '10px', letterSpacing: '1px' }}>Budget</label>
+            <select value={priceFilter} onChange={e => setPriceFilter(e.target.value)} style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
               <option value="">Any Budget</option>
               <option value="100000">Under N100,000</option>
               <option value="300000">Under N300,000</option>
@@ -262,7 +262,7 @@ export default function BrowsePage() {
 
         {/* Results info */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
-          <div style={{ fontSize: '0.88rem', color: '#ffffff', fontWeight: 700 }}>
+          <div style={{ fontSize: '0.88rem', color: 'var(--text-1)', fontWeight: 700 }}>
             Showing <span style={{ color: '#0ef6cc', fontWeight: 800 }}>{filtered.length}</span> {filtered.length === 1 ? 'property' : 'properties'}
           </div>
           <a href="/search" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(14,246,204,0.1)', border: '2px solid #0ef6cc', color: '#0ef6cc', padding: '9px 18px', borderRadius: '100px', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none' }}>Try Mr. Rent AI</a>

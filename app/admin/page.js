@@ -219,7 +219,7 @@ export default function AdminDashboard() {
     return (
       <div style={{
         minHeight: '100vh', display: 'flex', alignItems: 'center',
-        justifyContent: 'center', background: '#080a0f', fontFamily: 'DM Sans, sans-serif'
+        justifyContent: 'center', background: 'var(--page-bg)', fontFamily: 'DM Sans, sans-serif'
       }}>
         <div style={{
           background: '#111318', border: '0.5px solid #222',
@@ -285,7 +285,7 @@ export default function AdminDashboard() {
   const verylandPending = verylandSubmissions.filter(s => s.status === 'submitted' || s.status === 'under_review');
 
   return (
-    <div style={{ minHeight: '100vh', background: '#080a0f', fontFamily: 'DM Sans, sans-serif', color: '#e8e8e8' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-1)' }}>
 
       {/* Top nav */}
       <div style={{

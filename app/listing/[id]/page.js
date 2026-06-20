@@ -258,15 +258,15 @@ export default function ListingPage() {
   }
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#080a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Segoe UI, system-ui, sans-serif' }}>
-      <div style={{ color: '#555', fontSize: 14 }}>Loading property…</div>
+    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Segoe UI, system-ui, sans-serif' }}>
+      <div style={{ color: 'var(--text-3)', fontSize: 14 }}>Loading property…</div>
     </div>
   )
 
   if (notFound) return (
-    <div style={{ minHeight: '100vh', background: '#080a0f', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, fontFamily: 'Segoe UI, system-ui, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, fontFamily: 'Segoe UI, system-ui, sans-serif' }}>
       <div style={{ fontSize: 48 }}>🏠</div>
-      <div style={{ color: '#e8e8e8', fontSize: 18, fontWeight: 600 }}>Property not found</div>
+      <div style={{ color: 'var(--text-1)', fontSize: 18, fontWeight: 600 }}>Property not found</div>
       <button onClick={() => router.push('/browse')} style={{ background: '#0ef6cc', color: '#080a0f', border: 'none', padding: '10px 24px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', fontSize: 14 }}>
         Back to Browse
       </button>
@@ -278,7 +278,7 @@ export default function ListingPage() {
   const hasVideo = !!listing.video_url
 
   return (
-    <div style={{ minHeight: '100vh', background: '#080a0f', fontFamily: 'Segoe UI, system-ui, sans-serif', color: '#e8e8e8' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: 'Segoe UI, system-ui, sans-serif', color: 'var(--text-1)' }}>
 
       {/* Lightbox */}
       {lightboxOpen && hasImages && (
