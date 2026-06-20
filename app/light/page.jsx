@@ -33,6 +33,13 @@ export default function HomeDarkPage() {
           <a href="/browse" style={styles.navLink}>Browse</a>
           <a href="/search" style={styles.navLink}>AI Chat</a>
           <a href="/list" style={styles.navLink}>List Property</a>
+          <span className="vl-nav-wrap">
+            <a href="/veryland" style={{ ...styles.navLink, color: '#1d4ed8', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 800 }}>
+              Veryland
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#1d4ed8"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </a>
+            <span className="vl-tooltip">Nigeria&apos;s first property document<br/>verification system.<br/>Verify land titles, C of O &amp; survey plans.</span>
+          </span>
           <a href="/account" style={styles.navBtn}>Login / Sign up</a>
           <a href="/" title="Switch to light mode" style={{ fontSize: '1.1rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', padding: '6px 10px', cursor: 'pointer', textDecoration: 'none' }}>☀️</a>
         </div>
@@ -61,6 +68,13 @@ export default function HomeDarkPage() {
                   <a href="/list" style={styles.btnWhite}>Add Property (free) 🏠</a>
                   <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={styles.btnPurple}>Learn AI Skills 🎓</a>
                   <a href="/affiliate" style={styles.btnAffiliate}>💰 Join Associate — Earn Commission</a>
+                  <span className="vl-nav-wrap" style={{gridColumn:'1 / -1', display:'block'}}>
+                    <a href="/veryland" style={{background:'linear-gradient(135deg,#1d4ed8,#3B82F6)',color:'white',padding:'0.75rem 1.25rem',borderRadius:'10px',fontWeight:800,fontSize:'0.85rem',boxShadow:'0 4px 16px rgba(59,130,246,0.3)',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',width:'100%'}}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="rgba(255,255,255,0.25)"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      Veryland — Verify Your Property Documents
+                    </a>
+                    <span className="vl-tooltip">Submit ownership docs (C of O, Survey Plan,<br/>Deed of Assignment) for human review.<br/>Get a verified badge displayed on your listing.</span>
+                  </span>
                 </div>
                 <div style={styles.heroStats}>
                   <div style={styles.heroStat}>
@@ -208,6 +222,13 @@ export default function HomeDarkPage() {
             <a href="/browse" style={styles.footerLink}>Browse</a>
             <a href="/search" style={styles.footerLink}>AI Chat</a>
             <a href="/list" style={styles.footerLink}>List Property</a>
+            <span className="vl-nav-wrap">
+              <a href="/veryland" style={{ ...styles.footerLink, color: '#1d4ed8', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                Veryland
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#1d4ed8"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </a>
+              <span className="vl-tooltip vl-tooltip-up">Nigeria&apos;s first property document<br/>verification system.</span>
+            </span>
             <a href="/account" style={styles.footerLink}>Login</a>
             <a href="/admin" style={styles.footerAdminLink}>⚙ Admin</a>
           </div>
@@ -221,6 +242,21 @@ export default function HomeDarkPage() {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #000; }
         a { text-decoration: none; }
+        .vl-nav-wrap { position: relative; display: inline-flex; align-items: center; }
+        .vl-tooltip {
+          display: none; position: absolute; top: calc(100% + 10px); left: 50%;
+          transform: translateX(-50%); background: #1d4ed8; color: white;
+          padding: 10px 14px; border-radius: 10px; font-size: 0.74rem; font-weight: 600;
+          white-space: nowrap; z-index: 9999; box-shadow: 0 4px 20px rgba(29,78,216,0.45);
+          line-height: 1.6; pointer-events: none; text-align: center;
+        }
+        .vl-tooltip::before {
+          content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+          border: 7px solid transparent; border-bottom-color: #1d4ed8;
+        }
+        .vl-tooltip-up { top: auto; bottom: calc(100% + 10px); }
+        .vl-tooltip-up::before { bottom: auto; top: 100%; border-bottom-color: transparent; border-top-color: #1d4ed8; }
+        .vl-nav-wrap:hover .vl-tooltip { display: block; }
 
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
