@@ -33,7 +33,13 @@ export default function Home() {
           <a href="/browse" style={s.navLink}>Browse</a>
           <a href="/search" style={s.navLink}>AI Chat</a>
           <a href="/list" style={s.navLink}>List Property</a>
-          <a href="/veryland" style={{ ...s.navLink, color: '#3B82F6' }}>Veryland</a>
+          <span className="vl-nav-wrap">
+            <a href="/veryland" style={{ ...s.navLink, color: '#1d4ed8', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 800 }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#1d4ed8"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              Veryland
+            </a>
+            <span className="vl-tooltip">Nigeria&apos;s first property document<br/>verification system.<br/>Verify land titles, C of O &amp; survey plans.</span>
+          </span>
           <a href="/account" style={s.navBtn}>Login / Sign up</a>
           <a href="/light" title="Switch to dark mode" style={{ fontSize: '1.1rem', background: 'rgba(0,0,0,0.06)', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '6px 10px', cursor: 'pointer', textDecoration: 'none' }}>🌙</a>
         </div>
@@ -60,7 +66,13 @@ export default function Home() {
                   <a href="/list" style={s.btnOutline}>Add Property (free) 🏠</a>
                   <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={s.btnPurple}>Learn AI Skills 🎓</a>
                   <a href="/affiliate" style={s.btnAffiliate}>💰 Join Associate — Earn Commission</a>
-                  <a href="/veryland" style={s.btnVeryland}>🏷️ Veryland — Verify Your Property Documents</a>
+                  <span className="vl-nav-wrap" style={{gridColumn:'1 / -1', display:'block'}}>
+                    <a href="/veryland" style={{background:'linear-gradient(135deg,#1d4ed8,#3B82F6)',color:'white',padding:'0.75rem 1.25rem',borderRadius:'10px',fontWeight:800,fontSize:'0.85rem',boxShadow:'0 4px 16px rgba(59,130,246,0.3)',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',width:'100%'}}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="rgba(255,255,255,0.25)"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      Veryland — Verify Your Property Documents
+                    </a>
+                    <span className="vl-tooltip">Submit ownership docs (C of O, Survey Plan,<br/>Deed of Assignment) for human review.<br/>Get a verified badge displayed on your listing.</span>
+                  </span>
                 </div>
                 <div style={s.heroStats}>
                   <div style={s.heroStat}>
@@ -185,7 +197,13 @@ export default function Home() {
             <a href="/browse" style={s.footerLink}>Browse</a>
             <a href="/search" style={s.footerLink}>AI Chat</a>
             <a href="/list" style={s.footerLink}>List Property</a>
-            <a href="/veryland" style={{ ...s.footerLink, color: '#3B82F6', fontWeight: 700 }}>🏷️ Veryland</a>
+            <span className="vl-nav-wrap">
+              <a href="/veryland" style={{ ...s.footerLink, color: '#1d4ed8', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#1d4ed8"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Veryland
+              </a>
+              <span className="vl-tooltip vl-tooltip-up">Nigeria&apos;s first property document<br/>verification system.</span>
+            </span>
             <a href="/affiliate" style={{ ...s.footerLink, color: '#7c3aed', fontWeight: 700 }}>💰 Earn — Affiliate</a>
             <a href="/account" style={s.footerLink}>Login</a>
             <a href="/admin" style={s.footerAdminLink}>⚙ Admin</a>
@@ -200,6 +218,21 @@ export default function Home() {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #ffffff; }
         a { text-decoration: none; }
+        .vl-nav-wrap { position: relative; display: inline-flex; align-items: center; }
+        .vl-tooltip {
+          display: none; position: absolute; top: calc(100% + 10px); left: 50%;
+          transform: translateX(-50%); background: #1d4ed8; color: white;
+          padding: 10px 14px; border-radius: 10px; font-size: 0.74rem; font-weight: 600;
+          white-space: nowrap; z-index: 9999; box-shadow: 0 4px 20px rgba(29,78,216,0.35);
+          line-height: 1.6; pointer-events: none; text-align: center;
+        }
+        .vl-tooltip::before {
+          content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+          border: 7px solid transparent; border-bottom-color: #1d4ed8;
+        }
+        .vl-tooltip-up { top: auto; bottom: calc(100% + 10px); }
+        .vl-tooltip-up::before { bottom: auto; top: 100%; border-bottom-color: transparent; border-top-color: #1d4ed8; }
+        .vl-nav-wrap:hover .vl-tooltip { display: block; }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
         @keyframes floatReverse { 0%,100%{transform:translateY(0)} 50%{transform:translateY(12px)} }
         @keyframes spinSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
