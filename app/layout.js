@@ -123,6 +123,14 @@ export default function RootLayout({ children }) {
         ` }} />
       </head>
       <body className="min-h-full flex flex-col">
+        {/* Cyan/Pink brand frame — top */}
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg, #0ef6cc 0%, #ff2d78 100%)', zIndex: 99999, pointerEvents: 'none' }} />
+        {/* bottom */}
+        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg, #ff2d78 0%, #0ef6cc 100%)', zIndex: 99999, pointerEvents: 'none' }} />
+        {/* left */}
+        <div style={{ position: 'fixed', top: 0, bottom: 0, left: 0, width: 4, background: 'linear-gradient(180deg, #0ef6cc 0%, #ff2d78 100%)', zIndex: 99999, pointerEvents: 'none' }} />
+        {/* right */}
+        <div style={{ position: 'fixed', top: 0, bottom: 0, right: 0, width: 4, background: 'linear-gradient(180deg, #ff2d78 0%, #0ef6cc 100%)', zIndex: 99999, pointerEvents: 'none' }} />
         <Suspense fallback={null}><RefCapture /></Suspense>
         {children}
       </body>

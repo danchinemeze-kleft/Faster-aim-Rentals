@@ -105,7 +105,8 @@ export default function VerylandCheckPage() {
     <div style={{ minHeight: '100vh', background: '#f9fafb', fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#111827' }}>
 
       {/* Nav */}
-      <nav style={{ borderBottom: '1px solid #e5e7eb', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: '#fff', position: 'sticky', top: 0, zIndex: 100 }}>
+      <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)' }} />
+      <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: '#fff', position: 'sticky', top: 3, zIndex: 100 }}>
         <a href="/" style={{ color: '#6b7280', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</a>
         <span style={{ color: '#d1d5db', margin: '0 8px' }}>/</span>
         <a href="/veryland" style={{ color: GREEN, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Veryland</a>

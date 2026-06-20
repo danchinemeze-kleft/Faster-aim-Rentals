@@ -182,12 +182,15 @@ export default function VerylandSubmitPage() {
 
   if (screen === 'uploading') {
     return (
-      <div style={{ minHeight: '100vh', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 52, height: 52, borderRadius: '50%', border: `4px solid ${GREEN_LIGHT}`, borderTopColor: GREEN, animation: 'spin 0.9s linear infinite', margin: '0 auto 20px' }} />
-          <div style={{ color: '#374151', fontSize: 15, fontWeight: 600 }}>Uploading documents and submitting…</div>
-          <div style={{ color: '#6b7280', fontSize: 13, marginTop: 6 }}>Please keep this page open</div>
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <div style={{ minHeight: '100vh', background: '#f9fafb', display: 'flex', flexDirection: 'column', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+        <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)', flexShrink: 0 }} />
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ width: 52, height: 52, borderRadius: '50%', border: `4px solid ${GREEN_LIGHT}`, borderTopColor: GREEN, animation: 'spin 0.9s linear infinite', margin: '0 auto 20px' }} />
+            <div style={{ color: '#374151', fontSize: 15, fontWeight: 600 }}>Uploading documents and submitting…</div>
+            <div style={{ color: '#6b7280', fontSize: 13, marginTop: 6 }}>Please keep this page open</div>
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          </div>
         </div>
       </div>
     );
@@ -195,7 +198,9 @@ export default function VerylandSubmitPage() {
 
   if (screen === 'success') {
     return (
-      <div style={{ minHeight: '100vh', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Segoe UI', system-ui, sans-serif", padding: '2rem' }}>
+      <div style={{ minHeight: '100vh', background: '#f9fafb', display: 'flex', flexDirection: 'column', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+        <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)', flexShrink: 0 }} />
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <div style={{ maxWidth: 520, width: '100%', textAlign: 'center', background: '#fff', border: '1.5px solid #d1fae5', borderRadius: 20, padding: '3rem 2.5rem', boxShadow: '0 8px 32px rgba(5,150,105,0.1)' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
             <svg width="80" height="80" viewBox="0 0 80 80">
@@ -224,6 +229,7 @@ export default function VerylandSubmitPage() {
             </a>
           </div>
         </div>
+        </div>
       </div>
     );
   }
@@ -232,7 +238,8 @@ export default function VerylandSubmitPage() {
     <div style={{ minHeight: '100vh', background: '#f9fafb', fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#111827' }}>
 
       {/* Nav */}
-      <nav style={{ borderBottom: '1px solid #e5e7eb', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: '#fff', position: 'sticky', top: 0, zIndex: 100 }}>
+      <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)' }} />
+      <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: '#fff', position: 'sticky', top: 3, zIndex: 100 }}>
         <a href="/" style={{ color: '#6b7280', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</a>
         <span style={{ color: '#d1d5db', margin: '0 8px' }}>/</span>
         <a href="/veryland" style={{ color: GREEN, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Veryland</a>

@@ -64,7 +64,8 @@ export default function VerylandPage() {
     <div style={{ minHeight: '100vh', background: '#ffffff', color: '#111827', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
 
       {/* Nav */}
-      <nav style={{ borderBottom: '1px solid #e5e7eb', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60, position: 'sticky', top: 0, background: '#fff', zIndex: 100 }}>
+      <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)' }} />
+      <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60, position: 'sticky', top: 3, background: '#fff', zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <a href="/" style={{ color: '#6b7280', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Mr. Rent</a>
           <span style={{ color: '#d1d5db' }}>/</span>
