@@ -28,6 +28,10 @@ export default function AdminDashboard() {
     totalLandlords: 0,
   });
 
+  const [verylandSubmissions, setVerylandSubmissions] = useState([]);
+  const [verylandBadgeSel, setVerylandBadgeSel] = useState({});
+  const [verylandNotes, setVerylandNotes] = useState({});
+
   useEffect(() => {
     const saved = sessionStorage.getItem('mr_rent_admin');
     setTimeout(() => {
@@ -53,6 +57,11 @@ export default function AdminDashboard() {
         .select('*')
         .order('created_at', { ascending: false });
 
+      const { data: vData } = await supabase
+        .from('veryland_submissions')
+        .select('*')
+        .order('submitted_at', { ascending: false });
+
       if (!le && listingData) {
         setListings(listingData);
         setStats(s => ({
@@ -68,10 +77,43 @@ export default function AdminDashboard() {
         setLandlords(landlordList);
         setStats(s => ({ ...s, totalLandlords: landlordList.length }));
       }
+
+      if (vData) setVerylandSubmissions(vData);
     } catch (err) {
       console.error(err);
     }
     setLoading(false);
+  }
+
+  async function approveVeryland(id) {
+    const level = verylandBadgeSel[id] || 'green';
+    const sub = verylandSubmissions.find(s => s.id === id);
+    const newStatus = level === 'yellow' ? 'approved_partial' : 'approved_full';
+
+    const { error } = await supabase
+      .from('veryland_submissions')
+      .update({ status: newStatus, badge_level: level, reviewed_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (!error) {
+      if (sub?.listing_id) {
+        await supabase.from('listings').update({ veryland_badge: level }).eq('id', sub.listing_id);
+      }
+      setVerylandSubmissions(prev => prev.map(s => s.id === id ? { ...s, status: newStatus, badge_level: level } : s));
+      showMsg('Veryland submission approved — badge awarded.');
+    }
+  }
+
+  async function rejectVeryland(id) {
+    const notes = verylandNotes[id] || '';
+    const { error } = await supabase
+      .from('veryland_submissions')
+      .update({ status: 'rejected', admin_notes: notes, reviewed_at: new Date().toISOString() })
+      .eq('id', id);
+    if (!error) {
+      setVerylandSubmissions(prev => prev.map(s => s.id === id ? { ...s, status: 'rejected' } : s));
+      showMsg('Veryland submission rejected.');
+    }
   }
 
   async function updateListingStatus(id, status) {
@@ -240,6 +282,7 @@ export default function AdminDashboard() {
   const activeListings = listings.filter(l => l.status === 'approved');
   const otherListings = listings.filter(l => l.status === 'rejected' || l.status === 'unavailable');
   const tabListings = [...pendingListings, ...activeListings, ...otherListings];
+  const verylandPending = verylandSubmissions.filter(s => s.status === 'submitted' || s.status === 'under_review');
 
   return (
     <div style={{ minHeight: '100vh', background: '#080a0f', fontFamily: 'DM Sans, sans-serif', color: '#e8e8e8' }}>
@@ -284,6 +327,7 @@ export default function AdminDashboard() {
             { label: 'Active listings', value: stats.activeListings, color: '#0ef6cc' },
             { label: 'Pending review', value: stats.pendingListings, color: stats.pendingListings > 0 ? '#EF9F27' : '#e8e8e8' },
             { label: 'Landlords', value: stats.totalLandlords, color: '#ff2d78' },
+            { label: 'Veryland queue', value: verylandPending.length, color: verylandPending.length > 0 ? '#3B82F6' : '#555' },
           ].map(s => (
             <div key={s.label} style={{
               background: '#111318', border: '0.5px solid #222',
@@ -300,6 +344,7 @@ export default function AdminDashboard() {
           {[
             { key: 'listings', label: `Listings${pendingListings.length > 0 ? ` (${pendingListings.length} pending)` : ''}` },
             { key: 'landlords', label: `Landlords (${landlords.length})` },
+            { key: 'veryland', label: `Veryland${verylandPending.length > 0 ? ` (${verylandPending.length} pending)` : ''}` },
           ].map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
               background: activeTab === tab.key ? '#0ef6cc' : 'transparent',
@@ -435,6 +480,140 @@ export default function AdminDashboard() {
                   }}>
                     {lp.subscribed ? '✓ Subscribed' : 'No subscription'}
                   </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* VERYLAND TAB */}
+        {!loading && activeTab === 'veryland' && (
+          <div>
+            {verylandSubmissions.length === 0 && (
+              <div style={{
+                background: '#111318', border: '0.5px solid #222',
+                borderRadius: 12, padding: '3rem', textAlign: 'center', color: '#555'
+              }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>🏷️</div>
+                <div style={{ fontSize: 14 }}>No Veryland submissions yet. They appear here when property owners submit documents.</div>
+                <a href="/veryland" target="_blank" rel="noreferrer" style={{ color: '#0ef6cc', fontSize: 13, marginTop: 10, display: 'inline-block' }}>View Veryland page →</a>
+              </div>
+            )}
+            {verylandSubmissions.map(sub => {
+              const isPending = sub.status === 'submitted' || sub.status === 'under_review';
+              const isApproved = sub.status === 'approved_partial' || sub.status === 'approved_full';
+              const badgeColors = { white: '#d0d0d0', yellow: '#F59E0B', green: '#10B981', blue: '#3B82F6' };
+              const badgeFill = badgeColors[sub.badge_level] || '#d0d0d0';
+              const statusMap = {
+                submitted: { bg: '#1a1a0a', color: '#EF9F27', label: 'Pending' },
+                under_review: { bg: '#0a0f1a', color: '#3B82F6', label: 'Under Review' },
+                approved_partial: { bg: '#0a1a10', color: '#10B981', label: 'Partial Approved' },
+                approved_full: { bg: '#0a1a10', color: '#10B981', label: 'Fully Approved' },
+                rejected: { bg: '#1a0a0a', color: '#E24B4A', label: 'Rejected' },
+              };
+              const st = statusMap[sub.status] || statusMap.submitted;
+
+              return (
+                <div key={sub.id} style={{
+                  background: '#111318',
+                  border: isPending ? '0.5px solid #3B82F644' : '0.5px solid #222',
+                  borderRadius: 12, padding: '1.25rem', marginBottom: 12
+                }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'start' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
+                        <svg width="18" height="18" viewBox="0 0 18 18" style={{ flexShrink: 0 }}>
+                          <circle cx="9" cy="9" r="9" fill={badgeFill} />
+                          <polyline points="5,9 8,12 13,6" stroke={sub.badge_level === 'white' ? '#888' : '#fff'} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <span style={{ fontWeight: 600, fontSize: 15, color: '#e8e8e8' }}>
+                          {sub.owner_name || 'Unnamed submitter'}
+                        </span>
+                        <span style={{ background: st.bg, color: st.color, fontSize: 11, fontWeight: 500, padding: '2px 9px', borderRadius: 20 }}>
+                          {st.label}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: 13, color: '#888', display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 8 }}>
+                        <span>📍 {sub.property_address}{sub.state ? `, ${sub.state}` : ''}</span>
+                        <span>✉️ {sub.owner_email || '—'}</span>
+                        {sub.owner_phone && <span>📞 {sub.owner_phone}</span>}
+                        <span>📄 {Array.isArray(sub.documents) ? sub.documents.length : 0} doc{Array.isArray(sub.documents) && sub.documents.length !== 1 ? 's' : ''}</span>
+                        <span>🕐 {sub.submitted_at ? new Date(sub.submitted_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}</span>
+                      </div>
+                      {Array.isArray(sub.documents) && sub.documents.length > 0 && (
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                          {sub.documents.map((doc, i) => (
+                            <a key={i} href={doc.url} target="_blank" rel="noreferrer" style={{
+                              background: '#1a1d24', border: '0.5px solid #333', borderRadius: 6,
+                              padding: '3px 10px', fontSize: 11, color: '#0ef6cc', textDecoration: 'none',
+                              display: 'inline-flex', alignItems: 'center', gap: 4
+                            }}>
+                              📎 {doc.type?.replace(/_/g, ' ') || doc.name || `Doc ${i + 1}`}
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                      {sub.additional_info && (
+                        <div style={{ marginTop: 8, fontSize: 12, color: '#555', fontStyle: 'italic' }}>
+                          Note: {sub.additional_info}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Actions */}
+                    {isPending && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 180 }}>
+                        <select
+                          value={verylandBadgeSel[sub.id] || 'green'}
+                          onChange={e => setVerylandBadgeSel(prev => ({ ...prev, [sub.id]: e.target.value }))}
+                          style={{
+                            background: '#1a1d24', border: '0.5px solid #333', borderRadius: 6,
+                            color: '#e8e8e8', fontSize: 12, padding: '6px 10px', outline: 'none',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <option value="white">⬜ White — Submitted</option>
+                          <option value="yellow">🟡 Yellow — Partial</option>
+                          <option value="green">🟢 Green — Verified</option>
+                          <option value="blue">🔵 Blue — Premium</option>
+                        </select>
+                        <button onClick={() => approveVeryland(sub.id)} style={{
+                          background: '#0ef6cc', color: '#080a0f', border: 'none',
+                          borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer'
+                        }}>
+                          ✓ Approve &amp; Award Badge
+                        </button>
+                        <div>
+                          <input
+                            placeholder="Rejection reason (optional)"
+                            value={verylandNotes[sub.id] || ''}
+                            onChange={e => setVerylandNotes(prev => ({ ...prev, [sub.id]: e.target.value }))}
+                            style={{
+                              width: '100%', background: '#1a1d24', border: '0.5px solid #333',
+                              borderRadius: 6, color: '#888', fontSize: 12, padding: '6px 10px',
+                              outline: 'none', marginBottom: 4, boxSizing: 'border-box'
+                            }}
+                          />
+                          <button onClick={() => rejectVeryland(sub.id)} style={{
+                            background: 'transparent', color: '#E24B4A', border: '0.5px solid #E24B4A',
+                            borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer', width: '100%'
+                          }}>
+                            ✕ Reject
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {isApproved && (
+                      <div style={{ textAlign: 'right' }}>
+                        <svg width="32" height="32" viewBox="0 0 32 32">
+                          <circle cx="16" cy="16" r="16" fill={badgeFill} />
+                          <polyline points="9,16 14,21 23,11" stroke={sub.badge_level === 'white' ? '#888' : '#fff'} strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>Badge awarded</div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })}

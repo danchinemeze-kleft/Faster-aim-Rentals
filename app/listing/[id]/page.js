@@ -12,6 +12,31 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
+const VERYLAND_BADGE = {
+  white:  { fill: '#d0d0d0', check: '#888', label: 'Veryland: Submitted' },
+  yellow: { fill: '#F59E0B', check: '#fff', label: 'Veryland: Partial Verified' },
+  green:  { fill: '#10B981', check: '#fff', label: 'Veryland: Verified' },
+  blue:   { fill: '#3B82F6', check: '#fff', label: 'Veryland: Premium Verified' },
+}
+
+function VerylandBadge({ level }) {
+  const b = VERYLAND_BADGE[level]
+  if (!b) return null
+  return (
+    <a
+      href="/veryland"
+      title={b.label}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, textDecoration: 'none', background: '#111318', border: `1px solid ${b.fill}33`, borderRadius: 20, padding: '4px 12px 4px 6px' }}
+    >
+      <svg width="18" height="18" viewBox="0 0 18 18" style={{ flexShrink: 0 }}>
+        <circle cx="9" cy="9" r="9" fill={b.fill} />
+        <polyline points="5,9 8,12 13,6" stroke={b.check} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <span style={{ fontSize: 11, fontWeight: 700, color: b.fill }}>{b.label}</span>
+    </a>
+  )
+}
+
 function isYouTube(url) {
   return url && (url.includes('youtube.com') || url.includes('youtu.be'))
 }
@@ -422,7 +447,7 @@ export default function ListingPage() {
           <div>
             {/* Title row */}
             <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10, alignItems: 'center' }}>
                 {listing.property_type && (
                   <span style={{ background: '#0e1c19', color: '#0ef6cc', fontSize: 11, fontWeight: 600, padding: '3px 12px', borderRadius: 20, border: '0.5px solid #0ef6cc33' }}>
                     {listing.property_type}
@@ -433,6 +458,7 @@ export default function ListingPage() {
                     ● Available
                   </span>
                 )}
+                {listing.veryland_badge && <VerylandBadge level={listing.veryland_badge} />}
               </div>
 
               <h1 style={{ fontSize: 24, fontWeight: 700, color: '#e8e8e8', marginBottom: 10, lineHeight: 1.35 }}>

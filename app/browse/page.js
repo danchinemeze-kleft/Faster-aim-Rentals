@@ -10,6 +10,30 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
+const VERYLAND_BADGE = {
+  white:  { fill: '#d0d0d0', check: '#888', label: 'Submitted' },
+  yellow: { fill: '#F59E0B', check: '#fff', label: 'Partial Verified' },
+  green:  { fill: '#10B981', check: '#fff', label: 'Verified' },
+  blue:   { fill: '#3B82F6', check: '#fff', label: 'Premium Verified' },
+};
+
+function VerylandBadge({ level }) {
+  const b = VERYLAND_BADGE[level];
+  if (!b) return null;
+  return (
+    <span
+      title={`Veryland ${b.label}`}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 700, color: b.fill, flexShrink: 0 }}
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" style={{ flexShrink: 0 }}>
+        <circle cx="8" cy="8" r="8" fill={b.fill} />
+        <polyline points="4.5,8 7,10.5 12,5" stroke={b.check} strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      {b.label}
+    </span>
+  );
+}
+
 function BrowseVideoPlayer({ src }) {
   const [state, setState] = useState('loading')
   if (!src) return null
@@ -272,7 +296,12 @@ export default function BrowsePage() {
                     N{Number(l.price).toLocaleString('en-NG')} <span style={{ fontSize: '0.82rem', fontWeight: 400, color: '#999', fontFamily: 'DM Sans, sans-serif' }}>/ {l.price_period || 'year'}</span>
                   </div>
                   <a href={`/listing/${l.id}`} style={{ fontSize: '1rem', fontWeight: 700, color: '#111', marginBottom: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textDecoration: 'none', display: 'block' }}>{l.title}</a>
-                  <div style={{ fontSize: '0.82rem', color: '#666', fontWeight: 600, marginBottom: '16px' }}>📍 {l.location}{l.city ? `, ${l.city}` : ''}, {l.state}</div>
+                  <div style={{ fontSize: '0.82rem', color: '#666', fontWeight: 600, marginBottom: l.veryland_badge ? 8 : 16 }}>📍 {l.location}{l.city ? `, ${l.city}` : ''}, {l.state}</div>
+                  {l.veryland_badge && (
+                    <div style={{ marginBottom: 16 }}>
+                      <VerylandBadge level={l.veryland_badge} />
+                    </div>
+                  )}
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
                     <a href={`/listing/${l.id}`} style={{ flex: 1, padding: '11px 8px', borderRadius: '8px', border: '2px solid #e8e8e8', background: '#f8f8f8', color: '#444', fontSize: '0.78rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>View Details</a>
                     <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '11px 8px', borderRadius: '8px', border: 'none', background: '#ff2d78', color: '#fff', fontSize: '0.82rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif' }}>{paying === l.id ? 'Please wait...' : 'Meet Landlord • ₦5k'}</button>
