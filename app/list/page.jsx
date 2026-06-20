@@ -106,6 +106,7 @@ function ListPageInner() {
   const userClosedFormRef = useRef(false)
 
   const [user, setUser] = useState(null)
+  const [userRole, setUserRole] = useState(null)
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
   const [isSubscribed, setIsSubscribed] = useState(false)
@@ -165,6 +166,9 @@ function ListPageInner() {
       }
       const userId = session.user.id
       setUser(session.user)
+
+      supabase.from('Profiles').select('role').eq('id', userId).single()
+        .then(({ data }) => setUserRole(data?.role || 'tenant'))
 
       const startOfMonth = new Date()
       startOfMonth.setDate(1)
@@ -521,7 +525,11 @@ videoEl.src = URL.createObjectURL(file)
 
   return (
     <div className="faim-list-page">
-      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Dashboard', href: '/dashboard' }, { label: 'List Property', href: '/list' }]} />
+      <Breadcrumb items={[
+        { label: 'Home', href: '/' },
+        { label: userRole === 'landlord' ? 'Dashboard' : 'My Account', href: userRole === 'landlord' ? '/dashboard' : '/my-account' },
+        { label: 'List Property', href: '/list' },
+      ]} />
       <div className="faim-list-header">
         <div>
           <h1>🏠 My Listings</h1>

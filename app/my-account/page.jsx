@@ -169,6 +169,11 @@ export default function MyAccountPage() {
                   <span className="faim-action-title">My Profile</span>
                   <span className="faim-action-desc">View your details</span>
                 </button>
+                <a href="/list" className="faim-action-card">
+                  <span className="faim-action-icon">🏠</span>
+                  <span className="faim-action-title">List a Property</span>
+                  <span className="faim-action-desc">Add your property for free</span>
+                </a>
               </div>
             </div>
 
@@ -402,7 +407,7 @@ export default function MyAccountPage() {
         .faim-quick-actions h2 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 1rem; }
         .faim-actions-grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(5, 1fr);
           gap: 1rem;
         }
         .faim-action-card {
@@ -581,7 +586,7 @@ export default function MyAccountPage() {
           .faim-browse-btn, .faim-chat-btn { font-size: 0; padding: 0.65rem; }
           .faim-main { margin-left: 60px; padding: 1rem; }
           .faim-stats-grid { grid-template-columns: repeat(2, 1fr); }
-          .faim-actions-grid { grid-template-columns: repeat(2, 1fr); }
+          .faim-actions-grid { grid-template-columns: repeat(3, 1fr); }
           .faim-profile-tab { flex-direction: column; }
           .faim-profile-card { width: 100%; }
         }
