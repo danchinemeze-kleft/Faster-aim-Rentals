@@ -84,6 +84,16 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'Failed to save subscription: ' + subError.message }, { status: 500 })
     }
 
+    // Mark landlord as subscribed in their Profile
+    const serviceSupabaseForProfile = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    )
+    await serviceSupabaseForProfile
+      .from('Profiles')
+      .update({ subscribed: true })
+      .eq('id', landlordId)
+
     // Credit affiliate commission if a ref_code was attached
     const refCode = metadata?.ref_code
     if (refCode) {
