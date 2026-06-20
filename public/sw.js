@@ -1,5 +1,5 @@
-const CACHE = 'mrrent-v1';
-const PRECACHE = ['/', '/browse', '/icon.svg', '/manifest.json'];
+const CACHE = 'mrrent-v2';
+const PRECACHE = ['/', '/browse', '/manifest.json'];
 
 self.addEventListener('install', e => {
   self.skipWaiting();
