@@ -33,6 +33,7 @@ export default function Home() {
           <a href="/browse" style={s.navLink}>Browse</a>
           <a href="/search" style={s.navLink}>AI Chat</a>
           <a href="/list" style={s.navLink}>List Property</a>
+          <a href="/veryland" style={{ ...s.navLink, color: '#3B82F6' }}>Veryland</a>
           <a href="/account" style={s.navBtn}>Login / Sign up</a>
           <a href="/light" title="Switch to dark mode" style={{ fontSize: '1.1rem', background: 'rgba(0,0,0,0.06)', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '6px 10px', cursor: 'pointer', textDecoration: 'none' }}>🌙</a>
         </div>
@@ -59,6 +60,7 @@ export default function Home() {
                   <a href="/list" style={s.btnOutline}>Add Property (free) 🏠</a>
                   <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={s.btnPurple}>Learn AI Skills 🎓</a>
                   <a href="/affiliate" style={s.btnAffiliate}>💰 Join Associate — Earn Commission</a>
+                  <a href="/veryland" style={s.btnVeryland}>🏷️ Veryland — Verify Your Property Documents</a>
                 </div>
                 <div style={s.heroStats}>
                   <div style={s.heroStat}>
@@ -183,6 +185,7 @@ export default function Home() {
             <a href="/browse" style={s.footerLink}>Browse</a>
             <a href="/search" style={s.footerLink}>AI Chat</a>
             <a href="/list" style={s.footerLink}>List Property</a>
+            <a href="/veryland" style={{ ...s.footerLink, color: '#3B82F6', fontWeight: 700 }}>🏷️ Veryland</a>
             <a href="/affiliate" style={{ ...s.footerLink, color: '#7c3aed', fontWeight: 700 }}>💰 Earn — Affiliate</a>
             <a href="/account" style={s.footerLink}>Login</a>
             <a href="/admin" style={s.footerAdminLink}>⚙ Admin</a>
@@ -279,6 +282,13 @@ const s = {
     color: 'white', padding: '0.75rem 1.25rem',
     borderRadius: '10px', fontWeight: '800', fontSize: '0.85rem',
     boxShadow: '0 4px 16px rgba(22,163,74,0.3)', textAlign: 'center',
+  },
+  btnVeryland: {
+    gridColumn: '1 / -1',
+    background: 'linear-gradient(135deg, #1d4ed8, #3B82F6)',
+    color: 'white', padding: '0.75rem 1.25rem',
+    borderRadius: '10px', fontWeight: '800', fontSize: '0.85rem',
+    boxShadow: '0 4px 16px rgba(59,130,246,0.3)', textAlign: 'center',
   },
 
   btnCyan: {
