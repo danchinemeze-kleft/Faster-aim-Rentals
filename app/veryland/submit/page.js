@@ -8,6 +8,10 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
+const GREEN = '#059669';
+const GREEN_DARK = '#047857';
+const GREEN_LIGHT = '#d1fae5';
+
 const DOC_TYPES = [
   { value: 'certificate_of_occupancy', label: 'Certificate of Occupancy (C of O)' },
   { value: 'survey_plan', label: 'Survey Plan' },
@@ -41,19 +45,21 @@ const PROPERTY_TYPES = [
 ];
 
 const inputStyle = {
-  width: '100%', padding: '12px 14px', background: '#1a1d24',
-  border: '0.5px solid #2d3038', borderRadius: 8, color: '#e8e8e8',
-  fontSize: 14, boxSizing: 'border-box', outline: 'none',
-  fontFamily: 'DM Sans, system-ui, sans-serif',
+  width: '100%', padding: '12px 14px',
+  background: '#ffffff', border: '1.5px solid #d1d5db',
+  borderRadius: 8, color: '#111827', fontSize: 14,
+  boxSizing: 'border-box', outline: 'none',
+  fontFamily: "'Segoe UI', system-ui, sans-serif",
 };
 
 const labelStyle = {
-  fontSize: 12, color: '#888', display: 'block', marginBottom: 6, fontWeight: 500,
+  fontSize: 13, color: '#374151', display: 'block',
+  marginBottom: 7, fontWeight: 600,
 };
 
 export default function VerylandSubmitPage() {
   const [user, setUser] = useState(null);
-  const [screen, setScreen] = useState('form'); // form | uploading | success
+  const [screen, setScreen] = useState('form');
   const [submissionId, setSubmissionId] = useState(null);
   const [error, setError] = useState('');
 
@@ -66,7 +72,6 @@ export default function VerylandSubmitPage() {
   const [propertyType, setPropertyType] = useState('');
   const [additionalInfo, setAdditionalInfo] = useState('');
 
-  // Each doc: { type, file, uploading, url, error }
   const [documents, setDocuments] = useState([
     { type: 'certificate_of_occupancy', file: null, uploading: false, url: '', error: '' },
   ]);
@@ -109,22 +114,17 @@ export default function VerylandSubmitPage() {
   async function uploadOne(idx) {
     const doc = documents[idx];
     if (!doc.file) return null;
-
     const ts = Date.now();
     const ext = doc.file.name.split('.').pop().toLowerCase();
     const path = `submissions/${ts}/${doc.type || 'doc'}_${idx}.${ext}`;
-
     setDocuments(prev => prev.map((d, i) => i === idx ? { ...d, uploading: true } : d));
-
     const { error: upErr } = await supabase.storage
       .from('veryland-docs')
       .upload(path, doc.file, { upsert: false });
-
     if (upErr) {
       setDocuments(prev => prev.map((d, i) => i === idx ? { ...d, uploading: false, error: upErr.message } : d));
       return null;
     }
-
     const { data: { publicUrl } } = supabase.storage.from('veryland-docs').getPublicUrl(path);
     setDocuments(prev => prev.map((d, i) => i === idx ? { ...d, uploading: false, url: publicUrl } : d));
     return publicUrl;
@@ -133,7 +133,6 @@ export default function VerylandSubmitPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
-
     if (!ownerName.trim() || !ownerEmail.trim() || !propertyAddress.trim() || !propertyState) {
       setError('Please fill in all required fields (marked with *).');
       return;
@@ -142,9 +141,7 @@ export default function VerylandSubmitPage() {
       setError('Please upload at least one property document.');
       return;
     }
-
     setScreen('uploading');
-
     const uploadedDocs = [];
     for (let i = 0; i < documents.length; i++) {
       if (!documents[i].file) continue;
@@ -154,13 +151,8 @@ export default function VerylandSubmitPage() {
         setScreen('form');
         return;
       }
-      uploadedDocs.push({
-        type: documents[i].type,
-        name: documents[i].file.name,
-        url,
-      });
+      uploadedDocs.push({ type: documents[i].type, name: documents[i].file.name, url });
     }
-
     const { data, error: dbErr } = await supabase
       .from('veryland_submissions')
       .insert({
@@ -179,23 +171,22 @@ export default function VerylandSubmitPage() {
       })
       .select('id')
       .single();
-
     if (dbErr) {
       setError('Submission failed: ' + dbErr.message);
       setScreen('form');
       return;
     }
-
     setSubmissionId(data.id);
     setScreen('success');
   }
 
   if (screen === 'uploading') {
     return (
-      <div style={{ minHeight: '100vh', background: '#080a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'DM Sans, system-ui, sans-serif' }}>
+      <div style={{ minHeight: '100vh', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 48, height: 48, borderRadius: '50%', border: '4px solid #1a1d24', borderTopColor: '#0ef6cc', animation: 'spin 0.9s linear infinite', margin: '0 auto 20px' }} />
-          <div style={{ color: '#888', fontSize: 14 }}>Uploading documents and submitting…</div>
+          <div style={{ width: 52, height: 52, borderRadius: '50%', border: `4px solid ${GREEN_LIGHT}`, borderTopColor: GREEN, animation: 'spin 0.9s linear infinite', margin: '0 auto 20px' }} />
+          <div style={{ color: '#374151', fontSize: 15, fontWeight: 600 }}>Uploading documents and submitting…</div>
+          <div style={{ color: '#6b7280', fontSize: 13, marginTop: 6 }}>Please keep this page open</div>
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       </div>
@@ -204,31 +195,31 @@ export default function VerylandSubmitPage() {
 
   if (screen === 'success') {
     return (
-      <div style={{ minHeight: '100vh', background: '#080a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'DM Sans, system-ui, sans-serif', padding: '2rem' }}>
-        <div style={{ maxWidth: 520, width: '100%', textAlign: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Segoe UI', system-ui, sans-serif", padding: '2rem' }}>
+        <div style={{ maxWidth: 520, width: '100%', textAlign: 'center', background: '#fff', border: '1.5px solid #d1fae5', borderRadius: 20, padding: '3rem 2.5rem', boxShadow: '0 8px 32px rgba(5,150,105,0.1)' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
             <svg width="80" height="80" viewBox="0 0 80 80">
-              <circle cx="40" cy="40" r="40" fill="#d0d0d0" />
-              <polyline points="22,40 36,54 58,26" stroke="#888" strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="40" cy="40" r="40" fill={GREEN_LIGHT} />
+              <polyline points="22,40 36,54 58,26" stroke={GREEN} strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: '2rem', fontWeight: 800, color: '#fff', margin: '0 0 14px' }}>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0f172a', margin: '0 0 14px' }}>
             Submission Received!
           </h1>
-          <p style={{ color: '#777', fontSize: 15, lineHeight: 1.75, marginBottom: 10 }}>
+          <p style={{ color: '#374151', fontSize: 15, fontWeight: 500, lineHeight: 1.75, marginBottom: 10 }}>
             Your documents are in our queue. Our verification team will review them and assign your Veryland badge within 3–5 business days.
           </p>
-          <p style={{ color: '#444', fontSize: 13, marginBottom: 36 }}>
+          <p style={{ color: '#6b7280', fontSize: 13, marginBottom: 36 }}>
             Reference ID:{' '}
-            <span style={{ color: '#0ef6cc', fontFamily: 'monospace', fontWeight: 700 }}>
+            <span style={{ color: GREEN_DARK, fontFamily: 'monospace', fontWeight: 800 }}>
               {submissionId?.slice(0, 8).toUpperCase()}
             </span>
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="/browse" style={{ background: '#0ef6cc', color: '#080a0f', padding: '12px 26px', borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
+            <a href="/browse" style={{ background: GREEN, color: '#fff', padding: '12px 26px', borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
               Browse Listings
             </a>
-            <a href="/veryland" style={{ background: 'transparent', color: '#666', border: '0.5px solid #2d3038', padding: '12px 26px', borderRadius: 8, fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
+            <a href="/veryland" style={{ background: '#fff', color: '#374151', border: '1.5px solid #d1d5db', padding: '12px 26px', borderRadius: 8, fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
               Back to Veryland
             </a>
           </div>
@@ -238,30 +229,31 @@ export default function VerylandSubmitPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#080a0f', fontFamily: 'DM Sans, system-ui, sans-serif', color: '#e8e8e8' }}>
+    <div style={{ minHeight: '100vh', background: '#f9fafb', fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#111827' }}>
 
       {/* Nav */}
-      <div style={{ borderBottom: '0.5px solid #1a1d24', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 56, gap: 12 }}>
-        <a href="/" style={{ color: '#0ef6cc', fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>Mr. Rent</a>
-        <span style={{ color: '#333' }}>/</span>
-        <a href="/veryland" style={{ color: '#888', fontSize: 14, textDecoration: 'none' }}>Veryland</a>
-        <span style={{ color: '#333' }}>/</span>
-        <span style={{ color: '#e8e8e8', fontSize: 14 }}>Submit Documents</span>
-      </div>
+      <nav style={{ borderBottom: '1px solid #e5e7eb', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: '#fff', position: 'sticky', top: 0, zIndex: 100 }}>
+        <a href="/" style={{ color: '#6b7280', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</a>
+        <span style={{ color: '#d1d5db', margin: '0 8px' }}>/</span>
+        <a href="/veryland" style={{ color: GREEN, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Veryland</a>
+        <span style={{ color: '#d1d5db', margin: '0 8px' }}>/</span>
+        <span style={{ color: '#111827', fontSize: 14, fontWeight: 600 }}>Submit Documents</span>
+      </nav>
 
-      <div style={{ maxWidth: 700, margin: '0 auto', padding: '3rem 2rem 5rem' }}>
+      <div style={{ maxWidth: 720, margin: '0 auto', padding: '3rem 2rem 5rem' }}>
 
+        {/* Page header */}
         <div style={{ marginBottom: '2.5rem' }}>
-          <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: '2rem', fontWeight: 800, color: '#fff', margin: '0 0 10px' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a', margin: '0 0 10px', letterSpacing: '-0.5px' }}>
             Verify Your Property
           </h1>
-          <p style={{ color: '#666', fontSize: 14, lineHeight: 1.7 }}>
+          <p style={{ color: '#4b5563', fontSize: 15, fontWeight: 500, lineHeight: 1.7 }}>
             Submit your property ownership documents. Our team manually reviews each submission and awards the appropriate Veryland badge — no bots, no shortcuts.
           </p>
         </div>
 
         {error && (
-          <div style={{ background: '#1a0a0a', border: '1px solid #E24B4A', borderRadius: 10, padding: '12px 16px', marginBottom: 24, color: '#E24B4A', fontSize: 14 }}>
+          <div style={{ background: '#fff1f2', border: '1.5px solid #fca5a5', borderRadius: 10, padding: '12px 16px', marginBottom: 24, color: '#dc2626', fontSize: 14, fontWeight: 600 }}>
             {error}
           </div>
         )}
@@ -269,12 +261,12 @@ export default function VerylandSubmitPage() {
         <form onSubmit={handleSubmit}>
 
           {/* Section 1: Your Details */}
-          <div style={{ background: '#111318', border: '0.5px solid #1e2128', borderRadius: 14, padding: '1.5rem', marginBottom: 18 }}>
-            <div style={{ fontWeight: 700, fontSize: 14, color: '#fff', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ background: '#0ef6cc', color: '#080a0f', borderRadius: '50%', width: 22, height: 22, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, flexShrink: 0 }}>1</span>
+          <div style={{ background: '#fff', border: '1.5px solid #e5e7eb', borderRadius: 16, padding: '1.75rem', marginBottom: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: '#0f172a', marginBottom: 22, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ background: GREEN, color: '#fff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0 }}>1</span>
               Your Details
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
               <div>
                 <label style={labelStyle}>Full Name *</label>
                 <input value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="As on your documents" required style={inputStyle} />
@@ -291,12 +283,12 @@ export default function VerylandSubmitPage() {
           </div>
 
           {/* Section 2: Property Details */}
-          <div style={{ background: '#111318', border: '0.5px solid #1e2128', borderRadius: 14, padding: '1.5rem', marginBottom: 18 }}>
-            <div style={{ fontWeight: 700, fontSize: 14, color: '#fff', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ background: '#0ef6cc', color: '#080a0f', borderRadius: '50%', width: 22, height: 22, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, flexShrink: 0 }}>2</span>
+          <div style={{ background: '#fff', border: '1.5px solid #e5e7eb', borderRadius: 16, padding: '1.75rem', marginBottom: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: '#0f172a', marginBottom: 22, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ background: GREEN, color: '#fff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0 }}>2</span>
               Property Details
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
               <div style={{ gridColumn: '1 / -1' }}>
                 <label style={labelStyle}>Full Property Address *</label>
                 <input value={propertyAddress} onChange={e => setPropertyAddress(e.target.value)} placeholder="Exact address as it appears on your documents" required style={inputStyle} />
@@ -323,26 +315,26 @@ export default function VerylandSubmitPage() {
           </div>
 
           {/* Section 3: Documents */}
-          <div style={{ background: '#111318', border: '0.5px solid #1e2128', borderRadius: 14, padding: '1.5rem', marginBottom: 18 }}>
-            <div style={{ fontWeight: 700, fontSize: 14, color: '#fff', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ background: '#0ef6cc', color: '#080a0f', borderRadius: '50%', width: 22, height: 22, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, flexShrink: 0 }}>3</span>
+          <div style={{ background: '#fff', border: '1.5px solid #e5e7eb', borderRadius: 16, padding: '1.75rem', marginBottom: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: '#0f172a', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ background: GREEN, color: '#fff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0 }}>3</span>
               Property Documents *
             </div>
-            <p style={{ fontSize: 12, color: '#555', marginBottom: 20, marginLeft: 32 }}>
-              Upload scanned copies or clear photos. Accepted: PDF, JPG, PNG. Max 10MB per file. Upload as many documents as you have.
+            <p style={{ fontSize: 13, color: '#6b7280', fontWeight: 500, marginBottom: 20, marginLeft: 36 }}>
+              Upload scanned copies or clear photos. Accepted: PDF, JPG, PNG. Max 10MB per file.
             </p>
 
             {documents.map((doc, idx) => (
-              <div key={idx} style={{ background: '#0d0f15', border: '0.5px solid #252830', borderRadius: 10, padding: '1rem', marginBottom: 12 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <span style={{ fontSize: 12, color: '#666', fontWeight: 600 }}>Document {idx + 1}</span>
+              <div key={idx} style={{ background: '#f9fafb', border: '1.5px solid #e5e7eb', borderRadius: 12, padding: '1.25rem', marginBottom: 14 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                  <span style={{ fontSize: 13, color: '#374151', fontWeight: 700 }}>Document {idx + 1}</span>
                   {documents.length > 1 && (
-                    <button type="button" onClick={() => removeDocument(idx)} style={{ background: 'none', border: 'none', color: '#444', cursor: 'pointer', fontSize: 12 }}>
+                    <button type="button" onClick={() => removeDocument(idx)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 13, fontWeight: 600, padding: 0 }}>
                       Remove
                     </button>
                   )}
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                   <div>
                     <label style={labelStyle}>Document Type</label>
                     <select value={doc.type} onChange={e => updateType(idx, e.target.value)} style={inputStyle}>
@@ -356,12 +348,12 @@ export default function VerylandSubmitPage() {
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png,.webp"
                       onChange={e => updateFile(idx, e.target.files?.[0] || null)}
-                      style={{ ...inputStyle, padding: '8px 12px', cursor: 'pointer', color: '#888' }}
+                      style={{ ...inputStyle, padding: '9px 12px', cursor: 'pointer', color: '#374151' }}
                     />
                   </div>
                 </div>
-                {doc.error && <p style={{ color: '#E24B4A', fontSize: 12, marginTop: 8, margin: '8px 0 0' }}>{doc.error}</p>}
-                {doc.url && <p style={{ color: '#0ef6cc', fontSize: 12, marginTop: 8, margin: '8px 0 0' }}>✓ Uploaded successfully</p>}
+                {doc.error && <p style={{ color: '#dc2626', fontSize: 13, fontWeight: 600, marginTop: 10 }}>{doc.error}</p>}
+                {doc.url && <p style={{ color: GREEN_DARK, fontSize: 13, fontWeight: 700, marginTop: 10 }}>✓ Uploaded successfully</p>}
               </div>
             ))}
 
@@ -369,8 +361,9 @@ export default function VerylandSubmitPage() {
               type="button"
               onClick={addDocument}
               style={{
-                background: 'transparent', border: '1px dashed #2d3038', color: '#666',
-                borderRadius: 8, padding: '10px', fontSize: 13, cursor: 'pointer', width: '100%', marginTop: 4
+                background: '#fff', border: `2px dashed #d1d5db`, color: '#6b7280',
+                borderRadius: 10, padding: '12px', fontSize: 14, fontWeight: 600,
+                cursor: 'pointer', width: '100%', marginTop: 4,
               }}
             >
               + Add Another Document
@@ -378,10 +371,10 @@ export default function VerylandSubmitPage() {
           </div>
 
           {/* Section 4: Notes */}
-          <div style={{ background: '#111318', border: '0.5px solid #1e2128', borderRadius: 14, padding: '1.5rem', marginBottom: 28 }}>
-            <div style={{ fontWeight: 700, fontSize: 14, color: '#fff', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ background: '#222', color: '#666', borderRadius: '50%', width: 22, height: 22, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>4</span>
-              Additional Notes <span style={{ color: '#444', fontWeight: 400, fontSize: 13 }}>(optional)</span>
+          <div style={{ background: '#fff', border: '1.5px solid #e5e7eb', borderRadius: 16, padding: '1.75rem', marginBottom: 28, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: '#0f172a', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ background: '#f3f4f6', color: '#374151', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0, border: '1.5px solid #e5e7eb' }}>4</span>
+              Additional Notes <span style={{ color: '#9ca3af', fontWeight: 400, fontSize: 13 }}>(optional)</span>
             </div>
             <textarea
               value={additionalInfo}
@@ -393,15 +386,17 @@ export default function VerylandSubmitPage() {
           </div>
 
           <button type="submit" style={{
-            width: '100%', padding: '15px', background: '#0ef6cc',
-            color: '#080a0f', border: 'none', borderRadius: 10,
+            width: '100%', padding: '16px',
+            background: `linear-gradient(135deg, ${GREEN_DARK}, ${GREEN})`,
+            color: '#fff', border: 'none', borderRadius: 12,
             fontWeight: 800, fontSize: 16, cursor: 'pointer',
-            fontFamily: 'DM Sans, system-ui, sans-serif',
+            fontFamily: "'Segoe UI', system-ui, sans-serif",
+            boxShadow: `0 4px 16px ${GREEN}44`,
           }}>
             Submit for Verification →
           </button>
 
-          <p style={{ textAlign: 'center', color: '#333', fontSize: 12, marginTop: 16, lineHeight: 1.6 }}>
+          <p style={{ textAlign: 'center', color: '#9ca3af', fontSize: 13, fontWeight: 500, marginTop: 16, lineHeight: 1.6 }}>
             Review takes 3–5 business days. You&apos;ll be notified by email once your badge is awarded.
           </p>
         </form>
