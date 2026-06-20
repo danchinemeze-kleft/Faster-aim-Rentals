@@ -369,7 +369,6 @@ export default function ListingPage() {
           ← Back
         </button>
         <span style={{ color: '#0ef6cc', fontWeight: 700, fontSize: 15 }}>Mr. Rent</span>
-        <a href={`/light/listing/${id}`} title="Switch to light mode" style={{ marginLeft: 'auto', fontSize: '1.1rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', padding: '5px 9px', textDecoration: 'none' }}>☀️</a>
         <span style={{ color: '#333' }}>/</span>
         <a href="/browse" style={{ color: '#666', fontSize: 13, textDecoration: 'none' }}>Browse</a>
         <span style={{ color: '#333' }}>/</span>

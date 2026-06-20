@@ -41,7 +41,6 @@ export default function Home() {
             <span className="vl-tooltip">Nigeria&apos;s first property document<br/>verification system.<br/>Verify land titles, C of O &amp; survey plans.</span>
           </span>
           <a href="/account" style={s.navBtn}>Login / Sign up</a>
-          <a href="/light" title="Switch to dark mode" style={{ fontSize: '1.1rem', background: 'rgba(0,0,0,0.06)', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '6px 10px', cursor: 'pointer', textDecoration: 'none' }}>🌙</a>
         </div>
       </nav>
 

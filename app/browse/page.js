@@ -207,7 +207,6 @@ export default function BrowsePage() {
             </div>
             <span style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '1px' }}>{user ? 'Account' : 'Login'}</span>
           </a>
-          <a href="/light/browse" title="Switch to light mode" style={{ fontSize: '1.1rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', padding: '6px 10px', textDecoration: 'none' }}>☀️</a>
         </div>
 
         {/* Filters */}
