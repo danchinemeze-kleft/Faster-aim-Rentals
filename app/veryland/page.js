@@ -7,7 +7,7 @@ const BADGE_TIERS = [
     check: '#888',
     title: 'Submitted',
     desc: 'Documents received and queued for manual review. First step in the Veryland process.',
-    color: '#aaa',
+    color: '#c8c8c8',
   },
   {
     level: 'yellow',
@@ -58,8 +58,8 @@ export default function VerylandPage() {
       {/* Nav */}
       <div style={{ borderBottom: '0.5px solid #1a1d24', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 56, gap: 12 }}>
         <a href="/" style={{ color: '#0ef6cc', fontWeight: 700, fontSize: 16, textDecoration: 'none' }}>Mr. Rent</a>
-        <span style={{ color: '#333' }}>/</span>
-        <span style={{ color: '#888', fontSize: 14, display: 'flex', alignItems: 'center', gap: 5 }}>
+        <span style={{ color: '#666' }}>/</span>
+        <span style={{ color: '#ddd', fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
           Veryland
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#1d4ed8"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </span>
@@ -87,7 +87,7 @@ export default function VerylandPage() {
             <path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </h1>
-        <p style={{ fontSize: 'clamp(1rem, 2vw, 1.2rem)', color: '#777', maxWidth: 580, margin: '0 auto 40px', lineHeight: 1.75 }}>
+        <p style={{ fontSize: 'clamp(1rem, 2vw, 1.2rem)', color: '#c8c8c8', fontWeight: 600, maxWidth: 580, margin: '0 auto 40px', lineHeight: 1.75 }}>
           Nigeria&apos;s first property document verification system. Prove your property is real — or check if the one you&apos;re about to buy is legitimate.
         </p>
         <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -113,7 +113,7 @@ export default function VerylandPage() {
           <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.8rem', fontWeight: 800, color: '#fff', margin: '0 0 12px' }}>
             Four Levels of Trust
           </h2>
-          <p style={{ color: '#555', fontSize: 14, maxWidth: 480, margin: '0 auto' }}>
+          <p style={{ color: '#b8b8b8', fontSize: 14, fontWeight: 600, maxWidth: 480, margin: '0 auto' }}>
             Every verified property earns a badge. The colour tells you exactly how much has been confirmed.
           </p>
         </div>
@@ -128,7 +128,7 @@ export default function VerylandPage() {
                 <BadgeIcon fill={tier.fill} check={tier.check} size={52} />
               </div>
               <div style={{ fontWeight: 700, fontSize: 15, color: tier.color, marginBottom: 8 }}>{tier.title}</div>
-              <div style={{ fontSize: 12.5, color: '#555', lineHeight: 1.6 }}>{tier.desc}</div>
+              <div style={{ fontSize: 12.5, color: '#b0b0b0', fontWeight: 600, lineHeight: 1.6 }}>{tier.desc}</div>
             </div>
           ))}
         </div>
@@ -144,7 +144,7 @@ export default function VerylandPage() {
           <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.4rem', fontWeight: 800, color: '#fff', margin: '0 0 12px' }}>
             For Property Owners
           </h3>
-          <p style={{ color: '#666', fontSize: 14, lineHeight: 1.75, marginBottom: 24 }}>
+          <p style={{ color: '#c0c0c0', fontWeight: 600, fontSize: 14, lineHeight: 1.75, marginBottom: 24 }}>
             Submit your documents — C of O, Survey Plan, Deed of Assignment and more. Our team manually reviews every submission. Once approved, your listing earns a coloured Veryland badge that signals trust to buyers and tenants.
           </p>
           <a href="/veryland/submit" style={{
@@ -162,7 +162,7 @@ export default function VerylandPage() {
           <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.4rem', fontWeight: 800, color: '#fff', margin: '0 0 12px' }}>
             For Buyers &amp; Tenants
           </h3>
-          <p style={{ color: '#666', fontSize: 14, lineHeight: 1.75, marginBottom: 24 }}>
+          <p style={{ color: '#c0c0c0', fontWeight: 600, fontSize: 14, lineHeight: 1.75, marginBottom: 24 }}>
             Before you pay for any property, check if the documents you were given are authentic. Cross-check our verified database and optionally upload the document for an AI-powered authenticity scan.
           </p>
           <a href="/veryland/check" style={{
@@ -192,7 +192,7 @@ export default function VerylandPage() {
               }}>{item.step}</div>
               <div style={{ paddingTop: 28 }}>
                 <div style={{ fontWeight: 700, fontSize: 15, color: '#e8e8e8', marginBottom: 8 }}>{item.title}</div>
-                <div style={{ fontSize: 13, color: '#555', lineHeight: 1.7 }}>{item.desc}</div>
+                <div style={{ fontSize: 13, color: '#b8b8b8', fontWeight: 600, lineHeight: 1.7 }}>{item.desc}</div>
               </div>
             </div>
           ))}
@@ -201,12 +201,12 @@ export default function VerylandPage() {
 
       {/* Footer */}
       <div style={{ borderTop: '0.5px solid #111318', padding: '1.5rem 2rem', textAlign: 'center' }}>
-        <span style={{ color: '#333', fontSize: 13 }}>Veryland is a product of </span>
-        <a href="https://fasteraim.com" style={{ color: '#0ef6cc', fontSize: 13, textDecoration: 'none' }}>Faster Aim Technology Limited</a>
-        <span style={{ color: '#333', fontSize: 13 }}> · </span>
-        <a href="/privacy-policy" style={{ color: '#444', fontSize: 13, textDecoration: 'none' }}>Privacy Policy</a>
-        <span style={{ color: '#333', fontSize: 13 }}> · </span>
-        <a href="/browse" style={{ color: '#444', fontSize: 13, textDecoration: 'none' }}>Browse Listings</a>
+        <span style={{ color: '#888', fontSize: 13, fontWeight: 600 }}>Veryland is a product of </span>
+        <a href="https://fasteraim.com" style={{ color: '#0ef6cc', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>Faster Aim Technology Limited</a>
+        <span style={{ color: '#666', fontSize: 13 }}> · </span>
+        <a href="/privacy-policy" style={{ color: '#999', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>Privacy Policy</a>
+        <span style={{ color: '#666', fontSize: 13 }}> · </span>
+        <a href="/browse" style={{ color: '#999', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>Browse Listings</a>
       </div>
     </div>
   );
