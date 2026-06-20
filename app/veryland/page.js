@@ -59,7 +59,10 @@ export default function VerylandPage() {
       <div style={{ borderBottom: '0.5px solid #1a1d24', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 56, gap: 12 }}>
         <a href="/" style={{ color: '#0ef6cc', fontWeight: 700, fontSize: 16, textDecoration: 'none' }}>Mr. Rent</a>
         <span style={{ color: '#333' }}>/</span>
-        <span style={{ color: '#888', fontSize: 14 }}>Veryland</span>
+        <span style={{ color: '#888', fontSize: 14, display: 'flex', alignItems: 'center', gap: 5 }}>
+          Veryland
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#1d4ed8"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </span>
       </div>
 
       {/* Hero */}
@@ -75,9 +78,14 @@ export default function VerylandPage() {
         <h1 style={{
           fontFamily: 'Syne, sans-serif',
           fontSize: 'clamp(2.4rem, 7vw, 4.5rem)',
-          fontWeight: 900, color: '#fff', margin: '0 0 22px', lineHeight: 1.05
+          fontWeight: 900, color: '#fff', margin: '0 0 22px', lineHeight: 1.05,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 18
         }}>
           Veryland
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+            <circle cx="12" cy="12" r="12" fill="#1d4ed8"/>
+            <path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </h1>
         <p style={{ fontSize: 'clamp(1rem, 2vw, 1.2rem)', color: '#777', maxWidth: 580, margin: '0 auto 40px', lineHeight: 1.75 }}>
           Nigeria&apos;s first property document verification system. Prove your property is real — or check if the one you&apos;re about to buy is legitimate.

@@ -35,8 +35,8 @@ export default function Home() {
           <a href="/list" style={s.navLink}>List Property</a>
           <span className="vl-nav-wrap">
             <a href="/veryland" style={{ ...s.navLink, color: '#1d4ed8', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 800 }}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#1d4ed8"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               Veryland
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#1d4ed8"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </a>
             <span className="vl-tooltip">Nigeria&apos;s first property document<br/>verification system.<br/>Verify land titles, C of O &amp; survey plans.</span>
           </span>
