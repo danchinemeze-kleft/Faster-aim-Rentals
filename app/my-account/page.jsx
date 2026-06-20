@@ -71,7 +71,6 @@ export default function MyAccountPage() {
 
   return (
     <div className="faim-myaccount">
-      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'My Account', href: '/my-account' }]} />
 
       {/* Sidebar */}
       <aside className="faim-sidebar">
@@ -102,6 +101,7 @@ export default function MyAccountPage() {
 
       {/* Main */}
       <main className="faim-main">
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'My Account', href: '/my-account' }]} />
 
         {/* Topbar */}
         <div className="faim-topbar">
