@@ -1016,73 +1016,73 @@ videoEl.src = URL.createObjectURL(file)
         @keyframes spin { to { transform: rotate(360deg); } }
         .faim-list-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; max-width:1200px; margin-left:auto; margin-right:auto; }
         .faim-list-header h1 { font-size:1.8rem; font-weight:700; color:var(--text-1); }
-        .faim-list-header p { color:var(--text-3); font-size:0.9rem; }
-        .faim-new-btn { background:#e67e22; color:white; border:none; padding:0.75rem 1.5rem; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.95rem; transition:background 0.15s; }
+        .faim-list-header p { color:var(--text-3); font-size:1rem; }
+        .faim-new-btn { background:#e67e22; color:white; border:none; padding:0.75rem 1.5rem; border-radius:10px; font-weight:600; cursor:pointer; font-size:1rem; transition:background 0.15s; }
         .faim-new-btn:hover { background:#cf6d17; }
-        .faim-success { background:#0a1a0f; color:#27ae60; border:1px solid #27ae6055; padding:0.75rem 1rem; border-radius:8px; margin-bottom:1.5rem; max-width:1200px; margin-left:auto; margin-right:auto; font-weight:600; }
+        .faim-success { background:#0a1a0f; color:#27ae60; border:1px solid #27ae6055; padding:0.75rem 1rem; border-radius:8px; margin-bottom:1.5rem; max-width:1200px; margin-left:auto; margin-right:auto; font-weight:600; font-size:1rem; }
         .faim-form-card { background:var(--card-bg); border-radius:16px; padding:2rem; margin-bottom:2rem; box-shadow:var(--shadow-card); max-width:1200px; margin-left:auto; margin-right:auto; border:0.5px solid var(--border-1); }
         .faim-form-card h2 { font-size:1.3rem; color:var(--text-1); margin-bottom:1.5rem; }
         .faim-form-grid { display:grid; grid-template-columns:1fr 380px; gap:2rem; }
         .faim-form { display:flex; flex-direction:column; gap:1.25rem; }
         .faim-field { display:flex; flex-direction:column; gap:6px; }
-        .faim-field label { font-size:0.85rem; font-weight:600; color:var(--text-2); }
-        .faim-field input, .faim-field select, .faim-field textarea { padding:0.65rem 0.875rem; border:1.5px solid var(--border-1); border-radius:9px; font-size:0.9rem; color:var(--text-1); outline:none; transition:border-color 0.15s; background:var(--input-bg); font-family:inherit; }
-        .faim-field input:focus, .faim-field select:focus, .faim-field textarea:focus { border-color:#e67e22; }
+        .faim-field label { font-size:0.95rem; font-weight:600; color:var(--text-2); }
+        .faim-field input, .faim-field select, .faim-field textarea { padding:0.7rem 0.95rem; border:1.5px solid rgba(255,255,255,0.25); border-radius:9px; font-size:1rem; color:var(--text-1); outline:none; transition:border-color 0.15s,box-shadow 0.15s; background:var(--input-bg); font-family:inherit; }
+        .faim-field input:focus, .faim-field select:focus, .faim-field textarea:focus { border-color:#0ef6cc; box-shadow:0 0 0 2px rgba(14,246,204,0.12); }
         .faim-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; }
         .faim-amenities-grid { display:flex; flex-wrap:wrap; gap:8px; }
-        .faim-amenity { padding:6px 14px; border:1.5px solid var(--border-1); border-radius:20px; font-size:0.82rem; cursor:pointer; transition:all 0.15s; color:var(--text-2); user-select:none; }
+        .faim-amenity { padding:7px 14px; border:1.5px solid rgba(255,255,255,0.2); border-radius:20px; font-size:0.9rem; cursor:pointer; transition:all 0.15s; color:var(--text-2); user-select:none; }
         .faim-amenity--active { border-color:#e67e22; background:rgba(230,126,34,0.12); color:#e67e22; font-weight:600; }
         .faim-form-actions { display:flex; gap:1rem; margin-top:0.5rem; }
-        .faim-preview-btn { flex:1; padding:0.75rem; border:1.5px solid #e67e22; border-radius:10px; background:transparent; color:#e67e22; font-weight:600; cursor:pointer; transition:all 0.15s; }
+        .faim-preview-btn { flex:1; padding:0.75rem; border:1.5px solid #e67e22; border-radius:10px; background:transparent; color:#e67e22; font-weight:600; cursor:pointer; transition:all 0.15s; font-size:1rem; }
         .faim-preview-btn:hover { background:rgba(230,126,34,0.1); }
-        .faim-submit-btn { flex:2; padding:0.75rem; background:#e67e22; color:white; border:none; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.95rem; transition:background 0.15s; }
+        .faim-submit-btn { flex:2; padding:0.75rem; background:#e67e22; color:white; border:none; border-radius:10px; font-weight:600; cursor:pointer; font-size:1rem; transition:background 0.15s; }
         .faim-submit-btn:hover { background:#cf6d17; }
         .faim-submit-btn:disabled { opacity:0.6; cursor:not-allowed; }
         .faim-preview h3 { font-size:0.9rem; color:var(--text-3); margin-bottom:1rem; text-transform:uppercase; letter-spacing:0.05em; }
-        .faim-preview-card { background:var(--card-bg); border-radius:14px; padding:1.5rem; color:var(--text-1); position:sticky; top:1rem; border:0.5px solid var(--border-1); }
-        .faim-preview-badge { display:inline-block; background:#e67e22; color:white; padding:3px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; text-transform:capitalize; margin-bottom:0.75rem; }
+        .faim-preview-card { background:var(--card-bg); border-radius:14px; padding:1.5rem; color:var(--text-1); position:sticky; top:1rem; border:0.5px solid rgba(255,255,255,0.15); }
+        .faim-preview-badge { display:inline-block; background:#e67e22; color:white; padding:3px 12px; border-radius:20px; font-size:0.8rem; font-weight:600; text-transform:capitalize; margin-bottom:0.75rem; }
         .faim-preview-card h2 { font-size:1.2rem; margin-bottom:0.5rem; }
-        .faim-preview-location { color:var(--text-3); font-size:0.85rem; margin-bottom:0.5rem; }
+        .faim-preview-location { color:var(--text-3); font-size:0.95rem; margin-bottom:0.5rem; }
         .faim-preview-price { font-size:1.3rem; font-weight:700; color:#e67e22; margin-bottom:0.75rem; }
-        .faim-preview-specs { display:flex; gap:1rem; font-size:0.85rem; margin-bottom:1rem; color:var(--text-2); }
-        .faim-preview-desc { font-size:0.85rem; color:var(--text-2); line-height:1.6; margin-bottom:1rem; }
+        .faim-preview-specs { display:flex; gap:1rem; font-size:0.95rem; margin-bottom:1rem; color:var(--text-2); }
+        .faim-preview-desc { font-size:1rem; color:var(--text-2); line-height:1.6; margin-bottom:1rem; }
         .faim-preview-amenities { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:1rem; }
-        .faim-preview-amenities span { font-size:0.78rem; color:var(--text-3); }
-        .faim-preview-cta { background:#e67e22; color:white; text-align:center; padding:0.75rem; border-radius:10px; font-weight:600; font-size:0.9rem; }
+        .faim-preview-amenities span { font-size:0.85rem; color:var(--text-3); }
+        .faim-preview-cta { background:#e67e22; color:white; text-align:center; padding:0.75rem; border-radius:10px; font-weight:600; font-size:1rem; }
         .faim-video-upload { width:100%; }
-        .faim-video-drop { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; padding:2rem; border:2px dashed var(--border-2); border-radius:12px; cursor:pointer; transition:border-color 0.15s; text-align:center; color:var(--text-3); font-size:0.9rem; }
+        .faim-video-drop { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; padding:2rem; border:2px dashed rgba(255,255,255,0.2); border-radius:12px; cursor:pointer; transition:border-color 0.15s; text-align:center; color:var(--text-3); font-size:1rem; }
         .faim-video-drop:hover { border-color:#e67e22; color:#e67e22; }
         .faim-video-icon { font-size:2rem; }
-        .faim-video-hint { font-size:0.78rem; color:var(--text-3); }
+        .faim-video-hint { font-size:0.9rem; color:var(--text-3); }
         .faim-video-preview { display:flex; flex-direction:column; gap:0.75rem; }
         .faim-video-player { width:100%; border-radius:10px; max-height:200px; background:#000; }
-        .faim-video-info { display:flex; justify-content:space-between; font-size:0.82rem; color:var(--text-3); }
-        .faim-remove-video { background:rgba(231,76,60,0.12); color:#e74c3c; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600; align-self:flex-start; }
+        .faim-video-info { display:flex; justify-content:space-between; font-size:0.9rem; color:var(--text-3); }
+        .faim-remove-video { background:rgba(231,76,60,0.12); color:#e74c3c; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.95rem; font-weight:600; align-self:flex-start; }
         .faim-remove-video:hover { background:rgba(231,76,60,0.22); }
         .faim-progress-wrap { background:var(--border-1); border-radius:20px; height:8px; overflow:hidden; }
         .faim-progress-bar { height:100%; background:linear-gradient(90deg,#e67e22,#f39c12); border-radius:20px; transition:width 0.3s ease; }
         .faim-listing-video { width:100%; border-radius:10px; max-height:180px; background:#000; margin-bottom:0.75rem; }
         .faim-listings-section { max-width:1200px; margin:0 auto; }
         .faim-listings-section h2 { font-size:1.3rem; color:var(--text-1); margin-bottom:1.5rem; }
-        .faim-empty { text-align:center; padding:3rem; background:var(--card-bg); border-radius:16px; color:var(--text-3); line-height:2; border:0.5px solid var(--border-1); }
+        .faim-empty { text-align:center; padding:3rem; background:var(--card-bg); border-radius:16px; color:var(--text-3); line-height:2; border:0.5px solid var(--border-1); font-size:1rem; }
         .faim-listings-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1.5rem; }
         .faim-listing-card { background:var(--card-bg); border-radius:14px; padding:1.5rem; border:0.5px solid var(--border-1); }
         .faim-listing-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; }
-        .faim-type-badge { background:var(--card-bg2); color:var(--text-3); padding:3px 10px; border-radius:20px; font-size:0.75rem; font-weight:600; text-transform:capitalize; }
-        .faim-status-badge { font-size:0.78rem; font-weight:600; }
+        .faim-type-badge { background:var(--card-bg2); color:var(--text-3); padding:3px 10px; border-radius:20px; font-size:0.8rem; font-weight:600; text-transform:capitalize; }
+        .faim-status-badge { font-size:0.9rem; font-weight:600; }
         .faim-status-badge--available { color:#27ae60; }
         .faim-status-badge--unavailable { color:#e74c3c; }
         .faim-listing-card h3 { font-size:1.05rem; font-weight:700; color:var(--text-1); margin-bottom:0.4rem; }
-        .faim-listing-location { font-size:0.82rem; color:var(--text-3); margin-bottom:0.4rem; }
+        .faim-listing-location { font-size:0.95rem; color:var(--text-3); margin-bottom:0.4rem; }
         .faim-listing-price { font-size:1.1rem; font-weight:700; color:#e67e22; margin-bottom:0.4rem; }
-        .faim-listing-specs { font-size:0.82rem; color:var(--text-3); margin-bottom:0.5rem; }
-        .faim-listing-desc { font-size:0.82rem; color:var(--text-2); line-height:1.5; margin-bottom:0.75rem; }
+        .faim-listing-specs { font-size:0.95rem; color:var(--text-3); margin-bottom:0.5rem; }
+        .faim-listing-desc { font-size:1rem; color:var(--text-2); line-height:1.5; margin-bottom:0.75rem; }
         .faim-listing-amenities { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:1rem; }
-        .faim-listing-amenities span { background:var(--card-bg2); color:var(--text-3); padding:3px 10px; border-radius:20px; font-size:0.75rem; }
+        .faim-listing-amenities span { background:var(--card-bg2); color:var(--text-3); padding:3px 10px; border-radius:20px; font-size:0.85rem; }
         .faim-listing-actions { display:flex; gap:0.75rem; }
-        .faim-edit-btn { flex:1; padding:0.6rem; border:1.5px solid #e67e22; border-radius:8px; background:transparent; color:#e67e22; font-weight:600; cursor:pointer; font-size:0.85rem; transition:all 0.15s; }
+        .faim-edit-btn { flex:1; padding:0.6rem; border:1.5px solid #e67e22; border-radius:8px; background:transparent; color:#e67e22; font-weight:600; cursor:pointer; font-size:0.95rem; transition:all 0.15s; }
         .faim-edit-btn:hover { background:rgba(230,126,34,0.1); }
-        .faim-delete-btn { flex:1; padding:0.6rem; border:none; border-radius:8px; background:rgba(231,76,60,0.12); color:#e74c3c; font-weight:600; cursor:pointer; font-size:0.85rem; transition:all 0.15s; }
+        .faim-delete-btn { flex:1; padding:0.6rem; border:none; border-radius:8px; background:rgba(231,76,60,0.12); color:#e74c3c; font-weight:600; cursor:pointer; font-size:0.95rem; transition:all 0.15s; }
         .faim-delete-btn:hover { background:rgba(231,76,60,0.22); }
         @media (max-width:768px) { .faim-form-grid { grid-template-columns:1fr; } .faim-list-page { padding:1rem; } }
       `}</style>
