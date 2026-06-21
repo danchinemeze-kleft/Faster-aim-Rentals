@@ -672,6 +672,14 @@ export default function ListingPage() {
                         : <>One-time secure payment via Paystack.<br />Landlord phone number revealed instantly after payment.</>
                       }
                     </p>
+                    {!hasSub && (
+                      <a
+                        href="/tenant-subscribe"
+                        style={{ display: 'block', textAlign: 'center', fontSize: 12, color: '#0ef6cc', marginTop: 10, textDecoration: 'none', fontWeight: 600 }}
+                      >
+                        🔓 Or get unlimited reveals — ₦25,000/month →
+                      </a>
+                    )}
                   </>
                 )}
               </div>

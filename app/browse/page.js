@@ -260,12 +260,39 @@ export default function BrowsePage() {
         </div>
 
         {/* Results info */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div style={{ fontSize: '0.88rem', color: 'var(--text-1)', fontWeight: 700 }}>
             Showing <span style={{ color: '#0ef6cc', fontWeight: 800 }}>{filtered.length}</span> {filtered.length === 1 ? 'property' : 'properties'}
           </div>
           <a href="/search" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(14,246,204,0.1)', border: '2px solid #0ef6cc', color: '#0ef6cc', padding: '9px 18px', borderRadius: '100px', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none' }}>Try Mr. Rent AI</a>
         </div>
+
+        {/* Tenant pass banner */}
+        <a
+          href="/tenant-subscribe"
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            background: 'linear-gradient(90deg, #0a1f1a 0%, #0d0f14 100%)',
+            border: '1px solid #0ef6cc33', borderRadius: 12,
+            padding: '14px 20px', marginBottom: '28px',
+            textDecoration: 'none', gap: 12,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontSize: 22 }}>🔓</span>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#e8e8e8', marginBottom: 2 }}>
+                Tenant Access Pass — ₦25,000/month
+              </div>
+              <div style={{ fontSize: 12, color: '#666' }}>
+                Reveal unlimited landlord contacts. Cheaper than 5 pays.
+              </div>
+            </div>
+          </div>
+          <span style={{ fontSize: 12, fontWeight: 700, color: '#0ef6cc', whiteSpace: 'nowrap', flexShrink: 0 }}>
+            Subscribe →
+          </span>
+        </a>
 
         {/* Grid */}
         {loading ? (
