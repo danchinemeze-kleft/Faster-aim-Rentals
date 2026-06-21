@@ -46,15 +46,15 @@ const PROPERTY_TYPES = [
 
 const inputStyle = {
   width: '100%', padding: '12px 14px',
-  background: 'var(--input-bg)', border: '1.5px solid var(--border-2)',
-  borderRadius: 8, color: '#111827', fontSize: 14,
+  background: 'var(--input-bg)', border: '1.5px solid rgba(255,255,255,0.25)',
+  borderRadius: 8, color: '#ffffff', fontSize: 16,
   boxSizing: 'border-box', outline: 'none',
   fontFamily: "'Segoe UI', system-ui, sans-serif",
 };
 
 const labelStyle = {
-  fontSize: 13, color: 'var(--text-2)', display: 'block',
-  marginBottom: 7, fontWeight: 600,
+  fontSize: 16, color: '#ffffff', display: 'block',
+  marginBottom: 7, fontWeight: 700,
 };
 
 export default function VerylandSubmitPage() {
@@ -187,8 +187,8 @@ export default function VerylandSubmitPage() {
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ width: 52, height: 52, borderRadius: '50%', border: `4px solid ${GREEN_LIGHT}`, borderTopColor: GREEN, animation: 'spin 0.9s linear infinite', margin: '0 auto 20px' }} />
-            <div style={{ color: 'var(--text-2)', fontSize: 15, fontWeight: 600 }}>Uploading documents and submitting…</div>
-            <div style={{ color: 'var(--text-3)', fontSize: 13, marginTop: 6 }}>Please keep this page open</div>
+            <div style={{ color: '#cccccc', fontSize: 16, fontWeight: 600 }}>Uploading documents and submitting…</div>
+            <div style={{ color: '#cccccc', fontSize: 15, marginTop: 6 }}>Please keep this page open</div>
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </div>
         </div>
@@ -211,10 +211,10 @@ export default function VerylandSubmitPage() {
           <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-1)', margin: '0 0 14px' }}>
             Submission Received!
           </h1>
-          <p style={{ color: 'var(--text-2)', fontSize: 15, fontWeight: 500, lineHeight: 1.75, marginBottom: 10 }}>
+          <p style={{ color: '#cccccc', fontSize: 16, fontWeight: 500, lineHeight: 1.75, marginBottom: 10 }}>
             Your documents are in our queue. Our verification team will review them and assign your Veryland badge within 3–5 business days.
           </p>
-          <p style={{ color: 'var(--text-3)', fontSize: 13, marginBottom: 36 }}>
+          <p style={{ color: '#cccccc', fontSize: 15, marginBottom: 36 }}>
             Reference ID:{' '}
             <span style={{ color: GREEN_DARK, fontFamily: 'monospace', fontWeight: 800 }}>
               {submissionId?.slice(0, 8).toUpperCase()}
@@ -254,7 +254,7 @@ export default function VerylandSubmitPage() {
           <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-1)', margin: '0 0 10px', letterSpacing: '-0.5px' }}>
             Verify Your Property
           </h1>
-          <p style={{ color: 'var(--text-2)', fontSize: 15, fontWeight: 500, lineHeight: 1.7 }}>
+          <p style={{ color: '#cccccc', fontSize: 16, fontWeight: 500, lineHeight: 1.7 }}>
             Submit your property ownership documents. Our team manually reviews each submission and awards the appropriate Veryland badge — no bots, no shortcuts.
           </p>
         </div>
@@ -327,16 +327,16 @@ export default function VerylandSubmitPage() {
               <span style={{ background: GREEN, color: '#fff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0 }}>3</span>
               Property Documents *
             </div>
-            <p style={{ fontSize: 13, color: 'var(--text-3)', fontWeight: 500, marginBottom: 20, marginLeft: 36 }}>
+            <p style={{ fontSize: 15, color: '#cccccc', fontWeight: 500, marginBottom: 20, marginLeft: 36 }}>
               Upload scanned copies or clear photos. Accepted: PDF, JPG, PNG. Max 10MB per file.
             </p>
 
             {documents.map((doc, idx) => (
               <div key={idx} style={{ background: 'var(--page-bg)', border: '1.5px solid var(--border-1)', borderRadius: 12, padding: '1.25rem', marginBottom: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                  <span style={{ fontSize: 13, color: 'var(--text-2)', fontWeight: 700 }}>Document {idx + 1}</span>
+                  <span style={{ fontSize: 15, color: '#ffffff', fontWeight: 700 }}>Document {idx + 1}</span>
                   {documents.length > 1 && (
-                    <button type="button" onClick={() => removeDocument(idx)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 13, fontWeight: 600, padding: 0 }}>
+                    <button type="button" onClick={() => removeDocument(idx)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 15, fontWeight: 600, padding: 0 }}>
                       Remove
                     </button>
                   )}
@@ -359,8 +359,8 @@ export default function VerylandSubmitPage() {
                     />
                   </div>
                 </div>
-                {doc.error && <p style={{ color: '#dc2626', fontSize: 13, fontWeight: 600, marginTop: 10 }}>{doc.error}</p>}
-                {doc.url && <p style={{ color: GREEN_DARK, fontSize: 13, fontWeight: 700, marginTop: 10 }}>✓ Uploaded successfully</p>}
+                {doc.error && <p style={{ color: '#dc2626', fontSize: 15, fontWeight: 600, marginTop: 10 }}>{doc.error}</p>}
+                {doc.url && <p style={{ color: GREEN_DARK, fontSize: 15, fontWeight: 700, marginTop: 10 }}>✓ Uploaded successfully</p>}
               </div>
             ))}
 
@@ -380,8 +380,8 @@ export default function VerylandSubmitPage() {
           {/* Section 4: Notes */}
           <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: 28, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
             <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ background: '#f3f4f6', color: 'var(--text-2)', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0, border: '1.5px solid #e5e7eb' }}>4</span>
-              Additional Notes <span style={{ color: '#9ca3af', fontWeight: 400, fontSize: 13 }}>(optional)</span>
+              <span style={{ background: 'var(--card-bg2)', color: '#ffffff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0, border: '1.5px solid #444' }}>4</span>
+              Additional Notes <span style={{ color: '#cccccc', fontWeight: 400, fontSize: 15 }}>(optional)</span>
             </div>
             <textarea
               value={additionalInfo}
@@ -403,7 +403,7 @@ export default function VerylandSubmitPage() {
             Submit for Verification →
           </button>
 
-          <p style={{ textAlign: 'center', color: '#9ca3af', fontSize: 13, fontWeight: 500, marginTop: 16, lineHeight: 1.6 }}>
+          <p style={{ textAlign: 'center', color: '#cccccc', fontSize: 15, fontWeight: 500, marginTop: 16, lineHeight: 1.6 }}>
             Review takes 3–5 business days. You&apos;ll be notified by email once your badge is awarded.
           </p>
         </form>

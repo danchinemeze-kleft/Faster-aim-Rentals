@@ -37,15 +37,15 @@ function BadgeIcon({ fill, check, size = 48 }) {
 
 const inputStyle = {
   width: '100%', padding: '12px 14px',
-  background: 'var(--input-bg)', border: '1.5px solid var(--border-2)',
-  borderRadius: 8, color: 'var(--text-1)', fontSize: 14,
+  background: 'var(--input-bg)', border: '1.5px solid rgba(255,255,255,0.25)',
+  borderRadius: 8, color: '#ffffff', fontSize: 16,
   boxSizing: 'border-box', outline: 'none',
   fontFamily: "'Segoe UI', system-ui, sans-serif",
 };
 
 const labelStyle = {
-  fontSize: 13, color: 'var(--text-2)', display: 'block',
-  marginBottom: 7, fontWeight: 600,
+  fontSize: 16, color: '#ffffff', display: 'block',
+  marginBottom: 7, fontWeight: 700,
 };
 
 export default function VerylandCheckPage() {
@@ -111,7 +111,7 @@ export default function VerylandCheckPage() {
         <span style={{ color: '#d1d5db', margin: '0 8px' }}>/</span>
         <a href="/veryland" style={{ color: GREEN, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Veryland</a>
         <span style={{ color: '#d1d5db', margin: '0 8px' }}>/</span>
-        <span style={{ color: '#111827', fontSize: 14, fontWeight: 600 }}>Check Documents</span>
+        <span style={{ color: '#ffffff', fontSize: 14, fontWeight: 600 }}>Check Documents</span>
       </nav>
 
       <div style={{ maxWidth: 660, margin: '0 auto', padding: '3rem 2rem 5rem' }}>
@@ -144,7 +144,7 @@ export default function VerylandCheckPage() {
             <div style={{ marginBottom: 18 }}>
               <label style={labelStyle}>
                 State{' '}
-                <span style={{ color: '#9ca3af', fontWeight: 400 }}>(optional — narrows the search)</span>
+                <span style={{ color: '#cccccc', fontWeight: 400 }}>(optional — narrows the search)</span>
               </label>
               <select value={state} onChange={e => setState(e.target.value)} style={inputStyle}>
                 <option value="">All states</option>
@@ -155,16 +155,16 @@ export default function VerylandCheckPage() {
             <div>
               <label style={labelStyle}>
                 Upload Document for AI Scan{' '}
-                <span style={{ color: '#9ca3af', fontWeight: 400 }}>(optional — JPG or PNG only)</span>
+                <span style={{ color: '#cccccc', fontWeight: 400 }}>(optional — JPG or PNG only)</span>
               </label>
               <input
                 type="file"
                 accept=".jpg,.jpeg,.png,.webp"
                 onChange={e => setDocFile(e.target.files?.[0] || null)}
-                style={{ ...inputStyle, padding: '9px 12px', cursor: 'pointer', color: '#374151' }}
+                style={{ ...inputStyle, padding: '9px 12px', cursor: 'pointer', color: '#ffffff' }}
               />
               {docFile && (
-                <p style={{ fontSize: 13, color: GREEN_DARK, fontWeight: 600, marginTop: 8 }}>
+                <p style={{ fontSize: 15, color: GREEN_DARK, fontWeight: 600, marginTop: 8 }}>
                   ✓ {docFile.name} — will be scanned by Gemini AI
                 </p>
               )}
@@ -196,7 +196,7 @@ export default function VerylandCheckPage() {
         {/* DB Result */}
         {dbResult && (
           <div style={{ marginTop: 40 }}>
-            <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5 }}>
+            <div style={{ fontSize: 13, color: '#cccccc', marginBottom: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5 }}>
               Veryland Database Result
             </div>
 
@@ -214,7 +214,7 @@ export default function VerylandCheckPage() {
                       <BadgeIcon fill={b.fill} check={b.check} size={52} />
                       <div>
                         <div style={{ fontWeight: 800, fontSize: 17, color: b.color }}>{b.label}</div>
-                        <div style={{ fontSize: 13, color: 'var(--text-3)', fontWeight: 500, marginTop: 3 }}>Found in the Veryland database</div>
+                        <div style={{ fontSize: 15, color: '#cccccc', fontWeight: 500, marginTop: 3 }}>Found in the Veryland database</div>
                       </div>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -227,9 +227,9 @@ export default function VerylandCheckPage() {
                           value: new Date(sub.reviewed_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })
                         },
                       ].filter(Boolean).map((row, i) => (
-                        <div key={i} style={{ display: 'flex', gap: 8, fontSize: 14 }}>
-                          <span style={{ color: '#374151', fontWeight: 700, minWidth: 140 }}>{row.label}:</span>
-                          <span style={{ color: '#111827', fontWeight: 500 }}>{row.value}</span>
+                        <div key={i} style={{ display: 'flex', gap: 8, fontSize: 16 }}>
+                          <span style={{ color: '#cccccc', fontWeight: 700, minWidth: 140 }}>{row.label}:</span>
+                          <span style={{ color: '#ffffff', fontWeight: 500 }}>{row.value}</span>
                         </div>
                       ))}
                     </div>
@@ -243,7 +243,7 @@ export default function VerylandCheckPage() {
                   <div style={{ fontWeight: 800, fontSize: 16, color: '#92400e', marginBottom: 10 }}>
                     Not Found in Veryland
                   </div>
-                  <p style={{ fontSize: 14, color: '#374151', fontWeight: 500, lineHeight: 1.75, margin: 0 }}>
+                  <p style={{ fontSize: 16, color: '#cccccc', fontWeight: 500, lineHeight: 1.75, margin: 0 }}>
                     This address is not in our verified database. That doesn&apos;t automatically mean it&apos;s fraudulent — but we strongly recommend asking the owner to{' '}
                     <a href="/veryland/submit" style={{ color: GREEN_DARK, textDecoration: 'none', fontWeight: 700, borderBottom: `1px solid ${GREEN_DARK}` }}>
                       submit their documents for verification
@@ -259,23 +259,23 @@ export default function VerylandCheckPage() {
         {/* AI Result */}
         {(aiLoading || aiResult) && (
           <div style={{ marginTop: 28 }}>
-            <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5 }}>
+            <div style={{ fontSize: 13, color: '#cccccc', marginBottom: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5 }}>
               AI Document Analysis
             </div>
 
             {aiLoading ? (
               <div style={{ background: 'var(--card-bg)', border: '1.5px solid #bfdbfe', borderRadius: 16, padding: '1.5rem', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
                 <div style={{ width: 26, height: 26, borderRadius: '50%', border: '3px solid #dbeafe', borderTopColor: '#1d4ed8', animation: 'spin 0.9s linear infinite', flexShrink: 0 }} />
-                <span style={{ color: '#374151', fontSize: 14, fontWeight: 600 }}>Gemini AI is analysing your document…</span>
+                <span style={{ color: '#cccccc', fontSize: 16, fontWeight: 600 }}>Gemini AI is analysing your document…</span>
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
               </div>
             ) : (
               <div style={{ background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: 16, padding: '1.75rem', boxShadow: '0 2px 8px rgba(29,78,216,0.06)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
                   <span style={{ fontSize: 20 }}>🤖</span>
-                  <span style={{ fontWeight: 800, fontSize: 15, color: '#1e3a8a' }}>Gemini AI Analysis</span>
+                  <span style={{ fontWeight: 800, fontSize: 16, color: '#0ef6cc' }}>Gemini AI Analysis</span>
                 </div>
-                <div style={{ fontSize: 14, color: '#1e3a8a', fontWeight: 500, lineHeight: 1.85, whiteSpace: 'pre-wrap' }}>
+                <div style={{ fontSize: 16, color: '#cccccc', fontWeight: 500, lineHeight: 1.85, whiteSpace: 'pre-wrap' }}>
                   {aiResult}
                 </div>
               </div>
@@ -286,7 +286,7 @@ export default function VerylandCheckPage() {
         {/* Bottom CTA */}
         {!dbResult && !loading && (
           <div style={{ marginTop: 40, background: 'var(--card-bg)', border: '1.5px solid var(--border-1)', borderRadius: 16, padding: '1.5rem', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
-            <p style={{ color: '#374151', fontSize: 14, fontWeight: 500, margin: 0 }}>
+            <p style={{ color: '#cccccc', fontSize: 14, fontWeight: 500, margin: 0 }}>
               Are you a property owner?{' '}
               <a href="/veryland/submit" style={{ color: GREEN_DARK, textDecoration: 'none', fontWeight: 700, borderBottom: `1px solid ${GREEN_DARK}` }}>
                 Get your property verified →
