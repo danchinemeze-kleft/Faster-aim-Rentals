@@ -223,14 +223,15 @@ export default function VerylandPage() {
       {/* Hero */}
       <section style={{ background: 'linear-gradient(180deg, #050a1a 0%, #080a0f 100%)', padding: '4rem 2rem 3rem', textAlign: 'center', borderBottom: '0.5px solid #1e293b' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>
+          <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 900, margin: '0 0 1.25rem', letterSpacing: '-1px' }}>Veryland☑️</h1>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#0f1a2e', border: '0.5px solid #1d4ed8', borderRadius: 20, padding: '4px 14px', marginBottom: '1.5rem' }}>
             <BadgeIcon color="#3b82f6" size={16} />
             <span style={{ fontSize: 12, color: '#3b82f6', fontWeight: 600 }}>Nigeria&apos;s First Property Document Verification</span>
           </div>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, lineHeight: 1.15, margin: '0 0 1rem' }}>
+          <h2 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, lineHeight: 1.15, margin: '0 0 1rem' }}>
             Verify Your Property.<br />
             <span style={{ color: '#3b82f6' }}>Earn Trust.</span>
-          </h1>
+          </h2>
           <p style={{ fontSize: 16, color: '#94a3b8', maxWidth: 520, margin: '0 auto 2rem', lineHeight: 1.7 }}>
             Submit your title documents for human review. Get a Veryland badge displayed on your listing so tenants and buyers know your property is authentic.
           </p>
