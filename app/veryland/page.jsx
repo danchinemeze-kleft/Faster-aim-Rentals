@@ -29,6 +29,34 @@ const BADGES = [
   { level: 'blue',   color: '#3b82f6', bg: '#050f1a', label: 'Blue',   desc: 'Premium — comprehensive title & survey verified' },
 ]
 
+// Scalloped badge seal — 12 curved bumps, smooth Q-bezier path, 28×28 viewBox
+const SEAL_PATH =
+  'M12.68,2.82 Q14.00,1.50 15.32,2.83 Q16.64,4.15 18.45,3.66 Q20.25,3.18 20.73,4.98 Q21.21,6.79 23.02,7.27 Q24.83,7.75 24.34,9.55 Q23.85,11.36 25.18,12.68 Q26.50,14.00 25.18,15.32 Q23.85,16.64 24.34,18.45 Q24.83,20.25 23.02,20.73 Q21.21,21.21 20.73,23.02 Q20.25,24.83 18.44,24.34 Q16.64,23.85 15.32,25.18 Q14.00,26.50 12.68,25.18 Q11.36,23.85 9.56,24.34 Q7.75,24.83 7.27,23.02 Q6.79,21.21 4.98,20.73 Q3.18,20.25 3.66,18.45 Q4.15,16.64 2.82,15.32 Q1.50,14.00 2.82,12.68 Q4.15,11.36 3.66,9.55 Q3.18,7.75 4.98,7.27 Q6.79,6.79 7.27,4.98 Q7.75,3.18 9.56,3.66 Q11.36,4.15 12.68,2.82 Z'
+
+function PremiumBadge({ size = 28, id = 'pb' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 28 28" fill="none" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+      <defs>
+        <linearGradient id={`${id}-g`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#1d4ed8" />
+          <stop offset="55%" stopColor="#2563eb" />
+          <stop offset="100%" stopColor="#0ea5e9" />
+        </linearGradient>
+        <filter id={`${id}-glow`} x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+      {/* Soft outer glow ring */}
+      <path d={SEAL_PATH} fill="rgba(37,99,235,0.28)" transform="translate(14,14) scale(1.12) translate(-14,-14)" filter={`url(#${id}-glow)`} />
+      {/* Badge body */}
+      <path d={SEAL_PATH} fill={`url(#${id}-g)`} />
+      {/* White checkmark */}
+      <path d="M9.5,14 L12.5,17.5 L19,10.5" stroke="white" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  )
+}
+
 function BadgeIcon({ color, size = 20 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -223,7 +251,9 @@ export default function VerylandPage() {
       {/* Hero */}
       <section style={{ background: 'linear-gradient(180deg, #050a1a 0%, #080a0f 100%)', padding: '4rem 2rem 3rem', textAlign: 'center', borderBottom: '0.5px solid #1e293b' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>
-          <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 900, margin: '0 0 1.25rem', letterSpacing: '-1px' }}>Veryland☑️</h1>
+          <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 900, margin: '0 0 1.25rem', letterSpacing: '-1px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4em' }}>
+            Veryland <PremiumBadge size={52} id="hero-badge" />
+          </h1>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#0f1a2e', border: '0.5px solid #1d4ed8', borderRadius: 20, padding: '4px 14px', marginBottom: '1.5rem' }}>
             <BadgeIcon color="#3b82f6" size={16} />
             <span style={{ fontSize: 12, color: '#3b82f6', fontWeight: 600 }}>Nigeria&apos;s First Property Document Verification</span>
