@@ -36,16 +36,17 @@ function BadgeIcon({ fill, check, size = 48 }) {
 }
 
 const inputStyle = {
-  width: '100%', padding: '12px 14px',
-  background: 'var(--input-bg)', border: '1.5px solid rgba(255,255,255,0.25)',
-  borderRadius: 8, color: '#ffffff', fontSize: 16,
+  width: '100%', padding: '13px 15px',
+  background: 'var(--input-bg)', border: '2px solid rgba(255,255,255,0.55)',
+  borderRadius: 9, color: '#ffffff', fontSize: 16,
   boxSizing: 'border-box', outline: 'none',
   fontFamily: "'Segoe UI', system-ui, sans-serif",
 };
 
 const labelStyle = {
-  fontSize: 16, color: '#ffffff', display: 'block',
-  marginBottom: 7, fontWeight: 700,
+  fontSize: 15, color: '#ffffff', display: 'block',
+  marginBottom: 8, fontWeight: 800,
+  textTransform: 'uppercase', letterSpacing: '0.04em',
 };
 
 export default function VerylandCheckPage() {

@@ -45,16 +45,17 @@ const PROPERTY_TYPES = [
 ];
 
 const inputStyle = {
-  width: '100%', padding: '12px 14px',
-  background: 'var(--input-bg)', border: '1.5px solid rgba(255,255,255,0.25)',
-  borderRadius: 8, color: '#ffffff', fontSize: 16,
+  width: '100%', padding: '13px 15px',
+  background: 'var(--input-bg)', border: '2px solid rgba(255,255,255,0.55)',
+  borderRadius: 9, color: '#ffffff', fontSize: 16,
   boxSizing: 'border-box', outline: 'none',
   fontFamily: "'Segoe UI', system-ui, sans-serif",
 };
 
 const labelStyle = {
-  fontSize: 16, color: '#ffffff', display: 'block',
-  marginBottom: 7, fontWeight: 700,
+  fontSize: 15, color: '#ffffff', display: 'block',
+  marginBottom: 8, fontWeight: 800,
+  textTransform: 'uppercase', letterSpacing: '0.04em',
 };
 
 export default function VerylandSubmitPage() {
@@ -268,8 +269,8 @@ export default function VerylandSubmitPage() {
         <form onSubmit={handleSubmit}>
 
           {/* Section 1: Your Details */}
-          <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
-            <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 22, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ background: 'var(--card-bg)', border: '2px solid rgba(255,255,255,0.18)', borderRadius: 16, padding: '1.75rem', marginBottom: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}>
+            <div style={{ fontWeight: 800, fontSize: 17, color: '#ffffff', marginBottom: 22, display: 'flex', alignItems: 'center', gap: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               <span style={{ background: GREEN, color: '#fff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0 }}>1</span>
               Your Details
             </div>
@@ -290,8 +291,8 @@ export default function VerylandSubmitPage() {
           </div>
 
           {/* Section 2: Property Details */}
-          <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
-            <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 22, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ background: 'var(--card-bg)', border: '2px solid rgba(255,255,255,0.18)', borderRadius: 16, padding: '1.75rem', marginBottom: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}>
+            <div style={{ fontWeight: 800, fontSize: 17, color: '#ffffff', marginBottom: 22, display: 'flex', alignItems: 'center', gap: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               <span style={{ background: GREEN, color: '#fff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0 }}>2</span>
               Property Details
             </div>
@@ -322,8 +323,8 @@ export default function VerylandSubmitPage() {
           </div>
 
           {/* Section 3: Documents */}
-          <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
-            <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ background: 'var(--card-bg)', border: '2px solid rgba(255,255,255,0.18)', borderRadius: 16, padding: '1.75rem', marginBottom: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}>
+            <div style={{ fontWeight: 800, fontSize: 17, color: '#ffffff', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               <span style={{ background: GREEN, color: '#fff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0 }}>3</span>
               Property Documents *
             </div>
@@ -332,7 +333,7 @@ export default function VerylandSubmitPage() {
             </p>
 
             {documents.map((doc, idx) => (
-              <div key={idx} style={{ background: 'var(--page-bg)', border: '1.5px solid var(--border-1)', borderRadius: 12, padding: '1.25rem', marginBottom: 14 }}>
+              <div key={idx} style={{ background: 'var(--page-bg)', border: '2px solid rgba(255,255,255,0.2)', borderRadius: 12, padding: '1.25rem', marginBottom: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
                   <span style={{ fontSize: 15, color: '#ffffff', fontWeight: 700 }}>Document {idx + 1}</span>
                   {documents.length > 1 && (
@@ -355,7 +356,7 @@ export default function VerylandSubmitPage() {
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png,.webp"
                       onChange={e => updateFile(idx, e.target.files?.[0] || null)}
-                      style={{ ...inputStyle, padding: '9px 12px', cursor: 'pointer', color: 'var(--text-2)' }}
+                      style={{ ...inputStyle, padding: '9px 12px', cursor: 'pointer', color: '#ffffff' }}
                     />
                   </div>
                 </div>
@@ -368,8 +369,8 @@ export default function VerylandSubmitPage() {
               type="button"
               onClick={addDocument}
               style={{
-                background: 'var(--card-bg)', border: `2px dashed var(--border-2)`, color: 'var(--text-3)',
-                borderRadius: 10, padding: '12px', fontSize: 14, fontWeight: 600,
+                background: 'var(--card-bg)', border: `2px dashed rgba(255,255,255,0.4)`, color: '#ffffff',
+                borderRadius: 10, padding: '12px', fontSize: 15, fontWeight: 700,
                 cursor: 'pointer', width: '100%', marginTop: 4,
               }}
             >
@@ -379,7 +380,7 @@ export default function VerylandSubmitPage() {
 
           {/* Section 4: Notes */}
           <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: 28, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
-            <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ fontWeight: 800, fontSize: 17, color: '#ffffff', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               <span style={{ background: 'var(--card-bg2)', color: '#ffffff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0, border: '1.5px solid #444' }}>4</span>
               Additional Notes <span style={{ color: '#cccccc', fontWeight: 400, fontSize: 15 }}>(optional)</span>
             </div>
