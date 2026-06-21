@@ -23,10 +23,34 @@ const DOC_TYPES = [
 ]
 
 const BADGES = [
-  { level: 'white',  color: '#9ca3af', bg: '#1f2937', label: 'Survey Plan',          desc: 'Survey Plan on file — pending review' },
-  { level: 'yellow', color: '#f59e0b', bg: '#1c1507', label: 'Title Document',        desc: 'C of O or R of O authenticated' },
-  { level: 'green',  color: '#10b981', bg: '#051a0f', label: 'Deed & Title Verified', desc: 'Deed of Assignment + C of O confirmed' },
-  { level: 'blue',   color: '#3b82f6', bg: '#050f1a', label: 'Fully Authenticated',   desc: 'All documents verified — highest trust level' },
+  {
+    level: 'white', color: '#9ca3af', bg: '#1f2937',
+    label: 'Minimum Documentation',
+    desc: '1–2 core documents submitted, or docs present but unverifiable',
+    risk: 'High risk — buyer should conduct independent due diligence',
+    documents: ['1–2 core documents submitted (e.g. Survey Plan or Receipt only)', 'OR documents submitted but could not be fully verified by AI or reviewer'],
+  },
+  {
+    level: 'yellow', color: '#f59e0b', bg: '#1c1507',
+    label: 'Partial Documentation',
+    desc: '3+ core documents consistent, at least 1 supporting document present',
+    risk: 'Moderate — improving but some documents still missing',
+    documents: ['Certificate of Occupancy (C of O)', 'Deed of Assignment', 'Survey Plan', 'Plus at least one of: Governor\'s Consent, Land Use Charge receipt, or Receipt of Sale'],
+  },
+  {
+    level: 'green', color: '#10b981', bg: '#051a0f',
+    label: 'Strong Documentation',
+    desc: 'All applicable core docs verified, most supporting docs present, no red flags',
+    risk: 'Low risk — suitable for most buyers with standard legal caution',
+    documents: ['All core documents present and internally consistent', 'Governor\'s Consent (where property has changed hands)', 'Building Plan Approval (where structures exist on the land)', 'No name mismatches, no missing stamps or signatures'],
+  },
+  {
+    level: 'blue', color: '#3b82f6', bg: '#050f1a',
+    label: 'Fully Verified',
+    desc: 'Every applicable document present, full cross-document consistency confirmed, zero flags',
+    risk: 'Complete file — all standard Veryland checks passed',
+    documents: ['All core, supporting & conditional documents present', 'Excision / Gazette (if land has communal or family land origin)', 'Power of Attorney or Probate / Letters of Administration (if applicable)', 'Full cross-document consistency — names, coordinates, descriptions all match'],
+  },
 ]
 
 // Scalloped badge seal — 12 curved bumps, smooth Q-bezier path, 28×28 viewBox
@@ -317,15 +341,35 @@ export default function VerylandPage() {
             Submit your title documents for human review. Get a Veryland badge displayed on your listing so tenants and buyers know your property is authentic.
           </p>
 
-          {/* Badge levels */}
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            {BADGES.map(b => (
-              <div key={b.level} style={{ background: b.bg, border: `1px solid ${b.color}44`, borderRadius: 12, padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 8, minWidth: 140 }}>
-                <BadgeIcon color={b.color} size={22} />
-                <div style={{ textAlign: 'left' }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: b.color, textTransform: 'uppercase', letterSpacing: 0.5 }}>{b.label}</div>
-                  <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 1 }}>{b.desc}</div>
+          {/* Badge level strip */}
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', marginBottom: '2rem' }}>
+            {BADGES.map((b, i) => (
+              <div key={b.level} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ background: b.bg, border: `1px solid ${b.color}55`, borderRadius: 20, padding: '5px 14px', display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <BadgeIcon color={b.color} size={16} />
+                  <span style={{ fontSize: 12, fontWeight: 700, color: b.color }}>{b.label}</span>
                 </div>
+                {i < BADGES.length - 1 && <span style={{ color: 'var(--text-3)', fontSize: 12 }}>→</span>}
+              </div>
+            ))}
+          </div>
+
+          {/* Tier explanation cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10, textAlign: 'left' }}>
+            {BADGES.map(b => (
+              <div key={b.level} style={{ background: b.bg, border: `1px solid ${b.color}33`, borderRadius: 12, padding: '1rem 1.1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                  <BadgeIcon color={b.color} size={20} />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: b.color }}>{b.label}</span>
+                </div>
+                <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                  {b.documents.map((d, i) => (
+                    <li key={i} style={{ fontSize: 11, color: 'var(--text-2)', padding: '2px 0', display: 'flex', gap: 6, lineHeight: 1.5 }}>
+                      <span style={{ color: b.color, flexShrink: 0 }}>✓</span>{d}
+                    </li>
+                  ))}
+                </ul>
+                <div style={{ marginTop: 8, fontSize: 10, color: b.color, opacity: 0.75, fontStyle: 'italic', lineHeight: 1.4 }}>{b.risk}</div>
               </div>
             ))}
           </div>
