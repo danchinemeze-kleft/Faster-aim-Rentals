@@ -12,6 +12,7 @@ const supabase = createClient(
 
 export default function Home() {
   const [listingCount, setListingCount] = useState(null)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     supabase
@@ -29,34 +30,30 @@ export default function Home() {
       {/* Navbar */}
       <nav style={s.nav}>
         <div style={s.navBrand}>🏠 Mr. Rent</div>
-        <div style={s.navLinks}>
-          <a href="/browse" style={s.navLink}>Browse</a>
-          <a href="/search" style={s.navLink}>AI Chat</a>
-          <a href="/list" style={s.navLink}>List Property</a>
-          <span className="vl-nav-wrap">
-            <a href="/veryland" style={{ ...s.navLink, color: '#1d4ed8', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 800 }}>
-              Veryland
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#1d4ed8"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </a>
-            <span className="vl-tooltip">Nigeria&apos;s first property document<br/>verification system.<br/>Verify land titles, C of O &amp; survey plans.</span>
-          </span>
-          <a href="/account" style={s.navBtn}>Login / Sign up</a>
+        <div className={`nav-links${menuOpen ? ' open' : ''}`}>
+          <button className="nav-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">✕</button>
+          <a href="/browse" style={s.navLink} onClick={() => setMenuOpen(false)}>Browse</a>
+          <a href="/search" style={s.navLink} onClick={() => setMenuOpen(false)}>AI Chat</a>
+          <a href="/list" style={s.navLink} onClick={() => setMenuOpen(false)}>List Property</a>
+          <a href="/veryland" style={{ ...s.navLink, color: '#1d4ed8', fontWeight: 800 }} onClick={() => setMenuOpen(false)}>Veryland ✓</a>
+          <a href="/account" style={s.navBtn} onClick={() => setMenuOpen(false)}>Login / Sign up</a>
         </div>
+        <button className="nav-hamburger" onClick={() => setMenuOpen(true)} aria-label="Open menu">☰</button>
       </nav>
 
       {/* Hero */}
-      <section style={s.heroSection}>
-        <div style={s.heroOuter}>
-          <div style={s.heroInner}>
-            <div style={s.heroLayout}>
+      <section style={s.heroSection} className="hero-section">
+        <div style={s.heroOuter} className="hero-outer">
+          <div style={s.heroInner} className="hero-inner">
+            <div style={s.heroLayout} className="hero-layout">
               <div style={s.heroText}>
                 <div style={s.heroBadge}>🇳🇬 Nigeria Nationwide</div>
-                <h1 style={s.heroTitle}>
+                <h1 style={s.heroTitle} className="hero-title-el">
                   Find or List<br />
                   <span style={s.heroCyan}>Property for Rent</span><br />
                   <span style={s.heroPink}>Quickly & Securely</span>
                 </h1>
-                <p style={s.heroSubtitle}>
+                <p style={s.heroSubtitle} className="hero-subtitle">
                   Connect with verified landlords across Nigeria. Browse listings, chat with Mr. Rent AI, and find your perfect home today.
                 </p>
                 <div style={s.heroActions}>
@@ -86,11 +83,11 @@ export default function Home() {
                 </div>
               </div>
 
-              <div style={s.avatarContainer}>
-                <div style={s.ringPink}></div>
-                <div style={s.ringCyan}></div>
+              <div style={s.avatarContainer} className="avatar-cont">
+                <div style={s.ringPink} className="ring-pink"></div>
+                <div style={s.ringCyan} className="ring-cyan"></div>
                 <a href="/search" style={{ display: 'block', borderRadius: '50%' }}>
-                  <div style={s.avatarWrapper}>
+                  <div style={s.avatarWrapper} className="avatar-wrap">
                     <Image
                       src="/mr-rent-avatar.png"
                       alt="Mr. Rent"
@@ -118,7 +115,7 @@ export default function Home() {
         <div style={s.sectionInner}>
           <p style={s.sectionTag}>— HOW IT WORKS —</p>
           <h2 style={s.sectionTitle}>Simple. Fast. <span style={s.heroCyan}>Secure.</span></h2>
-          <div style={s.stepsGrid}>
+          <div style={s.stepsGrid} className="steps-grid-el">
             {[
               { icon: '🔍', title: 'Browse Listings', desc: 'Search properties by location, budget, and type across all 36 states.', color: '#0ea5e9', link: '/browse' },
               { icon: '🤖', title: 'Ask Mr. Rent AI', desc: 'Chat with our AI assistant to find the perfect property for your needs.', color: '#ff2d78', link: '/search' },
@@ -139,7 +136,7 @@ export default function Home() {
       {/* For Landlords */}
       <section style={s.landlordSection}>
         <div style={s.landlordInner}>
-          <div style={s.landlordContent}>
+          <div style={s.landlordContent} className="landlord-cont">
             <div style={s.landlordText}>
               <p style={s.sectionTag}>— FOR LANDLORDS —</p>
               <h2 style={{ ...s.sectionTitle, textAlign: 'left', marginBottom: '1rem' }}>
@@ -156,7 +153,7 @@ export default function Home() {
               </ul>
               <a href="/account" style={s.btnCyan}>Get Started →</a>
             </div>
-            <div style={s.pricingCard}>
+            <div style={s.pricingCard} className="pricing-card">
               <p style={s.pricingLabel}>LANDLORD PLAN</p>
               <div style={s.pricingAmount}>
                 <span style={s.pricingCurrency}>₦</span>
@@ -178,7 +175,7 @@ export default function Home() {
       {/* CTA */}
       <section style={s.ctaSection}>
         <p style={s.sectionTag}>— JOIN MR. RENT —</p>
-        <h2 style={s.ctaTitle}>Your Next Home is<br /><span style={s.heroCyan}>One Click Away</span></h2>
+        <h2 style={s.ctaTitle} className="cta-title">Your Next Home is<br /><span style={s.heroCyan}>One Click Away</span></h2>
         <p style={s.ctaSubtitle}>Join thousands of Nigerians finding and listing homes on Mr. Rent</p>
         <div style={{ ...s.heroActions, margin: '0 auto 2.5rem' }}>
           <a href="/browse" style={s.btnCyan}>Browse Listings</a>
@@ -190,9 +187,9 @@ export default function Home() {
 
       {/* Footer */}
       <footer style={s.footer}>
-        <div style={s.footerTop}>
+        <div style={s.footerTop} className="footer-top">
           <div style={s.footerBrand}>🏠 Mr. Rent</div>
-          <div style={s.footerLinks}>
+          <div style={s.footerLinks} className="footer-links">
             <a href="/browse" style={s.footerLink}>Browse</a>
             <a href="/search" style={s.footerLink}>AI Chat</a>
             <a href="/list" style={s.footerLink}>List Property</a>
@@ -217,6 +214,22 @@ export default function Home() {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #ffffff; }
         a { text-decoration: none; }
+
+        /* ---- Hamburger nav ---- */
+        .nav-hamburger {
+          display: none; background: none; border: 2px solid #e2e8f0;
+          border-radius: 8px; font-size: 1.3rem; cursor: pointer; color: #0f172a;
+          padding: 6px 10px; line-height: 1; flex-shrink: 0;
+        }
+        .nav-close {
+          display: none; background: none; border: none; font-size: 1.4rem;
+          cursor: pointer; color: #0f172a; align-self: flex-end; padding: 4px 8px;
+        }
+        .nav-links {
+          display: flex; align-items: center; gap: 1.5rem;
+        }
+
+        /* ---- Veryland tooltip ---- */
         .vl-nav-wrap { position: relative; display: inline-flex; align-items: center; }
         .vl-tooltip {
           display: none; position: absolute; top: calc(100% + 10px); left: 50%;
@@ -232,17 +245,66 @@ export default function Home() {
         .vl-tooltip-up { top: auto; bottom: calc(100% + 10px); }
         .vl-tooltip-up::before { bottom: auto; top: 100%; border-bottom-color: transparent; border-top-color: #1d4ed8; }
         .vl-nav-wrap:hover .vl-tooltip { display: block; }
+
+        /* ---- Animations ---- */
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
         @keyframes floatReverse { 0%,100%{transform:translateY(0)} 50%{transform:translateY(12px)} }
         @keyframes spinSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes spinSlowReverse { from{transform:rotate(360deg)} to{transform:rotate(0deg)} }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+        /* ---- Tablet (≤900px) ---- */
+        @media (max-width: 900px) {
+          .hero-layout { flex-direction: column-reverse !important; gap: 2rem !important; }
+          .avatar-cont { width: 220px !important; height: 260px !important; margin: 0 auto !important; }
+          .ring-pink { width: 210px !important; height: 210px !important; }
+          .ring-cyan { width: 180px !important; height: 180px !important; }
+          .avatar-wrap { width: 160px !important; height: 160px !important; }
+          .landlord-cont { flex-direction: column !important; gap: 2rem !important; }
+          .pricing-card { min-width: unset !important; width: 100% !important; }
+        }
+
+        /* ---- Mobile (≤768px) ---- */
         @media (max-width: 768px) {
-          .hero-layout { flex-direction: column !important; }
-          .hero-title { font-size: 2rem !important; }
-          .steps-grid { grid-template-columns: 1fr 1fr !important; }
-          .landlord-content { flex-direction: column !important; }
-          .avatar-container { width: 260px !important; height: 300px !important; }
+          /* Nav */
+          .nav-hamburger { display: flex; align-items: center; justify-content: center; }
+          .nav-close { display: flex; }
+          .nav-links {
+            display: none; position: fixed; inset: 0; background: #ffffff;
+            flex-direction: column; align-items: center; justify-content: center;
+            gap: 2rem; z-index: 500; padding: 2rem;
+          }
+          .nav-links.open { display: flex; }
+          .nav-links a { font-size: 1.15rem !important; font-weight: 700 !important; padding: 8px 0; }
+
+          /* Hero */
+          .hero-section { padding: 1.25rem 0.75rem !important; }
+          .hero-outer { border-radius: 14px !important; }
+          .hero-inner { padding: 1.75rem 1.25rem !important; border-radius: 10px !important; }
+          .hero-title-el { font-size: 2rem !important; letter-spacing: -0.5px !important; margin-bottom: 1rem !important; }
+          .hero-subtitle { font-size: 0.88rem !important; margin-bottom: 1.5rem !important; }
+
+          /* Steps */
+          .steps-grid-el { grid-template-columns: 1fr 1fr !important; gap: 1rem !important; }
+
+          /* CTA */
+          .cta-title { font-size: 1.9rem !important; letter-spacing: -0.5px !important; }
+
+          /* Footer */
+          .footer-top { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 1rem !important; }
+          .footer-links { flex-wrap: wrap !important; justify-content: center !important; gap: 0.85rem !important; }
+        }
+
+        /* ---- Small phones (≤480px) ---- */
+        @media (max-width: 480px) {
+          .hero-title-el { font-size: 1.65rem !important; }
+          .hero-inner { padding: 1.25rem 1rem !important; }
+          .steps-grid-el { grid-template-columns: 1fr !important; }
+          .cta-title { font-size: 1.5rem !important; }
+          .avatar-cont { width: 170px !important; height: 200px !important; }
+          .ring-pink { width: 160px !important; height: 160px !important; }
+          .ring-cyan { width: 135px !important; height: 135px !important; }
+          .avatar-wrap { width: 120px !important; height: 120px !important; }
         }
       `}</style>
     </main>
@@ -257,7 +319,7 @@ const s = {
 
   nav: {
     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-    padding: '1.25rem 2rem', background: '#ffffff',
+    padding: '0.9rem 1.25rem', background: '#ffffff',
     boxShadow: '0 1px 0 #e2e8f0', position: 'sticky', top: 0, zIndex: 100,
   },
   navBrand: {

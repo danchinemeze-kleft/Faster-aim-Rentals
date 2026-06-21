@@ -438,7 +438,7 @@ export default function ListingPage() {
         <span style={{ color: '#aaa', fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 260 }}>{listing.title}</span>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem 1.5rem' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(1rem, 4vw, 2rem) clamp(0.75rem, 4vw, 1.5rem)' }}>
 
         {/* Image gallery */}
         {hasImages && (
@@ -451,7 +451,7 @@ export default function ListingPage() {
               <img
                 src={images[activeImage]}
                 alt={listing.title}
-                style={{ width: '100%', height: 420, objectFit: 'cover', display: 'block' }}
+                style={{ width: '100%', height: 'clamp(220px, 45vw, 420px)', objectFit: 'cover', display: 'block' }}
               />
               <div style={{ position: 'absolute', bottom: 12, right: 12, background: 'rgba(0,0,0,0.65)', color: '#fff', fontSize: 12, padding: '4px 12px', borderRadius: 20, backdropFilter: 'blur(4px)' }}>
                 🔍 {activeImage + 1} / {images.length}
@@ -756,15 +756,12 @@ export default function ListingPage() {
           gap: 2rem;
           align-items: start;
         }
-        @media (max-width: 768px) {
-          .listing-grid {
-            grid-template-columns: 1fr;
-          }
+        @media (max-width: 900px) {
+          .listing-grid { grid-template-columns: 1fr; }
+          .listing-grid > div:last-child { order: -1; }
         }
-        @media (max-width: 768px) {
-          .listing-grid > div:last-child {
-            order: -1;
-          }
+        @media (max-width: 600px) {
+          .listing-grid { gap: 1.25rem; }
         }
       `}</style>
     </div>

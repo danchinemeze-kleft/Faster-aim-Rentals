@@ -248,7 +248,7 @@ export default function BrowsePage() {
         </div>
 
         {/* Filters */}
-        <div style={{ background: 'var(--card-bg)', border: '2px solid #0ef6cc', borderRadius: '16px', padding: '28px', marginBottom: '36px', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '18px', alignItems: 'flex-end' }}>
+        <div className="browse-filters" style={{ background: 'var(--card-bg)', border: '2px solid #0ef6cc', borderRadius: '16px', padding: '20px', marginBottom: '28px', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '14px', alignItems: 'flex-end' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-1)', marginBottom: '10px', letterSpacing: '1px' }}>Search</label>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Location, area or title..." style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }} />
@@ -342,7 +342,7 @@ export default function BrowsePage() {
             <p style={{ color: '#aaaaaa' }}>Try adjusting your filters or check back soon.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+          <div className="browse-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
             {filtered.map(l => (
               <div key={l.id} style={{ background: 'var(--card-bg)', borderRadius: '14px', border: '1px solid var(--border-1)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <a href={`/listing/${l.id}`} style={{ display: 'block', position: 'relative', height: '220px', background: '#111318', textDecoration: 'none' }}>
@@ -368,7 +368,7 @@ export default function BrowsePage() {
                   )}
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
                     <a href={`/listing/${l.id}`} style={{ flex: 1, padding: '11px 8px', borderRadius: '8px', border: '2px solid #e8e8e8', background: '#f8f8f8', color: '#444', fontSize: '0.78rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>View Details</a>
-                    <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '11px 8px', borderRadius: '8px', border: 'none', background: '#ff2d78', color: '#fff', fontSize: '0.82rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif' }}>{paying === l.id ? 'Please wait...' : 'Meet Landlord • ₦5k'}</button>
+                    <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '13px 8px', borderRadius: '8px', border: 'none', background: '#ff2d78', color: '#fff', fontSize: '0.88rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif', minHeight: 48 }}>{paying === l.id ? 'Please wait...' : 'Meet Landlord • ₦5k'}</button>
                   </div>
                 </div>
               </div>
@@ -385,6 +385,22 @@ export default function BrowsePage() {
           onCancel={() => { setShowRoleModal(false); setPendingListing(null); }}
         />
       )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .browse-filters {
+            grid-template-columns: 1fr 1fr !important;
+            padding: 16px !important;
+            gap: 10px !important;
+          }
+          .browse-filters > div:first-child { grid-column: 1 / -1; }
+          .browse-filters > button:last-child { grid-column: 1 / -1; height: 48px !important; }
+        }
+        @media (max-width: 480px) {
+          .browse-filters { grid-template-columns: 1fr !important; }
+          .browse-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </div>
   );
 }
