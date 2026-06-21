@@ -66,31 +66,79 @@ function BadgeIcon({ color, size = 20 }) {
   )
 }
 
-function renderAnalysis(text) {
-  if (!text) return null
-  return text.split('\n').map((line, i) => {
-    if (line.startsWith('**') && line.endsWith('**')) {
-      return <p key={i} style={{ fontWeight: 700, color: '#e8e8e8', margin: '1rem 0 0.25rem' }}>{line.replace(/\*\*/g, '')}</p>
-    }
-    if (line.startsWith('**')) {
-      const parts = line.split('**')
-      return <p key={i} style={{ margin: '0.75rem 0 0.15rem' }}><strong style={{ color: '#e8e8e8' }}>{parts[1]}</strong>{parts[2] || ''}</p>
-    }
-    if (line.trim().startsWith('- ') || line.trim().startsWith('• ')) {
-      return <p key={i} style={{ paddingLeft: '1rem', margin: '0.15rem 0', color: '#aaa' }}>• {line.replace(/^[-•]\s*/, '')}</p>
-    }
-    if (line.includes('LIKELY AUTHENTIC')) {
-      return <p key={i} style={{ color: '#10b981', fontWeight: 700, fontSize: 15, margin: '0.5rem 0' }}>{line}</p>
-    }
-    if (line.includes('LIKELY FRAUDULENT')) {
-      return <p key={i} style={{ color: '#ef4444', fontWeight: 700, fontSize: 15, margin: '0.5rem 0' }}>{line}</p>
-    }
-    if (line.includes('UNCERTAIN')) {
-      return <p key={i} style={{ color: '#f59e0b', fontWeight: 700, fontSize: 15, margin: '0.5rem 0' }}>{line}</p>
-    }
-    if (!line.trim()) return <br key={i} />
-    return <p key={i} style={{ margin: '0.15rem 0', color: '#bbb' }}>{line}</p>
-  })
+
+const TIER_META = {
+  white:  { color: '#9ca3af', bg: '#1a1d24', border: '#374151', label: 'Minimum Documentation' },
+  yellow: { color: '#f59e0b', bg: '#1c1507', border: '#78350f', label: 'Partial Documentation' },
+  green:  { color: '#10b981', bg: '#051a0f', border: '#065f46', label: 'Strong Documentation' },
+  blue:   { color: '#3b82f6', bg: '#050f1a', border: '#1e3a5f', label: 'Fully Authenticated' },
+}
+
+function VerylandResult({ result, onSubmit }) {
+  if (result.error) {
+    return (
+      <div style={{ marginTop: '1.5rem', background: '#1a0505', border: '0.5px solid #ef4444', borderRadius: 12, padding: '1.25rem', fontSize: 13, color: '#ef4444' }}>
+        {result.error}
+      </div>
+    )
+  }
+
+  const tier = TIER_META[result.tier] || TIER_META.white
+  const badge = BADGES.find(b => b.level === result.tier) || BADGES[0]
+
+  return (
+    <div style={{ marginTop: '1.5rem' }}>
+      {/* Tier banner */}
+      <div style={{ background: tier.bg, border: `1px solid ${tier.border}`, borderRadius: 12, padding: '1.25rem 1.5rem', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 14 }}>
+        <BadgeIcon color={badge.color} size={40} />
+        <div>
+          <div style={{ fontSize: 11, color: tier.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 3 }}>Verification Result</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: '#e8e8e8' }}>{result.tier_label || tier.label}</div>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
+        {/* Documents found */}
+        <div style={{ background: '#0a1a0f', border: '0.5px solid #065f46', borderRadius: 10, padding: '1rem' }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#10b981', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8 }}>Documents Found</div>
+          {result.documents_found?.length > 0
+            ? result.documents_found.map((d, i) => <div key={i} style={{ fontSize: 12, color: '#a7f3d0', padding: '3px 0', display: 'flex', gap: 6 }}><span>✓</span>{d}</div>)
+            : <div style={{ fontSize: 12, color: '#475569' }}>None identified</div>
+          }
+        </div>
+
+        {/* Documents missing */}
+        <div style={{ background: '#1a0a0a', border: '0.5px solid #7f1d1d', borderRadius: 10, padding: '1rem' }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8 }}>Documents Missing</div>
+          {result.documents_missing?.length > 0
+            ? result.documents_missing.map((d, i) => <div key={i} style={{ fontSize: 12, color: '#fca5a5', padding: '3px 0', display: 'flex', gap: 6 }}><span>✗</span>{d}</div>)
+            : <div style={{ fontSize: 12, color: '#475569' }}>None identified</div>
+          }
+        </div>
+      </div>
+
+      {/* Inconsistencies */}
+      {result.inconsistencies_flagged?.length > 0 && (
+        <div style={{ background: '#1c1507', border: '0.5px solid #78350f', borderRadius: 10, padding: '1rem', marginBottom: 12 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8 }}>Flags & Inconsistencies</div>
+          {result.inconsistencies_flagged.map((f, i) => <div key={i} style={{ fontSize: 12, color: '#fde68a', padding: '3px 0', display: 'flex', gap: 6 }}><span>⚠</span>{f}</div>)}
+        </div>
+      )}
+
+      {/* Next steps */}
+      {result.recommended_next_steps && result.tier !== 'blue' && (
+        <div style={{ background: '#0f1a2e', border: '0.5px solid #1e3a5f', borderRadius: 10, padding: '1rem', marginBottom: 12 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 6 }}>Recommended Next Steps</div>
+          <div style={{ fontSize: 12, color: '#93c5fd', lineHeight: 1.6 }}>{result.recommended_next_steps}</div>
+        </div>
+      )}
+
+      <div style={{ padding: '0.75rem 1rem', background: '#111318', borderRadius: 8, fontSize: 11, color: '#475569', lineHeight: 1.5 }}>
+        ⚠️ This is an AI-generated preliminary check, not a legal determination. Veryland verifies documentation completeness and consistency — it does not guarantee against future legal disputes or claims outside the submitted document chain. Always engage qualified legal counsel for high-value transactions.{' '}
+        <button onClick={onSubmit} style={{ background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', fontSize: 11, padding: 0, fontWeight: 600 }}>Submit for official human review →</button>
+      </div>
+    </div>
+  )
 }
 
 export default function VerylandPage() {
@@ -103,8 +151,9 @@ export default function VerylandPage() {
   const [checkFile, setCheckFile] = useState(null)
   const [checkAddress, setCheckAddress] = useState('')
   const [checkState, setCheckState] = useState('')
+  const [checkDocType, setCheckDocType] = useState('')
   const [checking, setChecking] = useState(false)
-  const [checkResult, setCheckResult] = useState(null)
+  const [checkResult, setCheckResult] = useState(null) // now stores the JSON object from the API
   const [checkDrag, setCheckDrag] = useState(false)
   const checkInputRef = useRef(null)
 
@@ -159,11 +208,13 @@ export default function VerylandPage() {
       fd.append('document', checkFile)
       fd.append('address', checkAddress)
       fd.append('state', checkState)
+      fd.append('docType', checkDocType)
       const res = await fetch('/api/veryland/check', { method: 'POST', body: fd })
       const data = await res.json()
-      setCheckResult(data.analysis || 'No analysis returned.')
-    } catch {
-      setCheckResult('AI check failed. Please try again.')
+      if (data.error) throw new Error(data.error)
+      setCheckResult(data)
+    } catch (err) {
+      setCheckResult({ error: err.message || 'AI check failed. Please try again.' })
     } finally {
       setChecking(false)
     }
@@ -346,7 +397,14 @@ export default function VerylandPage() {
                   )}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: '1rem' }}>
+                  <div>
+                    <label style={lbl}>Document type (optional)</label>
+                    <select value={checkDocType} onChange={e => setCheckDocType(e.target.value)} style={iStyle}>
+                      <option value="">Unknown / Let AI decide</option>
+                      {DOC_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                    </select>
+                  </div>
                   <div>
                     <label style={lbl}>Property address (optional)</label>
                     <input placeholder="e.g. 12 Awka Road, Onitsha" value={checkAddress} onChange={e => setCheckAddress(e.target.value)} style={iStyle} />
@@ -374,15 +432,7 @@ export default function VerylandPage() {
                 </button>
               </form>
 
-              {checkResult && (
-                <div style={{ marginTop: '1.5rem', background: '#050a14', border: '0.5px solid #1e293b', borderRadius: 12, padding: '1.25rem' }}>
-                  <div style={{ fontSize: 12, color: '#3b82f6', fontWeight: 600, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: 0.5 }}>AI Analysis Result</div>
-                  <div style={{ fontSize: 13, lineHeight: 1.7 }}>{renderAnalysis(checkResult)}</div>
-                  <div style={{ marginTop: '1.25rem', padding: '0.75rem 1rem', background: '#0f1a2e', borderRadius: 8, fontSize: 12, color: '#64748b' }}>
-                    ⚠️ This is an AI-generated preliminary check, not a legal verification. For an official badge on your listing, <button onClick={() => setTab('submit')} style={{ background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', fontSize: 12, padding: 0, fontWeight: 600 }}>submit for human review →</button>
-                  </div>
-                </div>
-              )}
+              {checkResult && <VerylandResult result={checkResult} onSubmit={() => setTab('submit')} />}
             </div>
 
             {/* How AI check works */}
