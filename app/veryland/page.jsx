@@ -23,10 +23,10 @@ const DOC_TYPES = [
 ]
 
 const BADGES = [
-  { level: 'white',  color: '#9ca3af', bg: '#1f2937', label: 'White',  desc: 'Documents received — pending human review' },
-  { level: 'yellow', color: '#f59e0b', bg: '#1c1507', label: 'Yellow', desc: 'Partial verification — some documents confirmed' },
-  { level: 'green',  color: '#10b981', bg: '#051a0f', label: 'Green',  desc: 'Fully verified — all documents authenticated' },
-  { level: 'blue',   color: '#3b82f6', bg: '#050f1a', label: 'Blue',   desc: 'Premium — comprehensive title & survey verified' },
+  { level: 'white',  color: '#9ca3af', bg: '#1f2937', label: 'Survey Plan',          desc: 'Survey Plan on file — pending review' },
+  { level: 'yellow', color: '#f59e0b', bg: '#1c1507', label: 'Title Document',        desc: 'C of O or R of O authenticated' },
+  { level: 'green',  color: '#10b981', bg: '#051a0f', label: 'Deed & Title Verified', desc: 'Deed of Assignment + C of O confirmed' },
+  { level: 'blue',   color: '#3b82f6', bg: '#050f1a', label: 'Fully Authenticated',   desc: 'All documents verified — highest trust level' },
 ]
 
 // Scalloped badge seal — 12 curved bumps, smooth Q-bezier path, 28×28 viewBox
@@ -285,8 +285,8 @@ export default function VerylandPage() {
       <div style={{ maxWidth: 800, margin: '2.5rem auto 0', padding: '0 1.5rem' }}>
         <div style={{ display: 'flex', gap: 8, borderBottom: '0.5px solid #1e293b', paddingBottom: 12, marginBottom: '2rem' }}>
           {[
-            { key: 'check', label: '🤖 AI Quick Check', desc: 'Free instant scan' },
-            { key: 'submit', label: '📋 Submit for Verification', desc: 'Official human review' },
+            { key: 'check',  label: '🔍 Check a Document',          desc: 'For buyers & tenants — verify authenticity' },
+            { key: 'submit', label: '🏠 Verify My Property',          desc: 'For sellers & landlords — earn a badge' },
           ].map(t => (
             <button key={t.key} onClick={() => setTab(t.key)} style={{
               background: tab === t.key ? '#1d4ed8' : 'transparent',
