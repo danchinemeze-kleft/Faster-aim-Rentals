@@ -24,11 +24,11 @@ function VerylandBadge({ level }) {
   return (
     <span
       title={`Veryland ${b.label}`}
-      style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 700, color: b.fill, flexShrink: 0 }}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: b.fill, flexShrink: 0 }}
     >
-      <svg width="16" height="16" viewBox="0 0 16 16" style={{ flexShrink: 0 }}>
-        <circle cx="8" cy="8" r="8" fill={b.fill} />
-        <polyline points="4.5,8 7,10.5 12,5" stroke={b.check} strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <svg width="18" height="18" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+        <rect width="22" height="22" rx="7" fill={b.fill} />
+        <path d="M6 11.5l3.5 3.5 6.5-7" stroke={b.check} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
       {b.label}
     </span>

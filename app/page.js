@@ -35,7 +35,13 @@ export default function Home() {
           <a href="/browse" style={s.navLink} onClick={() => setMenuOpen(false)}>Browse</a>
           <a href="/search" style={s.navLink} onClick={() => setMenuOpen(false)}>AI Chat</a>
           <a href="/list" style={s.navLink} onClick={() => setMenuOpen(false)}>List Property</a>
-          <a href="/veryland" style={{ ...s.navLink, color: '#1d4ed8', fontWeight: 800 }} onClick={() => setMenuOpen(false)}>Veryland ✓</a>
+          <a href="/veryland" style={{ ...s.navLink, color: '#1877F2', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }} onClick={() => setMenuOpen(false)}>
+            Veryland
+            <svg width="18" height="18" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, verticalAlign: 'middle' }}>
+              <rect width="22" height="22" rx="7" fill="#1877F2"/>
+              <path d="M6 11.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </a>
           <a href="/account" style={s.navBtn} onClick={() => setMenuOpen(false)}>Login / Sign up</a>
         </div>
         <button className="nav-hamburger" onClick={() => setMenuOpen(true)} aria-label="Open menu">☰</button>
@@ -194,9 +200,12 @@ export default function Home() {
             <a href="/search" style={s.footerLink}>AI Chat</a>
             <a href="/list" style={s.footerLink}>List Property</a>
             <span className="vl-nav-wrap">
-              <a href="/veryland" style={{ ...s.footerLink, color: '#1d4ed8', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <a href="/veryland" style={{ ...s.footerLink, color: '#1877F2', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '5px' }}>
                 Veryland
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#1d4ed8"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="16" height="16" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+                  <rect width="22" height="22" rx="7" fill="#1877F2"/>
+                  <path d="M6 11.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </a>
               <span className="vl-tooltip vl-tooltip-up">Nigeria&apos;s first property document<br/>verification system.</span>
             </span>

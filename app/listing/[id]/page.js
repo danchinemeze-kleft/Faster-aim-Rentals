@@ -27,13 +27,13 @@ function VerylandBadge({ level }) {
     <a
       href="/veryland"
       title={b.label}
-      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, textDecoration: 'none', background: '#111318', border: `1px solid ${b.fill}33`, borderRadius: 20, padding: '4px 12px 4px 6px' }}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 7, textDecoration: 'none', background: '#111318', border: `1px solid ${b.fill}44`, borderRadius: 20, padding: '5px 13px 5px 7px' }}
     >
-      <svg width="18" height="18" viewBox="0 0 18 18" style={{ flexShrink: 0 }}>
-        <circle cx="9" cy="9" r="9" fill={b.fill} />
-        <polyline points="5,9 8,12 13,6" stroke={b.check} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <svg width="20" height="20" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+        <rect width="22" height="22" rx="7" fill={b.fill}/>
+        <path d="M6 11.5l3.5 3.5 6.5-7" stroke={b.check} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
-      <span style={{ fontSize: 11, fontWeight: 700, color: b.fill }}>{b.label}</span>
+      <span style={{ fontSize: 13, fontWeight: 700, color: b.fill }}>{b.label}</span>
     </a>
   )
 }
