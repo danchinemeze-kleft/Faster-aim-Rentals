@@ -33,8 +33,14 @@ export default function Home() {
         <div className={`nav-links${menuOpen ? ' open' : ''}`}>
           <button className="nav-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">✕</button>
           <a href="/browse" style={s.navLink} onClick={() => setMenuOpen(false)}>Browse Rentals</a>
-          <a href="/buy" style={s.navLink} onClick={() => setMenuOpen(false)}>Buy Property</a>
-          <a href="/sell" style={s.navLink} onClick={() => setMenuOpen(false)}>Sell Property</a>
+          <a href="/buy" style={{ display:'inline-flex', alignItems:'center', gap:5, background:'linear-gradient(135deg,#059669,#047857)', color:'white', padding:'6px 13px', borderRadius:'8px', fontSize:'0.82rem', fontWeight:800, boxShadow:'0 2px 8px rgba(5,150,105,0.3)' }} onClick={() => setMenuOpen(false)}>
+            🏡 Buy Property
+            <span style={{ background:'#fbbf24', color:'#080a0f', fontSize:'9px', fontWeight:900, borderRadius:'3px', padding:'1px 5px', lineHeight:1.4 }}>NEW</span>
+          </a>
+          <a href="/sell" style={{ display:'inline-flex', alignItems:'center', gap:5, background:'linear-gradient(135deg,#ff2d78,#c0135a)', color:'white', padding:'6px 13px', borderRadius:'8px', fontSize:'0.82rem', fontWeight:800, boxShadow:'0 2px 8px rgba(255,45,120,0.3)' }} onClick={() => setMenuOpen(false)}>
+            💰 Sell Property
+            <span style={{ background:'#fbbf24', color:'#080a0f', fontSize:'9px', fontWeight:900, borderRadius:'3px', padding:'1px 5px', lineHeight:1.4 }}>NEW</span>
+          </a>
           <a href="/search" style={s.navLink} onClick={() => setMenuOpen(false)}>AI Chat</a>
           <a href="/list" style={s.navLink} onClick={() => setMenuOpen(false)}>List for Rent</a>
           <a href="/veryland" style={{ ...s.navLink, color: '#1877F2', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }} onClick={() => setMenuOpen(false)}>
@@ -141,6 +147,39 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Buy & Sell — new product */}
+      <section style={{ padding:'4rem 2rem', background:'linear-gradient(135deg,#f0fdf4 0%,#ecfdf5 40%,#f0f9ff 100%)', borderTop:'1px solid #e2e8f0', borderBottom:'1px solid #e2e8f0' }}>
+        <div style={{ maxWidth:'900px', margin:'0 auto', textAlign:'center' }}>
+          <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'#fbbf24', color:'#080a0f', padding:'4px 14px', borderRadius:20, fontSize:'0.68rem', fontWeight:900, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'1rem' }}>
+            ✨ New Feature
+          </div>
+          <h2 style={{ fontSize:'2rem', fontWeight:900, color:'#0f172a', margin:'0 0 0.75rem', letterSpacing:'-0.5px' }}>
+            Now Also: <span style={s.heroCyan}>Buy</span> &amp; <span style={s.heroPink}>Sell</span> Property
+          </h2>
+          <p style={{ color:'#475569', fontSize:'0.92rem', fontWeight:600, lineHeight:1.75, marginBottom:'2.5rem', maxWidth:'540px', margin:'0 auto 2.5rem' }}>
+            Beyond rentals — browse land and properties for sale across Nigeria, or list yours to reach thousands of buyers.
+          </p>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20 }} className="buy-sell-grid">
+            <a href="/buy" style={{ background:'#ffffff', border:`2px solid ${CYAN}55`, borderRadius:18, padding:'2rem', textDecoration:'none', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:10, boxShadow:`0 4px 24px ${CYAN}22`, position:'relative', overflow:'hidden' }}>
+              <div style={{ fontSize:'2.5rem' }}>🏡</div>
+              <div style={{ fontWeight:900, fontSize:'1.15rem', color:'#0f172a' }}>Buy Property</div>
+              <p style={{ color:'#475569', fontSize:'0.84rem', fontWeight:600, lineHeight:1.7, margin:0, textAlign:'left' }}>Browse verified land and houses for sale. Contact sellers directly — free for logged-in users. No hidden fees.</p>
+              <span style={{ background:`${CYAN}15`, border:`1px solid ${CYAN}44`, color:CYAN, borderRadius:20, padding:'3px 12px', fontSize:'0.78rem', fontWeight:800, marginTop:4 }}>Free to browse</span>
+              <div style={{ display:'inline-block', background:`linear-gradient(135deg,${CYAN},#0284c7)`, color:'white', padding:'9px 20px', borderRadius:9, fontWeight:800, fontSize:'0.85rem', marginTop:4 }}>Browse Properties →</div>
+              <div style={{ position:'absolute', top:14, right:14, background:'#fbbf24', color:'#080a0f', fontSize:'0.62rem', fontWeight:900, borderRadius:5, padding:'2px 7px', letterSpacing:'0.06em' }}>NEW</div>
+            </a>
+            <a href="/sell" style={{ background:'#ffffff', border:`2px solid ${PINK}55`, borderRadius:18, padding:'2rem', textDecoration:'none', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:10, boxShadow:`0 4px 24px ${PINK}22`, position:'relative', overflow:'hidden' }}>
+              <div style={{ fontSize:'2.5rem' }}>💰</div>
+              <div style={{ fontWeight:900, fontSize:'1.15rem', color:'#0f172a' }}>Sell Property</div>
+              <p style={{ color:'#475569', fontSize:'0.84rem', fontWeight:600, lineHeight:1.7, margin:0, textAlign:'left' }}>List your land or house and reach thousands of serious buyers. One-time fee, listing stays live until sold.</p>
+              <span style={{ background:`${PINK}10`, border:`1px solid ${PINK}44`, color:PINK, borderRadius:20, padding:'3px 12px', fontSize:'0.78rem', fontWeight:800, marginTop:4 }}>₦20,000 listing fee</span>
+              <div style={{ display:'inline-block', background:`linear-gradient(135deg,${PINK},#c0135a)`, color:'white', padding:'9px 20px', borderRadius:9, fontWeight:800, fontSize:'0.85rem', marginTop:4 }}>List for Sale →</div>
+              <div style={{ position:'absolute', top:14, right:14, background:'#fbbf24', color:'#080a0f', fontSize:'0.62rem', fontWeight:900, borderRadius:5, padding:'2px 7px', letterSpacing:'0.06em' }}>NEW</div>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* For Landlords */}
       <section style={s.landlordSection}>
         <div style={s.landlordInner}>
@@ -199,6 +238,14 @@ export default function Home() {
           <div style={s.footerBrand}>🏠 Mr. Rent</div>
           <div style={s.footerLinks} className="footer-links">
             <a href="/browse" style={s.footerLink}>Browse</a>
+            <a href="/buy" style={{ ...s.footerLink, color:CYAN, fontWeight:800, display:'inline-flex', alignItems:'center', gap:4 }}>
+              🏡 Buy Property
+              <span style={{ background:'#fbbf24', color:'#080a0f', fontSize:'0.55rem', fontWeight:900, borderRadius:'3px', padding:'1px 5px' }}>NEW</span>
+            </a>
+            <a href="/sell" style={{ ...s.footerLink, color:PINK, fontWeight:800, display:'inline-flex', alignItems:'center', gap:4 }}>
+              💰 Sell Property
+              <span style={{ background:'#fbbf24', color:'#080a0f', fontSize:'0.55rem', fontWeight:900, borderRadius:'3px', padding:'1px 5px' }}>NEW</span>
+            </a>
             <a href="/search" style={s.footerLink}>AI Chat</a>
             <a href="/list" style={s.footerLink}>List Property</a>
             <span className="vl-nav-wrap">
@@ -304,6 +351,11 @@ export default function Home() {
           /* Footer */
           .footer-top { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 1rem !important; }
           .footer-links { flex-wrap: wrap !important; justify-content: center !important; gap: 0.85rem !important; }
+        }
+
+        /* ---- Buy/Sell grid ---- */
+        @media (max-width: 640px) {
+          .buy-sell-grid { grid-template-columns: 1fr !important; }
         }
 
         /* ---- Small phones (≤480px) ---- */
