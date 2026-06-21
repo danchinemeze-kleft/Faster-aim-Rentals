@@ -570,15 +570,65 @@ export default function MyAccountPage() {
         .faim-ma-info-row span:last-child { color: var(--text-1); font-weight: 500; }
 
         @media (max-width: 768px) {
-          .faim-ma-sidebar { width: 60px; padding: 1rem 0.5rem; }
-          .faim-ma-brand span:last-child,
-          .faim-ma-nav-item span:last-child { display: none; }
-          .faim-ma-browse-btn, .faim-ma-chat-btn { font-size: 0; padding: 0.65rem; }
-          .faim-ma-main { margin-left: 60px; padding: 1rem; }
-          .faim-ma-stats-grid { grid-template-columns: repeat(2, 1fr); }
-          .faim-ma-actions-grid { grid-template-columns: repeat(3, 1fr); }
+          /* Sidebar → bottom tab bar */
+          .faim-ma-sidebar {
+            width: 100%;
+            height: 60px;
+            padding: 0;
+            top: auto;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;
+            border-top: 1px solid #2a2a3e;
+          }
+          .faim-ma-brand { display: none; }
+          .faim-ma-nav {
+            flex-direction: row;
+            gap: 0;
+            flex: 1;
+            justify-content: space-around;
+          }
+          .faim-ma-nav-item {
+            flex-direction: column;
+            gap: 3px;
+            padding: 6px 8px;
+            font-size: 0.65rem;
+            align-items: center;
+            min-height: 52px;
+            border-radius: 0;
+            flex: 1;
+            justify-content: center;
+          }
+          .faim-ma-nav-item span:first-child { font-size: 1.3rem; }
+          .faim-ma-nav-item span:last-child { display: block; font-size: 0.6rem; }
+          .faim-ma-sidebar-actions { display: none; }
+
+          /* Main */
+          .faim-ma-main { margin-left: 0; padding: 1rem 0.875rem 80px; }
+          .faim-ma-topbar { margin-bottom: 1.25rem; }
+          .faim-ma-page-title { font-size: 1.3rem; }
+
+          /* Stats */
+          .faim-ma-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+          .faim-ma-stat-card { padding: 1rem; }
+          .faim-ma-stat-value { font-size: 1.2rem; }
+
+          /* Actions — 2 columns so cards stay readable */
+          .faim-ma-actions-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+          .faim-ma-action-card { padding: 1rem; }
+
+          /* Profile */
           .faim-ma-profile-tab { flex-direction: column; }
           .faim-ma-profile-card { width: 100%; }
+        }
+
+        @media (max-width: 480px) {
+          .faim-ma-main { padding: 0.875rem 0.75rem 80px; }
+          .faim-ma-stats-grid { gap: 0.5rem; }
+          .faim-ma-actions-grid { gap: 0.5rem; }
         }
       `}</style>
     </div>
