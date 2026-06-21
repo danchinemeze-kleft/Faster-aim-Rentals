@@ -492,21 +492,22 @@ function AccountPageInner() {
         .faim-google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .faim-divider {
           display: flex; align-items: center; gap: 12px;
-          margin: 1.25rem 0; color: var(--text-3); font-size: 0.8rem;
+          margin: 1.25rem 0; color: var(--text-2); font-size: 0.95rem;
         }
         .faim-divider::before, .faim-divider::after {
           content: ''; flex: 1; height: 1px; background: var(--border-1);
         }
         .faim-form { display: flex; flex-direction: column; gap: 1rem; }
         .faim-field { display: flex; flex-direction: column; gap: 6px; }
-        .faim-field label { font-size: 0.85rem; font-weight: 600; color: var(--text-2); }
+        .faim-field label { font-size: 1rem; font-weight: 700; color: #ffffff; letter-spacing: 0.01em; }
         .faim-field input {
-          padding: 0.65rem 0.875rem; border: 1.5px solid var(--border-1); border-radius: 9px;
-          font-size: 0.9rem; color: var(--text-1); outline: none;
-          transition: border-color 0.15s ease; background: var(--input-bg);
+          padding: 0.7rem 0.95rem; border: 1.5px solid rgba(255,255,255,0.3); border-radius: 9px;
+          font-size: 1rem; color: #ffffff; outline: none;
+          transition: border-color 0.15s ease, box-shadow 0.15s; background: var(--input-bg);
           width: 100%;
         }
-        .faim-field input:focus { border-color: #e67e22; }
+        .faim-field input::placeholder { color: #888888; }
+        .faim-field input:focus { border-color: #e67e22; box-shadow: 0 0 0 3px rgba(230,126,34,0.15); }
         .faim-password-wrap {
           position: relative;
           display: flex;
@@ -521,25 +522,25 @@ function AccountPageInner() {
           background: none;
           border: none;
           cursor: pointer;
-          font-size: 1rem;
+          font-size: 1.1rem;
           padding: 0;
           line-height: 1;
-          color: #888;
+          color: #cccccc;
         }
         .faim-eye-btn:hover { color: #e67e22; }
         .faim-forgot { text-align: right; margin-top: -0.25rem; }
         .faim-forgot button {
           background: none; border: none; color: #e67e22;
-          font-size: 0.82rem; cursor: pointer; padding: 0;
+          font-size: 0.9rem; cursor: pointer; padding: 0;
         }
         .faim-forgot button:hover { text-decoration: underline; }
         .faim-role-toggle { display: flex; gap: 8px; }
         .faim-role-btn {
-          flex: 1; padding: 0.6rem; border: 1.5px solid #e0e0e0; border-radius: 9px;
-          background: #fff; font-size: 0.85rem; font-weight: 500; color: #555;
+          flex: 1; padding: 0.7rem; border: 1.5px solid rgba(255,255,255,0.2); border-radius: 9px;
+          background: var(--input-bg); font-size: 0.95rem; font-weight: 600; color: #cccccc;
           cursor: pointer; transition: all 0.15s ease;
         }
-        .faim-role-btn--active { border-color: #e67e22; background: #fff8f2; color: #e67e22; }
+        .faim-role-btn--active { border-color: #e67e22; background: rgba(230,126,34,0.12); color: #e67e22; }
         .faim-submit-btn {
           width: 100%; padding: 0.75rem; background: #e67e22; color: #fff;
           border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 600;
