@@ -1,4 +1,4 @@
-﻿export default function sitemap() {
+export default function sitemap() {
   const baseUrl = 'https://rent.fasteraim.com'
   const lastModified = new Date()
 
@@ -8,6 +8,10 @@
     { url: `${baseUrl}/browse`, lastModified, priority: 0.9, changeFrequency: 'daily' },
     { url: `${baseUrl}/search`, lastModified, priority: 0.9, changeFrequency: 'daily' },
     { url: `${baseUrl}/list`, lastModified, priority: 0.8, changeFrequency: 'weekly' },
+    { url: `${baseUrl}/about`, lastModified, priority: 0.7, changeFrequency: 'monthly' },
+    { url: `${baseUrl}/subscribe`, lastModified, priority: 0.7, changeFrequency: 'monthly' },
+    { url: `${baseUrl}/affiliate`, lastModified, priority: 0.6, changeFrequency: 'monthly' },
+    { url: `${baseUrl}/veryland`, lastModified, priority: 0.6, changeFrequency: 'weekly' },
     { url: `${baseUrl}/contact`, lastModified, priority: 0.6, changeFrequency: 'monthly' },
 
     // Legal
@@ -16,6 +20,6 @@
     { url: `${baseUrl}/refund-policy`, lastModified, priority: 0.3, changeFrequency: 'yearly' },
 
     // NOT included (private/noindex):
-    // /account, /my-account, /dashboard, /login, /signup, /reveal-success, /api/*
+    // /account, /my-account, /dashboard, /admin, /reveal-success, /pay-success, /api/*
   ]
 }
