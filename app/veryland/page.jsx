@@ -93,7 +93,7 @@ function VerylandResult({ result, onSubmit }) {
         <BadgeIcon color={badge.color} size={40} />
         <div>
           <div style={{ fontSize: 11, color: tier.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 3 }}>Verification Result</div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: '#e8e8e8' }}>{result.tier_label || tier.label}</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-1)' }}>{result.tier_label || tier.label}</div>
         </div>
       </div>
 
@@ -103,7 +103,7 @@ function VerylandResult({ result, onSubmit }) {
           <div style={{ fontSize: 11, fontWeight: 700, color: '#10b981', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8 }}>Documents Found</div>
           {result.documents_found?.length > 0
             ? result.documents_found.map((d, i) => <div key={i} style={{ fontSize: 12, color: '#a7f3d0', padding: '3px 0', display: 'flex', gap: 6 }}><span>✓</span>{d}</div>)
-            : <div style={{ fontSize: 12, color: '#475569' }}>None identified</div>
+            : <div style={{ fontSize: 12, color: 'var(--text-3)' }}>None identified</div>
           }
         </div>
 
@@ -112,7 +112,7 @@ function VerylandResult({ result, onSubmit }) {
           <div style={{ fontSize: 11, fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8 }}>Documents Missing</div>
           {result.documents_missing?.length > 0
             ? result.documents_missing.map((d, i) => <div key={i} style={{ fontSize: 12, color: '#fca5a5', padding: '3px 0', display: 'flex', gap: 6 }}><span>✗</span>{d}</div>)
-            : <div style={{ fontSize: 12, color: '#475569' }}>None identified</div>
+            : <div style={{ fontSize: 12, color: 'var(--text-3)' }}>None identified</div>
           }
         </div>
       </div>
@@ -133,7 +133,7 @@ function VerylandResult({ result, onSubmit }) {
         </div>
       )}
 
-      <div style={{ padding: '0.75rem 1rem', background: '#111318', borderRadius: 8, fontSize: 11, color: '#475569', lineHeight: 1.5 }}>
+      <div style={{ padding: '0.75rem 1rem', background: 'var(--card-bg)', borderRadius: 8, fontSize: 11, color: 'var(--text-3)', lineHeight: 1.5 }}>
         ⚠️ This is an AI-generated preliminary check, not a legal determination. Veryland verifies documentation completeness and consistency — it does not guarantee against future legal disputes or claims outside the submitted document chain. Always engage qualified legal counsel for high-value transactions.{' '}
         <button onClick={onSubmit} style={{ background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', fontSize: 11, padding: 0, fontWeight: 600 }}>Submit for official human review →</button>
       </div>
@@ -283,11 +283,11 @@ export default function VerylandPage() {
   })
 
   return (
-    <div style={{ minHeight: '100vh', background: '#080a0f', fontFamily: 'DM Sans, Segoe UI, sans-serif', color: '#e8e8e8' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: 'DM Sans, Segoe UI, sans-serif', color: 'var(--text-1)' }}>
 
       {/* Nav */}
-      <nav style={{ background: '#0c0e14', borderBottom: '0.5px solid #1e293b', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 56, position: 'sticky', top: 0, zIndex: 100 }}>
-        <a href="/" style={{ color: '#e8e8e8', fontWeight: 700, fontSize: 18, textDecoration: 'none' }}>🏠 Mr. Rent</a>
+      <nav style={{ background: 'var(--card-bg)', borderBottom: '0.5px solid var(--border-1)', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 56, position: 'sticky', top: 0, zIndex: 100 }}>
+        <a href="/" style={{ color: 'var(--text-1)', fontWeight: 700, fontSize: 18, textDecoration: 'none' }}>🏠 Mr. Rent</a>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <a href="/browse" style={navLink}>Browse</a>
           <a href="/search" style={navLink}>AI Chat</a>
@@ -300,7 +300,7 @@ export default function VerylandPage() {
       </nav>
 
       {/* Hero */}
-      <section style={{ background: 'linear-gradient(180deg, #050a1a 0%, #080a0f 100%)', padding: '4rem 2rem 3rem', textAlign: 'center', borderBottom: '0.5px solid #1e293b' }}>
+      <section style={{ background: 'var(--card-bg)', padding: '4rem 2rem 3rem', textAlign: 'center', borderBottom: '0.5px solid var(--border-1)' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>
           <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 900, margin: '0 0 1.25rem', letterSpacing: '-1px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4em' }}>
             Veryland <PremiumBadge size={52} id="hero-badge" />
@@ -313,7 +313,7 @@ export default function VerylandPage() {
             Verify Your Property.<br />
             <span style={{ color: '#3b82f6' }}>Earn Trust.</span>
           </h2>
-          <p style={{ fontSize: 16, color: '#94a3b8', maxWidth: 520, margin: '0 auto 2rem', lineHeight: 1.7 }}>
+          <p style={{ fontSize: 16, color: 'var(--text-2)', maxWidth: 520, margin: '0 auto 2rem', lineHeight: 1.7 }}>
             Submit your title documents for human review. Get a Veryland badge displayed on your listing so tenants and buyers know your property is authentic.
           </p>
 
@@ -324,7 +324,7 @@ export default function VerylandPage() {
                 <BadgeIcon color={b.color} size={22} />
                 <div style={{ textAlign: 'left' }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: b.color, textTransform: 'uppercase', letterSpacing: 0.5 }}>{b.label}</div>
-                  <div style={{ fontSize: 10, color: '#64748b', marginTop: 1 }}>{b.desc}</div>
+                  <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 1 }}>{b.desc}</div>
                 </div>
               </div>
             ))}
@@ -334,7 +334,7 @@ export default function VerylandPage() {
 
       {/* Tabs */}
       <div style={{ maxWidth: 800, margin: '2.5rem auto 0', padding: '0 1.5rem' }}>
-        <div style={{ display: 'flex', gap: 8, borderBottom: '0.5px solid #1e293b', paddingBottom: 12, marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', gap: 8, borderBottom: '0.5px solid var(--border-1)', paddingBottom: 12, marginBottom: '2rem' }}>
           {[
             { key: 'check',  label: '🔍 Check a Document',          desc: 'For buyers & tenants — verify authenticity' },
             { key: 'submit', label: '🏠 Verify My Property',          desc: 'For sellers & landlords — earn a badge' },
@@ -354,15 +354,15 @@ export default function VerylandPage() {
         {/* ── AI CHECK TAB ── */}
         {tab === 'check' && (
           <div style={{ marginBottom: '4rem' }}>
-            <div style={{ background: '#0d1117', border: '0.5px solid #1e293b', borderRadius: 16, padding: '1.75rem' }}>
+            <div style={{ background: 'var(--card-bg)', border: '0.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem' }}>
               <h2 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 0.5rem' }}>AI Document Quick Check</h2>
-              <p style={{ fontSize: 13, color: '#64748b', margin: '0 0 1.5rem' }}>
+              <p style={{ fontSize: 13, color: 'var(--text-3)', margin: '0 0 1.5rem' }}>
                 Upload a photo or scan of any property document. Our AI will analyse it for authenticity, red flags, and recommendations in seconds. Free for all signed-in users.
               </p>
 
               {!session && !authLoading && (
                 <div style={{ background: '#0f1a2e', border: '0.5px solid #1d4ed8', borderRadius: 10, padding: '1rem 1.25rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
-                  <span style={{ fontSize: 13, color: '#94a3b8' }}>Sign in to use the AI Document Check.</span>
+                  <span style={{ fontSize: 13, color: 'var(--text-2)' }}>Sign in to use the AI Document Check.</span>
                   <a href="/account?redirect=/veryland" style={{ background: '#1d4ed8', color: '#fff', padding: '6px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>Sign In / Sign Up</a>
                 </div>
               )}
@@ -386,13 +386,13 @@ export default function VerylandPage() {
                     <div>
                       <div style={{ fontSize: 28, marginBottom: 6 }}>📄</div>
                       <div style={{ color: '#10b981', fontWeight: 600, fontSize: 14 }}>{checkFile.name}</div>
-                      <div style={{ color: '#64748b', fontSize: 12, marginTop: 4 }}>Click to change file</div>
+                      <div style={{ color: 'var(--text-3)', fontSize: 12, marginTop: 4 }}>Click to change file</div>
                     </div>
                   ) : (
                     <div>
                       <div style={{ fontSize: 32, marginBottom: 8 }}>📂</div>
-                      <div style={{ color: '#94a3b8', fontSize: 14 }}>Drop document here or <span style={{ color: '#3b82f6' }}>click to browse</span></div>
-                      <div style={{ color: '#475569', fontSize: 12, marginTop: 4 }}>JPEG, PNG, PDF — max 5MB</div>
+                      <div style={{ color: 'var(--text-2)', fontSize: 14 }}>Drop document here or <span style={{ color: '#3b82f6' }}>click to browse</span></div>
+                      <div style={{ color: 'var(--text-3)', fontSize: 12, marginTop: 4 }}>JPEG, PNG, PDF — max 5MB</div>
                     </div>
                   )}
                 </div>
@@ -442,11 +442,11 @@ export default function VerylandPage() {
                 { icon: '🤖', title: 'AI analyses it', desc: 'Gemini AI checks for stamps, seals, formatting' },
                 { icon: '📊', title: 'Instant report', desc: 'Red flags, authenticity signs, verdict' },
               ].map(s => (
-                <div key={s.title} style={{ background: '#0d1117', border: '0.5px solid #1e293b', borderRadius: 12, padding: '1rem 1.25rem', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <div key={s.title} style={{ background: 'var(--card-bg)', border: '0.5px solid var(--border-1)', borderRadius: 12, padding: '1rem 1.25rem', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                   <span style={{ fontSize: 22 }}>{s.icon}</span>
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 3 }}>{s.title}</div>
-                    <div style={{ fontSize: 12, color: '#64748b' }}>{s.desc}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-3)' }}>{s.desc}</div>
                   </div>
                 </div>
               ))}
@@ -461,7 +461,7 @@ export default function VerylandPage() {
               <div style={{ background: '#0f1a2e', border: '0.5px solid #1d4ed8', borderRadius: 16, padding: '3rem 2rem', textAlign: 'center' }}>
                 <BadgeIcon color="#3b82f6" size={40} />
                 <h2 style={{ fontSize: 20, fontWeight: 700, margin: '1rem 0 0.5rem' }}>Sign in to submit</h2>
-                <p style={{ color: '#64748b', fontSize: 14, marginBottom: '1.5rem' }}>You need to be signed in to submit property documents for verification.</p>
+                <p style={{ color: 'var(--text-3)', fontSize: 14, marginBottom: '1.5rem' }}>You need to be signed in to submit property documents for verification.</p>
                 <a href="/account?redirect=/veryland" style={{ background: '#1d4ed8', color: '#fff', padding: '10px 28px', borderRadius: 10, fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'inline-block' }}>Sign In / Create Account</a>
               </div>
             )}
@@ -470,22 +470,22 @@ export default function VerylandPage() {
               <div style={{ background: '#051a0f', border: '1px solid #10b981', borderRadius: 16, padding: '3rem 2rem', textAlign: 'center' }}>
                 <div style={{ fontSize: 48, marginBottom: 12 }}>✅</div>
                 <h2 style={{ fontSize: 22, fontWeight: 700, color: '#10b981', margin: '0 0 0.75rem' }}>Submission received!</h2>
-                <p style={{ color: '#94a3b8', fontSize: 14, maxWidth: 480, margin: '0 auto 1.5rem', lineHeight: 1.7 }}>
-                  Your property documents have been submitted for review. You&apos;ll receive a <strong style={{ color: '#e8e8e8' }}>white badge</strong> immediately, and our team will review your submission within <strong style={{ color: '#e8e8e8' }}>3–5 business days</strong>.
+                <p style={{ color: 'var(--text-2)', fontSize: 14, maxWidth: 480, margin: '0 auto 1.5rem', lineHeight: 1.7 }}>
+                  Your property documents have been submitted for review. You&apos;ll receive a <strong style={{ color: 'var(--text-1)' }}>white badge</strong> immediately, and our team will review your submission within <strong style={{ color: 'var(--text-1)' }}>3–5 business days</strong>.
                 </p>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
                   <button onClick={() => { setSubmitted(false); setDocs([{ type: '', file: null, preview: null }]); setForm(f => ({ ...f, propertyAddress: '', state: '', listingId: '', additionalInfo: '' })) }} style={{ background: '#1d4ed8', color: '#fff', border: 'none', borderRadius: 10, padding: '9px 22px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
                     Submit another property
                   </button>
-                  <a href="/dashboard" style={{ background: 'transparent', color: '#64748b', border: '0.5px solid #1e293b', borderRadius: 10, padding: '9px 22px', fontSize: 13, textDecoration: 'none', display: 'inline-block' }}>Go to dashboard</a>
+                  <a href="/dashboard" style={{ background: 'transparent', color: 'var(--text-3)', border: '0.5px solid var(--border-1)', borderRadius: 10, padding: '9px 22px', fontSize: 13, textDecoration: 'none', display: 'inline-block' }}>Go to dashboard</a>
                 </div>
               </div>
             )}
 
             {session && !submitted && (
               <form onSubmit={handleSubmit}>
-                <div style={{ background: '#0d1117', border: '0.5px solid #1e293b', borderRadius: 16, padding: '1.75rem', marginBottom: '1.25rem' }}>
-                  <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 1.25rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12 }}>Owner information</h2>
+                <div style={{ background: 'var(--card-bg)', border: '0.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: '1.25rem' }}>
+                  <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 1.25rem', color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12 }}>Owner information</h2>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
                     <div>
                       <label style={lbl}>Full name *</label>
@@ -502,8 +502,8 @@ export default function VerylandPage() {
                   </div>
                 </div>
 
-                <div style={{ background: '#0d1117', border: '0.5px solid #1e293b', borderRadius: 16, padding: '1.75rem', marginBottom: '1.25rem' }}>
-                  <h2 style={{ fontSize: 12, fontWeight: 700, margin: '0 0 1.25rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5 }}>Property details</h2>
+                <div style={{ background: 'var(--card-bg)', border: '0.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: '1.25rem' }}>
+                  <h2 style={{ fontSize: 12, fontWeight: 700, margin: '0 0 1.25rem', color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Property details</h2>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
                     <div style={{ gridColumn: '1 / -1' }}>
                       <label style={lbl}>Property address *</label>
@@ -538,16 +538,16 @@ export default function VerylandPage() {
                   </div>
                 </div>
 
-                <div style={{ background: '#0d1117', border: '0.5px solid #1e293b', borderRadius: 16, padding: '1.75rem', marginBottom: '1.25rem' }}>
+                <div style={{ background: 'var(--card-bg)', border: '0.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: '1.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-                    <h2 style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5, margin: 0 }}>Documents to submit</h2>
+                    <h2 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: 0.5, margin: 0 }}>Documents to submit</h2>
                     <button type="button" onClick={addDoc} style={{ background: '#1e293b', color: '#3b82f6', border: 'none', borderRadius: 8, padding: '5px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>+ Add document</button>
                   </div>
 
                   {docs.map((doc, i) => (
-                    <div key={i} style={{ background: '#080c14', border: '0.5px solid #1e293b', borderRadius: 12, padding: '1rem', marginBottom: 10 }}>
+                    <div key={i} style={{ background: 'var(--input-bg)', border: '0.5px solid var(--border-1)', borderRadius: 12, padding: '1rem', marginBottom: 10 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                        <span style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>Document {i + 1}</span>
+                        <span style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 600 }}>Document {i + 1}</span>
                         {docs.length > 1 && (
                           <button type="button" onClick={() => removeDoc(i)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 12, padding: '0 4px' }}>Remove</button>
                         )}
@@ -572,12 +572,12 @@ export default function VerylandPage() {
                         </div>
                       </div>
                       {doc.preview && (
-                        <img src={doc.preview} alt="preview" style={{ marginTop: 10, maxHeight: 120, maxWidth: '100%', borderRadius: 8, border: '0.5px solid #1e293b', objectFit: 'cover' }} />
+                        <img src={doc.preview} alt="preview" style={{ marginTop: 10, maxHeight: 120, maxWidth: '100%', borderRadius: 8, border: '0.5px solid var(--border-1)', objectFit: 'cover' }} />
                       )}
                     </div>
                   ))}
 
-                  <p style={{ fontSize: 12, color: '#475569', margin: '0.5rem 0 0' }}>
+                  <p style={{ fontSize: 12, color: 'var(--text-3)', margin: '0.5rem 0 0' }}>
                     Accepted: JPEG, PNG, PDF. Max 10MB per file. Upload C of O, Survey Plan, or Deed of Assignment for the best verification outcome.
                   </p>
                 </div>
@@ -599,7 +599,7 @@ export default function VerylandPage() {
                 >
                   {submitting ? '⏳ Uploading and submitting…' : '📋 Submit for Verification'}
                 </button>
-                <p style={{ textAlign: 'center', fontSize: 12, color: '#475569', marginTop: 10 }}>
+                <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-3)', marginTop: 10 }}>
                   Free to submit. Our team reviews within 3–5 business days. You&apos;ll get a Veryland badge on your listing once verified.
                 </p>
               </form>
@@ -609,12 +609,12 @@ export default function VerylandPage() {
       </div>
 
       {/* Footer */}
-      <footer style={{ borderTop: '0.5px solid #1e293b', padding: '2rem', textAlign: 'center', color: '#475569', fontSize: 13 }}>
+      <footer style={{ borderTop: '0.5px solid var(--border-1)', padding: '2rem', textAlign: 'center', color: 'var(--text-3)', fontSize: 13 }}>
         <div style={{ marginBottom: 8 }}>
-          <a href="/" style={{ color: '#64748b', textDecoration: 'none', marginRight: 16 }}>Home</a>
-          <a href="/browse" style={{ color: '#64748b', textDecoration: 'none', marginRight: 16 }}>Browse</a>
-          <a href="/search" style={{ color: '#64748b', textDecoration: 'none', marginRight: 16 }}>AI Chat</a>
-          <a href="/privacy-policy" style={{ color: '#64748b', textDecoration: 'none' }}>Privacy Policy</a>
+          <a href="/" style={{ color: 'var(--text-3)', textDecoration: 'none', marginRight: 16 }}>Home</a>
+          <a href="/browse" style={{ color: 'var(--text-3)', textDecoration: 'none', marginRight: 16 }}>Browse</a>
+          <a href="/search" style={{ color: 'var(--text-3)', textDecoration: 'none', marginRight: 16 }}>AI Chat</a>
+          <a href="/privacy-policy" style={{ color: 'var(--text-3)', textDecoration: 'none' }}>Privacy Policy</a>
         </div>
         <div>© {new Date().getFullYear()} Faster Aim Technology Limited. Veryland is a service of Mr. Rent.</div>
       </footer>
@@ -622,10 +622,10 @@ export default function VerylandPage() {
   )
 }
 
-const navLink = { color: '#94a3b8', textDecoration: 'none', fontSize: 14 }
-const lbl = { display: 'block', fontSize: 12, color: '#64748b', marginBottom: 5, fontWeight: 500 }
+const navLink = { color: 'var(--text-2)', textDecoration: 'none', fontSize: 14 }
+const lbl = { display: 'block', fontSize: 12, color: 'var(--text-3)', marginBottom: 5, fontWeight: 500 }
 const iStyle = {
-  width: '100%', padding: '9px 12px', background: '#080c14',
-  border: '0.5px solid #1e293b', borderRadius: 8, color: '#e8e8e8',
+  width: '100%', padding: '9px 12px', background: 'var(--input-bg)',
+  border: '0.5px solid var(--border-1)', borderRadius: 8, color: 'var(--text-1)',
   fontSize: 13, boxSizing: 'border-box', outline: 'none', fontFamily: 'inherit',
 }
