@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, useRef, Suspense } from 'react'
+import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 import Image from 'next/image'
 import Breadcrumb from '../components/Breadcrumb'
 
@@ -78,11 +78,6 @@ const PT_GROUPS = ['Residential', 'Commercial', 'Event & Community', 'Land']
 
 const FREE_MONTHLY_LIMIT = 2
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
-
 const emptyForm = {
   title: '',
   property_number: '',
@@ -104,6 +99,10 @@ function ListPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const userClosedFormRef = useRef(false)
+  const supabase = useMemo(() => createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ), [])
 
   const [user, setUser] = useState(null)
   const [userRole, setUserRole] = useState(null)
@@ -158,12 +157,13 @@ function ListPageInner() {
   }
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        router.push('/account?redirect=/list')
-        return
-      }
+    let settled = false
+
+    const init = async (session) => {
+      if (settled) return
+      settled = true
+      if (!session) { router.push('/account?redirect=/list'); return }
+
       const userId = session.user.id
       setUser(session.user)
 
@@ -211,13 +211,11 @@ function ListPageInner() {
 
       if (urlSignal && !userClosedFormRef.current) {
         if (urlSignal === 'subscribed') {
-          // Trust the signal — open form immediately, mark subscribed
           setIsSubscribed(true)
           setShowForm(true)
         } else if (urlSignal === 'free' || (urlSignal === 'new' && (subscribed || count < FREE_MONTHLY_LIMIT))) {
           setShowForm(true)
         } else if (urlSignal === 'new' && !subscribed && count >= FREE_MONTHLY_LIMIT) {
-          // Generic ?new=1 and initial check missed subscription — retry once
           const { data: freshSub } = await supabase
             .from('Subscription')
             .select('expiry_date')
@@ -231,7 +229,12 @@ function ListPageInner() {
         }
       }
     }
-    checkAuth()
+
+    const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!settled) init(session)
+    })
+
+    return () => authSub.unsubscribe()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
