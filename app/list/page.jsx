@@ -1025,9 +1025,9 @@ videoEl.src = URL.createObjectURL(file)
         .faim-form-grid { display:grid; grid-template-columns:1fr 380px; gap:2rem; }
         .faim-form { display:flex; flex-direction:column; gap:1.25rem; }
         .faim-field { display:flex; flex-direction:column; gap:6px; }
-        .faim-field label { font-size:0.95rem; font-weight:600; color:var(--text-2); }
-        .faim-field input, .faim-field select, .faim-field textarea { padding:0.7rem 0.95rem; border:1.5px solid rgba(255,255,255,0.25); border-radius:9px; font-size:1rem; color:var(--text-1); outline:none; transition:border-color 0.15s,box-shadow 0.15s; background:var(--input-bg); font-family:inherit; }
-        .faim-field input:focus, .faim-field select:focus, .faim-field textarea:focus { border-color:#0ef6cc; box-shadow:0 0 0 2px rgba(14,246,204,0.12); }
+        .faim-field label { font-size:0.95rem; font-weight:700; color:#ffffff; letter-spacing:0.01em; }
+        .faim-field input, .faim-field select, .faim-field textarea { padding:0.7rem 0.95rem; border:1.5px solid rgba(255,255,255,0.55); border-radius:9px; font-size:1rem; color:var(--text-1); outline:none; transition:border-color 0.15s,box-shadow 0.15s; background:var(--input-bg); font-family:inherit; }
+        .faim-field input:focus, .faim-field select:focus, .faim-field textarea:focus { border-color:#0ef6cc; box-shadow:0 0 0 3px rgba(14,246,204,0.15); }
         .faim-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; }
         .faim-amenities-grid { display:flex; flex-wrap:wrap; gap:8px; }
         .faim-amenity { padding:7px 14px; border:1.5px solid rgba(255,255,255,0.2); border-radius:20px; font-size:0.9rem; cursor:pointer; transition:all 0.15s; color:var(--text-2); user-select:none; }
