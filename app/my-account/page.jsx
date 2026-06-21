@@ -25,7 +25,7 @@ export default function MyAccountPage() {
   const fetchReveals = async (userId) => {
     const { data } = await supabase
       .from('Contact_reveals')
-      .select('*, listings(*)')
+      .select('*, listings(*), landlord_profile:Profiles!landlord_id(phone, full_name)')
       .eq('tenant_id', userId)
       .order('created_at', { ascending: false })
     setReveals(data || [])
@@ -60,8 +60,8 @@ export default function MyAccountPage() {
   }
 
   if (loading) return (
-    <div className="faim-ma-loading">
-      <div className="faim-ma-spinner"></div>
+    <div className="faim-dash-loading">
+      <div className="faim-spinner"></div>
       <p>Loading your account...</p>
     </div>
   )
@@ -223,7 +223,7 @@ export default function MyAccountPage() {
                     <p className="faim-ma-reveal-specs">{reveal.listings?.bedrooms} bed • {reveal.listings?.bathrooms} bath</p>
                     <div className="faim-ma-reveal-contact">
                       <p className="faim-ma-contact-label">Landlord Contact</p>
-                      <p className="faim-ma-contact-value">{reveal.landlord_phone || reveal.landlord_email || 'Contact info saved'}</p>
+                      <p className="faim-ma-contact-value">{reveal.landlord_profile?.phone || 'Contact info saved'}</p>
                     </div>
                     <p className="faim-ma-reveal-date">Revealed on {new Date(reveal.created_at).toLocaleDateString()}</p>
                   </div>
@@ -271,25 +271,6 @@ export default function MyAccountPage() {
           background: var(--page-bg);
           font-family: 'Segoe UI', system-ui, sans-serif;
         }
-        .faim-ma-loading {
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 1rem;
-          color: #666;
-          font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-        .faim-ma-spinner {
-          width: 40px; height: 40px;
-          border: 3px solid #e0e0e0;
-          border-top-color: #e67e22;
-          border-radius: 50%;
-          animation: faim-ma-spin 0.8s linear infinite;
-        }
-        @keyframes faim-ma-spin { to { transform: rotate(360deg); } }
-
         .faim-ma-sidebar {
           width: 220px;
           background: #1a1a2e;
@@ -403,7 +384,7 @@ export default function MyAccountPage() {
           display: flex;
           align-items: center;
           gap: 1rem;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+          box-shadow: var(--shadow-card);
         }
         .faim-ma-stat-icon { font-size: 1.8rem; }
         .faim-ma-stat-value { font-size: 1.4rem; font-weight: 700; color: var(--text-1); margin: 0 0 2px; }
@@ -427,12 +408,12 @@ export default function MyAccountPage() {
           text-decoration: none;
           border: none;
           cursor: pointer;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+          box-shadow: var(--shadow-card);
           transition: transform 0.15s, box-shadow 0.15s;
           text-align: center;
           font-family: inherit;
         }
-        .faim-ma-action-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+        .faim-ma-action-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
         .faim-ma-action-icon { font-size: 1.8rem; }
         .faim-ma-action-title { font-size: 0.85rem; font-weight: 600; color: var(--text-1); }
         .faim-ma-action-desc { font-size: 0.75rem; color: #888; }
@@ -441,7 +422,7 @@ export default function MyAccountPage() {
           background: var(--card-bg);
           border-radius: 14px;
           padding: 1.5rem;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+          box-shadow: var(--shadow-card);
           margin-bottom: 1.5rem;
         }
         .faim-ma-section-header {
@@ -478,7 +459,7 @@ export default function MyAccountPage() {
           border-radius: 14px;
           padding: 2.5rem;
           text-align: center;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+          box-shadow: var(--shadow-card);
           color: #666;
           line-height: 2;
         }
@@ -506,7 +487,7 @@ export default function MyAccountPage() {
           background: var(--card-bg);
           border-radius: 14px;
           padding: 1.5rem;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+          box-shadow: var(--shadow-card);
         }
         .faim-ma-reveal-card-header {
           display: flex;
@@ -553,7 +534,7 @@ export default function MyAccountPage() {
           text-align: center;
           width: 220px;
           flex-shrink: 0;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+          box-shadow: var(--shadow-card);
         }
         .faim-ma-profile-avatar {
           width: 72px; height: 72px;
@@ -575,7 +556,7 @@ export default function MyAccountPage() {
           background: var(--card-bg);
           border-radius: 14px;
           padding: 1.5rem;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+          box-shadow: var(--shadow-card);
         }
         .faim-ma-info-row {
           display: flex;
