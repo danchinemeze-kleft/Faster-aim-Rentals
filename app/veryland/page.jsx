@@ -529,7 +529,7 @@ export default function VerylandPage() {
             {session && !submitted && (
               <form onSubmit={handleSubmit}>
                 <div style={{ background: 'var(--card-bg)', border: '0.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: '1.25rem' }}>
-                  <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 1.25rem', color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 12 }}>Owner information</h2>
+                  <h2 style={{ fontWeight: 800, margin: '0 0 1.25rem', color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: 15 }}>Owner information</h2>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
                     <div>
                       <label style={lbl}>Full name *</label>
@@ -547,7 +547,7 @@ export default function VerylandPage() {
                 </div>
 
                 <div style={{ background: 'var(--card-bg)', border: '0.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: '1.25rem' }}>
-                  <h2 style={{ fontSize: 12, fontWeight: 700, margin: '0 0 1.25rem', color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Property details</h2>
+                  <h2 style={{ fontWeight: 800, margin: '0 0 1.25rem', color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: 15 }}>Property details</h2>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
                     <div style={{ gridColumn: '1 / -1' }}>
                       <label style={lbl}>Property address *</label>
@@ -584,7 +584,7 @@ export default function VerylandPage() {
 
                 <div style={{ background: 'var(--card-bg)', border: '0.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: '1.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-                    <h2 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: 0.5, margin: 0 }}>Documents to submit</h2>
+                    <h2 style={{ fontWeight: 800, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: 15, margin: 0 }}>Documents to submit</h2>
                     <button type="button" onClick={addDoc} style={{ background: '#1e293b', color: '#3b82f6', border: 'none', borderRadius: 8, padding: '5px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>+ Add document</button>
                   </div>
 
@@ -606,9 +606,9 @@ export default function VerylandPage() {
                         </div>
                         <div>
                           <label style={lbl}>File *</label>
-                          <label style={{ ...iStyle, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: doc.file ? '#10b981' : '#475569' }}>
+                          <label style={{ ...iStyle, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: doc.file ? '#10b981' : '#cccccc' }}>
                             <span style={{ fontSize: 16 }}>{doc.file ? '✅' : '📎'}</span>
-                            <span style={{ fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <span style={{ fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {doc.file ? doc.file.name : 'Click to upload file'}
                             </span>
                             <input type="file" accept="image/*,.pdf" style={{ display: 'none' }} onChange={e => e.target.files[0] && handleDocFile(i, e.target.files[0])} />
@@ -667,9 +667,9 @@ export default function VerylandPage() {
 }
 
 const navLink = { color: 'var(--text-2)', textDecoration: 'none', fontSize: 14 }
-const lbl = { display: 'block', fontSize: 12, color: 'var(--text-3)', marginBottom: 5, fontWeight: 500 }
+const lbl = { display: 'block', fontSize: 14, color: '#ffffff', marginBottom: 7, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }
 const iStyle = {
-  width: '100%', padding: '9px 12px', background: 'var(--input-bg)',
-  border: '0.5px solid var(--border-1)', borderRadius: 8, color: 'var(--text-1)',
-  fontSize: 13, boxSizing: 'border-box', outline: 'none', fontFamily: 'inherit',
+  width: '100%', padding: '11px 14px', background: 'var(--input-bg)',
+  border: '2px solid rgba(255,255,255,0.55)', borderRadius: 9, color: '#ffffff',
+  fontSize: 15, boxSizing: 'border-box', outline: 'none', fontFamily: 'inherit',
 }
