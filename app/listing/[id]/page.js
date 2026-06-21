@@ -139,6 +139,7 @@ export default function ListingPage() {
   const [revealing, setRevealing] = useState(false)
   const [user, setUser] = useState(null)
   const [revealedContact, setRevealedContact] = useState(null)
+  const [hasSub, setHasSub] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -154,15 +155,27 @@ export default function ListingPage() {
 
       if (session) {
         setUser(session.user)
-        const { data: reveal } = await supabase
-          .from('Contact_reveals')
-          .select('landlord_phone, landlord_email')
-          .eq('tenant_id', session.user.id)
-          .eq('listing_id', id)
-          .maybeSingle()
+        const [{ data: reveal }, { data: sub }] = await Promise.all([
+          supabase
+            .from('Contact_reveals')
+            .select('landlord_phone, landlord_email')
+            .eq('tenant_id', session.user.id)
+            .eq('listing_id', id)
+            .maybeSingle(),
+          supabase
+            .from('Tenant_subscription')
+            .select('id')
+            .eq('user_id', session.user.id)
+            .eq('status', 'active')
+            .gte('expiry_date', new Date().toISOString())
+            .order('expiry_date', { ascending: false })
+            .limit(1)
+            .maybeSingle(),
+        ])
+
+        setHasSub(!!sub)
+
         if (reveal) {
-          // If phone is missing in the saved record (old reveal before fix),
-          // fetch it live from Profiles
           if (!reveal.landlord_phone && listingData.landlord_id) {
             const { data: profile } = await supabase
               .from('Profiles')
@@ -219,7 +232,7 @@ export default function ListingPage() {
     if (!user) { router.push(`/account?redirect=/listing/${id}`); return }
     setRevealing(true)
     try {
-      // Guard: never charge twice for the same reveal
+      // Guard: never charge/reveal twice for the same listing
       const { data: existing } = await supabase
         .from('Contact_reveals')
         .select('landlord_phone, landlord_email')
@@ -232,6 +245,27 @@ export default function ListingPage() {
         return
       }
 
+      // Subscribed tenants reveal for free — server re-verifies subscription
+      if (hasSub) {
+        const res = await fetch('/api/free-reveal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ listing_id: id }),
+        })
+        const data = await res.json()
+        if (data.success && data.contact) {
+          setRevealedContact({
+            landlord_phone: data.contact.phone,
+            landlord_email: data.contact.email,
+          })
+        } else {
+          alert(data.error || 'Could not reveal contact. Please try again.')
+        }
+        setRevealing(false)
+        return
+      }
+
+      // Non-subscribed tenants pay ₦5,000 via Paystack
       const refCode = document.cookie.match(/mrrent_ref=([^;]+)/)?.[1] || null
       const res = await fetch('/api/init-payment', {
         method: 'POST',
@@ -625,11 +659,18 @@ export default function ListingPage() {
                         letterSpacing: '0.2px',
                       }}
                     >
-                      {revealing ? 'Redirecting…' : '📞 Reveal Contact — ₦5,000'}
+                      {revealing
+                        ? (hasSub ? 'Revealing…' : 'Redirecting…')
+                        : hasSub
+                          ? '📞 Reveal Contact — Free'
+                          : '📞 Reveal Contact — ₦5,000'
+                      }
                     </button>
                     <p style={{ fontSize: 11, color: '#444', textAlign: 'center', lineHeight: 1.6 }}>
-                      One-time secure payment via Paystack.<br />
-                      Landlord phone number revealed instantly after payment.
+                      {hasSub
+                        ? 'Included in your subscription. Landlord contact revealed instantly.'
+                        : <>One-time secure payment via Paystack.<br />Landlord phone number revealed instantly after payment.</>
+                      }
                     </p>
                   </>
                 )}

@@ -43,7 +43,7 @@ Starting with Southeast Nigeria (Anambra, Enugu, Imo, Abia, Delta), expanding na
 
 ### Monetization (Dual Revenue)
 1. **Tenant pays ₦5,000** per contact reveal (Paystack one-time payment) — LIVE
-2. **Landlord pays ₦10,000/month** subscription to list unlimited properties — BUILT, not fully wired
+2. **Landlord pays ₦10,000/month** subscription to list unlimited properties — LIVE
 3. **Featured/promoted listings** — planned for later phase once traffic builds
 
 ---
@@ -82,6 +82,7 @@ Starting with Southeast Nigeria (Anambra, Enugu, Imo, Abia, Delta), expanding na
   - `Profiles` — (capital P, case-sensitive) columns: `id`, `full_name`, `email`, `phone`, `role`, `subscribed`, `created_at`
   - `Subscription` — columns: `id`, `landlord_id`, `expiry_date`, `created_at`
   - `Contact_reveals` — columns: `id`, `landlord_id`, `tenant_id`, `listing_id`, `created_at`
+  - `Tenant_subscription` — columns: `id`, `user_id`, `plan_type`, `status` (pending/active/expired/cancelled), `start_date`, `expiry_date`, `paystack_reference`, `amount`, `created_at`
   - `user_activity` — tenant behavior tracking
 
 - **Env vars on Vercel:**
@@ -100,17 +101,23 @@ app/
   page.js                  ← Homepage (Next.js, live)
   layout.js                ← Root layout
   globals.css
-  browse/page.js           ← Browse listings (live, 0 properties showing)
+  browse/page.js           ← Browse listings (live)
   search/page.js           ← AI Chat (PROBLEM: WordPress still intercepting)
   list/page.js             ← List property form (PROBLEM: WordPress intercepting)
   account/page.js          ← Auth page (PROBLEM: WordPress intercepting)
+  listing/[id]/page.jsx    ← Property detail page (live — photos, amenities, Reveal Contact)
+  subscribe/page.jsx       ← Landlord subscription checkout via Paystack (live)
+  about/page.jsx           ← About page (live)
+  contact/page.jsx         ← Contact page (live)
+  affiliate/page.jsx       ← Affiliate page (live)
+  veryland/page.jsx        ← Veryland page (live)
   dashboard/page.jsx       ← Landlord dashboard (live, auth-protected)
   my-account/              ← Exists
   reveal-success/          ← Exists
+  pay-success/             ← Exists
   privacy-policy/          ← Live
-  terms-of-service/        ← EXISTS (check)
-  Refund-policy/           ← EXISTS (check)
-  Contact/                 ← EXISTS (check)
+  terms-of-service/        ← Live
+  refund-policy/           ← Live
   admin/page.js            ← Admin panel (live, password-protected)
   callback/route.js        ← Supabase auth handler — DO NOT MODIFY FOR AI WORK
   api/
@@ -118,6 +125,8 @@ app/
     init-payment/route.js  ← Paystack init (live)
     verify-payment/route.js← Paystack verify (live)
     admin-auth/route.js    ← Admin password check (live)
+    submit-listing/route.js← Listing form backend — uploads images, inserts to Supabase (live)
+    free-reveal/route.js   ← Subscription reveal — verifies active Tenant_subscription, inserts Contact_reveals, returns contact (no payment)
 ```
 
 ---
@@ -148,34 +157,32 @@ app/
 ## What Is Built and Working
 
 - [x] Homepage (Next.js, branded, live)
-- [x] Browse page (renders, needs listings in DB)
+- [x] Browse page (live)
 - [x] AI Chat API route (Gemini + DeepSeek, intent extraction, Supabase fetch)
 - [x] Paystack init + verify payment routes
 - [x] Contact reveal flow (₦5,000, Paystack → reveal-success)
 - [x] Landlord dashboard (overview, listings, subscription, profile tabs)
 - [x] Admin panel (password-protected, listing approval, landlord management)
 - [x] Supabase auth (signup, login, session, callback)
-- [x] Privacy policy page
-- [x] Sitemap.js + robots.js (SEO)
+- [x] Privacy policy / Terms of Service / Refund Policy pages
+- [x] Sitemap + robots.ts (SEO — 12 pages indexed in Google)
+- [x] `/listing/[id]` — Property detail page with photos, amenities, Reveal Contact button
+- [x] `/api/submit-listing` — Listing form backend (image upload to Supabase Storage, DB insert)
+- [x] `/subscribe` — Landlord subscription checkout via Paystack
+- [x] `/about`, `/contact`, `/affiliate`, `/veryland` pages
 
 ---
 
 ## What Is Missing / Broken (Priority Order)
 
-### Priority 1 — Revenue is blocked without these
-- [ ] `/listing/[id]` — Individual property detail page with photos, description, amenities, and Reveal Contact button. THE most critical missing page. Without it tenants cannot pay.
-- [ ] `/api/submit-listing` — API route to receive /list form data, upload images to Supabase Storage, insert pending listing row. The /list form currently has no confirmed backend.
+### Priority 1 — Revenue protection
+- [ ] Tenant reveal limit enforcement — no logic currently prevents unlimited free reveals
+- [ ] `/api/subscription-webhook` — Paystack webhook to auto-update Subscription table on renewal/cancellation/failure
 - [ ] Fix routing: `/search`, `/list`, `/account` are still intercepted by old WordPress. Next.js versions exist but WordPress wins the route. Needs DNS/hosting fix on Hostinger side.
 
-### Priority 2 — Landlord revenue stream
-- [ ] `/subscribe` — Dedicated landlord subscription checkout page via Paystack
-- [ ] `/api/subscription-webhook` — Paystack webhook to auto-update Subscription table on renewal/cancellation/failure
-- [ ] Tenant reveal limit enforcement — no logic currently prevents unlimited free reveals
-
-### Priority 3 — Legal and credibility
-- [ ] `/terms-of-service` — Required for Paystack compliance
-- [ ] `/about` — Investor credibility
-- [ ] `/contact` — Next.js version (WP version exists)
+### Priority 2 — Growth
+- [ ] Featured/promoted listings — paid placement for landlords once traffic builds
+- [ ] Listing search/filter on browse page (by state, price, bedrooms, property type)
 
 ---
 
