@@ -28,6 +28,7 @@ export default function AdminDashboard() {
     totalLandlords: 0,
   });
 
+  const [subscriptions, setSubscriptions] = useState([]);
   const [verylandSubmissions, setVerylandSubmissions] = useState([]);
   const [verylandBadgeSel, setVerylandBadgeSel] = useState({});
   const [verylandNotes, setVerylandNotes] = useState({});
@@ -57,6 +58,11 @@ export default function AdminDashboard() {
         .select('*')
         .order('created_at', { ascending: false });
 
+      const { data: subData } = await supabase
+        .from('Subscription')
+        .select('*')
+        .order('expiry_date', { ascending: false });
+
       const { data: vData } = await supabase
         .from('veryland_submissions')
         .select('*')
@@ -78,6 +84,7 @@ export default function AdminDashboard() {
         setStats(s => ({ ...s, totalLandlords: landlordList.length }));
       }
 
+      if (subData) setSubscriptions(subData);
       if (vData) setVerylandSubmissions(vData);
     } catch (err) {
       console.error(err);
@@ -283,6 +290,18 @@ export default function AdminDashboard() {
   const otherListings = listings.filter(l => l.status === 'rejected' || l.status === 'unavailable');
   const tabListings = [...pendingListings, ...activeListings, ...otherListings];
   const verylandPending = verylandSubmissions.filter(s => s.status === 'submitted' || s.status === 'under_review');
+  const now = new Date();
+  const activeSubs = subscriptions.filter(s => new Date(s.expiry_date) > now);
+
+  // Cross-reference subscription with profile for name + email
+  const profileMap = Object.fromEntries(landlords.map(p => [p.id, p]));
+  const enrichedSubs = subscriptions.map(s => ({
+    ...s,
+    full_name: profileMap[s.landlord_id]?.full_name || '—',
+    email: profileMap[s.landlord_id]?.email || '—',
+    phone: profileMap[s.landlord_id]?.phone || '—',
+    isActive: new Date(s.expiry_date) > now,
+  }));
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-1)' }}>
@@ -327,6 +346,7 @@ export default function AdminDashboard() {
             { label: 'Active listings', value: stats.activeListings, color: '#0ef6cc' },
             { label: 'Pending review', value: stats.pendingListings, color: stats.pendingListings > 0 ? '#EF9F27' : '#e8e8e8' },
             { label: 'Landlords', value: stats.totalLandlords, color: '#ff2d78' },
+            { label: 'Active subscriptions', value: activeSubs.length, color: activeSubs.length > 0 ? '#0ef6cc' : '#555' },
             { label: 'Veryland queue', value: verylandPending.length, color: verylandPending.length > 0 ? '#3B82F6' : '#555' },
           ].map(s => (
             <div key={s.label} style={{
@@ -344,6 +364,7 @@ export default function AdminDashboard() {
           {[
             { key: 'listings', label: `Listings${pendingListings.length > 0 ? ` (${pendingListings.length} pending)` : ''}` },
             { key: 'landlords', label: `Landlords (${landlords.length})` },
+            { key: 'subscriptions', label: `Subscriptions (${activeSubs.length} active)` },
             { key: 'veryland', label: `Veryland${verylandPending.length > 0 ? ` (${verylandPending.length} pending)` : ''}` },
           ].map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
@@ -455,6 +476,7 @@ export default function AdminDashboard() {
             )}
             {landlords.map(lp => {
               const landlordListings = listings.filter(l => l.user_id === lp.id || l.landlord_id === lp.id);
+              const activeSub = enrichedSubs.find(s => s.landlord_id === lp.id && s.isActive);
               return (
                 <div key={lp.id} style={{
                   background: '#111318', border: '0.5px solid #222',
@@ -470,19 +492,63 @@ export default function AdminDashboard() {
                       <span>📞 {lp.phone || lp.whatsapp || '—'}</span>
                       <span>📅 Joined {timeAgo(lp.created_at)}</span>
                       <span>🏠 {landlordListings.length} listing{landlordListings.length !== 1 ? 's' : ''}</span>
+                      {activeSub && <span style={{ color: '#0ef6cc' }}>💳 Expires {new Date(activeSub.expiry_date).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })}</span>}
                     </div>
                   </div>
                   <span style={{
-                    background: lp.subscribed ? '#E1F5EE' : '#1a1d24',
-                    color: lp.subscribed ? '#0F6E56' : '#555',
+                    background: activeSub ? '#E1F5EE' : '#1a1d24',
+                    color: activeSub ? '#0F6E56' : '#555',
                     fontSize: 11, fontWeight: 500, padding: '4px 10px',
-                    borderRadius: 20, border: lp.subscribed ? 'none' : '0.5px solid #333'
+                    borderRadius: 20, border: activeSub ? 'none' : '0.5px solid #333'
                   }}>
-                    {lp.subscribed ? '✓ Subscribed' : 'No subscription'}
+                    {activeSub ? '✓ Active Plan' : 'No subscription'}
                   </span>
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* SUBSCRIPTIONS TAB */}
+        {!loading && activeTab === 'subscriptions' && (
+          <div>
+            {enrichedSubs.length === 0 && (
+              <div style={{
+                background: '#111318', border: '0.5px solid #222',
+                borderRadius: 12, padding: '3rem', textAlign: 'center', color: '#555'
+              }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>💳</div>
+                <div style={{ fontSize: 14 }}>No subscription records found.</div>
+              </div>
+            )}
+            {enrichedSubs.map(s => (
+              <div key={s.id} style={{
+                background: '#111318',
+                border: s.isActive ? '0.5px solid #0ef6cc44' : '0.5px solid #222',
+                borderRadius: 12, padding: '1.25rem', marginBottom: 10,
+                display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'center'
+              }}>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 15, color: '#e8e8e8', marginBottom: 4 }}>
+                    {s.full_name}
+                  </div>
+                  <div style={{ fontSize: 13, color: '#888', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                    <span>✉️ {s.email}</span>
+                    <span>📞 {s.phone}</span>
+                    <span>💳 Expires {new Date(s.expiry_date).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                    <span>📅 Subscribed {timeAgo(s.created_at)}</span>
+                  </div>
+                </div>
+                <span style={{
+                  background: s.isActive ? '#E1F5EE' : '#1a1d24',
+                  color: s.isActive ? '#0F6E56' : '#555',
+                  fontSize: 11, fontWeight: 500, padding: '4px 10px',
+                  borderRadius: 20, border: s.isActive ? 'none' : '0.5px solid #333'
+                }}>
+                  {s.isActive ? '✓ Active' : '✕ Expired'}
+                </span>
+              </div>
+            ))}
           </div>
         )}
 
