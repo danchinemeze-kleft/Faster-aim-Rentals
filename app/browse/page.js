@@ -377,15 +377,14 @@ export default function BrowsePage() {
         )}
       </div>
 
+      {showRoleModal && (
+        <SwitchRoleModal
+          fromRole="landlord"
+          loading={switchingRole}
+          onConfirm={handleSwitchToTenant}
+          onCancel={() => { setShowRoleModal(false); setPendingListing(null); }}
+        />
+      )}
     </div>
-
-    {showRoleModal && (
-      <SwitchRoleModal
-        fromRole="landlord"
-        loading={switchingRole}
-        onConfirm={handleSwitchToTenant}
-        onCancel={() => { setShowRoleModal(false); setPendingListing(null); }}
-      />
-    )}
   );
 }
