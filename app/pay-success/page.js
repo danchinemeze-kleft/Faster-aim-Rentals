@@ -64,7 +64,7 @@ function PaySuccessInner() {
       {status === 'verifying' && (
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: 48, height: 48, border: '3px solid #1a1d24', borderTopColor: '#0ef6cc', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 1.5rem' }} />
-          <div style={{ fontSize: 16, color: '#666' }}>Activating your subscription…</div>
+          <div style={{ fontSize: 16, color: '#cccccc' }}>Activating your subscription…</div>
         </div>
       )}
 
@@ -74,10 +74,10 @@ function PaySuccessInner() {
           <h1 style={{ fontSize: 24, fontWeight: 700, color: '#0ef6cc', marginBottom: 10 }}>
             Subscription Activated!
           </h1>
-          <p style={{ color: '#888', fontSize: 14, lineHeight: 1.7, marginBottom: '2rem' }}>
+          <p style={{ color: '#cccccc', fontSize: 16, lineHeight: 1.7, marginBottom: '2rem' }}>
             You can now list unlimited properties on Mr. Rent.
             {expiryDate && (
-              <> Your subscription is active until <strong style={{ color: '#e8e8e8' }}>
+              <> Your subscription is active until <strong style={{ color: '#ffffff' }}>
                 {new Date(expiryDate).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })}
               </strong>.</>
             )}
@@ -92,7 +92,7 @@ function PaySuccessInner() {
             </button>
             <button
               onClick={() => router.push('/dashboard')}
-              style={{ width: '100%', padding: '13px', background: 'transparent', color: '#888', border: '0.5px solid #222', borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}
+              style={{ width: '100%', padding: '13px', background: 'transparent', color: '#cccccc', border: '0.5px solid #222', borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}
             >
               Go to Dashboard
             </button>
@@ -103,10 +103,10 @@ function PaySuccessInner() {
       {status === 'error' && (
         <div style={{ textAlign: 'center', maxWidth: 440 }}>
           <div style={{ fontSize: 48, marginBottom: '1rem' }}>⚠️</div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#e8e8e8', marginBottom: 10 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#ffffff', marginBottom: 10 }}>
             Something went wrong
           </h1>
-          <p style={{ color: '#888', fontSize: 14, lineHeight: 1.7, marginBottom: '2rem' }}>
+          <p style={{ color: '#cccccc', fontSize: 16, lineHeight: 1.7, marginBottom: '2rem' }}>
             {errorMsg}
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -118,7 +118,7 @@ function PaySuccessInner() {
             </button>
             <a
               href="mailto:info@fasteraim.com"
-              style={{ width: '100%', padding: '13px', background: 'transparent', color: '#888', border: '0.5px solid #222', borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'block', boxSizing: 'border-box' }}
+              style={{ width: '100%', padding: '13px', background: 'transparent', color: '#cccccc', border: '0.5px solid #222', borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'block', boxSizing: 'border-box' }}
             >
               Contact Support
             </a>
@@ -135,7 +135,7 @@ function PaySuccessInner() {
 
 export default function PaySuccessPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#080a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>Loading...</div>}>
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#080a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cccccc' }}>Loading...</div>}>
       <PaySuccessInner />
     </Suspense>
   )

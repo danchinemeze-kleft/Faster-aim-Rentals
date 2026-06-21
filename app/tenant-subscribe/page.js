@@ -91,10 +91,10 @@ export default function TenantSubscribePage() {
 
       {/* Top bar */}
       <div style={{ background: '#111318', borderBottom: '0.5px solid #222', padding: '0 1.5rem', height: 54, display: 'flex', alignItems: 'center', gap: 10 }}>
-        <button onClick={() => router.back()} style={{ background: 'transparent', border: 'none', color: '#888', cursor: 'pointer', fontSize: 20, padding: '0 4px' }}>←</button>
+        <button onClick={() => router.back()} style={{ background: 'transparent', border: 'none', color: '#cccccc', cursor: 'pointer', fontSize: 20, padding: '0 4px' }}>←</button>
         <span style={{ color: '#0ef6cc', fontWeight: 700, fontSize: 15 }}>Mr. Rent</span>
         <span style={{ color: '#333' }}>/</span>
-        <span style={{ color: '#aaa', fontSize: 13 }}>Tenant Pass</span>
+        <span style={{ color: '#cccccc', fontSize: 13 }}>Tenant Pass</span>
       </div>
 
       <div style={{ maxWidth: 520, margin: '0 auto', padding: '3rem 1.5rem' }}>
@@ -102,10 +102,10 @@ export default function TenantSubscribePage() {
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>🔓</div>
-          <h1 style={{ fontSize: 26, fontWeight: 700, color: '#e8e8e8', marginBottom: 8 }}>
+          <h1 style={{ fontSize: 26, fontWeight: 700, color: '#ffffff', marginBottom: 8 }}>
             Tenant Access Pass
           </h1>
-          <p style={{ color: '#666', fontSize: 14, lineHeight: 1.7 }}>
+          <p style={{ color: '#cccccc', fontSize: 17, lineHeight: 1.7 }}>
             Reveal unlimited landlord contacts for 30 days.<br />
             Better than paying ₦5,000 per property.
           </p>
@@ -118,7 +118,7 @@ export default function TenantSubscribePage() {
               <span style={{ fontSize: 22 }}>✅</span>
               <div>
                 <div style={{ fontWeight: 600, fontSize: 14, color: '#0ef6cc', marginBottom: 2 }}>Pass Active</div>
-                <div style={{ fontSize: 13, color: '#666' }}>
+                <div style={{ fontSize: 13, color: '#cccccc' }}>
                   Expires {new Date(subscription.expiry_date).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })} · {daysLeft} day{daysLeft !== 1 ? 's' : ''} remaining
                 </div>
               </div>
@@ -143,12 +143,12 @@ export default function TenantSubscribePage() {
 
           {/* Price header */}
           <div style={{ background: 'linear-gradient(135deg, #0a1f1a 0%, #111318 100%)', padding: '2rem', borderBottom: '0.5px solid #222', textAlign: 'center' }}>
-            <div style={{ fontSize: 13, color: '#666', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.5px' }}>30-day pass</div>
+            <div style={{ fontSize: 15, color: '#cccccc', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.5px' }}>30-day pass</div>
             <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 4 }}>
               <span style={{ fontSize: 42, fontWeight: 700, color: '#0ef6cc', lineHeight: 1 }}>₦25,000</span>
-              <span style={{ fontSize: 14, color: '#555', marginBottom: 6 }}>/month</span>
+              <span style={{ fontSize: 16, color: '#cccccc', marginBottom: 6 }}>/month</span>
             </div>
-            <div style={{ fontSize: 12, color: '#444', marginTop: 8 }}>
+            <div style={{ fontSize: 14, color: '#cccccc', marginTop: 8 }}>
               vs ₦5,000 × 5+ reveals = breaks even fast
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function TenantSubscribePage() {
           <div style={{ padding: '1.5rem' }}>
             <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
               {FEATURES.map(f => (
-                <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: '#ccc' }}>
+                <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 16, color: '#ffffff' }}>
                   <span style={{ color: '#0ef6cc', fontSize: 16, flexShrink: 0 }}>✓</span>
                   {f}
                 </li>
@@ -168,10 +168,10 @@ export default function TenantSubscribePage() {
 
         {/* Pay-per-reveal comparison */}
         <div style={{ background: '#0d0f14', border: '0.5px solid #1a1a1a', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '2rem' }}>
-          <div style={{ fontSize: 12, color: '#555', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Without a pass</div>
+          <div style={{ fontSize: 14, color: '#cccccc', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Without a pass</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {['₦5,000 per contact reveal', 'Pay again for every property', 'Costs add up fast'].map(f => (
-              <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: '#555' }}>
+              <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 15, color: '#cccccc' }}>
                 <span style={{ color: '#333' }}>–</span>
                 {f}
               </div>
@@ -200,7 +200,7 @@ export default function TenantSubscribePage() {
               : 'Get Tenant Pass — ₦25,000'}
         </button>
 
-        <p style={{ fontSize: 12, color: '#444', textAlign: 'center', lineHeight: 1.7 }}>
+        <p style={{ fontSize: 14, color: '#cccccc', textAlign: 'center', lineHeight: 1.7 }}>
           Secure payment via Paystack. Pass activates immediately after payment.<br />
           Renewing extends your current expiry by 30 days.
         </p>

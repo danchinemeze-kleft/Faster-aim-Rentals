@@ -613,7 +613,7 @@ videoEl.src = URL.createObjectURL(file)
                 ? '🔒 Free listing limit reached for this month'
                 : `📋 Free tier: ${monthlyCount} of ${FREE_MONTHLY_LIMIT} listings used this month`}
             </div>
-            <div style={{ fontSize: '0.82rem', color: '#888' }}>
+            <div style={{ fontSize: '0.82rem', color: '#cccccc' }}>
               {monthlyCount >= FREE_MONTHLY_LIMIT
                 ? 'Subscribe for ₦10,000/month to list unlimited properties.'
                 : `You have ${FREE_MONTHLY_LIMIT - monthlyCount} free listing${FREE_MONTHLY_LIMIT - monthlyCount === 1 ? '' : 's'} remaining this month.`}
@@ -645,7 +645,7 @@ videoEl.src = URL.createObjectURL(file)
               </div>
 
               <div className="faim-field">
-                <label>Property Number <span style={{fontWeight:400,color:'#888'}}>(optional)</span></label>
+                <label>Property Number <span style={{fontWeight:400,color:'#cccccc'}}>(optional)</span></label>
                 <input type="text" name="property_number" value={formData.property_number} onChange={handleChange}
                   placeholder="e.g., Shop 2 / Room 2" />
               </div>
@@ -719,7 +719,7 @@ videoEl.src = URL.createObjectURL(file)
               ) : (
                 <div className="faim-row">
                   <div className="faim-field">
-                    <label>Size <span style={{fontWeight:400,color:'#888'}}>(optional)</span></label>
+                    <label>Size <span style={{fontWeight:400,color:'#cccccc'}}>(optional)</span></label>
                     <input type="text" name="size" value={formData.size} onChange={handleChange} placeholder="e.g., 150 sqm, 3 plots, 200 ft²" />
                   </div>
                   <div className="faim-field">
@@ -747,14 +747,14 @@ videoEl.src = URL.createObjectURL(file)
 
               {/* ── PHOTO UPLOAD ── */}
               <div className="faim-field">
-                <label>Property Photos <span style={{fontWeight:400,color:'#888'}}>(up to 10, optional)</span></label>
-                <div style={{background:'#f8f8ff',border:'1px solid #dde',borderRadius:'8px',padding:'0.6rem 0.9rem',marginBottom:'0.5rem',fontSize:'0.82rem',color:'#555',lineHeight:'1.6'}}>
+                <label>Property Photos <span style={{fontWeight:400,color:'#cccccc'}}>(up to 10, optional)</span></label>
+                <div style={{background:'#1a1d24',border:'1px solid #333',borderRadius:'8px',padding:'0.6rem 0.9rem',marginBottom:'0.5rem',fontSize:'0.95rem',color:'#cccccc',lineHeight:'1.6'}}>
                   📸 Upload clear photos of the interior and exterior. Max 10MB per photo.
                 </div>
 
                 {editingListing && existingPhotos.length > 0 && (
                   <div style={{marginBottom:'0.75rem'}}>
-                    <div style={{fontSize:'0.8rem',color:'#888',marginBottom:'6px'}}>Current photos — click ✕ to remove:</div>
+                    <div style={{fontSize:'0.8rem',color:'#cccccc',marginBottom:'6px'}}>Current photos — click ✕ to remove:</div>
                     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(90px,1fr))',gap:'8px'}}>
                       {existingPhotos.map((url, i) => (
                         <div key={i} style={{position:'relative',borderRadius:'8px',overflow:'hidden',height:'80px',background:'#eee'}}>
@@ -789,7 +789,7 @@ videoEl.src = URL.createObjectURL(file)
                       </div>
                     ))}
                     {photoFiles.length < 10 && (
-                      <label style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'80px',border:'2px dashed #ccc',borderRadius:'8px',cursor:'pointer',color:'#aaa',fontSize:'1.3rem'}}>
+                      <label style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'80px',border:'2px dashed #444',borderRadius:'8px',cursor:'pointer',color:'#cccccc',fontSize:'1.3rem'}}>
                         <input type="file" accept="image/*" multiple style={{display:'none'}} onChange={handlePhotoSelect} />
                         +
                       </label>
@@ -808,7 +808,7 @@ videoEl.src = URL.createObjectURL(file)
 
                 {submitting && photoFiles.length > 0 && photoUploadProgress > 0 && (
                   <div style={{marginTop:'0.5rem'}}>
-                    <div style={{display:'flex',justifyContent:'space-between',fontSize:'0.8rem',color:'#888',marginBottom:'4px'}}>
+                    <div style={{display:'flex',justifyContent:'space-between',fontSize:'0.8rem',color:'#cccccc',marginBottom:'4px'}}>
                       <span>{photoUploadProgress < 100 ? '📸 Uploading photos...' : '✅ Photos uploaded!'}</span>
                       <span>{photoUploadProgress}%</span>
                     </div>
@@ -831,7 +831,7 @@ videoEl.src = URL.createObjectURL(file)
                 <div className="faim-video-upload">
                   {editingListing && existingVideoUrl && !videoFile && (
                     <div style={{marginBottom:'0.75rem'}}>
-                      <div style={{fontSize:'0.8rem',color:'#888',marginBottom:'6px'}}>Current video:</div>
+                      <div style={{fontSize:'0.8rem',color:'#cccccc',marginBottom:'6px'}}>Current video:</div>
                       <ListingVideoPlayer src={existingVideoUrl} />
                       <button
                         type="button"
@@ -890,7 +890,7 @@ videoEl.src = URL.createObjectURL(file)
 
                 {submitting && videoFile && (
                   <div style={{marginTop:'0.75rem'}}>
-                    <div style={{display:'flex',justifyContent:'space-between',fontSize:'0.8rem',color:'#888',marginBottom:'6px'}}>
+                    <div style={{display:'flex',justifyContent:'space-between',fontSize:'0.8rem',color:'#cccccc',marginBottom:'6px'}}>
                       <span>
                         {uploadProgress < 30 ? '⏳ Preparing upload...' :
                          uploadProgress < 80 ? '📤 Uploading video...' :

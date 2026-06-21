@@ -322,7 +322,7 @@ export default function BrowsePage() {
               <div style={{ fontSize: 13, fontWeight: 700, color: '#e8e8e8', marginBottom: 2 }}>
                 Tenant Access Pass — ₦25,000/month
               </div>
-              <div style={{ fontSize: 12, color: '#666' }}>
+              <div style={{ fontSize: 14, color: '#cccccc' }}>
                 Reveal unlimited landlord contacts. Cheaper than 5 pays.
               </div>
             </div>
@@ -339,7 +339,7 @@ export default function BrowsePage() {
           <div style={{ textAlign: 'center', color: '#ffffff', padding: '80px 20px' }}>
             <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🔍</div>
             <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.1rem', fontWeight: 800, marginBottom: '8px' }}>No properties found</div>
-            <p style={{ color: '#aaaaaa' }}>Try adjusting your filters or check back soon.</p>
+            <p style={{ color: '#cccccc', fontSize: '1rem' }}>Try adjusting your filters or check back soon.</p>
           </div>
         ) : (
           <div className="browse-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
@@ -356,18 +356,18 @@ export default function BrowsePage() {
                 </a>
                 {l.video_url && <BrowseVideoPlayer src={l.video_url} />}
                 <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.35rem', fontWeight: 800, color: '#111', marginBottom: '4px' }}>
-                    N{Number(l.price).toLocaleString('en-NG')} <span style={{ fontSize: '0.82rem', fontWeight: 400, color: '#999', fontFamily: 'DM Sans, sans-serif' }}>/ {l.price_period || 'year'}</span>
+                  <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.35rem', fontWeight: 800, color: '#0ef6cc', marginBottom: '4px' }}>
+                    N{Number(l.price).toLocaleString('en-NG')} <span style={{ fontSize: '0.9rem', fontWeight: 400, color: '#cccccc', fontFamily: 'DM Sans, sans-serif' }}>/ {l.price_period || 'year'}</span>
                   </div>
-                  <a href={`/listing/${l.id}`} style={{ fontSize: '1rem', fontWeight: 700, color: '#111', marginBottom: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textDecoration: 'none', display: 'block' }}>{l.title}</a>
-                  <div style={{ fontSize: '0.82rem', color: '#666', fontWeight: 600, marginBottom: l.veryland_badge ? 8 : 16 }}>📍 {l.location}{l.city ? `, ${l.city}` : ''}, {l.state}</div>
+                  <a href={`/listing/${l.id}`} style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff', marginBottom: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textDecoration: 'none', display: 'block' }}>{l.title}</a>
+                  <div style={{ fontSize: '0.9rem', color: '#cccccc', fontWeight: 600, marginBottom: l.veryland_badge ? 8 : 16 }}>📍 {l.location}{l.city ? `, ${l.city}` : ''}, {l.state}</div>
                   {l.veryland_badge && (
                     <div style={{ marginBottom: 16 }}>
                       <VerylandBadge level={l.veryland_badge} />
                     </div>
                   )}
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
-                    <a href={`/listing/${l.id}`} style={{ flex: 1, padding: '11px 8px', borderRadius: '8px', border: '2px solid #e8e8e8', background: '#f8f8f8', color: '#444', fontSize: '0.78rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>View Details</a>
+                    <a href={`/listing/${l.id}`} style={{ flex: 1, padding: '11px 8px', borderRadius: '8px', border: '2px solid #333', background: '#1a1d24', color: '#ffffff', fontSize: '0.88rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>View Details</a>
                     <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '13px 8px', borderRadius: '8px', border: 'none', background: '#ff2d78', color: '#fff', fontSize: '0.88rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif', minHeight: 48 }}>{paying === l.id ? 'Please wait...' : 'Meet Landlord • ₦5k'}</button>
                   </div>
                 </div>

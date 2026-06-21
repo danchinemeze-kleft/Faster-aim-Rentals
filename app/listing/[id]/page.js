@@ -67,7 +67,7 @@ function VideoPlayer({ src }) {
             border: '3px solid #1a1d24', borderTopColor: '#0ef6cc',
             animation: 'spin 0.8s linear infinite',
           }} />
-          <span style={{ color: '#555', fontSize: 13 }}>Loading video…</span>
+          <span style={{ color: '#cccccc', fontSize: 13 }}>Loading video…</span>
         </div>
       )}
 
@@ -77,7 +77,7 @@ function VideoPlayer({ src }) {
           padding: '2.5rem 1.5rem', textAlign: 'center', background: '#0a0a0a',
         }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>🎬</div>
-          <div style={{ color: '#666', fontSize: 14, marginBottom: 16, lineHeight: 1.6 }}>
+          <div style={{ color: '#cccccc', fontSize: 14, marginBottom: 16, lineHeight: 1.6 }}>
             Video could not be played in the browser.<br />
             You can still open it directly.
           </div>
@@ -428,14 +428,14 @@ export default function ListingPage() {
 
       {/* Top bar */}
       <div style={{ background: '#111318', borderBottom: '0.5px solid #222', padding: '0 1.5rem', height: 54, display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 100 }}>
-        <button onClick={() => router.back()} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#e8e8e8', cursor: 'pointer', fontSize: 13, fontWeight: 600, padding: '6px 12px', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 6, lineHeight: 1, fontFamily: 'inherit', flexShrink: 0 }}>
+        <button onClick={() => router.back()} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#ffffff', cursor: 'pointer', fontSize: 13, fontWeight: 600, padding: '6px 12px', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 6, lineHeight: 1, fontFamily: 'inherit', flexShrink: 0 }}>
           ← Back
         </button>
         <span style={{ color: '#0ef6cc', fontWeight: 700, fontSize: 15 }}>Mr. Rent</span>
         <span style={{ color: '#333' }}>/</span>
-        <a href="/browse" style={{ color: '#666', fontSize: 13, textDecoration: 'none' }}>Browse</a>
+        <a href="/browse" style={{ color: '#cccccc', fontSize: 14, textDecoration: 'none' }}>Browse</a>
         <span style={{ color: '#333' }}>/</span>
-        <span style={{ color: '#aaa', fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 260 }}>{listing.title}</span>
+        <span style={{ color: '#cccccc', fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 260 }}>{listing.title}</span>
       </div>
 
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(1rem, 4vw, 2rem) clamp(0.75rem, 4vw, 1.5rem)' }}>
@@ -495,7 +495,7 @@ export default function ListingPage() {
         {/* No image placeholder */}
         {!hasImages && (
           <div style={{ height: 240, background: '#111318', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem' }}>
-            <div style={{ textAlign: 'center', color: '#555' }}>
+            <div style={{ textAlign: 'center', color: '#cccccc' }}>
               <div style={{ fontSize: 48, marginBottom: 8 }}>🏠</div>
               <div style={{ fontSize: 13 }}>No photos uploaded yet</div>
             </div>
@@ -523,11 +523,11 @@ export default function ListingPage() {
                 {listing.veryland_badge && <VerylandBadge level={listing.veryland_badge} />}
               </div>
 
-              <h1 style={{ fontSize: 24, fontWeight: 700, color: '#e8e8e8', marginBottom: 10, lineHeight: 1.35 }}>
+              <h1 style={{ fontSize: 24, fontWeight: 700, color: '#ffffff', marginBottom: 10, lineHeight: 1.35 }}>
                 {listing.title}
               </h1>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, color: '#888', fontSize: 13 }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, color: '#cccccc', fontSize: 15 }}>
                 <span>📍 {listing.location}{listing.city ? `, ${listing.city}` : ''}{listing.state ? `, ${listing.state}` : ''}</span>
                 {listing.bedrooms && <span>🛏 {listing.bedrooms} bedroom{listing.bedrooms > 1 ? 's' : ''}</span>}
                 {listing.bathrooms && <span>🚿 {listing.bathrooms} bathroom{listing.bathrooms > 1 ? 's' : ''}</span>}
@@ -538,10 +538,10 @@ export default function ListingPage() {
             {/* Description */}
             {listing.description && (
               <div style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: 14, fontWeight: 600, color: '#e8e8e8', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <h2 style={{ fontSize: 14, fontWeight: 600, color: '#ffffff', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   About this property
                 </h2>
-                <p style={{ color: '#aaa', fontSize: 14, lineHeight: 1.85, whiteSpace: 'pre-wrap' }}>
+                <p style={{ color: '#cccccc', fontSize: 16, lineHeight: 1.85, whiteSpace: 'pre-wrap' }}>
                   {listing.description}
                 </p>
               </div>
@@ -550,12 +550,12 @@ export default function ListingPage() {
             {/* Amenities */}
             {listing.amenities?.length > 0 && (
               <div style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: 14, fontWeight: 600, color: '#e8e8e8', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <h2 style={{ fontSize: 14, fontWeight: 600, color: '#ffffff', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Amenities
                 </h2>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                   {listing.amenities.map(a => (
-                    <span key={a} style={{ background: '#111318', border: '0.5px solid #2a2a2a', color: '#ccc', fontSize: 13, padding: '6px 14px', borderRadius: 20 }}>
+                    <span key={a} style={{ background: '#111318', border: '0.5px solid #2a2a2a', color: '#ffffff', fontSize: 15, padding: '6px 14px', borderRadius: 20 }}>
                       ✓ {a}
                     </span>
                   ))}
@@ -566,7 +566,7 @@ export default function ListingPage() {
             {/* Video */}
             {hasVideo && (
               <div style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: 14, fontWeight: 600, color: '#e8e8e8', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <h2 style={{ fontSize: 14, fontWeight: 600, color: '#ffffff', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Property Video
                 </h2>
                 <button
@@ -594,7 +594,7 @@ export default function ListingPage() {
                     }}>
                       <span style={{ fontSize: 24, marginLeft: 4 }}>▶</span>
                     </div>
-                    <span style={{ color: '#e8e8e8', fontSize: 13, fontWeight: 600 }}>Watch Property Video</span>
+                    <span style={{ color: '#ffffff', fontSize: 13, fontWeight: 600 }}>Watch Property Video</span>
                   </div>
                 </button>
               </div>
@@ -612,39 +612,39 @@ export default function ListingPage() {
                     ₦{Number(listing.price).toLocaleString('en-NG')}
                   </div>
                   {listing.price_period && (
-                    <div style={{ fontSize: 12, color: '#555', marginTop: 4 }}>per {listing.price_period}</div>
+                    <div style={{ fontSize: 14, color: '#cccccc', marginTop: 4 }}>per {listing.price_period}</div>
                   )}
                 </div>
 
                 {/* Property facts */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: '1.5rem' }}>
                   {listing.property_type && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-                      <span style={{ color: '#555' }}>Type</span>
-                      <span style={{ color: '#e8e8e8', textTransform: 'capitalize' }}>{listing.property_type}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15 }}>
+                      <span style={{ color: '#cccccc' }}>Type</span>
+                      <span style={{ color: '#ffffff', textTransform: 'capitalize' }}>{listing.property_type}</span>
                     </div>
                   )}
                   {listing.bedrooms && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-                      <span style={{ color: '#555' }}>Bedrooms</span>
-                      <span style={{ color: '#e8e8e8' }}>{listing.bedrooms}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15 }}>
+                      <span style={{ color: '#cccccc' }}>Bedrooms</span>
+                      <span style={{ color: '#ffffff' }}>{listing.bedrooms}</span>
                     </div>
                   )}
                   {listing.bathrooms && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-                      <span style={{ color: '#555' }}>Bathrooms</span>
-                      <span style={{ color: '#e8e8e8' }}>{listing.bathrooms}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15 }}>
+                      <span style={{ color: '#cccccc' }}>Bathrooms</span>
+                      <span style={{ color: '#ffffff' }}>{listing.bathrooms}</span>
                     </div>
                   )}
                   {listing.size && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-                      <span style={{ color: '#555' }}>Size</span>
-                      <span style={{ color: '#e8e8e8' }}>{listing.size}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15 }}>
+                      <span style={{ color: '#cccccc' }}>Size</span>
+                      <span style={{ color: '#ffffff' }}>{listing.size}</span>
                     </div>
                   )}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-                    <span style={{ color: '#555' }}>Location</span>
-                    <span style={{ color: '#e8e8e8', textAlign: 'right', maxWidth: 170 }}>{listing.location}{listing.city ? `, ${listing.city}` : ''}{listing.state ? `, ${listing.state}` : ''}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15 }}>
+                    <span style={{ color: '#cccccc' }}>Location</span>
+                    <span style={{ color: '#ffffff', textAlign: 'right', maxWidth: 170 }}>{listing.location}{listing.city ? `, ${listing.city}` : ''}{listing.state ? `, ${listing.state}` : ''}</span>
                   </div>
                 </div>
 
@@ -653,7 +653,7 @@ export default function ListingPage() {
                   <div style={{ background: '#0e1c19', border: '0.5px solid #0ef6cc55', borderRadius: 10, padding: '1.25rem', marginBottom: 10 }}>
                     <div style={{ fontSize: 11, color: '#0ef6cc', fontWeight: 700, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.5px' }}>✅ Contact Revealed</div>
                     {revealedContact.landlord_phone && (
-                      <a href={`tel:${revealedContact.landlord_phone}`} style={{ display: 'block', fontSize: 20, fontWeight: 700, color: '#e8e8e8', textDecoration: 'none', marginBottom: 10 }}>
+                      <a href={`tel:${revealedContact.landlord_phone}`} style={{ display: 'block', fontSize: 20, fontWeight: 700, color: '#ffffff', textDecoration: 'none', marginBottom: 10 }}>
                         📞 {revealedContact.landlord_phone}
                       </a>
                     )}
@@ -669,7 +669,7 @@ export default function ListingPage() {
                       </a>
                     )}
                     {revealedContact.landlord_email && (
-                      <a href={`mailto:${revealedContact.landlord_email}`} style={{ display: 'block', fontSize: 13, color: '#666', textDecoration: 'none' }}>
+                      <a href={`mailto:${revealedContact.landlord_email}`} style={{ display: 'block', fontSize: 13, color: '#cccccc', textDecoration: 'none' }}>
                         ✉️ {revealedContact.landlord_email}
                       </a>
                     )}
@@ -695,7 +695,7 @@ export default function ListingPage() {
                           : '📞 Reveal Contact — ₦5,000'
                       }
                     </button>
-                    <p style={{ fontSize: 11, color: '#444', textAlign: 'center', lineHeight: 1.6 }}>
+                    <p style={{ fontSize: 13, color: '#aaaaaa', textAlign: 'center', lineHeight: 1.6 }}>
                       {hasSub
                         ? 'Included in your subscription. Landlord contact revealed instantly.'
                         : <>One-time secure payment via Paystack.<br />Landlord phone number revealed instantly after payment.</>

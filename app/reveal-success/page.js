@@ -53,7 +53,7 @@ function RevealSuccessInner() {
       {status === 'verifying' && (
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: 48, height: 48, border: '3px solid #1a1d24', borderTopColor: '#0ef6cc', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 1.5rem' }} />
-          <div style={{ fontSize: 15, color: '#666' }}>Verifying your payment…</div>
+          <div style={{ fontSize: 15, color: '#cccccc' }}>Verifying your payment…</div>
         </div>
       )}
 
@@ -62,7 +62,7 @@ function RevealSuccessInner() {
           <div style={{ fontSize: 56, marginBottom: '1rem' }}>✅</div>
           <h1 style={{ fontSize: 22, fontWeight: 700, color: '#0ef6cc', marginBottom: 6 }}>Contact Revealed!</h1>
           {listing && (
-            <p style={{ color: '#666', fontSize: 13, marginBottom: '1.5rem' }}>
+            <p style={{ color: '#cccccc', fontSize: 16, marginBottom: '1.5rem' }}>
               {listing.title} — {listing.location}, {listing.state}
             </p>
           )}
@@ -72,14 +72,14 @@ function RevealSuccessInner() {
 
             {contact.full_name && (
               <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 11, color: '#555', marginBottom: 3 }}>Name</div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: '#e8e8e8' }}>{contact.full_name}</div>
+                <div style={{ fontSize: 13, color: '#cccccc', marginBottom: 3 }}>Name</div>
+                <div style={{ fontSize: 16, fontWeight: 600, color: '#ffffff' }}>{contact.full_name}</div>
               </div>
             )}
 
             {contact.phone && (
               <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 11, color: '#555', marginBottom: 3 }}>Phone</div>
+                <div style={{ fontSize: 13, color: '#cccccc', marginBottom: 3 }}>Phone</div>
                 <a href={`tel:${contact.phone}`} style={{ fontSize: 22, fontWeight: 700, color: '#0ef6cc', textDecoration: 'none', display: 'block' }}>
                   📞 {contact.phone}
                 </a>
@@ -100,8 +100,8 @@ function RevealSuccessInner() {
 
             {contact.email && (
               <div>
-                <div style={{ fontSize: 11, color: '#555', marginBottom: 3 }}>Email</div>
-                <a href={`mailto:${contact.email}`} style={{ fontSize: 13, color: '#888', textDecoration: 'none' }}>
+                <div style={{ fontSize: 13, color: '#cccccc', marginBottom: 3 }}>Email</div>
+                <a href={`mailto:${contact.email}`} style={{ fontSize: 15, color: '#cccccc', textDecoration: 'none' }}>
                   ✉️ {contact.email}
                 </a>
               </div>
@@ -117,7 +117,7 @@ function RevealSuccessInner() {
             </button>
             <button
               onClick={() => router.back()}
-              style={{ width: '100%', padding: '12px', background: 'transparent', color: '#666', border: '0.5px solid #222', borderRadius: 10, fontWeight: 600, fontSize: 13, cursor: 'pointer' }}
+              style={{ width: '100%', padding: '12px', background: 'transparent', color: '#cccccc', border: '0.5px solid #222', borderRadius: 10, fontWeight: 600, fontSize: 13, cursor: 'pointer' }}
             >
               Back to Listing
             </button>
@@ -128,8 +128,8 @@ function RevealSuccessInner() {
       {status === 'error' && (
         <div style={{ textAlign: 'center', maxWidth: 440 }}>
           <div style={{ fontSize: 48, marginBottom: '1rem' }}>⚠️</div>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#e8e8e8', marginBottom: 10 }}>Something went wrong</h1>
-          <p style={{ color: '#666', fontSize: 14, lineHeight: 1.7, marginBottom: '2rem' }}>{errorMsg}</p>
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#ffffff', marginBottom: 10 }}>Something went wrong</h1>
+          <p style={{ color: '#cccccc', fontSize: 14, lineHeight: 1.7, marginBottom: '2rem' }}>{errorMsg}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <button
               onClick={() => router.push('/browse')}
@@ -139,7 +139,7 @@ function RevealSuccessInner() {
             </button>
             <a
               href="mailto:info@fasteraim.com"
-              style={{ display: 'block', width: '100%', padding: '12px', background: 'transparent', color: '#666', border: '0.5px solid #222', borderRadius: 10, fontWeight: 600, fontSize: 13, textAlign: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
+              style={{ display: 'block', width: '100%', padding: '12px', background: 'transparent', color: '#cccccc', border: '0.5px solid #222', borderRadius: 10, fontWeight: 600, fontSize: 13, textAlign: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
             >
               Contact Support
             </a>
@@ -154,7 +154,7 @@ function RevealSuccessInner() {
 
 export default function RevealSuccessPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#080a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>Loading…</div>}>
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#080a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cccccc' }}>Loading…</div>}>
       <RevealSuccessInner />
     </Suspense>
   )
