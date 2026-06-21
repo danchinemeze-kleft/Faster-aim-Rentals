@@ -593,7 +593,6 @@ html.light-mode .faim-alert-card--warning { background: #fffbf0; border-color: #
 .faim-toggle--on .faim-toggle-thumb { left: 22px; }
 .faim-toggle:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.faim-listings-tab { }
 .faim-listings-full { display: flex; flex-direction: column; gap: 1rem; }
 
 .faim-listing-full-card {
