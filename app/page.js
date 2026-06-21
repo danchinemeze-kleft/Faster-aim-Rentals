@@ -32,9 +32,11 @@ export default function Home() {
         <div style={s.navBrand}>🏠 Mr. Rent</div>
         <div className={`nav-links${menuOpen ? ' open' : ''}`}>
           <button className="nav-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">✕</button>
-          <a href="/browse" style={s.navLink} onClick={() => setMenuOpen(false)}>Browse</a>
+          <a href="/browse" style={s.navLink} onClick={() => setMenuOpen(false)}>Browse Rentals</a>
+          <a href="/buy" style={s.navLink} onClick={() => setMenuOpen(false)}>Buy Property</a>
+          <a href="/sell" style={s.navLink} onClick={() => setMenuOpen(false)}>Sell Property</a>
           <a href="/search" style={s.navLink} onClick={() => setMenuOpen(false)}>AI Chat</a>
-          <a href="/list" style={s.navLink} onClick={() => setMenuOpen(false)}>List Property</a>
+          <a href="/list" style={s.navLink} onClick={() => setMenuOpen(false)}>List for Rent</a>
           <a href="/veryland" style={{ ...s.navLink, color: '#1877F2', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }} onClick={() => setMenuOpen(false)}>
             Veryland
             <svg width="18" height="18" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, verticalAlign: 'middle' }}>

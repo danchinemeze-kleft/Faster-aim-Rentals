@@ -22,19 +22,31 @@ export async function POST(request) {
     }
 
     const metadata = paystackData.data.metadata
+    const paymentType = metadata?.payment_type
     const listingId = metadata?.listing_id
     const tenantId = metadata?.tenant_id
 
-    if (!listingId || !tenantId) {
-      return Response.json({ success: false, error: 'Missing payment metadata' })
-    }
-
     // Use service role key — bypasses RLS for all server-side DB operations.
-    // The Paystack verification above is the authorization proof; no client JWT needed.
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     )
+
+    // Handle sale listing fee payment
+    if (paymentType === 'sale_listing') {
+      if (!listingId) {
+        return Response.json({ success: false, error: 'Missing listing_id in payment metadata' })
+      }
+      await supabase
+        .from('property_sales')
+        .update({ listing_fee_paid: true, listing_fee_reference: reference })
+        .eq('id', listingId)
+      return Response.json({ success: true, payment_type: 'sale_listing', listing_id: listingId })
+    }
+
+    if (!listingId || !tenantId) {
+      return Response.json({ success: false, error: 'Missing payment metadata' })
+    }
 
     // Check for duplicate reveal (prevents double-charging)
     const { data: existing } = await supabase
