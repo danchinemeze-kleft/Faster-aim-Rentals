@@ -48,27 +48,23 @@ export default function AdminDashboard() {
   async function fetchAll() {
     setLoading(true);
     try {
-      const { data: listingData, error: le } = await supabase
-        .from('listings')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const pw = sessionStorage.getItem('mr_rent_admin_pw');
+      const res = await fetch('/api/admin-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw }),
+      });
 
-      const { data: profileData, error: pe } = await supabase
-        .from('Profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
+      if (!res.ok) {
+        const err = await res.json();
+        console.error('Admin data fetch failed:', err.error);
+        setLoading(false);
+        return;
+      }
 
-      const { data: subData } = await supabase
-        .from('Subscription')
-        .select('*')
-        .order('expiry_date', { ascending: false });
+      const { listings: listingData, profiles: profileData, subscriptions: subData, verylandSubmissions: vData } = await res.json();
 
-      const { data: vData } = await supabase
-        .from('veryland_submissions')
-        .select('*')
-        .order('submitted_at', { ascending: false });
-
-      if (!le && listingData) {
+      if (listingData) {
         setListings(listingData);
         setStats(s => ({
           ...s,
@@ -78,7 +74,7 @@ export default function AdminDashboard() {
         }));
       }
 
-      if (!pe && profileData) {
+      if (profileData) {
         const landlordList = profileData.filter(p => p.role === 'landlord');
         setLandlords(landlordList);
         setStats(s => ({ ...s, totalLandlords: landlordList.length }));
@@ -170,6 +166,7 @@ export default function AdminDashboard() {
       });
       if (res.ok) {
         sessionStorage.setItem('mr_rent_admin', 'true');
+        sessionStorage.setItem('mr_rent_admin_pw', pwInput);
         setAuthed(true);
       } else {
         const data = await res.json();
@@ -182,6 +179,7 @@ export default function AdminDashboard() {
 
   function logout() {
     sessionStorage.removeItem('mr_rent_admin');
+    sessionStorage.removeItem('mr_rent_admin_pw');
     setAuthed(false);
   }
 
