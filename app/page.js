@@ -117,7 +117,7 @@ export default function Home() {
                   AI Powered
                 </div>
                 <div style={s.floatingCard1}>🏠 2 new listings</div>
-                <div style={s.floatingCard2}>✓ Verified Landlord</div>
+                <div style={s.floatingCard2} className="floating-card-2">✓ Verified Landlord</div>
               </div>
             </div>
           </div>
@@ -310,6 +310,11 @@ export default function Home() {
         @keyframes spinSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes spinSlowReverse { from{transform:rotate(360deg)} to{transform:rotate(0deg)} }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+        /* ---- Floating badge — hide on mobile where avatar is too small ---- */
+        @media (max-width: 768px) {
+          .floating-card-2 { display: none !important; }
+        }
 
         /* ---- Tablet (≤900px) ---- */
         @media (max-width: 900px) {
