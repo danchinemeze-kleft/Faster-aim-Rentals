@@ -123,6 +123,7 @@ function ListPageInner() {
   const [editingListing, setEditingListing] = useState(null)
   const [existingPhotos, setExistingPhotos] = useState([])
   const [existingVideoUrl, setExistingVideoUrl] = useState(null)
+  const [checking, setChecking] = useState(false)
 
   const recheckSubscription = async (userId) => {
     if (!userId) return
@@ -170,63 +171,68 @@ function ListPageInner() {
       supabase.from('Profiles').select('role').eq('id', userId).single()
         .then(({ data }) => setUserRole(data?.role || 'tenant'))
 
-      const startOfMonth = new Date()
-      startOfMonth.setDate(1)
-      startOfMonth.setHours(0, 0, 0, 0)
+      try {
+        const startOfMonth = new Date()
+        startOfMonth.setDate(1)
+        startOfMonth.setHours(0, 0, 0, 0)
 
-      const [, { data: sub }, { data: monthListings }] = await Promise.all([
-        fetchListings(userId),
-        supabase
-          .from('Subscription')
-          .select('expiry_date')
-          .eq('landlord_id', userId)
-          .gte('expiry_date', new Date().toISOString())
-          .order('expiry_date', { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-        supabase
-          .from('listings')
-          .select('id')
-          .eq('landlord_id', userId)
-          .gte('created_at', startOfMonth.toISOString()),
-      ])
-
-      const subscribed = !!sub
-      const count = monthListings?.length || 0
-      setIsSubscribed(subscribed)
-      setMonthlyCount(count)
-      setLoading(false)
-
-      // URL signals from pages that already verified subscription status:
-      // ?subscribed=1 → trusted subscribed landlord (from subscribe/dashboard pages)
-      // ?free=1       → free-tier landlord with slots remaining
-      // ?new=1        → generic, still check Supabase
-      const urlSignal = searchParams.get('subscribed') === '1'
-        ? 'subscribed'
-        : searchParams.get('free') === '1'
-          ? 'free'
-          : searchParams.get('new') === '1'
-            ? 'new'
-            : null
-
-      if (urlSignal && !userClosedFormRef.current) {
-        if (urlSignal === 'subscribed') {
-          setIsSubscribed(true)
-          setShowForm(true)
-        } else if (urlSignal === 'free' || (urlSignal === 'new' && (subscribed || count < FREE_MONTHLY_LIMIT))) {
-          setShowForm(true)
-        } else if (urlSignal === 'new' && !subscribed && count >= FREE_MONTHLY_LIMIT) {
-          const { data: freshSub } = await supabase
+        const [, { data: sub }, { data: monthListings }] = await Promise.all([
+          fetchListings(userId),
+          supabase
             .from('Subscription')
             .select('expiry_date')
             .eq('landlord_id', userId)
             .gte('expiry_date', new Date().toISOString())
-            .maybeSingle()
-          if (freshSub) {
+            .order('expiry_date', { ascending: false })
+            .limit(1)
+            .maybeSingle(),
+          supabase
+            .from('listings')
+            .select('id')
+            .eq('landlord_id', userId)
+            .gte('created_at', startOfMonth.toISOString()),
+        ])
+
+        const subscribed = !!sub
+        const count = monthListings?.length || 0
+        setIsSubscribed(subscribed)
+        setMonthlyCount(count)
+
+        // URL signals from pages that already verified subscription status:
+        // ?subscribed=1 → trusted subscribed landlord (from subscribe/dashboard pages)
+        // ?free=1       → free-tier landlord with slots remaining
+        // ?new=1        → generic, still check Supabase
+        const urlSignal = searchParams.get('subscribed') === '1'
+          ? 'subscribed'
+          : searchParams.get('free') === '1'
+            ? 'free'
+            : searchParams.get('new') === '1'
+              ? 'new'
+              : null
+
+        if (urlSignal && !userClosedFormRef.current) {
+          if (urlSignal === 'subscribed') {
             setIsSubscribed(true)
             setShowForm(true)
+          } else if (urlSignal === 'free' || (urlSignal === 'new' && (subscribed || count < FREE_MONTHLY_LIMIT))) {
+            setShowForm(true)
+          } else if (urlSignal === 'new' && !subscribed && count >= FREE_MONTHLY_LIMIT) {
+            const { data: freshSub } = await supabase
+              .from('Subscription')
+              .select('expiry_date')
+              .eq('landlord_id', userId)
+              .gte('expiry_date', new Date().toISOString())
+              .maybeSingle()
+            if (freshSub) {
+              setIsSubscribed(true)
+              setShowForm(true)
+            }
           }
         }
+      } catch (err) {
+        console.error('List page load error:', err)
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -540,34 +546,40 @@ videoEl.src = URL.createObjectURL(file)
         </div>
         <button
           className="faim-new-btn"
+          disabled={checking}
           onClick={async () => {
             if (editingListing) { handleCancelEdit(); return }
             if (showForm) { userClosedFormRef.current = true; setShowForm(false); setPreview(false); return }
 
-            // If already confirmed subscribed or under limit, open form
+            // If already confirmed subscribed or under limit, open form immediately
             if (isSubscribed || monthlyCount < FREE_MONTHLY_LIMIT) {
               setShowForm(true); setPreview(false); return
             }
 
-            // Live subscription check before blocking
-            const { data: freshSub } = await supabase
-              .from('Subscription')
-              .select('expiry_date')
-              .eq('landlord_id', user.id)
-              .gte('expiry_date', new Date().toISOString())
-              .limit(1)
-              .maybeSingle()
+            // Live subscription re-check before blocking (catches recently-subscribed users)
+            setChecking(true)
+            try {
+              const { data: freshSub } = await supabase
+                .from('Subscription')
+                .select('expiry_date')
+                .eq('landlord_id', user.id)
+                .gte('expiry_date', new Date().toISOString())
+                .limit(1)
+                .maybeSingle()
 
-            if (freshSub) {
-              setIsSubscribed(true)
-              setShowForm(true)
-              setPreview(false)
-            } else {
-              router.push('/subscribe')
+              if (freshSub) {
+                setIsSubscribed(true)
+                setShowForm(true)
+                setPreview(false)
+              } else {
+                alert('You have reached your 2 free listings for this month.\n\nSubscribe for ₦10,000/month to list unlimited properties.')
+              }
+            } finally {
+              setChecking(false)
             }
           }}
         >
-          {showForm ? (editingListing ? '✕ Cancel Edit' : '✕ Cancel') : '+ New Listing'}
+          {checking ? 'Checking...' : showForm ? (editingListing ? '✕ Cancel Edit' : '✕ Cancel') : '+ New Listing'}
         </button>
       </div>
 
