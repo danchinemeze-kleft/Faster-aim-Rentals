@@ -279,8 +279,8 @@ export default function BrowsePage() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
             {filtered.map(l => (
-              <div key={l.id} style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e8e8e8', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                <a href={`/listing/${l.id}`} style={{ display: 'block', position: 'relative', height: '220px', background: '#f0f0f0', textDecoration: 'none' }}>
+              <div key={l.id} style={{ background: 'var(--card-bg)', borderRadius: '14px', border: '1px solid var(--border-1)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                <a href={`/listing/${l.id}`} style={{ display: 'block', position: 'relative', height: '220px', background: '#111318', textDecoration: 'none' }}>
                   {l.images && l.images.length > 0 ? (
                     <img src={l.images[0]} alt={l.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (

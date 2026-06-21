@@ -457,52 +457,53 @@ function AccountPageInner() {
           padding: 2rem 1rem;
         }
         .faim-account-card {
-          background: #ffffff;
+          background: var(--card-bg);
           border-radius: 16px;
           padding: 2.5rem 2rem;
           width: 100%;
           max-width: 420px;
-          box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+          box-shadow: var(--shadow-card);
+          border: 0.5px solid var(--border-1);
         }
         .faim-account-brand { text-align: center; margin-bottom: 1.75rem; }
         .faim-brand-icon { font-size: 2rem; display: block; margin-bottom: 0.25rem; }
-        .faim-brand-name { font-size: 1.6rem; font-weight: 700; color: #1a1a2e; margin: 0 0 0.25rem; }
-        .faim-brand-tagline { font-size: 0.875rem; color: #666; margin: 0; }
+        .faim-brand-name { font-size: 1.6rem; font-weight: 700; color: var(--text-1); margin: 0 0 0.25rem; }
+        .faim-brand-tagline { font-size: 0.875rem; color: var(--text-3); margin: 0; }
         .faim-tab-toggle {
-          display: flex; background: #f0efeb; border-radius: 10px;
+          display: flex; background: var(--card-bg2); border-radius: 10px;
           padding: 4px; margin-bottom: 1.25rem; gap: 4px;
         }
         .faim-tab {
           flex: 1; padding: 0.5rem; border: none; border-radius: 7px;
           background: transparent; font-size: 0.9rem; font-weight: 500;
-          color: #666; cursor: pointer; transition: all 0.15s ease;
+          color: var(--text-3); cursor: pointer; transition: all 0.15s ease;
         }
-        .faim-tab--active { background: #ffffff; color: #1a1a2e; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+        .faim-tab--active { background: var(--input-bg); color: var(--text-1); box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
         .faim-alert { padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.875rem; margin-bottom: 1rem; }
-        .faim-alert--error { background: #fff0f0; color: #c0392b; border: 1px solid #fcc; }
-        .faim-alert--success { background: #f0fff4; color: #27ae60; border: 1px solid #b2f0c8; }
+        .faim-alert--error { background: rgba(192,57,43,0.12); color: #e74c3c; border: 1px solid rgba(192,57,43,0.3); }
+        .faim-alert--success { background: rgba(39,174,96,0.12); color: #27ae60; border: 1px solid rgba(39,174,96,0.3); }
         .faim-google-btn {
           width: 100%; display: flex; align-items: center; justify-content: center;
-          gap: 10px; padding: 0.7rem 1rem; border: 1.5px solid #ddd; border-radius: 10px;
-          background: #fff; font-size: 0.9rem; font-weight: 500; color: #333;
+          gap: 10px; padding: 0.7rem 1rem; border: 1.5px solid var(--border-1); border-radius: 10px;
+          background: var(--input-bg); font-size: 0.9rem; font-weight: 500; color: var(--text-1);
           cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease;
         }
-        .faim-google-btn:hover { background: #f8f8f8; border-color: #bbb; }
+        .faim-google-btn:hover { background: var(--card-bg2); border-color: var(--border-2); }
         .faim-google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .faim-divider {
           display: flex; align-items: center; gap: 12px;
-          margin: 1.25rem 0; color: #aaa; font-size: 0.8rem;
+          margin: 1.25rem 0; color: var(--text-3); font-size: 0.8rem;
         }
         .faim-divider::before, .faim-divider::after {
-          content: ''; flex: 1; height: 1px; background: #e5e5e5;
+          content: ''; flex: 1; height: 1px; background: var(--border-1);
         }
         .faim-form { display: flex; flex-direction: column; gap: 1rem; }
         .faim-field { display: flex; flex-direction: column; gap: 6px; }
-        .faim-field label { font-size: 0.85rem; font-weight: 600; color: #444; }
+        .faim-field label { font-size: 0.85rem; font-weight: 600; color: var(--text-2); }
         .faim-field input {
-          padding: 0.65rem 0.875rem; border: 1.5px solid #e0e0e0; border-radius: 9px;
-          font-size: 0.9rem; color: #1a1a2e; outline: none;
-          transition: border-color 0.15s ease; background: #fff;
+          padding: 0.65rem 0.875rem; border: 1.5px solid var(--border-1); border-radius: 9px;
+          font-size: 0.9rem; color: var(--text-1); outline: none;
+          transition: border-color 0.15s ease; background: var(--input-bg);
           width: 100%;
         }
         .faim-field input:focus { border-color: #e67e22; }

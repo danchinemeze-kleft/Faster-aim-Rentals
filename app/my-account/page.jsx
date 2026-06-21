@@ -268,7 +268,7 @@ export default function MyAccountPage() {
         .faim-ma-wrap {
           display: flex;
           min-height: 100vh;
-          background: #f5f4f0;
+          background: var(--page-bg);
           font-family: 'Segoe UI', system-ui, sans-serif;
         }
         .faim-ma-loading {
@@ -379,10 +379,10 @@ export default function MyAccountPage() {
           flex-wrap: wrap;
           gap: 12px;
         }
-        .faim-ma-page-title { font-size: 1.6rem; font-weight: 700; color: #1a1a2e; margin: 0; }
+        .faim-ma-page-title { font-size: 1.6rem; font-weight: 700; color: var(--text-1); margin: 0; }
         .faim-ma-welcome { color: #888; font-size: 0.9rem; margin-top: 2px; }
         .faim-ma-tenant-badge {
-          background: #f0f4ff;
+          background: var(--card-bg2);
           color: #3b5bdb;
           padding: 6px 14px;
           border-radius: 20px;
@@ -397,7 +397,7 @@ export default function MyAccountPage() {
           margin-bottom: 1.5rem;
         }
         .faim-ma-stat-card {
-          background: white;
+          background: var(--card-bg);
           border-radius: 14px;
           padding: 1.25rem;
           display: flex;
@@ -406,18 +406,18 @@ export default function MyAccountPage() {
           box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         .faim-ma-stat-icon { font-size: 1.8rem; }
-        .faim-ma-stat-value { font-size: 1.4rem; font-weight: 700; color: #1a1a2e; margin: 0 0 2px; }
+        .faim-ma-stat-value { font-size: 1.4rem; font-weight: 700; color: var(--text-1); margin: 0 0 2px; }
         .faim-ma-stat-label { font-size: 0.78rem; color: #888; margin: 0; }
 
         .faim-ma-quick-actions { margin-bottom: 1.5rem; }
-        .faim-ma-quick-actions h2 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 1rem; }
+        .faim-ma-quick-actions h2 { font-size: 1rem; font-weight: 700; color: var(--text-1); margin-bottom: 1rem; }
         .faim-ma-actions-grid {
           display: grid;
           grid-template-columns: repeat(5, 1fr);
           gap: 1rem;
         }
         .faim-ma-action-card {
-          background: white;
+          background: var(--card-bg);
           border-radius: 14px;
           padding: 1.25rem;
           display: flex;
@@ -434,11 +434,11 @@ export default function MyAccountPage() {
         }
         .faim-ma-action-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
         .faim-ma-action-icon { font-size: 1.8rem; }
-        .faim-ma-action-title { font-size: 0.85rem; font-weight: 600; color: #1a1a2e; }
+        .faim-ma-action-title { font-size: 0.85rem; font-weight: 600; color: var(--text-1); }
         .faim-ma-action-desc { font-size: 0.75rem; color: #888; }
 
         .faim-ma-section {
-          background: white;
+          background: var(--card-bg);
           border-radius: 14px;
           padding: 1.5rem;
           box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -450,7 +450,7 @@ export default function MyAccountPage() {
           align-items: center;
           margin-bottom: 1rem;
         }
-        .faim-ma-section-header h2 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin: 0; }
+        .faim-ma-section-header h2 { font-size: 1rem; font-weight: 700; color: var(--text-1); margin: 0; }
         .faim-ma-view-all { background: none; border: none; color: #e67e22; font-weight: 600; cursor: pointer; font-size: 0.85rem; font-family: inherit; }
 
         .faim-ma-reveal-row {
@@ -461,10 +461,10 @@ export default function MyAccountPage() {
           border-bottom: 1px solid #f0ede8;
         }
         .faim-ma-reveal-row:last-child { border-bottom: none; }
-        .faim-ma-reveal-title { font-size: 0.9rem; font-weight: 600; color: #1a1a2e; margin: 0; }
+        .faim-ma-reveal-title { font-size: 0.9rem; font-weight: 600; color: var(--text-1); margin: 0; }
         .faim-ma-reveal-sub { font-size: 0.78rem; color: #888; margin: 2px 0 0; }
         .faim-ma-reveal-badge {
-          background: #f0fff4;
+          background: rgba(39,174,96,0.1);
           color: #27ae60;
           padding: 4px 10px;
           border-radius: 20px;
@@ -474,7 +474,7 @@ export default function MyAccountPage() {
         }
 
         .faim-ma-empty-card {
-          background: white;
+          background: var(--card-bg);
           border-radius: 14px;
           padding: 2.5rem;
           text-align: center;
@@ -503,7 +503,7 @@ export default function MyAccountPage() {
           gap: 1.5rem;
         }
         .faim-ma-reveal-card {
-          background: white;
+          background: var(--card-bg);
           border-radius: 14px;
           padding: 1.5rem;
           box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -515,7 +515,7 @@ export default function MyAccountPage() {
           margin-bottom: 0.75rem;
         }
         .faim-ma-type-pill {
-          background: #f0ede8;
+          background: var(--card-bg2);
           color: #666;
           padding: 3px 10px;
           border-radius: 20px;
@@ -524,30 +524,30 @@ export default function MyAccountPage() {
           text-transform: capitalize;
         }
         .faim-ma-revealed-tag {
-          background: #f0fff4;
+          background: rgba(39,174,96,0.1);
           color: #27ae60;
           padding: 3px 10px;
           border-radius: 20px;
           font-size: 0.72rem;
           font-weight: 600;
         }
-        .faim-ma-reveal-card h3 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+        .faim-ma-reveal-card h3 { font-size: 1rem; font-weight: 700; color: var(--text-1); margin-bottom: 4px; }
         .faim-ma-reveal-location { font-size: 0.82rem; color: #888; margin-bottom: 4px; }
         .faim-ma-reveal-price { font-size: 1rem; font-weight: 700; color: #e67e22; margin-bottom: 4px; }
         .faim-ma-reveal-specs { font-size: 0.82rem; color: #666; margin-bottom: 1rem; }
         .faim-ma-reveal-contact {
-          background: #f0ede8;
+          background: var(--card-bg2);
           border-radius: 8px;
           padding: 0.75rem;
           margin-bottom: 0.75rem;
         }
         .faim-ma-contact-label { font-size: 0.75rem; color: #888; margin-bottom: 2px; }
-        .faim-ma-contact-value { font-size: 0.9rem; font-weight: 600; color: #1a1a2e; }
+        .faim-ma-contact-value { font-size: 0.9rem; font-weight: 600; color: var(--text-1); }
         .faim-ma-reveal-date { font-size: 0.75rem; color: #aaa; }
 
         .faim-ma-profile-tab { display: flex; gap: 1.5rem; }
         .faim-ma-profile-card {
-          background: white;
+          background: var(--card-bg);
           border-radius: 14px;
           padding: 2rem;
           text-align: center;
@@ -568,11 +568,11 @@ export default function MyAccountPage() {
           margin: 0 auto 1rem;
           text-transform: uppercase;
         }
-        .faim-ma-profile-card h2 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+        .faim-ma-profile-card h2 { font-size: 1rem; font-weight: 700; color: var(--text-1); margin-bottom: 4px; }
         .faim-ma-profile-card p { font-size: 0.82rem; color: #888; margin-bottom: 4px; }
         .faim-ma-profile-info {
           flex: 1;
-          background: white;
+          background: var(--card-bg);
           border-radius: 14px;
           padding: 1.5rem;
           box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -586,7 +586,7 @@ export default function MyAccountPage() {
         }
         .faim-ma-info-row:last-child { border-bottom: none; }
         .faim-ma-info-row span:first-child { color: #888; }
-        .faim-ma-info-row span:last-child { color: #1a1a2e; font-weight: 500; }
+        .faim-ma-info-row span:last-child { color: var(--text-1); font-weight: 500; }
 
         @media (max-width: 768px) {
           .faim-ma-sidebar { width: 60px; padding: 1rem 0.5rem; }
