@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import Breadcrumb from '../components/Breadcrumb';
+import SwitchRoleModal from '../components/SwitchRoleModal';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -88,6 +89,10 @@ export default function BrowsePage() {
   const [priceFilter, setPriceFilter] = useState('');
   const [user, setUser] = useState(null);
   const [paying, setPaying] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [switchingRole, setSwitchingRole] = useState(false);
+  const [pendingListing, setPendingListing] = useState(null);
 
   const filtered = useMemo(() => {
     let result = listings;
@@ -105,7 +110,11 @@ export default function BrowsePage() {
 
   async function loadUser() {
     const { data: { session } } = await supabase.auth.getSession();
-    if (session) setUser(session.user);
+    if (session) {
+      setUser(session.user);
+      const { data: profile } = await supabase.from('Profiles').select('role').eq('id', session.user.id).single();
+      setUserRole(profile?.role || 'tenant');
+    }
   }
 
   async function loadListings() {
@@ -158,6 +167,12 @@ export default function BrowsePage() {
       return;
     }
 
+    if (userRole === 'landlord') {
+      setPendingListing(listing);
+      setShowRoleModal(true);
+      return;
+    }
+
     // If already paid, go straight to listing detail which shows the contact
     const { data: existing } = await supabase
       .from('Contact_reveals')
@@ -171,6 +186,29 @@ export default function BrowsePage() {
     }
 
     await initiatePayment(session.user, listing.id);
+  }
+
+  async function handleSwitchToTenant() {
+    if (!user) return;
+    setSwitchingRole(true);
+    try {
+      await supabase.from('Profiles').update({ role: 'tenant' }).eq('id', user.id);
+      setUserRole('tenant');
+      setShowRoleModal(false);
+      if (pendingListing) {
+        const listing = pendingListing;
+        setPendingListing(null);
+        const { data: existing } = await supabase
+          .from('Contact_reveals').select('id')
+          .eq('tenant_id', user.id).eq('listing_id', listing.id).maybeSingle();
+        if (existing) { router.push(`/listing/${listing.id}`); return; }
+        await initiatePayment(user, listing.id);
+      }
+    } catch {
+      alert('Could not switch role. Please try again.');
+    } finally {
+      setSwitchingRole(false);
+    }
   }
 
   // Resume pending payment after login redirect
@@ -340,5 +378,14 @@ export default function BrowsePage() {
       </div>
 
     </div>
+
+    {showRoleModal && (
+      <SwitchRoleModal
+        fromRole="landlord"
+        loading={switchingRole}
+        onConfirm={handleSwitchToTenant}
+        onCancel={() => { setShowRoleModal(false); setPendingListing(null); }}
+      />
+    )}
   );
 }

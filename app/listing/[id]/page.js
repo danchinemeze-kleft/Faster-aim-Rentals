@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
+import SwitchRoleModal from '../../components/SwitchRoleModal'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -140,6 +141,9 @@ export default function ListingPage() {
   const [user, setUser] = useState(null)
   const [revealedContact, setRevealedContact] = useState(null)
   const [hasSub, setHasSub] = useState(false)
+  const [userRole, setUserRole] = useState(null)
+  const [showRoleModal, setShowRoleModal] = useState(false)
+  const [switchingRole, setSwitchingRole] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -155,7 +159,7 @@ export default function ListingPage() {
 
       if (session) {
         setUser(session.user)
-        const [{ data: reveal }, { data: sub }] = await Promise.all([
+        const [{ data: reveal }, { data: sub }, { data: profile }] = await Promise.all([
           supabase
             .from('Contact_reveals')
             .select('landlord_phone, landlord_email')
@@ -171,9 +175,15 @@ export default function ListingPage() {
             .order('expiry_date', { ascending: false })
             .limit(1)
             .maybeSingle(),
+          supabase
+            .from('Profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single(),
         ])
 
         setHasSub(!!sub)
+        setUserRole(profile?.role || 'tenant')
 
         if (reveal) {
           if (!reveal.landlord_phone && listingData.landlord_id) {
@@ -230,6 +240,11 @@ export default function ListingPage() {
 
   async function handleReveal() {
     if (!user) { router.push(`/account?redirect=/listing/${id}`); return }
+    if (userRole === 'landlord') { setShowRoleModal(true); return }
+    await proceedWithReveal()
+  }
+
+  async function proceedWithReveal() {
     setRevealing(true)
     try {
       // Guard: never charge/reveal twice for the same listing
@@ -288,6 +303,20 @@ export default function ListingPage() {
     } catch (err) {
       alert('Payment error: ' + err.message)
       setRevealing(false)
+    }
+  }
+
+  async function handleSwitchToTenant() {
+    setSwitchingRole(true)
+    try {
+      await supabase.from('Profiles').update({ role: 'tenant' }).eq('id', user.id)
+      setUserRole('tenant')
+      setShowRoleModal(false)
+      await proceedWithReveal()
+    } catch (err) {
+      alert('Could not switch role. Please try again.')
+    } finally {
+      setSwitchingRole(false)
     }
   }
 
@@ -710,6 +739,15 @@ export default function ListingPage() {
           </div>
         </div>
       </div>
+
+      {showRoleModal && (
+        <SwitchRoleModal
+          fromRole="landlord"
+          loading={switchingRole}
+          onConfirm={handleSwitchToTenant}
+          onCancel={() => setShowRoleModal(false)}
+        />
+      )}
 
       <style>{`
         .listing-grid {

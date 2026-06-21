@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import Image from 'next/image'
 import Breadcrumb from '../components/Breadcrumb'
+import SwitchRoleModal from '../components/SwitchRoleModal'
 
 function ListingVideoPlayer({ src }) {
   const [state, setState] = useState('loading')
@@ -124,6 +125,22 @@ function ListPageInner() {
   const [existingPhotos, setExistingPhotos] = useState([])
   const [existingVideoUrl, setExistingVideoUrl] = useState(null)
   const [checking, setChecking] = useState(false)
+  const [showRoleModal, setShowRoleModal] = useState(false)
+  const [switchingRole, setSwitchingRole] = useState(false)
+
+  async function handleSwitchToLandlord() {
+    if (!user) return
+    setSwitchingRole(true)
+    try {
+      await supabase.from('Profiles').update({ role: 'landlord' }).eq('id', user.id)
+      setUserRole('landlord')
+      setShowRoleModal(false)
+    } catch {
+      alert('Could not switch role. Please try again.')
+    } finally {
+      setSwitchingRole(false)
+    }
+  }
 
   const recheckSubscription = async (userId) => {
     if (!userId) return
@@ -169,7 +186,11 @@ function ListPageInner() {
       setUser(session.user)
 
       supabase.from('Profiles').select('role').eq('id', userId).single()
-        .then(({ data }) => setUserRole(data?.role || 'tenant'))
+        .then(({ data }) => {
+          const role = data?.role || 'tenant'
+          setUserRole(role)
+          if (role === 'tenant') setShowRoleModal(true)
+        })
 
       try {
         const startOfMonth = new Date()
@@ -1086,6 +1107,15 @@ videoEl.src = URL.createObjectURL(file)
         .faim-delete-btn:hover { background:rgba(231,76,60,0.22); }
         @media (max-width:768px) { .faim-form-grid { grid-template-columns:1fr; } .faim-list-page { padding:1rem; } }
       `}</style>
+
+      {showRoleModal && (
+        <SwitchRoleModal
+          fromRole="tenant"
+          loading={switchingRole}
+          onConfirm={handleSwitchToLandlord}
+          onCancel={() => router.push('/browse')}
+        />
+      )}
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from '../components/Breadcrumb'
+import SwitchRoleModal from '../components/SwitchRoleModal'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -22,6 +23,8 @@ export default function DashboardPage() {
   const [profileForm, setProfileForm] = useState({ full_name: '', phone: '' })
   const [savingProfile, setSavingProfile] = useState(false)
   const [profileMsg, setProfileMsg] = useState('')
+  const [showRoleModal, setShowRoleModal] = useState(false)
+  const [switchingRole, setSwitchingRole] = useState(false)
 
   async function fetchProfile(userId) {
     const { data } = await supabase.from('Profiles').select('*').eq('id', userId).single()
@@ -63,6 +66,9 @@ export default function DashboardPage() {
         fetchStats(session.user.id),
       ])
       setLoading(false)
+      // Role guard: tenants must switch to landlord to access dashboard
+      const { data: prof } = await supabase.from('Profiles').select('role').eq('id', session.user.id).single()
+      if (prof?.role === 'tenant') setShowRoleModal(true)
     }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -72,6 +78,19 @@ export default function DashboardPage() {
     return () => subscription.unsubscribe()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  async function handleSwitchToLandlord() {
+    if (!user) return
+    setSwitchingRole(true)
+    try {
+      await supabase.from('Profiles').update({ role: 'landlord' }).eq('id', user.id)
+      setShowRoleModal(false)
+    } catch {
+      alert('Could not switch role. Please try again.')
+    } finally {
+      setSwitchingRole(false)
+    }
+  }
 
   const toggleAvailability = async (listing) => {
     setTogglingId(listing.id)
@@ -430,6 +449,15 @@ export default function DashboardPage() {
       </main>
 
       {/* Styles now defined in globals.css with dark/light mode support */}
+
+      {showRoleModal && (
+        <SwitchRoleModal
+          fromRole="tenant"
+          loading={switchingRole}
+          onConfirm={handleSwitchToLandlord}
+          onCancel={() => router.push('/browse')}
+        />
+      )}
     </div>
   )
 }
