@@ -16,6 +16,10 @@ export async function POST(request) {
     amount = 1000000;
     payment_type = 'landlord_listing';
     callback_url = `https://rent.fasteraim.com/pay-success?user_id=${encodeURIComponent(user_id)}`;
+  } else if (type === 'tenant_subscription') {
+    amount = 2500000;
+    payment_type = 'tenant_subscription';
+    callback_url = `https://rent.fasteraim.com/tenant-sub-success?user_id=${encodeURIComponent(user_id)}`;
   } else {
     return Response.json({ error: 'Invalid payment type' }, { status: 400 });
   }

@@ -31,7 +31,67 @@ export async function POST(request) {
     const metadata = data?.metadata || {}
     const paystackRef = data?.reference
 
-    // Only handle landlord subscription payments
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    )
+
+    // --- Tenant subscription ---
+    if (metadata.payment_type === 'tenant_subscription') {
+      const tenantId = metadata.tenant_id
+      if (!tenantId || !paystackRef) {
+        console.error('Tenant subscription webhook: missing tenant_id or reference')
+        return Response.json({ received: true })
+      }
+
+      const { data: existingTenantSub } = await supabase
+        .from('Tenant_subscription')
+        .select('id')
+        .eq('paystack_reference', paystackRef)
+        .maybeSingle()
+
+      if (existingTenantSub) {
+        return Response.json({ received: true, already_activated: true })
+      }
+
+      // Extend from current active sub, otherwise start from today
+      const { data: activeTenantSub } = await supabase
+        .from('Tenant_subscription')
+        .select('expiry_date')
+        .eq('user_id', tenantId)
+        .eq('status', 'active')
+        .gte('expiry_date', new Date().toISOString())
+        .order('expiry_date', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      const tenantBase = activeTenantSub?.expiry_date && new Date(activeTenantSub.expiry_date) > new Date()
+        ? new Date(activeTenantSub.expiry_date)
+        : new Date()
+
+      const tenantExpiry = new Date(tenantBase)
+      tenantExpiry.setDate(tenantExpiry.getDate() + 30)
+
+      const { error: tenantSubErr } = await supabase.from('Tenant_subscription').insert({
+        user_id: tenantId,
+        plan_type: 'monthly',
+        status: 'active',
+        start_date: new Date().toISOString(),
+        expiry_date: tenantExpiry.toISOString(),
+        paystack_reference: paystackRef,
+        amount: 25000,
+      })
+
+      if (tenantSubErr) {
+        console.error('Tenant subscription webhook: insert failed', tenantSubErr)
+        return Response.json({ received: true, error: tenantSubErr.message })
+      }
+
+      console.log(`Tenant subscription webhook: activated for tenant ${tenantId}, expires ${tenantExpiry.toISOString()}`)
+      return Response.json({ received: true, activated: true })
+    }
+
+    // --- Landlord subscription ---
     if (metadata.payment_type !== 'landlord_listing') {
       return Response.json({ received: true })
     }
@@ -42,12 +102,6 @@ export async function POST(request) {
       return Response.json({ received: true })
     }
 
-    // Use service role key — no user JWT available in a webhook context
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    )
-
     // Idempotency check — the browser path (/api/verify-subscription) may have
     // already activated this reference. Do nothing if it exists.
     const { data: existing } = await supabase
@@ -57,7 +111,6 @@ export async function POST(request) {
       .maybeSingle()
 
     if (existing) {
-      // Already activated — nothing to do, but still return 200
       return Response.json({ received: true, already_activated: true })
     }
 
@@ -78,7 +131,6 @@ export async function POST(request) {
     const expiryDate = new Date(baseDate)
     expiryDate.setDate(expiryDate.getDate() + 30)
 
-    // Insert subscription row
     const { error: subErr } = await supabase.from('Subscription').insert({
       landlord_id: landlordId,
       status: 'active',
@@ -90,11 +142,9 @@ export async function POST(request) {
 
     if (subErr) {
       console.error('Subscription webhook: insert failed', subErr)
-      // Return 200 anyway so Paystack doesn't retry — log the error for manual fix
       return Response.json({ received: true, error: subErr.message })
     }
 
-    // Mark the landlord as subscribed in their Profile
     await supabase
       .from('Profiles')
       .update({ subscribed: true })
