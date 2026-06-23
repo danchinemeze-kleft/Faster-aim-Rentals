@@ -15,6 +15,7 @@ const PROPERTY_TYPES = [
   { value: 'residential_land', label: 'Residential Land' },
   { value: 'commercial_land', label: 'Commercial Land' },
   { value: 'mixed_use_land', label: 'Mixed-Use Land' },
+  { value: 'agricultural_land', label: 'Agricultural Land' },
   { value: 'apartment', label: 'Apartment / Flat' },
   { value: 'house', label: 'House' },
   { value: 'duplex', label: 'Duplex' },
@@ -23,7 +24,7 @@ const PROPERTY_TYPES = [
   { value: 'warehouse', label: 'Warehouse' },
 ];
 
-const LAND_TYPES = ['residential_land', 'commercial_land', 'mixed_use_land'];
+const LAND_TYPES = ['residential_land', 'commercial_land', 'mixed_use_land', 'agricultural_land'];
 
 const TITLE_TYPES = [
   'Certificate of Occupancy (C of O)',
@@ -264,7 +265,7 @@ export default function SellPage() {
             List Property for Sale
           </h1>
           <p style={{ color: '#cccccc', fontSize: 15, lineHeight: 1.75, margin: 0 }}>
-            Reach thousands of buyers across Nigeria. Pay a one-time listing fee of <strong style={{ color: '#0ef6cc' }}>₦20,000</strong> and your property stays live until sold.
+            Sell a variety of properties — Residential Land, Commercial Land, Agricultural Land, House, Duplex, Bungalow and more. Pay a one-time listing fee of <strong style={{ color: '#0ef6cc' }}>₦20,000</strong> and your property stays live until sold.
           </p>
         </div>
 
