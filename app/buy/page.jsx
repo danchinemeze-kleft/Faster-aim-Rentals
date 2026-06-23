@@ -15,6 +15,7 @@ const TYPE_LABELS = {
   residential_land: 'Residential Land',
   commercial_land: 'Commercial Land',
   mixed_use_land: 'Mixed-Use Land',
+  agricultural_land: 'Agricultural Land',
   apartment: 'Apartment',
   house: 'House',
   duplex: 'Duplex',
@@ -23,22 +24,29 @@ const TYPE_LABELS = {
   warehouse: 'Warehouse',
 };
 
-const LAND_TYPES_SET = new Set(['residential_land', 'commercial_land', 'mixed_use_land']);
+const LAND_TYPES_SET = new Set(['residential_land', 'commercial_land', 'mixed_use_land', 'agricultural_land']);
 
-function VerylandBadge({ level, size = 16 }) {
-  if (!level) return null;
-  const cfg = {
-    green: { fill: '#10B981', check: '#fff', tip: 'Veryland Verified' },
-    blue: { fill: '#1877F2', check: '#fff', tip: 'Veryland Premium Verified' },
-    yellow: { fill: '#F59E0B', check: '#fff', tip: 'Partially Verified' },
-  }[level] || null;
-  if (!cfg) return null;
+/* ── Facebook-style verified tick ── */
+function VerifiedBadge({ size = 20 }) {
   return (
-    <span title={cfg.tip} style={{ display: 'inline-flex', flexShrink: 0 }}>
-      <svg width={size} height={size} viewBox="0 0 22 22" fill="none">
-        <rect width="22" height="22" rx="7" fill={cfg.fill} />
-        <path d="M6 11.5l3.5 3.5 6.5-7" stroke={cfg.check} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+    <span title="Verified Seller — documents checked, listing fee paid" style={{ display: 'inline-flex', flexShrink: 0 }}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="12" fill="#0ef6cc" />
+        <path d="M7 12.5l3.5 3.5 6.5-7" stroke="#080a0f" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
+    </span>
+  );
+}
+
+function UnverifiedBadge() {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 4,
+      background: 'rgba(234,179,8,0.15)', border: '1.5px solid rgba(234,179,8,0.5)',
+      color: '#fbbf24', borderRadius: 20, padding: '3px 9px', fontSize: 11, fontWeight: 800,
+      letterSpacing: '0.03em', flexShrink: 0,
+    }}>
+      ⚠ UNVERIFIED
     </span>
   );
 }
@@ -59,35 +67,42 @@ export default function BuyPage() {
   const [filterState, setFilterState] = useState('');
   const [filterType, setFilterType] = useState('');
   const [filterMax, setFilterMax] = useState('');
+  const [filterVerified, setFilterVerified] = useState('');
 
   useEffect(() => {
     async function load() {
       setLoading(true);
       let q = supabase
         .from('property_sales')
-        .select('id,title,location,state,price,negotiable,property_type,title_type,land_size,development_status,images,veryland_verified,veryland_badge_level,created_at')
-        .eq('status', 'approved')
-        .eq('listing_fee_paid', true)
+        .select('id,title,location,state,price,negotiable,property_type,title_type,land_size,development_status,images,veryland_verified,veryland_badge_level,status,listing_fee_paid,created_at')
+        .in('status', ['approved', 'active'])
         .eq('available', true)
+        .order('status', { ascending: false }) // 'active' sorts before 'approved'
         .order('created_at', { ascending: false });
 
       if (filterState) q = q.eq('state', filterState);
       if (filterType) q = q.eq('property_type', filterType);
       if (filterMax) q = q.lte('price', parseInt(filterMax));
+      if (filterVerified === 'verified') q = q.eq('status', 'active');
+      if (filterVerified === 'unverified') q = q.eq('status', 'approved');
 
       const { data } = await q;
       setListings(data || []);
       setLoading(false);
     }
     load();
-  }, [supabase, filterState, filterType, filterMax]);
+  }, [supabase, filterState, filterType, filterMax, filterVerified]);
 
   const selStyle = {
     padding: '10px 14px', background: 'var(--card-bg)',
     border: '1.5px solid var(--border-1)', borderRadius: 9,
     color: '#ffffff', fontSize: 14, outline: 'none',
     fontFamily: "'Segoe UI', system-ui, sans-serif",
+    cursor: 'pointer',
   };
+
+  const verified = listings.filter(l => l.status === 'active');
+  const unverified = listings.filter(l => l.status !== 'active');
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#ffffff' }}>
@@ -108,10 +123,10 @@ export default function BuyPage() {
         {/* Header */}
         <div style={{ marginBottom: '1.5rem' }}>
           <h1 style={{ fontSize: '1.85rem', fontWeight: 900, color: '#ffffff', margin: '0 0 8px', letterSpacing: '-0.5px' }}>
-            Buy Land & Property
+            Buy Land &amp; Property
           </h1>
           <p style={{ color: '#cccccc', fontSize: 15, margin: 0 }}>
-            Browse verified properties for sale across Nigeria. Contact sellers directly — no payment needed.
+            Browse properties for sale across Nigeria. <span style={{ color: '#0ef6cc', fontWeight: 700 }}>✓ Verified listings</span> show seller contact freely — no payment needed.
           </p>
         </div>
 
@@ -134,8 +149,13 @@ export default function BuyPage() {
             <option value="50000000">Under ₦50M</option>
             <option value="100000000">Under ₦100M</option>
           </select>
-          {(filterState || filterType || filterMax) && (
-            <button onClick={() => { setFilterState(''); setFilterType(''); setFilterMax(''); }} style={{ padding: '10px 14px', background: 'rgba(239,68,68,0.12)', border: '1.5px solid rgba(239,68,68,0.4)', borderRadius: 9, color: '#fca5a5', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+          <select value={filterVerified} onChange={e => setFilterVerified(e.target.value)} style={selStyle}>
+            <option value="">All Listings</option>
+            <option value="verified">✓ Verified only</option>
+            <option value="unverified">⚠ Unverified only</option>
+          </select>
+          {(filterState || filterType || filterMax || filterVerified) && (
+            <button onClick={() => { setFilterState(''); setFilterType(''); setFilterMax(''); setFilterVerified(''); }} style={{ padding: '10px 14px', background: 'rgba(239,68,68,0.12)', border: '1.5px solid rgba(239,68,68,0.4)', borderRadius: 9, color: '#fca5a5', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
               Clear filters
             </button>
           )}
@@ -152,7 +172,7 @@ export default function BuyPage() {
             <div style={{ fontSize: 48, marginBottom: 16 }}>🏡</div>
             <h2 style={{ color: '#ffffff', fontSize: '1.25rem', fontWeight: 800, margin: '0 0 10px' }}>No listings found</h2>
             <p style={{ color: '#cccccc', fontSize: 15, marginBottom: 24 }}>
-              {filterState || filterType || filterMax ? 'Try adjusting your filters.' : 'No properties for sale yet. Be the first to list!'}
+              {filterState || filterType || filterMax || filterVerified ? 'Try adjusting your filters.' : 'No properties for sale yet. Be the first to list!'}
             </p>
             <a href="/sell" style={{ display: 'inline-block', background: '#0ef6cc', color: '#080a0f', padding: '12px 28px', borderRadius: 10, fontWeight: 800, fontSize: 15, textDecoration: 'none' }}>
               List Your Property for Sale
@@ -160,38 +180,64 @@ export default function BuyPage() {
           </div>
         ) : (
           <>
-            <p style={{ color: '#888', fontSize: 13, marginBottom: 16 }}>{listings.length} propert{listings.length === 1 ? 'y' : 'ies'} found</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+              <p style={{ color: '#888', fontSize: 13, margin: 0 }}>
+                {listings.length} propert{listings.length === 1 ? 'y' : 'ies'} found
+                {verified.length > 0 && <> — <span style={{ color: '#0ef6cc', fontWeight: 700 }}>✓ {verified.length} verified</span></>}
+                {unverified.length > 0 && <> · <span style={{ color: '#fbbf24' }}>⚠ {unverified.length} unverified</span></>}
+              </p>
+            </div>
+
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20 }}>
               {listings.map(l => {
+                const isVerified = l.status === 'active';
                 const img = l.images?.[0];
                 const isLand = LAND_TYPES_SET.has(l.property_type);
                 return (
-                  <div key={l.id} style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-1)', borderRadius: 16, overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'border-color 0.2s' }}>
+                  <div key={l.id} style={{
+                    background: 'var(--card-bg)',
+                    border: isVerified ? '1.5px solid rgba(14,246,204,0.4)' : '1.5px solid rgba(234,179,8,0.25)',
+                    borderRadius: 16, overflow: 'hidden',
+                    display: 'flex', flexDirection: 'column',
+                    opacity: isVerified ? 1 : 0.82,
+                    transition: 'border-color 0.2s, opacity 0.2s',
+                  }}>
                     {/* Image */}
                     <div style={{ height: 190, background: '#111318', position: 'relative', overflow: 'hidden' }}>
                       {img ? (
-                        <img src={img} alt={l.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src={img} alt={l.title} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: isVerified ? 'none' : 'brightness(0.8)' }} />
                       ) : (
                         <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36 }}>
                           {isLand ? '🌿' : '🏠'}
                         </div>
                       )}
+
                       {/* FOR SALE badge */}
                       <div style={{ position: 'absolute', top: 10, left: 10, background: '#ff2d78', color: '#fff', fontSize: 11, fontWeight: 800, padding: '4px 10px', borderRadius: 20, letterSpacing: '0.05em' }}>
                         FOR SALE
                       </div>
-                      {l.veryland_verified && l.veryland_badge_level && (
-                        <div style={{ position: 'absolute', top: 10, right: 10 }}>
-                          <VerylandBadge level={l.veryland_badge_level} size={22} />
-                        </div>
-                      )}
+
+                      {/* Verification badge — top right */}
+                      <div style={{ position: 'absolute', top: 10, right: 10 }}>
+                        {isVerified ? (
+                          <div style={{
+                            display: 'flex', alignItems: 'center', gap: 5,
+                            background: 'rgba(8,10,15,0.85)', borderRadius: 20,
+                            padding: '4px 10px 4px 6px', backdropFilter: 'blur(4px)',
+                          }}>
+                            <VerifiedBadge size={16} />
+                            <span style={{ color: '#0ef6cc', fontSize: 11, fontWeight: 800 }}>Verified</span>
+                          </div>
+                        ) : (
+                          <UnverifiedBadge />
+                        )}
+                      </div>
                     </div>
 
                     {/* Card body */}
                     <div style={{ padding: '1rem', flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
-                        <span style={{ color: '#ffffff', fontWeight: 800, fontSize: 14, lineHeight: 1.4, flex: 1 }}>{l.title}</span>
-                      </div>
+                      <span style={{ color: '#ffffff', fontWeight: 800, fontSize: 14, lineHeight: 1.4 }}>{l.title}</span>
+
                       <div style={{ color: '#0ef6cc', fontWeight: 900, fontSize: 17 }}>
                         {formatPrice(l.price, l.negotiable)}
                       </div>
@@ -202,12 +248,12 @@ export default function BuyPage() {
                           {TYPE_LABELS[l.property_type] || l.property_type}
                         </span>
                         {l.title_type && (
-                          <span style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', color: '#cccccc', borderRadius: 20, padding: '3px 10px', fontSize: 12, fontWeight: 600 }}>
+                          <span style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', color: '#cccccc', borderRadius: 20, padding: '3px 10px', fontSize: 12 }}>
                             {l.title_type}
                           </span>
                         )}
                         {l.land_size && (
-                          <span style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', color: '#cccccc', borderRadius: 20, padding: '3px 10px', fontSize: 12, fontWeight: 600 }}>
+                          <span style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', color: '#cccccc', borderRadius: 20, padding: '3px 10px', fontSize: 12 }}>
                             📐 {l.land_size}
                           </span>
                         )}
@@ -219,14 +265,28 @@ export default function BuyPage() {
                         </div>
                       )}
 
-                      <div style={{ marginTop: 'auto', paddingTop: 12 }}>
+                      {/* Contact/verification notice */}
+                      <div style={{
+                        marginTop: 4, padding: '8px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600,
+                        background: isVerified ? 'rgba(14,246,204,0.06)' : 'rgba(234,179,8,0.06)',
+                        border: isVerified ? '1px solid rgba(14,246,204,0.2)' : '1px solid rgba(234,179,8,0.2)',
+                        color: isVerified ? '#0ef6cc' : '#fbbf24',
+                      }}>
+                        {isVerified
+                          ? '✓ Contact visible — documents verified'
+                          : '⚠ Contact hidden — seller not yet verified'}
+                      </div>
+
+                      <div style={{ marginTop: 'auto', paddingTop: 10 }}>
                         <a href={`/buy/${l.id}`} style={{
                           display: 'block', textAlign: 'center',
-                          background: 'linear-gradient(135deg, #0ef6cc, #00c9a7)',
-                          color: '#080a0f', padding: '10px', borderRadius: 9,
+                          background: isVerified ? 'linear-gradient(135deg, #0ef6cc, #00c9a7)' : 'rgba(255,255,255,0.08)',
+                          border: isVerified ? 'none' : '1.5px solid rgba(255,255,255,0.15)',
+                          color: isVerified ? '#080a0f' : '#cccccc',
+                          padding: '10px', borderRadius: 9,
                           fontWeight: 800, fontSize: 14, textDecoration: 'none',
                         }}>
-                          View Details →
+                          {isVerified ? 'View Details & Contact →' : 'View Listing →'}
                         </a>
                       </div>
                     </div>
@@ -237,6 +297,7 @@ export default function BuyPage() {
           </>
         )}
       </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
