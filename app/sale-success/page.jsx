@@ -58,36 +58,33 @@ function SaleSuccessInner() {
 
         {status === 'success' && (
           <div>
-            <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(16,185,129,0.12)', border: '3px solid #10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 28px', fontSize: 36 }}>
-              ✅
+            <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(14,246,204,0.12)', border: '3px solid #0ef6cc', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 28px', fontSize: 36 }}>
+              🚀
             </div>
-            <h1 style={{ color: '#10B981', fontSize: '1.75rem', fontWeight: 900, margin: '0 0 12px' }}>
-              Listing Submitted!
+            <h1 style={{ color: '#0ef6cc', fontSize: '1.75rem', fontWeight: 900, margin: '0 0 12px' }}>
+              Your Listing is Now LIVE!
             </h1>
             <p style={{ color: '#cccccc', fontSize: 16, lineHeight: 1.75, marginBottom: 28 }}>
-              Your property listing fee of <strong style={{ color: '#0ef6cc' }}>₦20,000</strong> has been received. We will review and approve your listing within <strong style={{ color: '#ffffff' }}>24 hours</strong>. Once approved, buyers across Nigeria can see and contact you directly.
+              Your <strong style={{ color: '#0ef6cc' }}>₦15,000</strong> activation fee has been received. Your verified property listing is now visible to thousands of buyers across Nigeria.
             </p>
 
             <div style={{ background: 'rgba(14,246,204,0.06)', border: '1.5px solid rgba(14,246,204,0.25)', borderRadius: 14, padding: '1.25rem', marginBottom: 28, textAlign: 'left' }}>
-              <div style={{ fontWeight: 800, color: '#0ef6cc', marginBottom: 8, fontSize: 14 }}>What happens next?</div>
+              <div style={{ fontWeight: 800, color: '#0ef6cc', marginBottom: 8, fontSize: 14 }}>Your listing benefits</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {[
-                  'Our team reviews your listing for accuracy',
-                  'Listing goes live on the Buy Property page',
-                  'Interested buyers see your contact details for free',
-                  'Listing stays live until sold — no monthly fee',
+                  '✅ Veryland Verified badge — builds instant buyer trust',
+                  '📍 Visible on the Buy Property page to all visitors',
+                  '📞 Buyers contact you directly — no middleman',
+                  '♾️ Stays live until sold — no monthly charges ever',
                 ].map((step, i) => (
-                  <div key={i} style={{ display: 'flex', gap: 10, color: '#cccccc', fontSize: 14 }}>
-                    <span style={{ color: '#0ef6cc', fontWeight: 700, minWidth: 20 }}>{i + 1}.</span>
-                    {step}
-                  </div>
+                  <div key={i} style={{ color: '#cccccc', fontSize: 14, lineHeight: 1.6 }}>{step}</div>
                 ))}
               </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <a href="/buy" style={{ display: 'block', background: 'linear-gradient(135deg, #0ef6cc, #00c9a7)', color: '#080a0f', padding: '14px', borderRadius: 11, fontWeight: 900, fontSize: 16, textDecoration: 'none' }}>
-                Browse All Properties for Sale
+                View Buy Property Page →
               </a>
               <a href="/" style={{ display: 'block', background: 'rgba(255,255,255,0.06)', border: '1.5px solid var(--border-1)', color: '#cccccc', padding: '13px', borderRadius: 11, fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>
                 Back to Homepage

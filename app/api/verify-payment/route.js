@@ -32,16 +32,16 @@ export async function POST(request) {
       process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     )
 
-    // Handle sale listing fee payment
-    if (paymentType === 'sale_listing') {
+    // Handle sale activation fee payment (charged after admin approval)
+    if (paymentType === 'sale_activation' || paymentType === 'sale_listing') {
       if (!listingId) {
         return Response.json({ success: false, error: 'Missing listing_id in payment metadata' })
       }
       await supabase
         .from('property_sales')
-        .update({ listing_fee_paid: true, listing_fee_reference: reference })
+        .update({ listing_fee_paid: true, listing_fee_reference: reference, status: 'active' })
         .eq('id', listingId)
-      return Response.json({ success: true, payment_type: 'sale_listing', listing_id: listingId })
+      return Response.json({ success: true, payment_type: 'sale_activation', listing_id: listingId })
     }
 
     if (!listingId || !tenantId) {

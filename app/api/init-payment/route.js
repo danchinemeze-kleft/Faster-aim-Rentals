@@ -20,9 +20,9 @@ export async function POST(request) {
     amount = 2500000;
     payment_type = 'tenant_subscription';
     callback_url = `https://rent.fasteraim.com/tenant-sub-success?user_id=${encodeURIComponent(user_id)}`;
-  } else if (type === 'sale_listing') {
-    amount = 2000000; // ₦20,000 one-time listing fee
-    payment_type = 'sale_listing';
+  } else if (type === 'sale_activation') {
+    amount = 1500000; // ₦15,000 activation fee — charged only after admin approval
+    payment_type = 'sale_activation';
     callback_url = `https://rent.fasteraim.com/sale-success?listing_id=${listing_id}&user_id=${encodeURIComponent(user_id)}`;
   } else {
     return Response.json({ error: 'Invalid payment type' }, { status: 400 });

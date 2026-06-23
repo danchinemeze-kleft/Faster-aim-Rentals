@@ -103,6 +103,7 @@ export default function SellPage() {
   const [photoProgress, setPhotoProgress] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [submitted, setSubmitted] = useState(null); // { id, title } after success
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -186,30 +187,7 @@ export default function SellPage() {
 
       if (insertErr) throw insertErr;
 
-      // Get user email for Paystack
-      const { data: profile } = await supabase
-        .from('Profiles')
-        .select('email')
-        .eq('id', user.id)
-        .single();
-
-      const email = profile?.email || user.email;
-
-      // Init payment
-      const res = await fetch('/api/init-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          type: 'sale_listing',
-          listing_id: newListing.id,
-          user_id: user.id,
-        }),
-      });
-      const payData = await res.json();
-      if (!payData.authorization_url) throw new Error(payData.error || 'Payment init failed');
-
-      window.location.href = payData.authorization_url;
+      setSubmitted({ id: newListing.id, title: form.title.trim() });
     } catch (err) {
       setError('Error: ' + err.message);
       setSubmitting(false);
@@ -261,6 +239,47 @@ export default function SellPage() {
 
       <style>{`.sell-field::placeholder { color: #8faabb !important; opacity: 1; }`}</style>
       <div style={{ maxWidth: 720, margin: '0 auto', padding: '3rem 1.25rem 6rem' }}>
+
+        {/* SUCCESS SCREEN */}
+        {submitted && (
+          <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+            <div style={{ width: 88, height: 88, borderRadius: '50%', background: 'rgba(14,246,204,0.1)', border: '3px solid #0ef6cc', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 28px', fontSize: 42 }}>
+              📋
+            </div>
+            <h1 style={{ color: '#0ef6cc', fontSize: '1.9rem', fontWeight: 900, margin: '0 0 12px' }}>
+              Submission Received!
+            </h1>
+            <p style={{ color: '#cccccc', fontSize: 16, lineHeight: 1.8, marginBottom: 32, maxWidth: 520, margin: '0 auto 32px' }}>
+              Your property <strong style={{ color: '#ffffff' }}>&ldquo;{submitted.title}&rdquo;</strong> has been submitted for review. Our team will verify your documents within <strong style={{ color: '#0ef6cc' }}>24–48 hours</strong>. Submission is <strong style={{ color: '#0ef6cc' }}>free</strong> — you only pay after your listing is approved.
+            </p>
+
+            <div style={{ background: 'rgba(14,246,204,0.06)', border: '2px solid rgba(14,246,204,0.25)', borderRadius: 16, padding: '1.5rem', marginBottom: 32, textAlign: 'left', maxWidth: 520, margin: '0 auto 32px' }}>
+              <div style={{ fontWeight: 800, color: '#0ef6cc', fontSize: 14, marginBottom: 14 }}>What happens next?</div>
+              {[
+                ['🔍', 'Admin reviews your listing and documents (24–48 hrs)'],
+                ['✅', 'Approved? You receive a notification to pay the ₦15,000 activation fee'],
+                ['🚀', 'After payment, your listing goes LIVE on the Buy Property page'],
+                ['♾️', 'Listing stays visible until your property is sold — no monthly charges'],
+              ].map(([icon, text], i) => (
+                <div key={i} style={{ display: 'flex', gap: 12, marginBottom: 10, color: '#cccccc', fontSize: 14, alignItems: 'flex-start' }}>
+                  <span style={{ fontSize: 18, lineHeight: 1.3 }}>{icon}</span>
+                  <span>{text}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 400, margin: '0 auto' }}>
+              <a href="/buy" style={{ display: 'block', background: 'linear-gradient(135deg, #0ef6cc, #00c9a7)', color: '#080a0f', padding: '14px', borderRadius: 11, fontWeight: 900, fontSize: 16, textDecoration: 'none' }}>
+                Browse Properties for Sale →
+              </a>
+              <a href="/" style={{ display: 'block', background: 'rgba(255,255,255,0.05)', border: '1.5px solid rgba(255,255,255,0.15)', color: '#cccccc', padding: '13px', borderRadius: 11, fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>
+                Back to Homepage
+              </a>
+            </div>
+          </div>
+        )}
+
+        {!submitted && (<>
         <div style={{ marginBottom: '2rem' }}>
           <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#ffffff', margin: '0 0 10px', letterSpacing: '-0.5px' }}>
             List Property for Sale
@@ -268,6 +287,17 @@ export default function SellPage() {
           <p style={{ color: '#cccccc', fontSize: 15, lineHeight: 1.75, margin: 0 }}>
             Sell a variety of properties — Residential Land, Commercial Land, Agricultural Land, House, Duplex, Bungalow and more. Your listing stays live until sold.
           </p>
+        </div>
+
+        {/* Deterrent warning */}
+        <div style={{ background: 'rgba(239,68,68,0.07)', border: '1.5px solid rgba(239,68,68,0.35)', borderRadius: 12, padding: '14px 18px', marginBottom: 24, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+          <span style={{ fontSize: 20, lineHeight: 1.3, flexShrink: 0 }}>🛡️</span>
+          <div>
+            <div style={{ color: '#fca5a5', fontWeight: 800, fontSize: 14, marginBottom: 4 }}>Document Verification Policy</div>
+            <div style={{ color: '#f87171', fontSize: 13, lineHeight: 1.65 }}>
+              All listings are reviewed before going live. <strong>Fake, forged, or incomplete ownership documents result in permanent rejection</strong> and may be reported to authorities. Only submit genuine property documents.
+            </div>
+          </div>
         </div>
 
         {error && (
@@ -429,9 +459,9 @@ export default function SellPage() {
 
           {/* Fee notice */}
           <div style={{ background: 'rgba(14,246,204,0.06)', border: '2px solid rgba(14,246,204,0.3)', borderRadius: 14, padding: '1.25rem', marginBottom: 24 }}>
-            <div style={{ fontWeight: 800, color: '#0ef6cc', fontSize: 15, marginBottom: 6 }}>📋 Listing Fee: ₦20,000 (one-time)</div>
+            <div style={{ fontWeight: 800, color: '#0ef6cc', fontSize: 15, marginBottom: 6 }}>✅ Submission is Free</div>
             <p style={{ color: '#cccccc', fontSize: 14, lineHeight: 1.65, margin: 0 }}>
-              After submitting this form you&apos;ll be redirected to Paystack to pay your listing fee. Your property stays live until it&apos;s sold, no monthly charges. We review and approve listings within 24 hours.
+              Submit your listing at no cost. Our team reviews and verifies your documents within <strong style={{ color: '#ffffff' }}>24–48 hours</strong>. If approved, you pay a one-time <strong style={{ color: '#0ef6cc' }}>₦15,000 activation fee</strong> to make your listing live — and it stays live until your property is sold.
             </p>
           </div>
 
@@ -447,9 +477,10 @@ export default function SellPage() {
               boxShadow: submitting ? 'none' : '0 4px 20px rgba(14,246,204,0.35)',
             }}
           >
-            {submitting ? `Uploading photos… ${photoProgress}%` : 'Submit & Pay Listing Fee →'}
+            {submitting ? `Uploading photos… ${photoProgress}%` : 'Submit for Review (Free) →'}
           </button>
         </form>
+        </>)}
       </div>
     </div>
   );

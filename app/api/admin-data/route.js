@@ -28,11 +28,13 @@ export async function POST(req) {
       { data: profileData },
       { data: subData },
       { data: vData },
+      { data: saleData },
     ] = await Promise.all([
       supabase.from('listings').select('*').order('created_at', { ascending: false }),
       supabase.from('Profiles').select('*').order('created_at', { ascending: false }),
       supabase.from('Subscription').select('*').order('expiry_date', { ascending: false }),
       supabase.from('veryland_submissions').select('*').order('submitted_at', { ascending: false }),
+      supabase.from('property_sales').select('*, seller:Profiles!seller_id(full_name, email, phone)').order('created_at', { ascending: false }),
     ]);
 
     return NextResponse.json({
@@ -40,6 +42,7 @@ export async function POST(req) {
       profiles: profileData || [],
       subscriptions: subData || [],
       verylandSubmissions: vData || [],
+      saleListings: saleData || [],
     });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });

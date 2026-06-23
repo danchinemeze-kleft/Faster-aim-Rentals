@@ -32,6 +32,8 @@ export default function AdminDashboard() {
   const [verylandSubmissions, setVerylandSubmissions] = useState([]);
   const [verylandBadgeSel, setVerylandBadgeSel] = useState({});
   const [verylandNotes, setVerylandNotes] = useState({});
+  const [saleListings, setSaleListings] = useState([]);
+  const [saleRejectNotes, setSaleRejectNotes] = useState({});
 
   useEffect(() => {
     const saved = sessionStorage.getItem('mr_rent_admin');
@@ -62,7 +64,7 @@ export default function AdminDashboard() {
         return;
       }
 
-      const { listings: listingData, profiles: profileData, subscriptions: subData, verylandSubmissions: vData } = await res.json();
+      const { listings: listingData, profiles: profileData, subscriptions: subData, verylandSubmissions: vData, saleListings: saleData } = await res.json();
 
       if (listingData) {
         setListings(listingData);
@@ -82,6 +84,7 @@ export default function AdminDashboard() {
 
       if (subData) setSubscriptions(subData);
       if (vData) setVerylandSubmissions(vData);
+      if (saleData) setSaleListings(saleData);
     } catch (err) {
       console.error(err);
     }
@@ -116,6 +119,23 @@ export default function AdminDashboard() {
     if (!error) {
       setVerylandSubmissions(prev => prev.map(s => s.id === id ? { ...s, status: 'rejected' } : s));
       showMsg('Veryland submission rejected.');
+    }
+  }
+
+  async function approveSaleListing(id) {
+    const { error } = await supabase.from('property_sales').update({ status: 'approved' }).eq('id', id);
+    if (!error) {
+      setSaleListings(prev => prev.map(l => l.id === id ? { ...l, status: 'approved' } : l));
+      showMsg('Sale listing approved — seller can now activate.');
+    }
+  }
+
+  async function rejectSaleListing(id) {
+    const reason = saleRejectNotes[id] || '';
+    const { error } = await supabase.from('property_sales').update({ status: 'rejected', admin_notes: reason }).eq('id', id);
+    if (!error) {
+      setSaleListings(prev => prev.map(l => l.id === id ? { ...l, status: 'rejected' } : l));
+      showMsg('Sale listing rejected.');
     }
   }
 
@@ -288,6 +308,7 @@ export default function AdminDashboard() {
   const otherListings = listings.filter(l => l.status === 'rejected' || l.status === 'unavailable');
   const tabListings = [...pendingListings, ...activeListings, ...otherListings];
   const verylandPending = verylandSubmissions.filter(s => s.status === 'submitted' || s.status === 'under_review');
+  const salePending = saleListings.filter(l => l.status === 'pending' || !l.status);
   const now = new Date();
   const activeSubs = subscriptions.filter(s => new Date(s.expiry_date) > now);
 
@@ -358,12 +379,13 @@ export default function AdminDashboard() {
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: '1.5rem', borderBottom: '0.5px solid #222', paddingBottom: 12 }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: '1.5rem', borderBottom: '0.5px solid #222', paddingBottom: 12, flexWrap: 'wrap' }}>
           {[
             { key: 'listings', label: `Listings${pendingListings.length > 0 ? ` (${pendingListings.length} pending)` : ''}` },
             { key: 'landlords', label: `Landlords (${landlords.length})` },
             { key: 'subscriptions', label: `Subscriptions (${activeSubs.length} active)` },
             { key: 'veryland', label: `Veryland${verylandPending.length > 0 ? ` (${verylandPending.length} pending)` : ''}` },
+            { key: 'sales', label: `Sale Listings${salePending.length > 0 ? ` (${salePending.length} pending)` : ''}` },
           ].map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
               background: activeTab === tab.key ? '#0ef6cc' : 'transparent',
@@ -677,6 +699,95 @@ export default function AdminDashboard() {
                         <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>Badge awarded</div>
                       </div>
                     )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* SALE LISTINGS TAB */}
+        {!loading && activeTab === 'sales' && (
+          <div>
+            {saleListings.length === 0 && (
+              <div style={{ background: '#111318', border: '0.5px solid #222', borderRadius: 12, padding: '3rem', textAlign: 'center', color: '#555' }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>🏡</div>
+                <div style={{ fontSize: 14 }}>No property sale listings yet.</div>
+              </div>
+            )}
+            {saleListings.map(listing => {
+              const isPending = listing.status === 'pending' || !listing.status;
+              const isApproved = listing.status === 'approved';
+              const isActive = listing.status === 'active';
+              const isRejected = listing.status === 'rejected';
+              const activationLink = `https://rent.fasteraim.com/sell/activate/${listing.id}`;
+              const saleStatusMap = {
+                pending: { bg: '#FAEEDA', color: '#854F0B', label: 'Pending Review' },
+                approved: { bg: '#E1F5EE', color: '#0F6E56', label: 'Approved — Awaiting Payment' },
+                active: { bg: '#e8f5ff', color: '#0055cc', label: 'Active (Live)' },
+                rejected: { bg: '#FCEBEB', color: '#A32D2D', label: 'Rejected' },
+              };
+              const st = saleStatusMap[listing.status] || saleStatusMap.pending;
+              return (
+                <div key={listing.id} style={{
+                  background: '#111318',
+                  border: isPending ? '0.5px solid #BA7517' : isApproved ? '0.5px solid #0ef6cc44' : '0.5px solid #222',
+                  borderRadius: 12, padding: '1.25rem', marginBottom: 10,
+                }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'start' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
+                        <span style={{ fontWeight: 600, fontSize: 15, color: '#e8e8e8' }}>{listing.title || 'Untitled'}</span>
+                        <span style={{ background: st.bg, color: st.color, fontSize: 11, fontWeight: 500, padding: '2px 9px', borderRadius: 20 }}>{st.label}</span>
+                        {listing.listing_fee_paid && <span style={{ background: '#E1F5EE', color: '#0F6E56', fontSize: 11, padding: '2px 9px', borderRadius: 20 }}>💳 Fee Paid</span>}
+                      </div>
+                      <div style={{ fontSize: 13, color: '#888', display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 6 }}>
+                        <span>📍 {listing.location}, {listing.state}</span>
+                        <span>🏠 {listing.property_type}</span>
+                        <span>💰 ₦{Number(listing.price).toLocaleString()}</span>
+                        <span>🕐 {timeAgo(listing.created_at)}</span>
+                      </div>
+                      <div style={{ fontSize: 13, color: '#666', display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                        <span>👤 {listing.seller?.full_name || '—'}</span>
+                        <span>✉️ {listing.seller?.email || '—'}</span>
+                        <span>📞 {listing.seller?.phone || '—'}</span>
+                      </div>
+                      {isApproved && (
+                        <div style={{ marginTop: 10, background: 'rgba(14,246,204,0.06)', border: '1px solid rgba(14,246,204,0.2)', borderRadius: 8, padding: '8px 12px' }}>
+                          <div style={{ fontSize: 12, color: '#0ef6cc', fontWeight: 700, marginBottom: 4 }}>Seller Activation Link</div>
+                          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                            <code style={{ fontSize: 11, color: '#888', wordBreak: 'break-all' }}>{activationLink}</code>
+                            <button onClick={() => { navigator.clipboard.writeText(activationLink); showMsg('Activation link copied!'); }} style={{
+                              background: '#0ef6cc', color: '#080a0f', border: 'none', borderRadius: 6,
+                              padding: '4px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap'
+                            }}>Copy Link</button>
+                          </div>
+                          <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>Send this link to the seller via WhatsApp or email so they can pay ₦15,000 to activate.</div>
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 160 }}>
+                      {isPending && (
+                        <>
+                          <button onClick={() => approveSaleListing(listing.id)} style={{
+                            background: '#0ef6cc', color: '#080a0f', border: 'none',
+                            borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer'
+                          }}>✓ Approve</button>
+                          <input
+                            placeholder="Rejection reason"
+                            value={saleRejectNotes[listing.id] || ''}
+                            onChange={e => setSaleRejectNotes(prev => ({ ...prev, [listing.id]: e.target.value }))}
+                            style={{ background: '#1a1d24', border: '0.5px solid #333', borderRadius: 6, color: '#888', fontSize: 12, padding: '6px 10px', outline: 'none', boxSizing: 'border-box' }}
+                          />
+                          <button onClick={() => rejectSaleListing(listing.id)} style={{
+                            background: 'transparent', color: '#E24B4A', border: '0.5px solid #E24B4A',
+                            borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer'
+                          }}>✕ Reject</button>
+                        </>
+                      )}
+                      {isActive && <span style={{ color: '#0ef6cc', fontSize: 12, fontWeight: 700, textAlign: 'center' }}>🟢 Live</span>}
+                      {isRejected && <span style={{ color: '#E24B4A', fontSize: 12, textAlign: 'center' }}>✕ Rejected</span>}
+                    </div>
                   </div>
                 </div>
               );
