@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 
 const NIGERIAN_STATES = [
@@ -113,6 +113,55 @@ export default function SellPage() {
   }, [supabase]);
 
   const isLand = LAND_TYPES.includes(form.property_type);
+
+  const strength = useMemo(() => {
+    const checks = [];
+    let score = 0;
+
+    // Required fields — 60 pts
+    const req = [
+      { label: 'Property title', done: !!form.title.trim(), pts: 10 },
+      { label: 'Location / address', done: !!form.location.trim(), pts: 10 },
+      { label: 'State selected', done: !!form.state, pts: 10 },
+      { label: 'Asking price', done: !!(form.price && !isNaN(form.price) && parseInt(form.price) > 0), pts: 10 },
+      { label: 'Ownership document type', done: !!form.title_type, pts: 10 },
+      { label: 'At least 1 photo', done: photos.length >= 1, pts: 10 },
+    ];
+    req.forEach(c => { if (c.done) score += c.pts; checks.push(c); });
+
+    // Bonus fields — 40 pts
+    const bonus = [
+      { label: 'Detailed description (50+ chars)', done: form.description.trim().length >= 50, pts: 10, bonus: true },
+      { label: '3 or more property photos', done: photos.length >= 3, pts: 8, bonus: true },
+      { label: 'Development status', done: !!form.development_status, pts: 5, bonus: true },
+      { label: 'Features & amenities listed', done: form.amenities.length >= 1, pts: 5, bonus: true },
+      ...(isLand ? [
+        { label: 'Land size / measurement', done: !!form.land_size.trim(), pts: 6, bonus: true },
+        { label: 'Land ownership type', done: !!form.land_ownership, pts: 6, bonus: true },
+      ] : []),
+    ];
+    bonus.forEach(c => { if (c.done) score += c.pts; checks.push(c); });
+
+    const maxScore = isLand ? 100 : 88;
+    const pct = Math.min(100, Math.round((score / maxScore) * 100));
+
+    let level, color, barColor, bgColor, message;
+    if (pct < 30) {
+      level = 'Weak'; color = '#ef4444'; barColor = '#ef4444'; bgColor = 'rgba(239,68,68,0.08)';
+      message = 'Fill all required fields before submitting.';
+    } else if (pct < 60) {
+      level = 'Fair'; color = '#f59e0b'; barColor = '#f59e0b'; bgColor = 'rgba(245,158,11,0.08)';
+      message = 'Good start — more detail = faster admin approval.';
+    } else if (pct < 85) {
+      level = 'Good'; color = '#22c55e'; barColor = '#22c55e'; bgColor = 'rgba(34,197,94,0.08)';
+      message = 'Almost there — complete all bonus fields for highest priority.';
+    } else {
+      level = 'Strong'; color = '#0ef6cc'; barColor = '#0ef6cc'; bgColor = 'rgba(14,246,204,0.08)';
+      message = 'Excellent! Your listing has strong documentation — high approval priority.';
+    }
+
+    return { pct, level, color, barColor, bgColor, message, checks };
+  }, [form, photos, isLand]);
 
   function setField(key, val) {
     setForm(prev => ({ ...prev, [key]: val }));
@@ -305,6 +354,32 @@ export default function SellPage() {
             {error}
           </div>
         )}
+
+        {/* Listing Strength Meter */}
+        <div style={{ background: strength.bgColor, border: `1.5px solid ${strength.color}55`, borderRadius: 14, padding: '1.25rem 1.5rem', marginBottom: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <div style={{ fontWeight: 800, color: strength.color, fontSize: 14 }}>
+              📊 Listing Strength: <span style={{ fontWeight: 900 }}>{strength.level}</span>
+            </div>
+            <div style={{ fontWeight: 900, color: strength.color, fontSize: 20 }}>{strength.pct}%</div>
+          </div>
+          <div style={{ height: 10, borderRadius: 5, background: 'rgba(255,255,255,0.07)', overflow: 'hidden', marginBottom: 8 }}>
+            <div style={{ width: `${strength.pct}%`, height: '100%', background: strength.barColor, borderRadius: 5, transition: 'width 0.35s ease' }} />
+          </div>
+          <div style={{ color: '#cccccc', fontSize: 13, marginBottom: strength.pct < 100 ? 10 : 0 }}>
+            {strength.message}
+          </div>
+          {strength.pct < 100 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {strength.checks.filter(c => !c.done).map(c => (
+                <span key={c.label} style={{
+                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)',
+                  color: '#888', borderRadius: 20, padding: '3px 11px', fontSize: 11, fontWeight: 600,
+                }}>+ {c.label}</span>
+              ))}
+            </div>
+          )}
+        </div>
 
         <form onSubmit={handleSubmit} style={{ border: '2.5px solid #0ef6cc', borderRadius: 20, padding: '1.5rem', boxShadow: '0 0 32px rgba(14,246,204,0.12)' }}>
 
