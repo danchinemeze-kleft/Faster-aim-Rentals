@@ -83,8 +83,8 @@ const lbl = {
 
 const inp = {
   width: '100%', padding: '13px 15px',
-  background: 'var(--input-bg)',
-  border: '2px solid rgba(255,255,255,0.45)',
+  background: '#1a2235',
+  border: '2px solid rgba(14,246,204,0.35)',
   borderRadius: 10, color: '#ffffff', fontSize: 15,
   boxSizing: 'border-box', outline: 'none',
   fontFamily: "'Segoe UI', system-ui, sans-serif",
@@ -259,13 +259,14 @@ export default function SellPage() {
         <span style={{ color: '#ffffff', fontSize: 14, fontWeight: 600 }}>Sell Property</span>
       </nav>
 
+      <style>{`.sell-field::placeholder { color: #8faabb !important; opacity: 1; }`}</style>
       <div style={{ maxWidth: 720, margin: '0 auto', padding: '3rem 1.25rem 6rem' }}>
         <div style={{ marginBottom: '2rem' }}>
           <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#ffffff', margin: '0 0 10px', letterSpacing: '-0.5px' }}>
             List Property for Sale
           </h1>
           <p style={{ color: '#cccccc', fontSize: 15, lineHeight: 1.75, margin: 0 }}>
-            Sell a variety of properties — Residential Land, Commercial Land, Agricultural Land, House, Duplex, Bungalow and more. Pay a one-time listing fee of <strong style={{ color: '#0ef6cc' }}>₦20,000</strong> and your property stays live until sold.
+            Sell a variety of properties — Residential Land, Commercial Land, Agricultural Land, House, Duplex, Bungalow and more. Your listing stays live until sold.
           </p>
         </div>
 
@@ -275,7 +276,7 @@ export default function SellPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={{ border: '2.5px solid #0ef6cc', borderRadius: 20, padding: '1.5rem', boxShadow: '0 0 32px rgba(14,246,204,0.12)' }}>
 
           {/* Basic info */}
           <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: 16 }}>
@@ -285,18 +286,18 @@ export default function SellPage() {
 
             <div style={{ marginBottom: 18 }}>
               <label style={lbl}>Property Title *</label>
-              <input value={form.title} onChange={e => setField('title', e.target.value)} placeholder="e.g. 2 Plots of Land with C of O in GRA Onitsha" style={inp} required />
+              <input className="sell-field" value={form.title} onChange={e => setField('title', e.target.value)} placeholder="e.g. 2 Plots of Land with C of O in GRA Onitsha" style={inp} required />
             </div>
 
             <div style={{ marginBottom: 18 }}>
               <label style={lbl}>Description</label>
-              <textarea value={form.description} onChange={e => setField('description', e.target.value)} placeholder="Describe the property — location advantages, road access, title history, development status..." rows={4} style={{ ...inp, resize: 'vertical', lineHeight: 1.65 }} />
+              <textarea className="sell-field" value={form.description} onChange={e => setField('description', e.target.value)} placeholder="Describe the property — location advantages, road access, title history, development status..." rows={4} style={{ ...inp, resize: 'vertical', lineHeight: 1.65 }} />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18 }}>
               <div>
                 <label style={lbl}>Location / Address *</label>
-                <input value={form.location} onChange={e => setField('location', e.target.value)} placeholder="Street / area name" style={inp} required />
+                <input className="sell-field" value={form.location} onChange={e => setField('location', e.target.value)} placeholder="Street / area name" style={inp} required />
               </div>
               <div>
                 <label style={lbl}>State *</label>
@@ -310,7 +311,7 @@ export default function SellPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18 }}>
               <div>
                 <label style={lbl}>Asking Price (₦) *</label>
-                <input type="number" value={form.price} onChange={e => setField('price', e.target.value)} placeholder="e.g. 5000000" style={inp} min={0} required />
+                <input className="sell-field" type="number" value={form.price} onChange={e => setField('price', e.target.value)} placeholder="e.g. 5000000" style={inp} min={0} required />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingBottom: 4 }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', color: '#cccccc', fontSize: 14, fontWeight: 600 }}>
@@ -345,7 +346,7 @@ export default function SellPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18 }}>
               <div>
                 <label style={lbl}>Land Size</label>
-                <input value={form.land_size} onChange={e => setField('land_size', e.target.value)} placeholder="e.g. 2 plots, 600 sqm" style={inp} />
+                <input className="sell-field" value={form.land_size} onChange={e => setField('land_size', e.target.value)} placeholder="e.g. 2 plots, 600 sqm" style={inp} />
               </div>
               <div>
                 <label style={lbl}>Land Ownership</label>
