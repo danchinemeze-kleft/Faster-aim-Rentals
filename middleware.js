@@ -19,12 +19,17 @@ export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
   const isProtected = PROTECTED.some(
-    p => pathname === p || pathname.startsWith(p + '/')
+    (p) => pathname === p || pathname.startsWith(p + '/')
   );
 
   if (!isProtected) return NextResponse.next({ request });
 
   let response = NextResponse.next({ request });
+
+  // Track every cookie Supabase wants to set, so we can re-apply them
+  // to whichever response object we ultimately return (including a
+  // redirect response, which is built separately below).
+  let pendingCookies = [];
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -35,6 +40,7 @@ export async function middleware(request) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
+          pendingCookies = cookiesToSet;
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           response = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
@@ -51,7 +57,18 @@ export async function middleware(request) {
     const url = request.nextUrl.clone();
     url.pathname = '/account';
     url.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(url);
+
+    const redirectResponse = NextResponse.redirect(url);
+
+    // Critical: re-apply any refreshed session cookies onto the redirect
+    // response too. Without this, a token refresh that happened during
+    // getUser() gets silently dropped, leaving the browser with a stale
+    // cookie and causing an account <-> subscribe redirect loop.
+    pendingCookies.forEach(({ name, value, options }) =>
+      redirectResponse.cookies.set(name, value, options)
+    );
+
+    return redirectResponse;
   }
 
   return response;
