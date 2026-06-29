@@ -33,24 +33,37 @@ export default function MyAccountPage() {
 
   useEffect(() => {
     let settled = false
+    let mounted = true
 
     const init = async (session) => {
       if (settled) return
       settled = true
-      if (!session) { router.push('/account?redirect=/my-account'); return }
+      if (!session) {
+        router.replace('/account?redirect=/my-account')
+        return
+      }
       setUser(session.user)
       await Promise.all([
         fetchProfile(session.user.id),
         fetchReveals(session.user.id),
       ])
-      setLoading(false)
+      if (mounted) setLoading(false)
     }
 
+    // Check the current session directly first — don't wait on the listener
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!settled) init(session)
+    })
+
+    // Still listen for later changes (e.g. token refresh, sign-in from another tab)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!settled) init(session)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
