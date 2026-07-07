@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createClient } from '@supabase/supabase-js'
 import Breadcrumb from './components/Breadcrumb'
@@ -11,8 +12,10 @@ const supabase = createClient(
 )
 
 export default function Home() {
+  const router = useRouter()
   const [listingCount, setListingCount] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [showBubble, setShowBubble] = useState(false)
 
   useEffect(() => {
     supabase
@@ -21,6 +24,36 @@ export default function Home() {
       .eq('status', 'active')
       .then(({ count }) => { if (count !== null) setListingCount(count) })
   }, [])
+
+  // Floating welcome chat bubble — first-time visitors only, after 6s
+  useEffect(() => {
+    try {
+      const seen = localStorage.getItem('mrRentBubbleSeen')
+      if (!seen) {
+        const timer = setTimeout(() => {
+          setShowBubble(true)
+        }, 6000)
+        return () => clearTimeout(timer)
+      }
+    } catch (e) {
+      // localStorage unavailable (e.g. private browsing) — just skip
+    }
+  }, [])
+
+  const dismissBubble = () => {
+    try { localStorage.setItem('mrRentBubbleSeen', '1') } catch (e) {}
+    setShowBubble(false)
+  }
+
+  const handleBubbleYes = () => {
+    dismissBubble()
+    router.push('/account')
+  }
+
+  const handleBubbleNo = () => {
+    dismissBubble()
+    router.push('/terms')
+  }
 
   const displayCount = listingCount === null ? '...' : listingCount > 0 ? `${listingCount}+` : 'New'
 
@@ -268,6 +301,35 @@ export default function Home() {
         <p style={s.footerCopy}>© 2026 Faster Aim Technology Limited. All rights reserved.</p>
       </footer>
 
+      {/* Floating welcome chat bubble */}
+      {showBubble && (
+        <div style={s.chatBubbleWrap} className="chat-bubble-wrap">
+          <div style={s.chatBubbleCard} className="chat-bubble-card">
+            <button onClick={dismissBubble} style={s.chatBubbleClose} aria-label="Close">✕</button>
+            <div style={s.chatBubbleHeader}>
+              <div style={s.chatBubbleAvatarWrap}>
+                <Image
+                  src="/mr-rent-avatar.png"
+                  alt="Mr. Rent"
+                  width={44}
+                  height={44}
+                  style={s.chatBubbleAvatar}
+                />
+              </div>
+              <div>
+                <div style={s.chatBubbleName}>Mr. Rent</div>
+                <div style={s.chatBubbleStatus}><span style={s.chatBubbleDot}></span>Online now</div>
+              </div>
+            </div>
+            <p style={s.chatBubbleText}>Hey, welcome! 👋 I&apos;m Mr. Rent. Please, can you tell me about yourself?</p>
+            <div style={s.chatBubbleActions}>
+              <button onClick={handleBubbleYes} style={s.chatBubbleYesBtn}>Yes, sure!</button>
+              <button onClick={handleBubbleNo} style={s.chatBubbleNoBtn}>No, thanks</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style>{`
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #ffffff; }
@@ -310,6 +372,22 @@ export default function Home() {
         @keyframes spinSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes spinSlowReverse { from{transform:rotate(360deg)} to{transform:rotate(0deg)} }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes bubbleIn {
+          0% { opacity: 0; transform: translateY(24px) scale(0.94); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes bubblePulse {
+          0%,100% { box-shadow: 0 8px 32px rgba(0,0,0,0.16), 0 0 0 0 rgba(14,165,233,0.35); }
+          50% { box-shadow: 0 8px 32px rgba(0,0,0,0.16), 0 0 0 8px rgba(14,165,233,0); }
+        }
+
+        /* ---- Chat bubble ---- */
+        .chat-bubble-wrap {
+          animation: bubbleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        .chat-bubble-card {
+          animation: bubblePulse 2.5s ease-in-out infinite;
+        }
 
         /* ---- Floating badge — hide on mobile where avatar is too small ---- */
         @media (max-width: 768px) {
@@ -356,6 +434,9 @@ export default function Home() {
           /* Footer */
           .footer-top { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 1rem !important; }
           .footer-links { flex-wrap: wrap !important; justify-content: center !important; gap: 0.85rem !important; }
+
+          /* Chat bubble */
+          .chat-bubble-wrap { right: 14px !important; bottom: 14px !important; left: 14px !important; max-width: none !important; }
         }
 
         /* ---- Buy/Sell grid ---- */
@@ -598,4 +679,42 @@ const s = {
   footerDivider: { border: 'none', borderTop: '1px solid #e2e8f0', margin: '0 auto 1.5rem', maxWidth: '1000px' },
   footerDesc: { color: '#94a3b8', fontWeight: '600', fontSize: '0.8rem', textAlign: 'center', marginBottom: '0.5rem' },
   footerCopy: { color: '#cbd5e1', fontWeight: '600', fontSize: '0.75rem', textAlign: 'center' },
+
+  // ---- Floating chat bubble ----
+  chatBubbleWrap: {
+    position: 'fixed', bottom: '24px', right: '24px', zIndex: 1000,
+    maxWidth: '320px', width: '90vw',
+  },
+  chatBubbleCard: {
+    background: '#ffffff', borderRadius: '18px', padding: '1.25rem',
+    border: `1.5px solid ${CYAN}44`,
+    boxShadow: '0 8px 32px rgba(0,0,0,0.16)', position: 'relative',
+  },
+  chatBubbleClose: {
+    position: 'absolute', top: '10px', right: '10px',
+    background: '#f1f5f9', border: 'none', borderRadius: '50%',
+    width: '24px', height: '24px', fontSize: '0.75rem', color: '#64748b',
+    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+  },
+  chatBubbleHeader: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.75rem' },
+  chatBubbleAvatarWrap: {
+    width: '44px', height: '44px', borderRadius: '50%', overflow: 'hidden',
+    border: `2px solid ${CYAN}55`, flexShrink: 0,
+  },
+  chatBubbleAvatar: { width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' },
+  chatBubbleName: { fontWeight: '800', fontSize: '0.92rem', color: '#0f172a' },
+  chatBubbleStatus: { display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.72rem', color: '#22c55e', fontWeight: '700' },
+  chatBubbleDot: { width: '7px', height: '7px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' },
+  chatBubbleText: { fontSize: '0.86rem', color: '#334155', fontWeight: '600', lineHeight: '1.6', marginBottom: '1rem' },
+  chatBubbleActions: { display: 'flex', gap: '0.6rem' },
+  chatBubbleYesBtn: {
+    flex: 1, background: `linear-gradient(135deg, ${CYAN}, #0284c7)`,
+    color: '#ffffff', border: 'none', padding: '0.6rem 0.75rem',
+    borderRadius: '9px', fontWeight: '800', fontSize: '0.82rem', cursor: 'pointer',
+  },
+  chatBubbleNoBtn: {
+    flex: 1, background: '#f1f5f9', color: '#334155', border: '1.5px solid #e2e8f0',
+    padding: '0.6rem 0.75rem', borderRadius: '9px', fontWeight: '800',
+    fontSize: '0.82rem', cursor: 'pointer',
+  },
 }
