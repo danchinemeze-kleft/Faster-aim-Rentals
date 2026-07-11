@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -108,9 +109,9 @@ export default function VerylandCheckPage() {
       {/* Nav */}
       <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)' }} />
       <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: 'var(--card-bg)', position: 'sticky', top: 3, zIndex: 100 }}>
-        <link href="/" style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</link>
+        <Link href="/" style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</Link>
         <span style={{ color: '#d1d5db', margin: '0 8px' }}>/</span>
-        <a href="/veryland" style={{ color: GREEN, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Veryland</a>
+        <Link href="/veryland" style={{ color: GREEN, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Veryland</Link>
         <span style={{ color: '#d1d5db', margin: '0 8px' }}>/</span>
         <span style={{ color: '#ffffff', fontSize: 14, fontWeight: 600 }}>Check Documents</span>
       </nav>
@@ -246,9 +247,9 @@ export default function VerylandCheckPage() {
                   </div>
                   <p style={{ fontSize: 16, color: '#cccccc', fontWeight: 500, lineHeight: 1.75, margin: 0 }}>
                     This address is not in our verified database. That doesn&apos;t automatically mean it&apos;s fraudulent — but we strongly recommend asking the owner to{' '}
-                    <a href="/veryland/submit" style={{ color: GREEN_DARK, textDecoration: 'none', fontWeight: 700, borderBottom: `1px solid ${GREEN_DARK}` }}>
+                    <Link href="/veryland/submit" style={{ color: GREEN_DARK, textDecoration: 'none', fontWeight: 700, borderBottom: `1px solid ${GREEN_DARK}` }}>
                       submit their documents for verification
-                    </a>{' '}
+                    </Link>{' '}
                     before you commit any money.
                   </p>
                 </div>
@@ -289,9 +290,9 @@ export default function VerylandCheckPage() {
           <div style={{ marginTop: 40, background: 'var(--card-bg)', border: '1.5px solid var(--border-1)', borderRadius: 16, padding: '1.5rem', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
             <p style={{ color: '#cccccc', fontSize: 14, fontWeight: 500, margin: 0 }}>
               Are you a property owner?{' '}
-              <a href="/veryland/submit" style={{ color: GREEN_DARK, textDecoration: 'none', fontWeight: 700, borderBottom: `1px solid ${GREEN_DARK}` }}>
+              <Link href="/veryland/submit" style={{ color: GREEN_DARK, textDecoration: 'none', fontWeight: 700, borderBottom: `1px solid ${GREEN_DARK}` }}>
                 Get your property verified →
-              </a>
+              </Link>
             </p>
           </div>
         )}
