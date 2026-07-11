@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import Breadcrumb from '../components/Breadcrumb'
 
 function RevealSuccessInner() {
   const searchParams = useSearchParams()
@@ -47,114 +48,274 @@ function RevealSuccessInner() {
     verify()
   }, [searchParams])
 
-  return (
-    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: 'Segoe UI, system-ui, sans-serif', color: 'var(--text-1)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-
-      {status === 'verifying' && (
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 48, height: 48, border: '3px solid #1a1d24', borderTopColor: '#0ef6cc', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 1.5rem' }} />
-          <div style={{ fontSize: 15, color: '#cccccc' }}>Verifying your payment…</div>
-        </div>
-      )}
-
-      {status === 'success' && contact && (
-        <div style={{ textAlign: 'center', maxWidth: 460, width: '100%' }}>
-          <div style={{ fontSize: 56, marginBottom: '1rem' }}>✅</div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#0ef6cc', marginBottom: 6 }}>Contact Revealed!</h1>
-          {listing && (
-            <p style={{ color: '#cccccc', fontSize: 16, marginBottom: '1.5rem' }}>
-              {listing.title} — {listing.location}, {listing.state}
-            </p>
-          )}
-
-          <div style={{ background: '#111318', border: '0.5px solid #0ef6cc44', borderRadius: 14, padding: '1.5rem', marginBottom: '1.5rem', textAlign: 'left' }}>
-            <div style={{ fontSize: 11, color: '#0ef6cc', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 16 }}>Landlord Contact</div>
-
-            {contact.full_name && (
-              <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 13, color: '#cccccc', marginBottom: 3 }}>Name</div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: '#ffffff' }}>{contact.full_name}</div>
-              </div>
-            )}
-
-            {contact.phone && (
-              <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 13, color: '#cccccc', marginBottom: 3 }}>Phone</div>
-                <a href={`tel:${contact.phone}`} style={{ fontSize: 22, fontWeight: 700, color: '#0ef6cc', textDecoration: 'none', display: 'block' }}>
-                  📞 {contact.phone}
-                </a>
-              </div>
-            )}
-
-            {contact.phone && (
-              <a
-                href={`https://wa.me/${contact.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I'm interested in your property "${listing?.title}" listed on Mr. Rent (rent.fasteraim.com). Is it still available?`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#0d1f0d', border: '0.5px solid #25D36633', borderRadius: 8, padding: '10px 14px', textDecoration: 'none', marginBottom: 12 }}
-              >
-                <span style={{ fontSize: 18 }}>💬</span>
-                <span style={{ fontSize: 14, fontWeight: 600, color: '#25D366' }}>WhatsApp Landlord</span>
-              </a>
-            )}
-
-            {contact.email && (
-              <div>
-                <div style={{ fontSize: 13, color: '#cccccc', marginBottom: 3 }}>Email</div>
-                <a href={`mailto:${contact.email}`} style={{ fontSize: 15, color: '#cccccc', textDecoration: 'none' }}>
-                  ✉️ {contact.email}
-                </a>
-              </div>
-            )}
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <button
-              onClick={() => router.push('/browse')}
-              style={{ width: '100%', padding: '13px', background: '#0ef6cc', color: '#080a0f', border: 'none', borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
-            >
-              Browse More Properties
-            </button>
-            <button
-              onClick={() => router.back()}
-              style={{ width: '100%', padding: '12px', background: 'transparent', color: '#cccccc', border: '0.5px solid #222', borderRadius: 10, fontWeight: 600, fontSize: 13, cursor: 'pointer' }}
-            >
-              Back to Listing
-            </button>
-          </div>
-        </div>
-      )}
-
-      {status === 'error' && (
-        <div style={{ textAlign: 'center', maxWidth: 440 }}>
-          <div style={{ fontSize: 48, marginBottom: '1rem' }}>⚠️</div>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#ffffff', marginBottom: 10 }}>Something went wrong</h1>
-          <p style={{ color: '#cccccc', fontSize: 14, lineHeight: 1.7, marginBottom: '2rem' }}>{errorMsg}</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <button
-              onClick={() => router.push('/browse')}
-              style={{ width: '100%', padding: '13px', background: '#0ef6cc', color: '#080a0f', border: 'none', borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
-            >
-              Back to Browse
-            </button>
-            <a
-              href="mailto:info@fasteraim.com"
-              style={{ display: 'block', width: '100%', padding: '12px', background: 'transparent', color: '#cccccc', border: '0.5px solid #222', borderRadius: 10, fontWeight: 600, fontSize: 13, textAlign: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
-            >
-              Contact Support
-            </a>
-          </div>
-        </div>
-      )}
-
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+  if (status === 'verifying') return (
+    <div className="faim-reveal-page">
+      <div style={{ width: '100%', maxWidth: '480px', padding: '0 0 4px' }}>
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Browse', href: '/browse' }, { label: 'Verifying Payment', href: '/reveal-success' }]} />
+      </div>
+      <div className="faim-reveal-card">
+        <div className="faim-spinner"></div>
+        <h2>Verifying your payment...</h2>
+        <p>Please wait while we confirm your transaction.</p>
+      </div>
+      <Styles />
     </div>
+  )
+
+  if (status === 'error') return (
+    <div className="faim-reveal-page">
+      <div style={{ width: '100%', maxWidth: '480px', padding: '0 0 4px' }}>
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Browse', href: '/browse' }, { label: 'Payment Failed', href: '/reveal-success' }]} />
+      </div>
+      <div className="faim-reveal-card faim-reveal-card--failed">
+        <div className="faim-status-icon">⚠️</div>
+        <h2>Something went wrong</h2>
+        <p>{errorMsg}</p>
+        <div className="faim-actions">
+          <a href="/browse" className="faim-btn faim-btn--primary">Browse Listings</a>
+          <a href="mailto:info@fasteraim.com" className="faim-btn faim-btn--outline">Contact Support</a>
+        </div>
+      </div>
+      <Styles />
+    </div>
+  )
+
+  return (
+    <div className="faim-reveal-page">
+      <div style={{ width: '100%', maxWidth: '480px', padding: '0 0 4px' }}>
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Browse', href: '/browse' }, { label: 'Contact Revealed', href: '/reveal-success' }]} />
+      </div>
+      <div className="faim-reveal-card faim-reveal-card--success">
+
+        {/* Success Header */}
+        <div className="faim-success-header">
+          <div className="faim-success-icon">✅</div>
+          <h1>Contact Revealed!</h1>
+          <p>Payment successful. Here are the landlord&apos;s contact details.</p>
+        </div>
+
+        {/* Property Info */}
+        {listing && (
+          <div className="faim-property-info">
+            <span className="faim-type-pill">{listing.property_type}</span>
+            <h3>{listing.title}</h3>
+            <p>📍 {listing.location}, {listing.state}</p>
+            <p>💰 ₦{listing.price?.toLocaleString()} / {listing.price_period}</p>
+            {(listing.bedrooms || listing.bathrooms) && (
+              <p>🛏 {listing.bedrooms} bed • 🚿 {listing.bathrooms} bath</p>
+            )}
+          </div>
+        )}
+
+        {/* Contact Details */}
+        <div className="faim-contact-box">
+          <h3>Landlord Contact</h3>
+          {contact?.full_name && (
+            <div className="faim-contact-item">
+              <span className="faim-contact-label">👤 Name</span>
+              <span className="faim-contact-value">{contact.full_name}</span>
+            </div>
+          )}
+          {contact?.phone && (
+            <div className="faim-contact-item">
+              <span className="faim-contact-label">📞 Phone</span>
+              <a href={`tel:${contact.phone}`} className="faim-contact-value">
+                {contact.phone}
+              </a>
+            </div>
+          )}
+          {contact?.email && (
+            <div className="faim-contact-item">
+              <span className="faim-contact-label">✉️ Email</span>
+              <a href={`mailto:${contact.email}`} className="faim-contact-value">
+                {contact.email}
+              </a>
+            </div>
+          )}
+          {contact?.phone && (
+            <a
+              href={`https://wa.me/${contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi, I'm interested in your property "${listing?.title}" listed on Mr. Rent (rent.fasteraim.com). Is it still available?`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="faim-whatsapp-btn"
+            >
+              <span>💬</span>
+              <span>WhatsApp Landlord</span>
+            </a>
+          )}
+        </div>
+
+        {/* Tips */}
+        <div className="faim-tips">
+          <h4>Tips for contacting the landlord</h4>
+          <ul>
+            <li>Call during business hours (8am – 6pm)</li>
+            <li>Mention you found the listing on Mr. Rent</li>
+            <li>Ask about inspection and available date</li>
+            <li>Confirm the caution fee and agency fee upfront</li>
+          </ul>
+        </div>
+
+        {/* Actions */}
+        <div className="faim-actions">
+          <a href="/browse" className="faim-btn faim-btn--primary">Browse More Listings</a>
+          <a href="/my-account" className="faim-btn faim-btn--outline">View Saved Contacts</a>
+        </div>
+
+        <p className="faim-receipt-note">
+          A receipt has been sent to your email. Reference: <strong>{reference}</strong>
+        </p>
+      </div>
+      <Styles />
+    </div>
+  )
+}
+
+function Styles() {
+  return (
+    <style>{`
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      .faim-reveal-page {
+        min-height: 100vh;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+      }
+      .faim-reveal-card {
+        background: white;
+        border: 1px solid #eaeaea;
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        width: 100%;
+        max-width: 480px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+        text-align: center;
+      }
+      .faim-spinner {
+        width: 48px; height: 48px;
+        border: 3px solid #e0e0e0;
+        border-top-color: #0ef6cc;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 1.5rem;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .faim-reveal-card h2 { font-size: 1.3rem; color: #080a0f; margin-bottom: 0.5rem; font-family: 'Syne', sans-serif; }
+      .faim-reveal-card p { color: #555; font-size: 0.9rem; }
+      .faim-status-icon { font-size: 3rem; margin-bottom: 1rem; }
+      .faim-success-header { margin-bottom: 1.5rem; }
+      .faim-success-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+      .faim-success-header h1 { font-size: 1.6rem; font-weight: 700; color: #080a0f; margin-bottom: 0.5rem; font-family: 'Syne', sans-serif; }
+      .faim-success-header p { color: #555; font-size: 0.9rem; }
+      .faim-property-info {
+        background: #f7f7f7;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        text-align: left;
+      }
+      .faim-type-pill {
+        display: inline-block;
+        background: #0ef6cc;
+        color: #080a0f;
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: capitalize;
+        margin-bottom: 0.75rem;
+      }
+      .faim-property-info h3 { font-size: 1rem; font-weight: 700; color: #080a0f; margin-bottom: 0.5rem; }
+      .faim-property-info p { font-size: 0.85rem; color: #555; margin-bottom: 4px; }
+      .faim-contact-box {
+        background: #080a0f;
+        border-radius: 14px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        text-align: left;
+      }
+      .faim-contact-box h3 { font-size: 0.85rem; color: #0ef6cc; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+      .faim-contact-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+      }
+      .faim-contact-item:last-child { border-bottom: none; }
+      .faim-contact-label { font-size: 0.85rem; color: #999; }
+      .faim-contact-value {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: white;
+        text-decoration: none;
+      }
+      .faim-contact-value:hover { color: #0ef6cc; }
+      .faim-whatsapp-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 0.85rem;
+        background: #25d366;
+        color: white;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-decoration: none;
+        margin-top: 1rem;
+        transition: background 0.15s;
+      }
+      .faim-whatsapp-btn:hover { background: #1ebe5b; }
+      .faim-tips {
+        background: #f0fffb;
+        border: 1.5px solid #0ef6cc;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        text-align: left;
+      }
+      .faim-tips h4 { font-size: 0.85rem; font-weight: 700; color: #0a8f77; margin-bottom: 0.75rem; }
+      .faim-tips ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+      .faim-tips li { font-size: 0.82rem; color: #555; padding-left: 1rem; position: relative; }
+      .faim-tips li::before { content: '→'; position: absolute; left: 0; color: #0a8f77; }
+      .faim-actions { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
+      .faim-btn {
+        flex: 1;
+        padding: 0.75rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.15s;
+        cursor: pointer;
+        border: none;
+      }
+      .faim-btn--primary { background: #0ef6cc; color: #080a0f; }
+      .faim-btn--primary:hover { background: #0bd9b3; }
+      .faim-btn--outline { border: 1.5px solid #0ef6cc; color: #080a0f; background: white; }
+      .faim-btn--outline:hover { background: #f0fffb; }
+      .faim-receipt-note { font-size: 0.75rem; color: #999; }
+      @media (max-width: 480px) {
+        .faim-reveal-card { padding: 2rem 1.25rem; }
+        .faim-actions { flex-direction: column; }
+      }
+    `}</style>
   )
 }
 
 export default function RevealSuccessPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#080a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cccccc' }}>Loading…</div>}>
+    <Suspense fallback={
+      <div style={{minHeight:'100vh', background:'#ffffff', display:'flex', alignItems:'center', justifyContent:'center', color:'#555'}}>
+        Verifying payment...
+      </div>
+    }>
       <RevealSuccessInner />
     </Suspense>
   )
