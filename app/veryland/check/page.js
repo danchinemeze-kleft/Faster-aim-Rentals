@@ -108,7 +108,7 @@ export default function VerylandCheckPage() {
       {/* Nav */}
       <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)' }} />
       <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: 'var(--card-bg)', position: 'sticky', top: 3, zIndex: 100 }}>
-        <a href="/" style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</a>
+        <link href="/" style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</link>
         <span style={{ color: '#d1d5db', margin: '0 8px' }}>/</span>
         <a href="/veryland" style={{ color: GREEN, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Veryland</a>
         <span style={{ color: '#d1d5db', margin: '0 8px' }}>/</span>
