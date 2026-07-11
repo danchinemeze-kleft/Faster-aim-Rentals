@@ -8,7 +8,7 @@ export default function SupportPage() {
         Having an issue? Reach out and we'll get back to you shortly.
       </p>
       
-        href="mailto:Info@fasteraim.com?subject=Mr.%20Rent%20Support%20Enquiry&body=Please%20describe%20the%20issue%20and%20attach%20screenshot%20of%20the%20affected%20page%3A%0A%0A"
+       <a href="mailto:Info@fasteraim.com?subject=Mr.%20Rent%20Support%20Enquiry&body=Please%20describe%20the%20issue%20and%20attach%20screenshot%20of%20the%20affected%20page%3A%0A%0A"
         style={{
           display: "inline-block",
           padding: "12px 24px",
