@@ -268,50 +268,49 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-<footer style={s.footer}>
-  <div style={s.footerGrid} className="footer-grid">
-    <div style={s.footerBrandCol}>
-      <div style={s.footerBrand}>🏠 Mr. Rent</div>
-      <p style={s.footerDesc}>Nigerian property rental platform powered by AI</p>
-    </div>
+      <footer style={s.footer}>
+        <div style={s.footerGrid} className="footer-grid">
+          <div style={s.footerBrandCol}>
+            <div style={s.footerBrand}>🏠 Mr. Rent</div>
+            <p style={s.footerDesc}>Nigerian property rental platform powered by AI</p>
+          </div>
 
-    <div style={s.footerCol}>
-      <p style={s.footerColTitle}>Explore</p>
-      <a href="/browse" style={s.footerLink}>Browse Rentals</a>
-      <Link href="/buy" style={s.footerLink}>Buy Property</Link>
-      <Link href="/sell" style={s.footerLink}>Sell Property</Link>
-      <a href="/search" style={s.footerLink}>AI Chat</a>
-      <a href="/list" style={s.footerLink}>List for Rent</a>
-      <a href="/veryland" style={{ ...s.footerLink, color: '#1877F2', fontWeight: 800 }}>Veryland</a>
-    </div>
+          <div style={s.footerCol}>
+            <p style={s.footerColTitle}>Explore</p>
+            <a href="/browse" style={s.footerLink}>Browse Rentals</a>
+            <Link href="/buy" style={s.footerLink}>Buy Property</Link>
+            <Link href="/sell" style={s.footerLink}>Sell Property</Link>
+            <a href="/search" style={s.footerLink}>AI Chat</a>
+            <a href="/list" style={s.footerLink}>List for Rent</a>
+            <a href="/veryland" style={{ ...s.footerLink, color: '#1877F2', fontWeight: 800 }}>Veryland</a>
+          </div>
 
-    <div style={s.footerCol}>
-      <p style={s.footerColTitle}>Account</p>
-      <a href="/account" style={s.footerLink}>Login / Sign Up</a>
-      <a href="/dashboard" style={s.footerLink}>Switch Role</a>
-      <a href="/my-account" style={s.footerLink}>My Account</a>
-      <a href="/affiliate" style={{ ...s.footerLink, color: '#7c3aed', fontWeight: 700 }}>💰 Earn — Affiliate</a>
-      <a href="/admin" style={s.footerAdminLink}>⚙ Admin</a>
-    </div>
+          <div style={s.footerCol}>
+            <p style={s.footerColTitle}>Account</p>
+            <a href="/account" style={s.footerLink}>Login / Sign Up</a>
+            <a href="/my-account" style={s.footerLink}>My Account</a>
+            <a href="/affiliate" style={{ ...s.footerLink, color: '#7c3aed', fontWeight: 700 }}>💰 Earn — Affiliate</a>
+            <a href="/admin" style={s.footerAdminLink}>⚙ Admin</a>
+          </div>
 
-    <div style={s.footerCol}>
-      <p style={s.footerColTitle}>Support</p>
-      <a href="/support" style={s.footerLink}>Support</a>
-      <a href="/feedback" style={s.footerLink}>Feedback</a>
-      <a href="/contact" style={s.footerLink}>Contact Us</a>
-    </div>
+          <div style={s.footerCol}>
+            <p style={s.footerColTitle}>Support</p>
+            <a href="/support" style={s.footerLink}>Support</a>
+            <a href="/feedback" style={s.footerLink}>Feedback</a>
+            <a href="/contact" style={s.footerLink}>Contact Us</a>
+          </div>
 
-    <div style={s.footerCol}>
-      <p style={s.footerColTitle}>Legal</p>
-      <a href="/privacy-policy" style={s.footerLink}>Privacy Policy</a>
-      <a href="/terms" style={s.footerLink}>Terms of Service</a>
-      <a href="/refund-policy" style={s.footerLink}>Refund Policy</a>
-    </div>
-  </div>
+          <div style={s.footerCol}>
+            <p style={s.footerColTitle}>Legal</p>
+            <a href="/privacy-policy" style={s.footerLink}>Privacy Policy</a>
+            <a href="/terms" style={s.footerLink}>Terms of Service</a>
+            <a href="/refund-policy" style={s.footerLink}>Refund Policy</a>
+          </div>
+        </div>
 
-  <hr style={s.footerDivider} />
-  <p style={s.footerCopy}>© 2026 Faster Aim Technology Limited. All rights reserved.</p>
-</footer>
+        <hr style={s.footerDivider} />
+        <p style={s.footerCopy}>© 2026 Faster Aim Technology Limited. All rights reserved.</p>
+      </footer>
 
       {/* Floating welcome chat bubble */}
       {showBubble && (
@@ -446,6 +445,7 @@ export default function Home() {
           /* Footer */
           .footer-top { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 1rem !important; }
           .footer-links { flex-wrap: wrap !important; justify-content: center !important; gap: 0.85rem !important; }
+          .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 1.5rem !important; text-align: left !important; }
 
           /* Chat bubble */
           .chat-bubble-wrap { right: 14px !important; bottom: 14px !important; left: 14px !important; max-width: none !important; }
@@ -466,6 +466,7 @@ export default function Home() {
           .ring-pink { width: 160px !important; height: 160px !important; }
           .ring-cyan { width: 135px !important; height: 135px !important; }
           .avatar-wrap { width: 120px !important; height: 120px !important; }
+          .footer-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </main>
@@ -675,21 +676,28 @@ const s = {
   ctaSubtitle: { color: '#475569', fontWeight: '600', marginBottom: '2.5rem', fontSize: '0.95rem' },
 
   footer: { padding: '3rem 2rem', borderTop: '1px solid #e2e8f0', background: '#f8fafc' },
-  footerTop: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-    marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem',
-    maxWidth: '1000px', margin: '0 auto 1.5rem',
+  footerGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1.4fr 1fr 1fr 1fr 1fr',
+    gap: '2rem',
+    maxWidth: '1100px',
+    margin: '0 auto 1.5rem',
+  },
+  footerBrandCol: { display: 'flex', flexDirection: 'column', gap: '0.5rem' },
+  footerCol: { display: 'flex', flexDirection: 'column', gap: '0.55rem' },
+  footerColTitle: {
+    color: '#0f172a', fontSize: '0.72rem', fontWeight: '800',
+    letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.25rem',
   },
   footerBrand: {
     fontSize: '1.2rem', fontWeight: '800',
     background: `linear-gradient(90deg, ${CYAN}, ${PINK})`,
     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
   },
-  footerLinks: { display: 'flex', gap: '1.5rem', alignItems: 'center' },
   footerLink: { color: '#64748b', fontSize: '0.82rem', fontWeight: '600' },
   footerAdminLink: { color: '#94a3b8', fontSize: '0.75rem', fontWeight: '600', border: '1px solid #e2e8f0', padding: '3px 10px', borderRadius: '6px' },
   footerDivider: { border: 'none', borderTop: '1px solid #e2e8f0', margin: '0 auto 1.5rem', maxWidth: '1000px' },
-  footerDesc: { color: '#94a3b8', fontWeight: '600', fontSize: '0.8rem', textAlign: 'center', marginBottom: '0.5rem' },
+  footerDesc: { color: '#94a3b8', fontWeight: '600', fontSize: '0.8rem', marginBottom: '0.5rem' },
   footerCopy: { color: '#cbd5e1', fontWeight: '600', fontSize: '0.75rem', textAlign: 'center' },
 
   // ---- Floating chat bubble ----
