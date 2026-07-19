@@ -268,40 +268,50 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer style={s.footer}>
-        <div style={s.footerTop} className="footer-top">
-          <div style={s.footerBrand}>🏠 Mr. Rent</div>
-          <div style={s.footerLinks} className="footer-links">
-            <a href="/browse" style={s.footerLink}>Browse</a>
-            <Link href="/buy" style={{ ...s.footerLink, color:CYAN, fontWeight:800, display:'inline-flex', alignItems:'center', gap:4 }}>
-              🏡 Buy Property
-              <span style={{ background:'#fbbf24', color:'#080a0f', fontSize:'0.55rem', fontWeight:900, borderRadius:'3px', padding:'1px 5px' }}>NEW</span>
-            </Link>
-            <Link href="/sell" style={{ ...s.footerLink, color:PINK, fontWeight:800, display:'inline-flex', alignItems:'center', gap:4 }}>
-              💰 Sell Property
-              <span style={{ background:'#fbbf24', color:'#080a0f', fontSize:'0.55rem', fontWeight:900, borderRadius:'3px', padding:'1px 5px' }}>NEW</span>
-            </Link>
-            <a href="/search" style={s.footerLink}>AI Chat</a>
-            <a href="/list" style={s.footerLink}>List Property</a>
-            <span className="vl-nav-wrap">
-              <a href="/veryland" style={{ ...s.footerLink, color: '#1877F2', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '5px' }}>
-                Veryland
-                <svg width="16" height="16" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-                  <rect width="22" height="22" rx="7" fill="#1877F2"/>
-                  <path d="M6 11.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </a>
-              <span className="vl-tooltip vl-tooltip-up">Nigeria&apos;s first property document<br/>verification system.</span>
-            </span>
-            <a href="/affiliate" style={{ ...s.footerLink, color: '#7c3aed', fontWeight: 700 }}>💰 Earn — Affiliate</a>
-            <a href="/account" style={s.footerLink}>Login</a>
-            <a href="/admin" style={s.footerAdminLink}>⚙ Admin</a>
-          </div>
-        </div>
-        <hr style={s.footerDivider} />
-        <p style={s.footerDesc}>Nigerian property rental platform powered by AI</p>
-        <p style={s.footerCopy}>© 2026 Faster Aim Technology Limited. All rights reserved.</p>
-      </footer>
+<footer style={s.footer}>
+  <div style={s.footerGrid} className="footer-grid">
+    <div style={s.footerBrandCol}>
+      <div style={s.footerBrand}>🏠 Mr. Rent</div>
+      <p style={s.footerDesc}>Nigerian property rental platform powered by AI</p>
+    </div>
+
+    <div style={s.footerCol}>
+      <p style={s.footerColTitle}>Explore</p>
+      <a href="/browse" style={s.footerLink}>Browse Rentals</a>
+      <Link href="/buy" style={s.footerLink}>Buy Property</Link>
+      <Link href="/sell" style={s.footerLink}>Sell Property</Link>
+      <a href="/search" style={s.footerLink}>AI Chat</a>
+      <a href="/list" style={s.footerLink}>List for Rent</a>
+      <a href="/veryland" style={{ ...s.footerLink, color: '#1877F2', fontWeight: 800 }}>Veryland</a>
+    </div>
+
+    <div style={s.footerCol}>
+      <p style={s.footerColTitle}>Account</p>
+      <a href="/account" style={s.footerLink}>Login / Sign Up</a>
+      <a href="/dashboard" style={s.footerLink}>Switch Role</a>
+      <a href="/my-account" style={s.footerLink}>My Account</a>
+      <a href="/affiliate" style={{ ...s.footerLink, color: '#7c3aed', fontWeight: 700 }}>💰 Earn — Affiliate</a>
+      <a href="/admin" style={s.footerAdminLink}>⚙ Admin</a>
+    </div>
+
+    <div style={s.footerCol}>
+      <p style={s.footerColTitle}>Support</p>
+      <a href="/support" style={s.footerLink}>Support</a>
+      <a href="/feedback" style={s.footerLink}>Feedback</a>
+      <a href="/contact" style={s.footerLink}>Contact Us</a>
+    </div>
+
+    <div style={s.footerCol}>
+      <p style={s.footerColTitle}>Legal</p>
+      <a href="/privacy-policy" style={s.footerLink}>Privacy Policy</a>
+      <a href="/terms" style={s.footerLink}>Terms of Service</a>
+      <a href="/refund-policy" style={s.footerLink}>Refund Policy</a>
+    </div>
+  </div>
+
+  <hr style={s.footerDivider} />
+  <p style={s.footerCopy}>© 2026 Faster Aim Technology Limited. All rights reserved.</p>
+</footer>
 
       {/* Floating welcome chat bubble */}
       {showBubble && (
