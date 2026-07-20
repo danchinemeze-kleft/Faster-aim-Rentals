@@ -1,782 +1,823 @@
-'use client'
+'use client';
 
-// NOTE: Run this in Supabase SQL editor to enable the likes feature:
-// ALTER TABLE listings ADD COLUMN IF NOT EXISTS likes integer DEFAULT 0;
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
-import { useState, useEffect } from 'react'
-import { useParams, useRouter, useSearchParams } from 'next/navigation'
-import { createClient } from '@supabase/supabase-js'
-import SwitchRoleModal from '../../components/SwitchRoleModal'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
-
-const VERYLAND_BADGE = {
-  white:  { fill: '#d0d0d0', check: '#888', label: 'Veryland: Submitted' },
-  yellow: { fill: '#F59E0B', check: '#fff', label: 'Veryland: Partial Verified' },
-  green:  { fill: '#10B981', check: '#fff', label: 'Veryland: Verified' },
-  blue:   { fill: '#3B82F6', check: '#fff', label: 'Veryland: Premium Verified' },
-}
-
-function VerylandBadge({ level }) {
-  const b = VERYLAND_BADGE[level]
-  if (!b) return null
-  return (
-    <a
-      href="/veryland"
-      title={b.label}
-      style={{ display: 'inline-flex', alignItems: 'center', gap: 7, textDecoration: 'none', background: '#111318', border: `1px solid ${b.fill}44`, borderRadius: 20, padding: '5px 13px 5px 7px' }}
-    >
-      <svg width="20" height="20" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-        <rect width="22" height="22" rx="7" fill={b.fill}/>
-        <path d="M6 11.5l3.5 3.5 6.5-7" stroke={b.check} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-      <span style={{ fontSize: 13, fontWeight: 700, color: b.fill }}>{b.label}</span>
-    </a>
-  )
-}
-
-function isYouTube(url) {
-  return url && (url.includes('youtube.com') || url.includes('youtu.be'))
-}
-
-function youtubeEmbedUrl(url) {
-  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/)
-  return m ? `https://www.youtube.com/embed/${m[1]}` : null
-}
-
-function VideoPlayer({ src }) {
-  const [state, setState] = useState('loading') // 'loading' | 'ready' | 'error'
-
-  if (!src) return null
-
-  return (
-    <div style={{ borderRadius: 12, overflow: 'hidden', background: '#0a0a0a', position: 'relative' }}>
-
-      {/* Loading overlay */}
-      {state === 'loading' && (
-        <div style={{
-          position: 'absolute', inset: 0, zIndex: 2,
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          background: '#0a0a0a', gap: 12,
-        }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: '50%',
-            border: '3px solid #1a1d24', borderTopColor: '#0ef6cc',
-            animation: 'spin 0.8s linear infinite',
-          }} />
-          <span style={{ color: '#cccccc', fontSize: 13 }}>Loading video…</span>
-        </div>
-      )}
-
-      {/* Error state */}
-      {state === 'error' && (
-        <div style={{
-          padding: '2.5rem 1.5rem', textAlign: 'center', background: '#0a0a0a',
-        }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>🎬</div>
-          <div style={{ color: '#cccccc', fontSize: 14, marginBottom: 16, lineHeight: 1.6 }}>
-            Video could not be played in the browser.<br />
-            You can still open it directly.
-          </div>
-          <a
-            href={src}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-block', padding: '10px 24px',
-              background: '#0ef6cc', color: '#080a0f',
-              borderRadius: 8, fontWeight: 700, fontSize: 13,
-              textDecoration: 'none',
-            }}
-          >
-            Open Video →
-          </a>
-        </div>
-      )}
-
-      {/* Actual video — always rendered so browser can attempt load */}
-      <video
-        controls
-        playsInline
-        preload="metadata"
-        onLoadStart={() => setState('loading')}
-        onLoadedMetadata={() => setState('ready')}
-        onCanPlay={() => setState('ready')}
-        onError={() => setState('error')}
-        style={{
-          width: '100%',
-          maxHeight: 420,
-          display: state === 'error' ? 'none' : 'block',
-          background: '#000',
-        }}
-      >
-        <source src={src} type="video/mp4" />
-        <source src={src} type="video/webm" />
-        <source src={src} type="video/quicktime" />
-        Your browser does not support video playback.{' '}
-        <a href={src} target="_blank" rel="noopener noreferrer">Open video</a>
-      </video>
-
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-    </div>
-  )
-}
-
-export default function ListingPage() {
-  const { id } = useParams()
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  // Preview links from the admin dashboard append ?ref=admin, since they
-  // open in a new tab (no browser history to go "back" through). In that
-  // case, send the back button straight to the admin dashboard instead
-  // of calling router.back(), which would do nothing in a fresh tab.
-  const cameFromAdmin = searchParams.get('ref') === 'admin'
-  const goBack = () => {
-    if (cameFromAdmin) {
-      router.push('/admin')
-    } else {
-      router.back()
-    }
+// All write actions go through /api/admin-action, which uses the Supabase
+// service role key server-side. The admin panel's "login" is just a
+// password check (see /api/admin-auth) — there is no real Supabase auth
+// session in the browser, so any write done with the anon key here would
+// be silently blocked by RLS (0 rows affected, no error) even though the
+// button appears to "succeed". Routing through the server fixes that.
+async function adminAction(action, payload) {
+  const pw = sessionStorage.getItem('mr_rent_admin_pw');
+  const res = await fetch('/api/admin-action', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: pw, action, payload }),
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    console.error(`Admin action "${action}" failed:`, json.error);
+    return { error: json.error || 'Action failed' };
   }
+  return { error: null, data: json.data };
+}
 
-  const [listing, setListing] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [notFound, setNotFound] = useState(false)
-  const [activeImage, setActiveImage] = useState(0)
-  const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [videoOpen, setVideoOpen] = useState(false)
-  const [liked, setLiked] = useState(false)
-  const [likes, setLikes] = useState(0)
-  const [revealing, setRevealing] = useState(false)
-  const [user, setUser] = useState(null)
-  const [revealedContact, setRevealedContact] = useState(null)
-  const [hasSub, setHasSub] = useState(false)
-  const [userRole, setUserRole] = useState(null)
-  const [showRoleModal, setShowRoleModal] = useState(false)
-  const [switchingRole, setSwitchingRole] = useState(false)
+export default function AdminDashboard() {
+  const [authed, setAuthed] = useState(false);
+  const [pwInput, setPwInput] = useState('');
+  const [pwError, setPwError] = useState('');
+  const [showPw, setShowPw] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  const [listings, setListings] = useState([]);
+  const [landlords, setLandlords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('listings');
+  const [actionMsg, setActionMsg] = useState('');
+
+  const [stats, setStats] = useState({
+    totalListings: 0,
+    activeListings: 0,
+    pendingListings: 0,
+    totalLandlords: 0,
+  });
+
+  const [subscriptions, setSubscriptions] = useState([]);
+  const [verylandSubmissions, setVerylandSubmissions] = useState([]);
+  const [verylandBadgeSel, setVerylandBadgeSel] = useState({});
+  const [verylandNotes, setVerylandNotes] = useState({});
+  const [saleListings, setSaleListings] = useState([]);
+  const [saleRejectNotes, setSaleRejectNotes] = useState({});
 
   useEffect(() => {
-    async function load() {
-      const [{ data: listingData }, { data: { session } }] = await Promise.all([
-        supabase.from('listings').select('*').eq('id', id).single(),
-        supabase.auth.getSession(),
-      ])
+    const saved = sessionStorage.getItem('mr_rent_admin');
+    setTimeout(() => {
+      if (saved === 'true') setAuthed(true);
+      setCheckingSession(false);
+    }, 0);
+  }, []);
 
-      if (!listingData) { setNotFound(true); setLoading(false); return }
-
-      setListing(listingData)
-      setLikes(listingData.likes || 0)
-
-      if (session) {
-        setUser(session.user)
-        const [{ data: reveal }, { data: sub }, { data: profile }] = await Promise.all([
-          supabase
-            .from('Contact_reveals')
-            .select('landlord_phone, landlord_email')
-            .eq('tenant_id', session.user.id)
-            .eq('listing_id', id)
-            .maybeSingle(),
-          supabase
-            .from('Tenant_subscription')
-            .select('id')
-            .eq('user_id', session.user.id)
-            .eq('status', 'active')
-            .gte('expiry_date', new Date().toISOString())
-            .order('expiry_date', { ascending: false })
-            .limit(1)
-            .maybeSingle(),
-          supabase
-            .from('Profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single(),
-        ])
-
-        setHasSub(!!sub)
-        setUserRole(profile?.role || 'tenant')
-
-        if (reveal) {
-          if (!reveal.landlord_phone && listingData.landlord_id) {
-            const { data: profile } = await supabase
-              .from('Profiles')
-              .select('phone, email')
-              .eq('id', listingData.landlord_id)
-              .single()
-            setRevealedContact({
-              landlord_phone: profile?.phone || null,
-              landlord_email: reveal.landlord_email || profile?.email || null,
-            })
-          } else {
-            setRevealedContact(reveal)
-          }
-        }
-      }
-
-      const saved = JSON.parse(localStorage.getItem('mr_rent_liked') || '[]')
-      setLiked(saved.includes(id))
-
-      setLoading(false)
-    }
-    load()
-  }, [id])
-
-  // Keyboard navigation inside lightbox
   useEffect(() => {
-    if (!lightboxOpen || !listing) return
-    const imgs = Array.isArray(listing.images) ? listing.images : []
-    const handler = (e) => {
-      if (e.key === 'ArrowRight') setActiveImage(i => (i + 1) % imgs.length)
-      if (e.key === 'ArrowLeft') setActiveImage(i => (i - 1 + imgs.length) % imgs.length)
-      if (e.key === 'Escape') { setLightboxOpen(false); setVideoOpen(false) }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [lightboxOpen, listing])
+    if (authed) fetchAll();
+  }, [authed]);
 
-  async function handleLike() {
-    const saved = JSON.parse(localStorage.getItem('mr_rent_liked') || '[]')
-    if (liked) {
-      localStorage.setItem('mr_rent_liked', JSON.stringify(saved.filter(lid => lid !== id)))
-      setLiked(false)
-      setLikes(l => Math.max(0, l - 1))
-      await supabase.from('listings').update({ likes: Math.max(0, likes - 1) }).eq('id', id)
-    } else {
-      localStorage.setItem('mr_rent_liked', JSON.stringify([...saved, id]))
-      setLiked(true)
-      setLikes(l => l + 1)
-      await supabase.from('listings').update({ likes: likes + 1 }).eq('id', id)
-    }
-  }
-
-  async function handleReveal() {
-    if (!user) { router.push(`/account?redirect=/listing/${id}`); return }
-    if (userRole === 'landlord') { setShowRoleModal(true); return }
-    await proceedWithReveal()
-  }
-
-  async function proceedWithReveal() {
-    setRevealing(true)
+  async function fetchAll() {
+    setLoading(true);
     try {
-      // Guard: never charge/reveal twice for the same listing
-      const { data: existing } = await supabase
-        .from('Contact_reveals')
-        .select('landlord_phone, landlord_email')
-        .eq('tenant_id', user.id)
-        .eq('listing_id', id)
-        .maybeSingle()
-      if (existing) {
-        setRevealedContact(existing)
-        setRevealing(false)
-        return
-      }
-
-      // Subscribed tenants reveal for free — server re-verifies subscription
-      if (hasSub) {
-        const res = await fetch('/api/free-reveal', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ listing_id: id }),
-        })
-        const data = await res.json()
-        if (data.success && data.contact) {
-          setRevealedContact({
-            landlord_phone: data.contact.phone,
-            landlord_email: data.contact.email,
-          })
-        } else {
-          alert(data.error || 'Could not reveal contact. Please try again.')
-        }
-        setRevealing(false)
-        return
-      }
-
-      // Non-subscribed tenants pay ₦5,000 via Paystack
-      const refCode = document.cookie.match(/mrrent_ref=([^;]+)/)?.[1] || null
-      const res = await fetch('/api/init-payment', {
+      const pw = sessionStorage.getItem('mr_rent_admin_pw');
+      const res = await fetch('/api/admin-data', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: user.email,
-          type: 'reveal',
-          listing_id: id,
-          user_id: user.id,
-          ref_code: refCode,
-        }),
-      })
-      const data = await res.json()
-      if (data.authorization_url) {
-        window.location.href = data.authorization_url
-      } else {
-        alert(data.error || 'Could not start payment. Please try again.')
-        setRevealing(false)
+        body: JSON.stringify({ password: pw }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        console.error('Admin data fetch failed:', err.error);
+        setLoading(false);
+        return;
       }
+
+      const { listings: listingData, profiles: profileData, subscriptions: subData, verylandSubmissions: vData, saleListings: saleData } = await res.json();
+
+      if (listingData) {
+        setListings(listingData);
+        setStats(s => ({
+          ...s,
+          totalListings: listingData.length,
+          activeListings: listingData.filter(l => l.status === 'approved').length,
+          pendingListings: listingData.filter(l => l.status === 'pending' || !l.status).length,
+        }));
+      }
+
+      if (profileData) {
+        const landlordList = profileData.filter(p => p.role === 'landlord');
+        setLandlords(landlordList);
+        setStats(s => ({ ...s, totalLandlords: landlordList.length }));
+      }
+
+      if (subData) setSubscriptions(subData);
+      if (vData) setVerylandSubmissions(vData);
+      if (saleData) setSaleListings(saleData);
     } catch (err) {
-      alert('Payment error: ' + err.message)
-      setRevealing(false)
+      console.error(err);
+    }
+    setLoading(false);
+  }
+
+  async function approveVeryland(id) {
+    const level = verylandBadgeSel[id] || 'green';
+    const sub = verylandSubmissions.find(s => s.id === id);
+    const newStatus = level === 'yellow' ? 'approved_partial' : 'approved_full';
+
+    const { error } = await adminAction('approveVeryland', { id, level, listingId: sub?.listing_id });
+
+    if (!error) {
+      setVerylandSubmissions(prev => prev.map(s => s.id === id ? { ...s, status: newStatus, badge_level: level } : s));
+      showMsg('Veryland submission approved — badge awarded.');
+    } else {
+      showMsg(`Error: ${error}`);
     }
   }
 
-  async function handleSwitchToTenant() {
-    setSwitchingRole(true)
+  async function rejectVeryland(id) {
+    const notes = verylandNotes[id] || '';
+    const { error } = await adminAction('rejectVeryland', { id, notes });
+    if (!error) {
+      setVerylandSubmissions(prev => prev.map(s => s.id === id ? { ...s, status: 'rejected' } : s));
+      showMsg('Veryland submission rejected.');
+    } else {
+      showMsg(`Error: ${error}`);
+    }
+  }
+
+  async function approveSaleListing(id) {
+    const { error } = await adminAction('approveSaleListing', { id });
+    if (!error) {
+      setSaleListings(prev => prev.map(l => l.id === id ? { ...l, status: 'approved' } : l));
+      showMsg('Sale listing approved — seller can now activate.');
+    } else {
+      showMsg(`Error: ${error}`);
+    }
+  }
+
+  async function rejectSaleListing(id) {
+    const reason = saleRejectNotes[id] || '';
+    const { error } = await adminAction('rejectSaleListing', { id, reason });
+    if (!error) {
+      setSaleListings(prev => prev.map(l => l.id === id ? { ...l, status: 'rejected' } : l));
+      showMsg('Sale listing rejected.');
+    } else {
+      showMsg(`Error: ${error}`);
+    }
+  }
+
+  async function updateListingStatus(id, status) {
+    const { error } = await adminAction('updateListingStatus', { id, status });
+
+    if (!error) {
+      setListings(prev => prev.map(l => l.id === id ? { ...l, status } : l));
+      showMsg(`Listing ${status === 'approved' ? 'approved' : status === 'rejected' ? 'rejected' : 'updated'}.`);
+      setStats(s => ({
+        ...s,
+        activeListings: status === 'approved' ? s.activeListings + 1 : s.activeListings,
+        pendingListings: s.pendingListings > 0 ? s.pendingListings - 1 : 0,
+      }));
+    } else {
+      showMsg(`Error: ${error}`);
+    }
+  }
+
+  async function deleteListing(id) {
+    if (!confirm('Delete this listing permanently?')) return;
+    const { error } = await adminAction('deleteListing', { id });
+    if (!error) {
+      setListings(prev => prev.filter(l => l.id !== id));
+      showMsg('Listing deleted.');
+    } else {
+      showMsg(`Error: ${error}`);
+    }
+  }
+
+  async function toggleAvailability(id, current) {
+    const newStatus = current === 'approved' ? 'unavailable' : 'approved';
+    await updateListingStatus(id, newStatus);
+  }
+
+  function showMsg(msg) {
+    setActionMsg(msg);
+    setTimeout(() => setActionMsg(''), 3000);
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    setPwError('');
     try {
-      await supabase.from('Profiles').update({ role: 'tenant' }).eq('id', user.id)
-      setUserRole('tenant')
-      setShowRoleModal(false)
-      await proceedWithReveal()
-    } catch (err) {
-      alert('Could not switch role. Please try again.')
-    } finally {
-      setSwitchingRole(false)
+      const res = await fetch('/api/admin-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwInput }),
+      });
+      if (res.ok) {
+        sessionStorage.setItem('mr_rent_admin', 'true');
+        sessionStorage.setItem('mr_rent_admin_pw', pwInput);
+        setAuthed(true);
+      } else {
+        const data = await res.json();
+        setPwError(data.error || 'Incorrect password.');
+      }
+    } catch {
+      setPwError('Something went wrong. Try again.');
     }
   }
 
-  if (loading) return (
-    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Segoe UI, system-ui, sans-serif' }}>
-      <div style={{ color: 'var(--text-3)', fontSize: 14 }}>Loading property…</div>
-    </div>
-  )
+  function logout() {
+    sessionStorage.removeItem('mr_rent_admin');
+    sessionStorage.removeItem('mr_rent_admin_pw');
+    setAuthed(false);
+  }
 
-  if (notFound) return (
-    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, fontFamily: 'Segoe UI, system-ui, sans-serif' }}>
-      <div style={{ fontSize: 48 }}>🏠</div>
-      <div style={{ color: 'var(--text-1)', fontSize: 18, fontWeight: 600 }}>Property not found</div>
-      <button onClick={() => router.push('/browse')} style={{ background: '#0ef6cc', color: '#080a0f', border: 'none', padding: '10px 24px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', fontSize: 14 }}>
-        Back to Browse
-      </button>
-    </div>
-  )
+  function formatPrice(price, period) {
+    if (!price) return '—';
+    const formatted = Number(price).toLocaleString('en-NG');
+    return `₦${formatted}${period ? ' / ' + period : ''}`;
+  }
 
-  const images = Array.isArray(listing.images) ? listing.images : []
-  const hasImages = images.length > 0
-  const hasVideo = !!listing.video_url
+  function timeAgo(dateStr) {
+    if (!dateStr) return '—';
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const days = Math.floor(diff / 86400000);
+    if (days === 0) return 'Today';
+    if (days === 1) return 'Yesterday';
+    if (days < 30) return `${days}d ago`;
+    return new Date(dateStr).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
 
-  return (
-    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: 'Segoe UI, system-ui, sans-serif', color: 'var(--text-1)' }}>
+  function statusBadge(status) {
+    const map = {
+      approved: { bg: '#E1F5EE', color: '#0F6E56', label: 'Approved' },
+      active: { bg: '#E1F5EE', color: '#0F6E56', label: 'Approved' },
+      pending: { bg: '#FAEEDA', color: '#854F0B', label: 'Pending' },
+      rejected: { bg: '#FCEBEB', color: '#A32D2D', label: 'Rejected' },
+      unavailable: { bg: '#F1EFE8', color: '#5F5E5A', label: 'Unavailable' },
+    };
+    const s = map[status] || map['pending'];
+    return (
+      <span style={{
+        background: s.bg, color: s.color,
+        fontSize: 11, fontWeight: 500, padding: '2px 9px',
+        borderRadius: 20, whiteSpace: 'nowrap'
+      }}>{s.label}</span>
+    );
+  }
 
-      {/* Lightbox */}
-      {lightboxOpen && hasImages && (
-        <div
-          onClick={() => setLightboxOpen(false)}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.96)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-        >
-          {/* Prev */}
-          <button
-            onClick={e => { e.stopPropagation(); setActiveImage(i => (i - 1 + images.length) % images.length) }}
-            style={{ position: 'fixed', left: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 26, width: 48, height: 48, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          >‹</button>
+  if (checkingSession) return null;
 
-          {/* Image */}
-          <img
-            src={images[activeImage]}
-            alt=""
-            onClick={e => e.stopPropagation()}
-            style={{ maxWidth: '88vw', maxHeight: '88vh', objectFit: 'contain', borderRadius: 10, userSelect: 'none' }}
-          />
-
-          {/* Next */}
-          <button
-            onClick={e => { e.stopPropagation(); setActiveImage(i => (i + 1) % images.length) }}
-            style={{ position: 'fixed', right: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 26, width: 48, height: 48, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          >›</button>
-
-          {/* Close */}
-          <button
-            onClick={() => setLightboxOpen(false)}
-            style={{ position: 'fixed', top: 18, right: 18, background: 'rgba(255,255,255,0.12)', border: 'none', color: '#fff', fontSize: 18, width: 38, height: 38, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          >✕</button>
-
-          {/* Counter + hint */}
-          <div style={{ position: 'fixed', bottom: 22, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.5)', fontSize: 12, textAlign: 'center', whiteSpace: 'nowrap' }}>
-            {activeImage + 1} / {images.length} &nbsp;·&nbsp; ← → to navigate &nbsp;·&nbsp; Esc to close
-          </div>
-        </div>
-      )}
-
-      {/* Video overlay */}
-      {videoOpen && hasVideo && (
-        <div
-          onClick={() => setVideoOpen(false)}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.97)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
-        >
-          {/* Close / back button */}
-          <button
-            onClick={() => setVideoOpen(false)}
-            style={{ position: 'fixed', top: 18, left: 18, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', fontSize: 13, fontWeight: 700, padding: '9px 16px', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'inherit', zIndex: 1 }}
-          >
-            ← Back
-          </button>
-
-          {/* Video */}
-          <div onClick={e => e.stopPropagation()} style={{ width: '90vw', maxWidth: 860 }}>
-            {isYouTube(listing.video_url) ? (
-              <div style={{ borderRadius: 14, overflow: 'hidden', background: '#000', aspectRatio: '16/9' }}>
-                <iframe
-                  src={youtubeEmbedUrl(listing.video_url) + '?autoplay=1'}
-                  style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            ) : (
-              <video
-                key={videoOpen ? 'open' : 'closed'}
-                autoPlay
-                controls
-                playsInline
-                style={{ width: '100%', maxHeight: '80vh', borderRadius: 12, background: '#000', display: 'block' }}
-              >
-                <source src={listing.video_url} type="video/mp4" />
-                <source src={listing.video_url} type="video/webm" />
-                <source src={listing.video_url} type="video/quicktime" />
-              </video>
-            )}
-          </div>
-
-          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, marginTop: 16 }}>Tap outside or press Esc to close</p>
-        </div>
-      )}
-
-      {/* Top bar */}
-      <div style={{ background: '#111318', borderBottom: '0.5px solid #222', padding: '0 1.5rem', height: 54, display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 100 }}>
-        <button onClick={goBack} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#ffffff', cursor: 'pointer', fontSize: 13, fontWeight: 600, padding: '6px 12px', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 6, lineHeight: 1, fontFamily: 'inherit', flexShrink: 0 }}>
-          ← Back
-        </button>
-        <span style={{ color: '#0ef6cc', fontWeight: 700, fontSize: 15 }}>Mr. Rent</span>
-        <span style={{ color: '#333' }}>/</span>
-        <a href="/browse" style={{ color: '#cccccc', fontSize: 14, textDecoration: 'none' }}>Browse</a>
-        <span style={{ color: '#333' }}>/</span>
-        <span style={{ color: '#cccccc', fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 260 }}>{listing.title}</span>
-      </div>
-
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(1rem, 4vw, 2rem) clamp(0.75rem, 4vw, 1.5rem)' }}>
-
-        {/* Image gallery */}
-        {hasImages && (
-          <div style={{ marginBottom: '2rem' }}>
-            {/* Main image */}
-            <div
-              onClick={() => setLightboxOpen(true)}
-              style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', cursor: 'zoom-in', marginBottom: 8 }}
-            >
-              <img
-                src={images[activeImage]}
-                alt={listing.title}
-                style={{ width: '100%', height: 'clamp(220px, 45vw, 420px)', objectFit: 'cover', display: 'block' }}
-              />
-              <div style={{ position: 'absolute', bottom: 12, right: 12, background: 'rgba(0,0,0,0.65)', color: '#fff', fontSize: 12, padding: '4px 12px', borderRadius: 20, backdropFilter: 'blur(4px)' }}>
-                🔍 {activeImage + 1} / {images.length}
-              </div>
-              {images.length > 1 && (
-                <>
-                  <button
-                    onClick={e => { e.stopPropagation(); setActiveImage(i => (i - 1 + images.length) % images.length) }}
-                    style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', fontSize: 22, width: 40, height: 40, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  >‹</button>
-                  <button
-                    onClick={e => { e.stopPropagation(); setActiveImage(i => (i + 1) % images.length) }}
-                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', fontSize: 22, width: 40, height: 40, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  >›</button>
-                </>
-              )}
+  // LOGIN SCREEN
+  if (!authed) {
+    return (
+      <div style={{
+        minHeight: '100vh', display: 'flex', alignItems: 'center',
+        justifyContent: 'center', background: 'var(--page-bg)', fontFamily: 'DM Sans, sans-serif'
+      }}>
+        <div style={{
+          background: '#111318', border: '0.5px solid #222',
+          borderRadius: 16, padding: '2.5rem 2rem', width: '100%', maxWidth: 380
+        }}>
+          <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
+            <div style={{ fontSize: 22, fontWeight: 600, color: '#0ef6cc', marginBottom: 4 }}>
+              Mr. Rent
             </div>
-
-            {/* Thumbnails */}
-            {images.length > 1 && (
-              <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
-                {images.map((img, i) => (
-                  <img
-                    key={i}
-                    src={img}
-                    alt=""
-                    onClick={() => setActiveImage(i)}
-                    style={{
-                      width: 80, height: 58, objectFit: 'cover', borderRadius: 8, cursor: 'pointer', flexShrink: 0,
-                      border: i === activeImage ? '2px solid #0ef6cc' : '2px solid transparent',
-                      opacity: i === activeImage ? 1 : 0.55,
-                      transition: 'all 0.15s',
-                    }}
-                  />
-                ))}
-              </div>
-            )}
+            <div style={{ fontSize: 13, color: '#888' }}>Admin Dashboard</div>
           </div>
-        )}
-
-        {/* No image placeholder */}
-        {!hasImages && (
-          <div style={{ height: 240, background: '#111318', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem' }}>
-            <div style={{ textAlign: 'center', color: '#cccccc' }}>
-              <div style={{ fontSize: 48, marginBottom: 8 }}>🏠</div>
-              <div style={{ fontSize: 13 }}>No photos uploaded yet</div>
-            </div>
-          </div>
-        )}
-
-        {/* Two-column layout */}
-        <div className="listing-grid">
-
-          {/* LEFT: description, video, amenities */}
-          <div>
-            {/* Title row */}
-            <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10, alignItems: 'center' }}>
-                {listing.property_type && (
-                  <span style={{ background: '#0e1c19', color: '#0ef6cc', fontSize: 11, fontWeight: 600, padding: '3px 12px', borderRadius: 20, border: '0.5px solid #0ef6cc33' }}>
-                    {listing.property_type}
-                  </span>
-                )}
-                {listing.available && (
-                  <span style={{ background: '#0e1c19', color: '#0ef6cc', fontSize: 11, fontWeight: 600, padding: '3px 12px', borderRadius: 20 }}>
-                    ● Available
-                  </span>
-                )}
-                {listing.veryland_badge && <VerylandBadge level={listing.veryland_badge} />}
-              </div>
-
-              <h1 style={{ fontSize: 24, fontWeight: 700, color: '#ffffff', marginBottom: 10, lineHeight: 1.35 }}>
-                {listing.title}
-              </h1>
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, color: '#cccccc', fontSize: 15 }}>
-                <span>📍 {listing.location}{listing.city ? `, ${listing.city}` : ''}{listing.state ? `, ${listing.state}` : ''}</span>
-                {listing.bedrooms && <span>🛏 {listing.bedrooms} bedroom{listing.bedrooms > 1 ? 's' : ''}</span>}
-                {listing.bathrooms && <span>🚿 {listing.bathrooms} bathroom{listing.bathrooms > 1 ? 's' : ''}</span>}
-                {listing.size && <span>📐 {listing.size}</span>}
-              </div>
-            </div>
-
-            {/* Description */}
-            {listing.description && (
-              <div style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: 14, fontWeight: 600, color: '#ffffff', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  About this property
-                </h2>
-                <p style={{ color: '#cccccc', fontSize: 16, lineHeight: 1.85, whiteSpace: 'pre-wrap' }}>
-                  {listing.description}
-                </p>
-              </div>
-            )}
-
-            {/* Amenities */}
-            {listing.amenities?.length > 0 && (
-              <div style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: 14, fontWeight: 600, color: '#ffffff', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Amenities
-                </h2>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {listing.amenities.map(a => (
-                    <span key={a} style={{ background: '#111318', border: '0.5px solid #2a2a2a', color: '#ffffff', fontSize: 15, padding: '6px 14px', borderRadius: 20 }}>
-                      ✓ {a}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Video */}
-            {hasVideo && (
-              <div style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: 14, fontWeight: 600, color: '#ffffff', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Property Video
-                </h2>
-                <button
-                  onClick={() => setVideoOpen(true)}
+          <form onSubmit={handleLogin}>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ fontSize: 12, color: '#888', display: 'block', marginBottom: 6 }}>
+                Admin password
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  value={pwInput}
+                  onChange={e => setPwInput(e.target.value)}
+                  placeholder="Enter password"
+                  autoFocus
                   style={{
-                    width: '100%', position: 'relative', borderRadius: 12, overflow: 'hidden',
-                    background: '#0a0a0a', border: '0.5px solid #222', cursor: 'pointer',
-                    padding: 0, display: 'block',
+                    width: '100%', padding: '10px 44px 10px 14px', background: '#1a1d24',
+                    border: pwError ? '1px solid #E24B4A' : '0.5px solid #333',
+                    borderRadius: 8, color: '#fff', fontSize: 14, boxSizing: 'border-box', outline: 'none'
                   }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(v => !v)}
+                  style={{
+                    position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: '#555', fontSize: 16, padding: '2px 4px', lineHeight: 1,
+                  }}
+                  title={showPw ? 'Hide password' : 'Show password'}
                 >
-                  {/* Thumbnail — use first listing image or dark placeholder */}
-                  {images[0]
-                    ? <img src={images[0]} alt="Video thumbnail" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block', filter: 'brightness(0.45)' }} />
-                    : <div style={{ height: 200, background: '#0d0d0d' }} />
-                  }
-                  {/* Play icon */}
-                  <div style={{
-                    position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', justifyContent: 'center', gap: 10,
-                  }}>
-                    <div style={{
-                      width: 60, height: 60, borderRadius: '50%',
-                      background: 'rgba(14,246,204,0.15)', border: '2px solid #0ef6cc',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <span style={{ fontSize: 24, marginLeft: 4 }}>▶</span>
-                    </div>
-                    <span style={{ color: '#ffffff', fontSize: 13, fontWeight: 600 }}>Watch Property Video</span>
-                  </div>
+                  {showPw ? '🙈' : '👁️'}
                 </button>
               </div>
-            )}
-          </div>
-
-          {/* RIGHT: price card + CTA */}
-          <div>
-            <div style={{ position: 'sticky', top: 70 }}>
-
-              {/* Price card */}
-              <div style={{ background: '#111318', border: '0.5px solid #222', borderRadius: 16, padding: '1.5rem', marginBottom: 12 }}>
-                <div style={{ paddingBottom: '1.25rem', marginBottom: '1.25rem', borderBottom: '0.5px solid #222' }}>
-                  <div style={{ fontSize: 30, fontWeight: 700, color: '#0ef6cc', lineHeight: 1 }}>
-                    ₦{Number(listing.price).toLocaleString('en-NG')}
-                  </div>
-                  {listing.price_period && (
-                    <div style={{ fontSize: 14, color: '#cccccc', marginTop: 4 }}>per {listing.price_period}</div>
-                  )}
-                </div>
-
-                {/* Property facts */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: '1.5rem' }}>
-                  {listing.property_type && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15 }}>
-                      <span style={{ color: '#cccccc' }}>Type</span>
-                      <span style={{ color: '#ffffff', textTransform: 'capitalize' }}>{listing.property_type}</span>
-                    </div>
-                  )}
-                  {listing.bedrooms && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15 }}>
-                      <span style={{ color: '#cccccc' }}>Bedrooms</span>
-                      <span style={{ color: '#ffffff' }}>{listing.bedrooms}</span>
-                    </div>
-                  )}
-                  {listing.bathrooms && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15 }}>
-                      <span style={{ color: '#cccccc' }}>Bathrooms</span>
-                      <span style={{ color: '#ffffff' }}>{listing.bathrooms}</span>
-                    </div>
-                  )}
-                  {listing.size && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15 }}>
-                      <span style={{ color: '#cccccc' }}>Size</span>
-                      <span style={{ color: '#ffffff' }}>{listing.size}</span>
-                    </div>
-                  )}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15 }}>
-                    <span style={{ color: '#cccccc' }}>Location</span>
-                    <span style={{ color: '#ffffff', textAlign: 'right', maxWidth: 170 }}>{listing.location}{listing.city ? `, ${listing.city}` : ''}{listing.state ? `, ${listing.state}` : ''}</span>
-                  </div>
-                </div>
-
-                {/* Reveal CTA */}
-                {revealedContact ? (
-                  <div style={{ background: '#0e1c19', border: '0.5px solid #0ef6cc55', borderRadius: 10, padding: '1.25rem', marginBottom: 10 }}>
-                    <div style={{ fontSize: 11, color: '#0ef6cc', fontWeight: 700, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.5px' }}>✅ Contact Revealed</div>
-                    {revealedContact.landlord_phone && (
-                      <a href={`tel:${revealedContact.landlord_phone}`} style={{ display: 'block', fontSize: 20, fontWeight: 700, color: '#ffffff', textDecoration: 'none', marginBottom: 10 }}>
-                        📞 {revealedContact.landlord_phone}
-                      </a>
-                    )}
-                    {revealedContact.landlord_phone && (
-                      <a
-                        href={`https://wa.me/${revealedContact.landlord_phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I'm interested in your property "${listing?.title}" listed on Mr. Rent (rent.fasteraim.com). Is it still available?`)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#0d1f0d', border: '0.5px solid #25D36633', borderRadius: 8, padding: '9px 12px', textDecoration: 'none', marginBottom: 10 }}
-                      >
-                        <span style={{ fontSize: 16 }}>💬</span>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: '#25D366' }}>WhatsApp Landlord</span>
-                      </a>
-                    )}
-                    {revealedContact.landlord_email && (
-                      <a href={`mailto:${revealedContact.landlord_email}`} style={{ display: 'block', fontSize: 13, color: '#cccccc', textDecoration: 'none' }}>
-                        ✉️ {revealedContact.landlord_email}
-                      </a>
-                    )}
-                  </div>
-                ) : (
-                  <>
-                    <button
-                      onClick={handleReveal}
-                      disabled={revealing}
-                      style={{
-                        width: '100%', padding: '14px',
-                        background: revealing ? '#0a5c50' : '#0ef6cc',
-                        color: '#080a0f', border: 'none', borderRadius: 10,
-                        fontWeight: 700, fontSize: 15, cursor: revealing ? 'not-allowed' : 'pointer',
-                        marginBottom: 10, transition: 'background 0.15s',
-                        letterSpacing: '0.2px',
-                      }}
-                    >
-                      {revealing
-                        ? (hasSub ? 'Revealing…' : 'Redirecting…')
-                        : hasSub
-                          ? '📞 Reveal Contact — Free'
-                          : '📞 Reveal Contact — ₦5,000'
-                      }
-                    </button>
-                    <p style={{ fontSize: 13, color: '#aaaaaa', textAlign: 'center', lineHeight: 1.6 }}>
-                      {hasSub
-                        ? 'Included in your subscription. Landlord contact revealed instantly.'
-                        : <>One-time secure payment via Paystack.<br />Landlord phone number revealed instantly after payment.</>
-                      }
-                    </p>
-                    {!hasSub && (
-                      <a
-                        href="/tenant-subscribe"
-                        style={{ display: 'block', textAlign: 'center', fontSize: 12, color: '#0ef6cc', marginTop: 10, textDecoration: 'none', fontWeight: 600 }}
-                      >
-                        🔓 Or get unlimited reveals — ₦25,000/month →
-                      </a>
-                    )}
-                  </>
-                )}
-              </div>
-
-              {/* Like / Save button */}
-              <button
-                onClick={handleLike}
-                style={{
-                  width: '100%', padding: '12px 16px',
-                  background: liked ? '#1a0c14' : '#111318',
-                  border: liked ? '0.5px solid #ff2d78' : '0.5px solid #2a2a2a',
-                  borderRadius: 12, cursor: 'pointer',
-                  color: liked ? '#ff2d78' : '#666',
-                  fontWeight: 600, fontSize: 14,
-                  transition: 'all 0.15s',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                }}
-              >
-                <span style={{ fontSize: 18 }}>{liked ? '♥' : '♡'}</span>
-                {liked ? 'Saved' : 'Save this listing'}
-                {likes > 0 && (
-                  <span style={{ fontSize: 12, color: liked ? '#ff2d7899' : '#444', marginLeft: 2 }}>
-                    · {likes}
-                  </span>
-                )}
-              </button>
+              {pwError && <p style={{ color: '#E24B4A', fontSize: 12, marginTop: 4 }}>{pwError}</p>}
             </div>
-          </div>
+            <button type="submit" style={{
+              width: '100%', padding: '10px', background: '#0ef6cc',
+              color: '#080a0f', border: 'none', borderRadius: 8,
+              fontWeight: 600, fontSize: 14, cursor: 'pointer', marginTop: 8
+            }}>
+              Enter Dashboard
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // DASHBOARD
+  const pendingListings = listings.filter(l => l.status === 'pending' || !l.status);
+  const activeListings = listings.filter(l => l.status === 'approved');
+  const otherListings = listings.filter(l => l.status === 'rejected' || l.status === 'unavailable');
+  const tabListings = [...pendingListings, ...activeListings, ...otherListings];
+  const verylandPending = verylandSubmissions.filter(s => s.status === 'submitted' || s.status === 'under_review');
+  const salePending = saleListings.filter(l => l.status === 'pending' || !l.status);
+  const now = new Date();
+  const activeSubs = subscriptions.filter(s => new Date(s.expiry_date) > now);
+
+  // Cross-reference subscription with profile for name + email
+  const profileMap = Object.fromEntries(landlords.map(p => [p.id, p]));
+  const enrichedSubs = subscriptions.map(s => ({
+    ...s,
+    full_name: profileMap[s.landlord_id]?.full_name || '—',
+    email: profileMap[s.landlord_id]?.email || '—',
+    phone: profileMap[s.landlord_id]?.phone || '—',
+    isActive: new Date(s.expiry_date) > now,
+  }));
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-1)' }}>
+
+      {/* Top nav */}
+      <div style={{
+        background: '#111318', borderBottom: '0.5px solid #222',
+        padding: '0 2rem', display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between', height: 56
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Link href="/" style={{
+            color: '#888', fontSize: 13, textDecoration: 'none',
+            border: '0.5px solid #333', borderRadius: 8, padding: '4px 10px',
+            display: 'inline-flex', alignItems: 'center', gap: 4
+          }}>← Site</Link>
+          <span style={{ color: '#444', fontSize: 14 }}>/</span>
+          <span style={{ color: '#0ef6cc', fontWeight: 700, fontSize: 16 }}>Mr. Rent</span>
+          <span style={{ color: '#444', fontSize: 14 }}>/</span>
+          <span style={{ color: '#888', fontSize: 14 }}>Admin</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          {actionMsg && (
+            <span style={{
+              background: '#0F6E56', color: '#9FE1CB',
+              fontSize: 12, padding: '4px 12px', borderRadius: 20
+            }}>{actionMsg}</span>
+          )}
+          <button onClick={fetchAll} style={{
+            background: 'transparent', border: '0.5px solid #333',
+            color: '#888', borderRadius: 8, padding: '5px 12px',
+            fontSize: 12, cursor: 'pointer'
+          }}>↻ Refresh</button>
+          <button onClick={logout} style={{
+            background: 'transparent', border: '0.5px solid #333',
+            color: '#888', borderRadius: 8, padding: '5px 12px',
+            fontSize: 12, cursor: 'pointer'
+          }}>Log out</button>
         </div>
       </div>
 
-      {showRoleModal && (
-        <SwitchRoleModal
-          fromRole="landlord"
-          loading={switchingRole}
-          onConfirm={handleSwitchToTenant}
-          onCancel={() => setShowRoleModal(false)}
-        />
-      )}
+      <div style={{ padding: '2rem', maxWidth: 1200, margin: '0 auto' }}>
 
-      <style>{`
-        .listing-grid {
-          display: grid;
-          grid-template-columns: 1fr 340px;
-          gap: 2rem;
-          align-items: start;
-        }
-        @media (max-width: 900px) {
-          .listing-grid { grid-template-columns: 1fr; }
-          .listing-grid > div:last-child { order: -1; }
-        }
-        @media (max-width: 600px) {
-          .listing-grid { gap: 1.25rem; }
-        }
-      `}</style>
+        {/* Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: '2rem' }}>
+          {[
+            { label: 'Total listings', value: stats.totalListings, color: '#e8e8e8' },
+            { label: 'Active listings', value: stats.activeListings, color: '#0ef6cc' },
+            { label: 'Pending review', value: stats.pendingListings, color: stats.pendingListings > 0 ? '#EF9F27' : '#e8e8e8' },
+            { label: 'Landlords', value: stats.totalLandlords, color: '#ff2d78' },
+            { label: 'Active subscriptions', value: activeSubs.length, color: activeSubs.length > 0 ? '#0ef6cc' : '#555' },
+            { label: 'Veryland queue', value: verylandPending.length, color: verylandPending.length > 0 ? '#3B82F6' : '#555' },
+          ].map(s => (
+            <div key={s.label} style={{
+              background: '#111318', border: '0.5px solid #222',
+              borderRadius: 12, padding: '1rem 1.25rem'
+            }}>
+              <div style={{ fontSize: 12, color: '#666', marginBottom: 6 }}>{s.label}</div>
+              <div style={{ fontSize: 28, fontWeight: 600, color: s.color }}>{s.value}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: '1.5rem', borderBottom: '0.5px solid #222', paddingBottom: 12, flexWrap: 'wrap' }}>
+          {[
+            { key: 'listings', label: `Listings${pendingListings.length > 0 ? ` (${pendingListings.length} pending)` : ''}` },
+            { key: 'landlords', label: `Landlords (${landlords.length})` },
+            { key: 'subscriptions', label: `Subscriptions (${activeSubs.length} active)` },
+            { key: 'veryland', label: `Veryland${verylandPending.length > 0 ? ` (${verylandPending.length} pending)` : ''}` },
+            { key: 'sales', label: `Sale Listings${salePending.length > 0 ? ` (${salePending.length} pending)` : ''}` },
+          ].map(tab => (
+            <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
+              background: activeTab === tab.key ? '#0ef6cc' : 'transparent',
+              color: activeTab === tab.key ? '#080a0f' : '#888',
+              border: activeTab === tab.key ? 'none' : '0.5px solid #333',
+              borderRadius: 8, padding: '6px 16px', fontSize: 13,
+              fontWeight: activeTab === tab.key ? 600 : 400, cursor: 'pointer'
+            }}>{tab.label}</button>
+          ))}
+        </div>
+
+        {loading && (
+          <div style={{ color: '#555', fontSize: 14, padding: '2rem 0' }}>Loading data from Supabase…</div>
+        )}
+
+        {/* LISTINGS TAB */}
+        {!loading && activeTab === 'listings' && (
+          <div>
+            {tabListings.length === 0 && (
+              <div style={{
+                background: '#111318', border: '0.5px solid #222',
+                borderRadius: 12, padding: '3rem', textAlign: 'center', color: '#555'
+              }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>🏠</div>
+                <div style={{ fontSize: 14 }}>No listings yet. They will appear here once landlords submit them.</div>
+              </div>
+            )}
+            {tabListings.map(listing => (
+              <div key={listing.id} style={{
+                background: '#111318',
+                border: (!listing.status || listing.status === 'pending') ? '0.5px solid #BA7517' : '0.5px solid #222',
+                borderRadius: 12, padding: '1.25rem', marginBottom: 10,
+                display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'start'
+              }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
+                    <span style={{ fontWeight: 600, fontSize: 15, color: '#e8e8e8' }}>
+                      {listing.title || 'Untitled listing'}
+                    </span>
+                    {statusBadge(listing.status)}
+                    {(!listing.status || listing.status === 'pending') && (
+                      <span style={{
+                        background: '#FAEEDA', color: '#854F0B',
+                        fontSize: 11, fontWeight: 600, padding: '2px 9px', borderRadius: 20
+                      }}>Needs review</span>
+                    )}
+                  </div>
+                  <div style={{ fontSize: 13, color: '#888', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                    <span>📍 {listing.location || '—'}{listing.city ? `, ${listing.city}` : ''}{listing.state ? `, ${listing.state}` : ''}</span>
+                    <span>🏠 {listing.property_type || '—'}</span>
+                    {listing.bedrooms && <span>🛏 {listing.bedrooms} bed</span>}
+                    {listing.size && <span>📐 {listing.size}</span>}
+                    <span>💰 {formatPrice(listing.price, listing.price_period)}</span>
+                    <span>🕐 {timeAgo(listing.created_at)}</span>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <a href={`/listing/${listing.id}?ref=admin`} target="_blank" rel="noreferrer" style={{
+                    background: 'transparent', color: '#888', border: '0.5px solid #333',
+                    borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer',
+                    textDecoration: 'none', display: 'inline-flex', alignItems: 'center'
+                  }}>👁 Preview</a>
+                  {(!listing.status || listing.status === 'pending') && (
+                    <>
+                      <button onClick={() => updateListingStatus(listing.id, 'approved')} style={{
+                        background: '#0ef6cc', color: '#080a0f', border: 'none',
+                        borderRadius: 8, padding: '5px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer'
+                      }}>✓ Approve</button>
+                      <button onClick={() => updateListingStatus(listing.id, 'rejected')} style={{
+                        background: 'transparent', color: '#E24B4A', border: '0.5px solid #E24B4A',
+                        borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer'
+                      }}>✕ Reject</button>
+                    </>
+                  )}
+                  {listing.status === 'approved' && (
+                    <button onClick={() => toggleAvailability(listing.id, listing.status)} style={{
+                      background: 'transparent', color: '#888', border: '0.5px solid #333',
+                      borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer'
+                    }}>Mark unavailable</button>
+                  )}
+                  {listing.status === 'unavailable' && (
+                    <button onClick={() => toggleAvailability(listing.id, listing.status)} style={{
+                      background: 'transparent', color: '#0ef6cc', border: '0.5px solid #0ef6cc',
+                      borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer'
+                    }}>Mark approved</button>
+                  )}
+                  <button onClick={() => deleteListing(listing.id)} style={{
+                    background: 'transparent', color: '#555', border: '0.5px solid #333',
+                    borderRadius: 8, padding: '5px 10px', fontSize: 12, cursor: 'pointer'
+                  }}>🗑</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* LANDLORDS TAB */}
+        {!loading && activeTab === 'landlords' && (
+          <div>
+            {landlords.length === 0 && (
+              <div style={{
+                background: '#111318', border: '0.5px solid #222',
+                borderRadius: 12, padding: '3rem', textAlign: 'center', color: '#555'
+              }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>👤</div>
+                <div style={{ fontSize: 14 }}>No landlords have signed up yet.</div>
+              </div>
+            )}
+            {landlords.map(lp => {
+              const landlordListings = listings.filter(l => l.user_id === lp.id || l.landlord_id === lp.id);
+              const activeSub = enrichedSubs.find(s => s.landlord_id === lp.id && s.isActive);
+              return (
+                <div key={lp.id} style={{
+                  background: '#111318', border: '0.5px solid #222',
+                  borderRadius: 12, padding: '1.25rem', marginBottom: 10,
+                  display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'center'
+                }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: 15, color: '#e8e8e8', marginBottom: 4 }}>
+                      {lp.full_name || lp.name || 'Unnamed landlord'}
+                    </div>
+                    <div style={{ fontSize: 13, color: '#888', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                      <span>✉️ {lp.email || '—'}</span>
+                      <span>📞 {lp.phone || lp.whatsapp || '—'}</span>
+                      <span>📅 Joined {timeAgo(lp.created_at)}</span>
+                      <span>🏠 {landlordListings.length} listing{landlordListings.length !== 1 ? 's' : ''}</span>
+                      {activeSub && <span style={{ color: '#0ef6cc' }}>💳 Expires {new Date(activeSub.expiry_date).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })}</span>}
+                    </div>
+                  </div>
+                  <span style={{
+                    background: activeSub ? '#E1F5EE' : '#1a1d24',
+                    color: activeSub ? '#0F6E56' : '#555',
+                    fontSize: 11, fontWeight: 500, padding: '4px 10px',
+                    borderRadius: 20, border: activeSub ? 'none' : '0.5px solid #333'
+                  }}>
+                    {activeSub ? '✓ Active Plan' : 'No subscription'}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* SUBSCRIPTIONS TAB */}
+        {!loading && activeTab === 'subscriptions' && (
+          <div>
+            {enrichedSubs.length === 0 && (
+              <div style={{
+                background: '#111318', border: '0.5px solid #222',
+                borderRadius: 12, padding: '3rem', textAlign: 'center', color: '#555'
+              }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>💳</div>
+                <div style={{ fontSize: 14 }}>No subscription records found.</div>
+              </div>
+            )}
+            {enrichedSubs.map(s => (
+              <div key={s.id} style={{
+                background: '#111318',
+                border: s.isActive ? '0.5px solid #0ef6cc44' : '0.5px solid #222',
+                borderRadius: 12, padding: '1.25rem', marginBottom: 10,
+                display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'center'
+              }}>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 15, color: '#e8e8e8', marginBottom: 4 }}>
+                    {s.full_name}
+                  </div>
+                  <div style={{ fontSize: 13, color: '#888', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                    <span>✉️ {s.email}</span>
+                    <span>📞 {s.phone}</span>
+                    <span>💳 Expires {new Date(s.expiry_date).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                    <span>📅 Subscribed {timeAgo(s.created_at)}</span>
+                  </div>
+                </div>
+                <span style={{
+                  background: s.isActive ? '#E1F5EE' : '#1a1d24',
+                  color: s.isActive ? '#0F6E56' : '#555',
+                  fontSize: 11, fontWeight: 500, padding: '4px 10px',
+                  borderRadius: 20, border: s.isActive ? 'none' : '0.5px solid #333'
+                }}>
+                  {s.isActive ? '✓ Active' : '✕ Expired'}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* VERYLAND TAB */}
+        {!loading && activeTab === 'veryland' && (
+          <div>
+            {verylandSubmissions.length === 0 && (
+              <div style={{
+                background: '#111318', border: '0.5px solid #222',
+                borderRadius: 12, padding: '3rem', textAlign: 'center', color: '#555'
+              }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>🏷️</div>
+                <div style={{ fontSize: 14 }}>No Veryland submissions yet. They appear here when property owners submit documents.</div>
+                <a href="/veryland" target="_blank" rel="noreferrer" style={{ color: '#0ef6cc', fontSize: 13, marginTop: 10, display: 'inline-block' }}>View Veryland page →</a>
+              </div>
+            )}
+            {verylandSubmissions.map(sub => {
+              const isPending = sub.status === 'submitted' || sub.status === 'under_review';
+              const isApproved = sub.status === 'approved_partial' || sub.status === 'approved_full';
+              const badgeColors = { white: '#d0d0d0', yellow: '#F59E0B', green: '#10B981', blue: '#3B82F6' };
+              const badgeFill = badgeColors[sub.badge_level] || '#d0d0d0';
+              const statusMap = {
+                submitted: { bg: '#1a1a0a', color: '#EF9F27', label: 'Pending' },
+                under_review: { bg: '#0a0f1a', color: '#3B82F6', label: 'Under Review' },
+                approved_partial: { bg: '#0a1a10', color: '#10B981', label: 'Partial Approved' },
+                approved_full: { bg: '#0a1a10', color: '#10B981', label: 'Fully Approved' },
+                rejected: { bg: '#1a0a0a', color: '#E24B4A', label: 'Rejected' },
+              };
+              const st = statusMap[sub.status] || statusMap.submitted;
+
+              return (
+                <div key={sub.id} style={{
+                  background: '#111318',
+                  border: isPending ? '0.5px solid #3B82F644' : '0.5px solid #222',
+                  borderRadius: 12, padding: '1.25rem', marginBottom: 12
+                }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'start' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
+                        <svg width="18" height="18" viewBox="0 0 18 18" style={{ flexShrink: 0 }}>
+                          <circle cx="9" cy="9" r="9" fill={badgeFill} />
+                          <polyline points="5,9 8,12 13,6" stroke={sub.badge_level === 'white' ? '#888' : '#fff'} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <span style={{ fontWeight: 600, fontSize: 15, color: '#e8e8e8' }}>
+                          {sub.owner_name || 'Unnamed submitter'}
+                        </span>
+                        <span style={{ background: st.bg, color: st.color, fontSize: 11, fontWeight: 500, padding: '2px 9px', borderRadius: 20 }}>
+                          {st.label}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: 13, color: '#888', display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 8 }}>
+                        <span>📍 {sub.property_address}{sub.state ? `, ${sub.state}` : ''}</span>
+                        <span>✉️ {sub.owner_email || '—'}</span>
+                        {sub.owner_phone && <span>📞 {sub.owner_phone}</span>}
+                        <span>📄 {Array.isArray(sub.documents) ? sub.documents.length : 0} doc{Array.isArray(sub.documents) && sub.documents.length !== 1 ? 's' : ''}</span>
+                        <span>🕐 {sub.submitted_at ? new Date(sub.submitted_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}</span>
+                      </div>
+                      {Array.isArray(sub.documents) && sub.documents.length > 0 && (
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                          {sub.documents.map((doc, i) => (
+                            <a key={i} href={doc.url} target="_blank" rel="noreferrer" style={{
+                              background: '#1a1d24', border: '0.5px solid #333', borderRadius: 6,
+                              padding: '3px 10px', fontSize: 11, color: '#0ef6cc', textDecoration: 'none',
+                              display: 'inline-flex', alignItems: 'center', gap: 4
+                            }}>
+                              📎 {doc.type?.replace(/_/g, ' ') || doc.name || `Doc ${i + 1}`}
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                      {sub.additional_info && (
+                        <div style={{ marginTop: 8, fontSize: 12, color: '#555', fontStyle: 'italic' }}>
+                          Note: {sub.additional_info}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Actions */}
+                    {isPending && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 180 }}>
+                        <select
+                          value={verylandBadgeSel[sub.id] || 'green'}
+                          onChange={e => setVerylandBadgeSel(prev => ({ ...prev, [sub.id]: e.target.value }))}
+                          style={{
+                            background: '#1a1d24', border: '0.5px solid #333', borderRadius: 6,
+                            color: '#e8e8e8', fontSize: 12, padding: '6px 10px', outline: 'none',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <option value="white">⬜ White — Submitted</option>
+                          <option value="yellow">🟡 Yellow — Partial</option>
+                          <option value="green">🟢 Green — Verified</option>
+                          <option value="blue">🔵 Blue — Premium</option>
+                        </select>
+                        <button onClick={() => approveVeryland(sub.id)} style={{
+                          background: '#0ef6cc', color: '#080a0f', border: 'none',
+                          borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer'
+                        }}>
+                          ✓ Approve &amp; Award Badge
+                        </button>
+                        <div>
+                          <input
+                            placeholder="Rejection reason (optional)"
+                            value={verylandNotes[sub.id] || ''}
+                            onChange={e => setVerylandNotes(prev => ({ ...prev, [sub.id]: e.target.value }))}
+                            style={{
+                              width: '100%', background: '#1a1d24', border: '0.5px solid #333',
+                              borderRadius: 6, color: '#888', fontSize: 12, padding: '6px 10px',
+                              outline: 'none', marginBottom: 4, boxSizing: 'border-box'
+                            }}
+                          />
+                          <button onClick={() => rejectVeryland(sub.id)} style={{
+                            background: 'transparent', color: '#E24B4A', border: '0.5px solid #E24B4A',
+                            borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer', width: '100%'
+                          }}>
+                            ✕ Reject
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {isApproved && (
+                      <div style={{ textAlign: 'right' }}>
+                        <svg width="32" height="32" viewBox="0 0 32 32">
+                          <circle cx="16" cy="16" r="16" fill={badgeFill} />
+                          <polyline points="9,16 14,21 23,11" stroke={sub.badge_level === 'white' ? '#888' : '#fff'} strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>Badge awarded</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* SALE LISTINGS TAB */}
+        {!loading && activeTab === 'sales' && (
+          <div>
+            {saleListings.length === 0 && (
+              <div style={{ background: '#111318', border: '0.5px solid #222', borderRadius: 12, padding: '3rem', textAlign: 'center', color: '#555' }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>🏡</div>
+                <div style={{ fontSize: 14 }}>No property sale listings yet.</div>
+              </div>
+            )}
+            {saleListings.map(listing => {
+              const isPending = listing.status === 'pending' || !listing.status;
+              const isApproved = listing.status === 'approved';
+              const isActive = listing.status === 'active';
+              const isRejected = listing.status === 'rejected';
+              const activationLink = `https://rent.fasteraim.com/sell/activate/${listing.id}`;
+              const saleStatusMap = {
+                pending: { bg: '#FAEEDA', color: '#854F0B', label: 'Pending Review' },
+                approved: { bg: '#E1F5EE', color: '#0F6E56', label: 'Approved — Awaiting Payment' },
+                active: { bg: '#e8f5ff', color: '#0055cc', label: 'Active (Live)' },
+                rejected: { bg: '#FCEBEB', color: '#A32D2D', label: 'Rejected' },
+              };
+              const st = saleStatusMap[listing.status] || saleStatusMap.pending;
+              return (
+                <div key={listing.id} style={{
+                  background: '#111318',
+                  border: isPending ? '0.5px solid #BA7517' : isApproved ? '0.5px solid #0ef6cc44' : '0.5px solid #222',
+                  borderRadius: 12, padding: '1.25rem', marginBottom: 10,
+                }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'start' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
+                        <span style={{ fontWeight: 600, fontSize: 15, color: '#e8e8e8' }}>{listing.title || 'Untitled'}</span>
+                        <span style={{ background: st.bg, color: st.color, fontSize: 11, fontWeight: 500, padding: '2px 9px', borderRadius: 20 }}>{st.label}</span>
+                        {listing.listing_fee_paid && <span style={{ background: '#E1F5EE', color: '#0F6E56', fontSize: 11, padding: '2px 9px', borderRadius: 20 }}>💳 Fee Paid</span>}
+                      </div>
+                      <div style={{ fontSize: 13, color: '#888', display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 6 }}>
+                        <span>📍 {listing.location}, {listing.state}</span>
+                        <span>🏠 {listing.property_type}</span>
+                        <span>💰 ₦{Number(listing.price).toLocaleString()}</span>
+                        <span>🕐 {timeAgo(listing.created_at)}</span>
+                      </div>
+                      <div style={{ fontSize: 13, color: '#666', display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                        <span>👤 {listing.seller?.full_name || '—'}</span>
+                        <span>✉️ {listing.seller?.email || '—'}</span>
+                        <span>📞 {listing.seller?.phone || '—'}</span>
+                      </div>
+                      {isApproved && (
+                        <div style={{ marginTop: 10, background: 'rgba(14,246,204,0.06)', border: '1px solid rgba(14,246,204,0.2)', borderRadius: 8, padding: '8px 12px' }}>
+                          <div style={{ fontSize: 12, color: '#0ef6cc', fontWeight: 700, marginBottom: 4 }}>Seller Activation Link</div>
+                          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                            <code style={{ fontSize: 11, color: '#888', wordBreak: 'break-all' }}>{activationLink}</code>
+                            <button onClick={() => { navigator.clipboard.writeText(activationLink); showMsg('Activation link copied!'); }} style={{
+                              background: '#0ef6cc', color: '#080a0f', border: 'none', borderRadius: 6,
+                              padding: '4px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap'
+                            }}>Copy Link</button>
+                          </div>
+                          <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>Send this link to the seller via WhatsApp or email so they can pay ₦15,000 to activate.</div>
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 160 }}>
+                      {isPending && (
+                        <>
+                          <button onClick={() => approveSaleListing(listing.id)} style={{
+                            background: '#0ef6cc', color: '#080a0f', border: 'none',
+                            borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer'
+                          }}>✓ Approve</button>
+                          <input
+                            placeholder="Rejection reason"
+                            value={saleRejectNotes[listing.id] || ''}
+                            onChange={e => setSaleRejectNotes(prev => ({ ...prev, [listing.id]: e.target.value }))}
+                            style={{ background: '#1a1d24', border: '0.5px solid #333', borderRadius: 6, color: '#888', fontSize: 12, padding: '6px 10px', outline: 'none', boxSizing: 'border-box' }}
+                          />
+                          <button onClick={() => rejectSaleListing(listing.id)} style={{
+                            background: 'transparent', color: '#E24B4A', border: '0.5px solid #E24B4A',
+                            borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer'
+                          }}>✕ Reject</button>
+                        </>
+                      )}
+                      {isActive && <span style={{ color: '#0ef6cc', fontSize: 12, fontWeight: 700, textAlign: 'center' }}>🟢 Live</span>}
+                      {isRejected && <span style={{ color: '#E24B4A', fontSize: 12, textAlign: 'center' }}>✕ Rejected</span>}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+      </div>
     </div>
-  )
+  );
 }
