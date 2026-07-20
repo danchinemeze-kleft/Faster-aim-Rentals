@@ -1,12 +1,27 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+// All write actions go through /api/admin-action, which uses the Supabase
+// service role key server-side. The admin panel's "login" is just a
+// password check (see /api/admin-auth) — there is no real Supabase auth
+// session in the browser, so any write done with the anon key here would
+// be silently blocked by RLS (0 rows affected, no error) even though the
+// button appears to "succeed". Routing through the server fixes that.
+async function adminAction(action, payload) {
+  const pw = sessionStorage.getItem('mr_rent_admin_pw');
+  const res = await fetch('/api/admin-action', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: pw, action, payload }),
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    console.error(`Admin action "${action}" failed:`, json.error);
+    return { error: json.error || 'Action failed' };
+  }
+  return { error: null, data: json.data };
+}
 
 export default function AdminDashboard() {
   const [authed, setAuthed] = useState(false);
@@ -96,54 +111,50 @@ export default function AdminDashboard() {
     const sub = verylandSubmissions.find(s => s.id === id);
     const newStatus = level === 'yellow' ? 'approved_partial' : 'approved_full';
 
-    const { error } = await supabase
-      .from('veryland_submissions')
-      .update({ status: newStatus, badge_level: level, reviewed_at: new Date().toISOString() })
-      .eq('id', id);
+    const { error } = await adminAction('approveVeryland', { id, level, listingId: sub?.listing_id });
 
     if (!error) {
-      if (sub?.listing_id) {
-        await supabase.from('listings').update({ veryland_badge: level }).eq('id', sub.listing_id);
-      }
       setVerylandSubmissions(prev => prev.map(s => s.id === id ? { ...s, status: newStatus, badge_level: level } : s));
       showMsg('Veryland submission approved — badge awarded.');
+    } else {
+      showMsg(`Error: ${error}`);
     }
   }
 
   async function rejectVeryland(id) {
     const notes = verylandNotes[id] || '';
-    const { error } = await supabase
-      .from('veryland_submissions')
-      .update({ status: 'rejected', admin_notes: notes, reviewed_at: new Date().toISOString() })
-      .eq('id', id);
+    const { error } = await adminAction('rejectVeryland', { id, notes });
     if (!error) {
       setVerylandSubmissions(prev => prev.map(s => s.id === id ? { ...s, status: 'rejected' } : s));
       showMsg('Veryland submission rejected.');
+    } else {
+      showMsg(`Error: ${error}`);
     }
   }
 
   async function approveSaleListing(id) {
-    const { error } = await supabase.from('property_sales').update({ status: 'approved' }).eq('id', id);
+    const { error } = await adminAction('approveSaleListing', { id });
     if (!error) {
       setSaleListings(prev => prev.map(l => l.id === id ? { ...l, status: 'approved' } : l));
       showMsg('Sale listing approved — seller can now activate.');
+    } else {
+      showMsg(`Error: ${error}`);
     }
   }
 
   async function rejectSaleListing(id) {
     const reason = saleRejectNotes[id] || '';
-    const { error } = await supabase.from('property_sales').update({ status: 'rejected', admin_notes: reason }).eq('id', id);
+    const { error } = await adminAction('rejectSaleListing', { id, reason });
     if (!error) {
       setSaleListings(prev => prev.map(l => l.id === id ? { ...l, status: 'rejected' } : l));
       showMsg('Sale listing rejected.');
+    } else {
+      showMsg(`Error: ${error}`);
     }
   }
 
   async function updateListingStatus(id, status) {
-    const { error } = await supabase
-      .from('listings')
-      .update({ status })
-      .eq('id', id);
+    const { error } = await adminAction('updateListingStatus', { id, status });
 
     if (!error) {
       setListings(prev => prev.map(l => l.id === id ? { ...l, status } : l));
@@ -153,15 +164,19 @@ export default function AdminDashboard() {
         activeListings: status === 'approved' ? s.activeListings + 1 : s.activeListings,
         pendingListings: s.pendingListings > 0 ? s.pendingListings - 1 : 0,
       }));
+    } else {
+      showMsg(`Error: ${error}`);
     }
   }
 
   async function deleteListing(id) {
     if (!confirm('Delete this listing permanently?')) return;
-    const { error } = await supabase.from('listings').delete().eq('id', id);
+    const { error } = await adminAction('deleteListing', { id });
     if (!error) {
       setListings(prev => prev.filter(l => l.id !== id));
       showMsg('Listing deleted.');
+    } else {
+      showMsg(`Error: ${error}`);
     }
   }
 
@@ -332,6 +347,12 @@ export default function AdminDashboard() {
         justifyContent: 'space-between', height: 56
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <link href="/" style={{
+            color: '#888', fontSize: 13, textDecoration: 'none',
+            border: '0.5px solid #333', borderRadius: 8, padding: '4px 10px',
+            display: 'inline-flex', alignItems: 'center', gap: 4
+          }}>← Site</link>
+          <span style={{ color: '#444', fontSize: 14 }}>/</span>
           <span style={{ color: '#0ef6cc', fontWeight: 700, fontSize: 16 }}>Mr. Rent</span>
           <span style={{ color: '#444', fontSize: 14 }}>/</span>
           <span style={{ color: '#888', fontSize: 14 }}>Admin</span>
