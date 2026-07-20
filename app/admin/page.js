@@ -464,7 +464,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                  <a href={`/listing/${listing.id}`} target="_blank" rel="noreferrer" style={{
+                  <a href={`/listing/${listing.id}?ref=admin`} target="_blank" rel="noreferrer" style={{
                     background: 'transparent', color: '#888', border: '0.5px solid #333',
                     borderRadius: 8, padding: '5px 14px', fontSize: 12, cursor: 'pointer',
                     textDecoration: 'none', display: 'inline-flex', alignItems: 'center'

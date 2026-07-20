@@ -4,7 +4,7 @@
 // ALTER TABLE listings ADD COLUMN IF NOT EXISTS likes integer DEFAULT 0;
 
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import SwitchRoleModal from '../../components/SwitchRoleModal'
 
@@ -128,6 +128,19 @@ function VideoPlayer({ src }) {
 export default function ListingPage() {
   const { id } = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  // Preview links from the admin dashboard append ?ref=admin, since they
+  // open in a new tab (no browser history to go "back" through). In that
+  // case, send the back button straight to the admin dashboard instead
+  // of calling router.back(), which would do nothing in a fresh tab.
+  const cameFromAdmin = searchParams.get('ref') === 'admin'
+  const goBack = () => {
+    if (cameFromAdmin) {
+      router.push('/admin')
+    } else {
+      router.back()
+    }
+  }
 
   const [listing, setListing] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -428,7 +441,7 @@ export default function ListingPage() {
 
       {/* Top bar */}
       <div style={{ background: '#111318', borderBottom: '0.5px solid #222', padding: '0 1.5rem', height: 54, display: 'flex', alignItems: 'center', gap: 10, position: 'sticky', top: 0, zIndex: 100 }}>
-        <button onClick={() => router.back()} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#ffffff', cursor: 'pointer', fontSize: 13, fontWeight: 600, padding: '6px 12px', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 6, lineHeight: 1, fontFamily: 'inherit', flexShrink: 0 }}>
+        <button onClick={goBack} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#ffffff', cursor: 'pointer', fontSize: 13, fontWeight: 600, padding: '6px 12px', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 6, lineHeight: 1, fontFamily: 'inherit', flexShrink: 0 }}>
           ← Back
         </button>
         <span style={{ color: '#0ef6cc', fontWeight: 700, fontSize: 15 }}>Mr. Rent</span>
