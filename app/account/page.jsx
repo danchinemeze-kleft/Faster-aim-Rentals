@@ -23,6 +23,7 @@ function AccountPageInner() {
   const [role, setRole] = useState('tenant')
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
+  const [facebookLoading, setFacebookLoading] = useState(false)
   const [error, setError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -43,7 +44,7 @@ function AccountPageInner() {
       .eq('id', user.id)
       .single()
 
-    // New Google user — no role set yet, show onboarding
+    // New OAuth user — no role set yet, show onboarding
     if (!profile?.role) {
       setOnboardingUser({ ...user, full_name: profile?.full_name })
       setMode('onboarding')
@@ -83,6 +84,23 @@ function AccountPageInner() {
     if (error) {
       setError(error.message)
       setGoogleLoading(false)
+    }
+  }
+
+  const handleFacebookLogin = async () => {
+    setFacebookLoading(true)
+    setError('')
+    const callbackUrl = redirectTo
+      ? `${window.location.origin}/account/callback?redirect=${encodeURIComponent(redirectTo)}`
+      : `${window.location.origin}/account/callback`
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'facebook',
+      options: { redirectTo: callbackUrl },
+    })
+    if (error) {
+      setError(error.message)
+      setFacebookLoading(false)
     }
   }
 
@@ -250,6 +268,18 @@ function AccountPageInner() {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
               {googleLoading ? 'Redirecting...' : 'Continue with Google'}
+            </button>
+
+            <button
+              className="faim-facebook-btn"
+              onClick={handleFacebookLogin}
+              disabled={facebookLoading}
+              type="button"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+              {facebookLoading ? 'Redirecting...' : 'Continue with Facebook'}
             </button>
 
             <div className="faim-divider"><span>or</span></div>
@@ -490,6 +520,15 @@ function AccountPageInner() {
         }
         .faim-google-btn:hover { background: var(--card-bg2); border-color: var(--border-2); }
         .faim-google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .faim-facebook-btn {
+          width: 100%; display: flex; align-items: center; justify-content: center;
+          gap: 10px; padding: 0.7rem 1rem; border: 1.5px solid var(--border-1); border-radius: 10px;
+          background: var(--input-bg); font-size: 0.9rem; font-weight: 500; color: var(--text-1);
+          cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease;
+          margin-top: 0.75rem;
+        }
+        .faim-facebook-btn:hover { background: var(--card-bg2); border-color: var(--border-2); }
+        .faim-facebook-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .faim-divider {
           display: flex; align-items: center; gap: 12px;
           margin: 1.25rem 0; color: var(--text-2); font-size: 0.95rem;
