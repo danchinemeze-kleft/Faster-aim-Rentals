@@ -191,7 +191,7 @@ export async function POST(request) {
             }))
 
           const result = await genAI.models.generateContentStream({
-            model: 'gemini-3.5-flash',
+            model: 'gemini-3.6-flash',
             contents: [
               ...history,
               { role: 'user', parts: [{ text: lastMessage }] },
