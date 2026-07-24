@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useLoadingRouter } from '../hooks/useLoadingRouter';
 import { createClient } from '@supabase/supabase-js';
 import Breadcrumb from '../components/Breadcrumb';
 import SwitchRoleModal from '../components/SwitchRoleModal';
@@ -80,7 +80,7 @@ function BrowseVideoPlayer({ src }) {
 }
 
 export default function BrowsePage() {
-  const router = useRouter();
+  const router = useLoadingRouter();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');

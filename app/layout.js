@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { Suspense } from "react";
 import Script from "next/script";
+import { LoadingProvider } from "./context/LoadingContext";
 import RefCapture from "./components/RefCapture";
 
 const geistSans = Geist({
@@ -140,7 +141,7 @@ export default function RootLayout({ children }) {
         {/* right */}
         <div style={{ position: 'fixed', top: 0, bottom: 0, right: 0, width: 4, background: 'linear-gradient(180deg, #ff2d78 0%, #0ef6cc 100%)', zIndex: 99999, pointerEvents: 'none' }} />
         <Suspense fallback={null}><RefCapture /></Suspense>
-        {children}
+        <LoadingProvider>{children}</LoadingProvider>
       </body>
       <Analytics />
       <SpeedInsights />

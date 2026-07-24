@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useLoadingRouter } from '../hooks/useLoadingRouter';
+import { useSearchParams } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr'
 import Image from 'next/image'
 import Breadcrumb from '../components/Breadcrumb'
@@ -97,7 +98,7 @@ const emptyForm = {
 }
 
 function ListPageInner() {
-  const router = useRouter()
+  const router = useLoadingRouter()
   const searchParams = useSearchParams()
   const userClosedFormRef = useRef(false)
   const supabase = useMemo(() => createBrowserClient(
@@ -546,12 +547,7 @@ videoEl.src = URL.createObjectURL(file)
 
   const isResidential = RESIDENTIAL_TYPES.includes(formData.property_type)
 
-  if (loading) return (
-    <div className="faim-list-loading">
-      <div className="faim-spinner"></div>
-      <p>Loading your listings...</p>
-    </div>
-  )
+  if (loading) return null
 
   return (
     <div className="faim-list-page">
@@ -1032,8 +1028,6 @@ videoEl.src = URL.createObjectURL(file)
 
       <style>{`
         .faim-list-page { min-height:100vh; background:#f5f4f0; font-family:'Segoe UI',system-ui,sans-serif; padding:2rem; }
-        .faim-list-loading { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem; color:#666; }
-        .faim-spinner { width:40px; height:40px; border:3px solid #e0e0e0; border-top-color:#e67e22; border-radius:50%; animation:spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .faim-list-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; max-width:1200px; margin-left:auto; margin-right:auto; }
         .faim-list-header h1 { font-size:1.8rem; font-weight:700; color:var(--text-1); }

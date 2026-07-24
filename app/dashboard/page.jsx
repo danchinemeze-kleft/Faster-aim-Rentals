@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
+import { useLoadingRouter } from '../hooks/useLoadingRouter';
 import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from '../components/Breadcrumb'
 import SwitchRoleModal from '../components/SwitchRoleModal'
