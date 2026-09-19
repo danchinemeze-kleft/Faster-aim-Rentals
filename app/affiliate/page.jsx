@@ -83,7 +83,7 @@ export default function AffiliatePage() {
           {affiliate && <a href="/affiliate/dashboard" style={{ color: '#0ea5e9', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none' }}>My Dashboard →</a>}
           {user
             ? <span style={{ fontSize: '0.85rem', color: '#64748b' }}>{user.email}</span>
-            : <a href="/account?redirect=/affiliate" style={{ background: 'linear-gradient(135deg,#ff2d78,#c0135a)', color: '#fff', padding: '0.5rem 1.25rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>Login / Sign up</a>
+            : <a href="/affiliate/auth" style={{ background: 'linear-gradient(135deg,#ff2d78,#c0135a)', color: '#fff', padding: '0.5rem 1.25rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>Login / Sign up</a>
           }
         </div>
       </nav>
@@ -166,7 +166,7 @@ export default function AffiliatePage() {
             </p>
 
             {!user ? (
-              <a href="/account?redirect=/affiliate" style={{ display: 'block', textAlign: 'center', background: 'linear-gradient(135deg,#ff2d78,#c0135a)', color: '#fff', padding: '0.875rem', borderRadius: '12px', fontWeight: 800, fontSize: '1rem', textDecoration: 'none' }}>
+              <a href="/affiliate/auth" style={{ display: 'block', textAlign: 'center', background: 'linear-gradient(135deg,#ff2d78,#c0135a)', color: '#fff', padding: '0.875rem', borderRadius: '12px', fontWeight: 800, fontSize: '1rem', textDecoration: 'none' }}>
                 Create Account / Login →
               </a>
             ) : (
