@@ -91,22 +91,32 @@ export default function AffiliateAuthPage() {
         return
       }
 
-      const { error: affiliateError } = await supabase
-        .from('affiliates')
-        .insert({
-          id: authData.user.id,
+      // Call API route to insert affiliate (uses service_role backend)
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        setMsgType('error')
+        setMsg('Failed to get session token')
+        setLoading(false)
+        return
+      }
+
+      const affiliateRes = await fetch('/api/affiliate/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           full_name: formData.full_name,
-          email: formData.email,
           phone: formData.phone,
           bank_name: formData.bank_name,
           account_number: formData.account_number,
           account_name: formData.account_name,
-          status: 'active'
-        })
+          access_token: session.access_token,
+        }),
+      })
 
-      if (affiliateError) {
+      const affiliateData = await affiliateRes.json()
+      if (!affiliateData.success) {
         setMsgType('error')
-        setMsg('Failed to create affiliate account: ' + affiliateError.message)
+        setMsg('Failed to create affiliate account: ' + (affiliateData.error || 'Unknown error'))
         setLoading(false)
         return
       }
