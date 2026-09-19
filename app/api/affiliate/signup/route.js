@@ -1,80 +1,79 @@
-import { createClient } from '@supabase/supabase-js'
+﻿import { createClient } from '@supabase/supabase-js'
+import crypto from 'crypto'
 
-function generateRefCode(name) {
-  const prefix = (name || 'MRR')
-    .toUpperCase()
-    .replace(/[^A-Z]/g, '')
-    .slice(0, 4)
-    .padEnd(4, 'X')
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-  let suffix = ''
-  for (let i = 0; i < 4; i++) suffix += chars[Math.floor(Math.random() * chars.length)]
-  return prefix + suffix
+function generateRefCode() {
+  return 'MRENT' + crypto.randomBytes(4).toString('hex').toUpperCase().slice(0, 8)
 }
 
 export async function POST(request) {
   try {
     const { full_name, phone, bank_name, account_number, account_name, access_token } = await request.json()
 
-    if (!access_token) return Response.json({ error: 'Not authenticated' }, { status: 401 })
+    if (!full_name || !phone || !bank_name || !account_number || !account_name || !access_token) {
+      return Response.json({ success: false, error: 'Missing required fields' }, { status: 400 })
+    }
 
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      { global: { headers: { Authorization: `Bearer ${access_token}` } } }
-    )
-
-    const { data: { user }, error: authErr } = await supabase.auth.getUser()
-    if (authErr || !user) return Response.json({ error: 'Invalid session' }, { status: 401 })
-
-    const serviceSupabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     )
 
-    // Check if already an affiliate
-    const { data: existing } = await serviceSupabase
+    // Get user from token
+    const { data: { user }, error: userError } = await supabase.auth.getUser(access_token)
+    if (userError || !user) {
+      return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Check if user is already an affiliate
+    const { data: existing } = await supabase
       .from('affiliates')
-      .select('ref_code')
+      .select('id')
       .eq('id', user.id)
       .maybeSingle()
 
     if (existing) {
-      return Response.json({ success: true, ref_code: existing.ref_code, already_exists: true })
+      return Response.json({ success: false, error: 'Already registered as affiliate' }, { status: 400 })
     }
 
     // Generate unique ref code
-    let ref_code = generateRefCode(full_name)
-    let attempts = 0
-    while (attempts < 10) {
-      const { data: clash } = await serviceSupabase
-        .from('affiliates').select('id').eq('ref_code', ref_code).maybeSingle()
-      if (!clash) break
-      ref_code = generateRefCode(full_name)
-      attempts++
+    let ref_code
+    let codeExists = true
+    while (codeExists) {
+      ref_code = generateRefCode()
+      const { data } = await supabase
+        .from('affiliates')
+        .select('id', { count: 'exact', head: true })
+        .eq('ref_code', ref_code)
+      codeExists = data && data.length > 0
     }
 
-    const { error: insertErr } = await serviceSupabase.from('affiliates').insert({
-      id: user.id,
+    // Insert affiliate
+    const { error: insertError } = await supabase
+      .from('affiliates')
+      .insert({
+        id: user.id,
+        ref_code,
+        full_name: full_name.trim(),
+        phone: phone.trim(),
+        bank_name: bank_name.trim(),
+        account_number: account_number.trim(),
+        account_name: account_name.trim(),
+        status: 'active',
+      })
+
+    if (insertError) {
+      console.error('Insert error:', insertError)
+      return Response.json({ success: false, error: 'Failed to create affiliate account' }, { status: 500 })
+    }
+
+    return Response.json({
+      success: true,
       ref_code,
-      full_name: full_name || null,
-      email: user.email,
-      phone: phone || null,
-      bank_name: bank_name || null,
-      account_number: account_number || null,
-      account_name: account_name || null,
-      status: 'active',
+      message: `Welcome to Mr. Rent Affiliate Program! Your ref code: ${ref_code}`,
     })
 
-    if (insertErr) {
-      console.error('Affiliate insert error:', insertErr)
-      return Response.json({ error: 'Failed to create affiliate account' }, { status: 500 })
-    }
-
-    return Response.json({ success: true, ref_code })
-
-  } catch (err) {
-    console.error('Affiliate signup error:', err)
-    return Response.json({ error: 'Server error' }, { status: 500 })
+  } catch (error) {
+    console.error('Affiliate signup error:', error)
+    return Response.json({ success: false, error: 'Server error' }, { status: 500 })
   }
 }

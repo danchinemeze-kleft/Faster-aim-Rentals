@@ -42,6 +42,17 @@ export default function Home() {
     }
   }, [])
 
+  // Capture affiliate ref parameter from URL
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const ref = params.get('ref')
+      if (ref) {
+        localStorage.setItem('mrRentAffiliate', ref)
+      }
+    } catch (e) {}
+  }, [])
+
   const dismissBubble = () => {
     try { localStorage.setItem('mrRentBubbleSeen', '1') } catch (e) {}
     setShowBubble(false)

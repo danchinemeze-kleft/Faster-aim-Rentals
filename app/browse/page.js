@@ -131,12 +131,21 @@ export default function BrowsePage() {
   useEffect(() => {
     loadUser();
     loadListings();
+    // Capture affiliate ref parameter from URL
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref) {
+        localStorage.setItem('mrRentAffiliate', ref);
+      }
+    } catch (e) {}
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function initiatePayment(userObj, listingId) {
     setPaying(listingId);
     try {
+      const refCode = localStorage.getItem('mrRentAffiliate') || null;
       const res = await fetch('/api/init-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -145,6 +154,7 @@ export default function BrowsePage() {
           type: 'reveal',
           listing_id: listingId,
           user_id: userObj.id,
+          ref_code: refCode,
         }),
       });
       const data = await res.json();
