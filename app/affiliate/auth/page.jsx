@@ -84,6 +84,13 @@ export default function AffiliateAuthPage() {
         return
       }
 
+      if (!authData?.user?.id) {
+        setMsgType('error')
+        setMsg('Failed to create user account: Invalid user ID')
+        setLoading(false)
+        return
+      }
+
       const { error: affiliateError } = await supabase
         .from('affiliates')
         .insert({
