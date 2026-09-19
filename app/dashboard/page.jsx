@@ -1,4 +1,5 @@
 'use client'
+export const dynamic = 'force-dynamic'
 
 import { useState, useEffect, useMemo } from 'react'
 import { useLoadingRouter } from '../hooks/useLoadingRouter';
@@ -7,7 +8,7 @@ import Breadcrumb from '../components/Breadcrumb'
 import SwitchRoleModal from '../components/SwitchRoleModal'
 
 export default function DashboardPage() {
-  const router = useRouter()
+  const router = useLoadingRouter()
   const supabase = useMemo(() => createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
