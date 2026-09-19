@@ -54,6 +54,7 @@ export async function POST(request) {
         id: user.id,
         ref_code,
         full_name: full_name.trim(),
+        email: user.email,
         phone: phone.trim(),
         bank_name: bank_name.trim(),
         account_number: account_number.trim(),
