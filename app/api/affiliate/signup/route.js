@@ -78,3 +78,4 @@ export async function POST(request) {
     return Response.json({ success: false, error: 'Server error' }, { status: 500 })
   }
 }
+/* Vercel sync test */
