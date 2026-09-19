@@ -155,12 +155,18 @@ ON affiliates FOR SELECT
 TO public
 USING ((auth.jwt() ->> 'role'::text) = 'admin'::text);
 
+DROP POLICY IF EXISTS "Service role can insert affiliates" ON affiliates;
+CREATE POLICY "Service role can insert affiliates"
+ON affiliates FOR INSERT
+TO service_role
+WITH CHECK (true);
+
 DROP POLICY IF EXISTS "Service role can update affiliates" ON affiliates;
 CREATE POLICY "Service role can update affiliates"
 ON affiliates FOR UPDATE
-TO public
-USING (auth.role() = 'service_role'::text)
-WITH CHECK (auth.role() = 'service_role'::text);
+TO service_role
+USING (true)
+WITH CHECK (true);
 
 DROP POLICY IF EXISTS "Users can insert own affiliate record" ON affiliates;
 CREATE POLICY "Users can insert own affiliate record"
