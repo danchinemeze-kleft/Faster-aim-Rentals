@@ -13,6 +13,14 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'Missing required fields' }, { status: 400 })
     }
 
+    // Check which key is being used
+    const hasServiceRoleKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY
+    const keyType = hasServiceRoleKey ? 'service_role' : 'anon'
+    console.log(`[AFFILIATE SIGNUP] Using key type: ${keyType}`)
+    if (!hasServiceRoleKey) {
+      console.warn('[AFFILIATE SIGNUP] WARNING: SUPABASE_SERVICE_ROLE_KEY not set! Falling back to anon key.')
+    }
+
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -21,8 +29,11 @@ export async function POST(request) {
     // Get user from token
     const { data: { user }, error: userError } = await supabase.auth.getUser(access_token)
     if (userError || !user) {
-      return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+      console.error('[AFFILIATE SIGNUP] Auth failed:', userError?.message)
+      return Response.json({ success: false, error: 'Unauthorized: ' + (userError?.message || 'Invalid token') }, { status: 401 })
     }
+
+    console.log(`[AFFILIATE SIGNUP] Authenticated user: ${user.id} (${user.email})`)
 
     // Check if user is already an affiliate
     const { data: existing } = await supabase
@@ -48,24 +59,40 @@ export async function POST(request) {
     }
 
     // Insert affiliate
+    const insertPayload = {
+      id: user.id,
+      ref_code,
+      full_name: full_name.trim(),
+      email: user.email,
+      phone: phone.trim(),
+      bank_name: bank_name.trim(),
+      account_number: account_number.trim(),
+      account_name: account_name.trim(),
+      status: 'active',
+    }
+
+    console.log(`[AFFILIATE SIGNUP] Attempting insert with ref_code: ${ref_code}`)
+    console.log(`[AFFILIATE SIGNUP] Insert payload:`, insertPayload)
+
     const { error: insertError } = await supabase
       .from('affiliates')
-      .insert({
-        id: user.id,
-        ref_code,
-        full_name: full_name.trim(),
-        email: user.email,
-        phone: phone.trim(),
-        bank_name: bank_name.trim(),
-        account_number: account_number.trim(),
-        account_name: account_name.trim(),
-        status: 'active',
-      })
+      .insert(insertPayload)
 
     if (insertError) {
-      console.error('Insert error:', insertError)
-      return Response.json({ success: false, error: 'Failed to create affiliate account' }, { status: 500 })
+      console.error('[AFFILIATE SIGNUP] INSERT ERROR:')
+      console.error('  Code:', insertError.code)
+      console.error('  Message:', insertError.message)
+      console.error('  Details:', insertError.details)
+      console.error('  Full error:', JSON.stringify(insertError, null, 2))
+
+      return Response.json({
+        success: false,
+        error: `RLS Policy Error: ${insertError.message}. Key type: ${keyType}. Check server logs for details.`,
+        code: insertError.code
+      }, { status: 500 })
     }
+
+    console.log(`[AFFILIATE SIGNUP] Success! Created affiliate ${user.id} with ref_code ${ref_code}`)
 
     return Response.json({
       success: true,
