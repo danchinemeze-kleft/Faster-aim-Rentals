@@ -9,12 +9,27 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
+const getPasswordStrength = (password) => {
+  if (!password) return { level: 'none', color: '#e2e8f0', label: '' }
+  let strength = 0
+  if (password.length >= 8) strength++
+  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++
+  if (/[0-9]/.test(password)) strength++
+  if (/[^a-zA-Z0-9]/.test(password)) strength++
+
+  if (strength < 2) return { level: 'weak', color: '#e74c3c', label: 'Weak' }
+  if (strength < 4) return { level: 'medium', color: '#f39c12', label: 'Medium' }
+  return { level: 'strong', color: '#22c55e', label: 'Strong' }
+}
+
 export default function AffiliateAuthPage() {
   const [mode, setMode] = useState('signup')
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState('')
   const [msgType, setMsgType] = useState('')
-  
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -30,6 +45,9 @@ export default function AffiliateAuthPage() {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
+
+  const passwordStrength = getPasswordStrength(formData.password)
+  const passwordsMatch = formData.password && formData.confirmPassword && formData.password === formData.confirmPassword
 
   const handleSignup = async (e) => {
     e.preventDefault()
@@ -184,12 +202,10 @@ export default function AffiliateAuthPage() {
               <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1.5rem', fontWeight: 600 }}>Create your account and start earning ₦500 per reveal, ₦2,000 per subscription.</p>
 
               {[
-                { name: 'full_name', label: 'Full Name *', type: 'text', placeholder: 'Daniel Igboke' },
+                { name: 'full_name', label: 'Full Name *', type: 'text', placeholder: 'Your full name' },
                 { name: 'email', label: 'Email *', type: 'email', placeholder: 'your@email.com' },
-                { name: 'password', label: 'Password *', type: 'password', placeholder: 'Min 6 characters' },
-                { name: 'confirmPassword', label: 'Confirm Password *', type: 'password', placeholder: 'Confirm password' },
                 { name: 'phone', label: 'WhatsApp / Phone *', type: 'tel', placeholder: '08012345678' },
-                { name: 'bank_name', label: 'Bank Name *', type: 'text', placeholder: 'Access Bank' },
+                { name: 'bank_name', label: 'Bank Name *', type: 'text', placeholder: 'e.g. Access Bank' },
                 { name: 'account_number', label: 'Account Number *', type: 'text', placeholder: '10-digit number' },
                 { name: 'account_name', label: 'Account Name *', type: 'text', placeholder: 'Name on account' },
               ].map(field => (
@@ -206,6 +222,60 @@ export default function AffiliateAuthPage() {
                   />
                 </div>
               ))}
+
+              {/* Password Field */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#374151' }}>Password *</label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Min 6 characters"
+                    required
+                    style={{ width: '100%', padding: '0.7rem 2.5rem 0.7rem 0.9rem', border: '1.5px solid #e2e8f0', borderRadius: '10px', fontSize: '0.9rem', fontFamily: 'inherit', outline: 'none', color: '#0f172a', boxSizing: 'border-box' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#0ea5e9' }}
+                  >
+                    {showPassword ? '👁️' : '👁️‍🗨️'}
+                  </button>
+                </div>
+                {formData.password && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', fontWeight: 700 }}>
+                    <div style={{ flex: 1, height: '4px', background: '#e2e8f0', borderRadius: '2px', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: passwordStrength.level === 'weak' ? '33%' : passwordStrength.level === 'medium' ? '66%' : '100%', background: passwordStrength.color, transition: 'all 0.3s' }} />
+                    </div>
+                    <span style={{ color: passwordStrength.color }}>✓ {passwordStrength.label}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Confirm Password Field */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#374151' }}>Confirm Password * {passwordsMatch && <span style={{ color: '#22c55e' }}>✓</span>}</label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Confirm password"
+                    required
+                    style={{ width: '100%', padding: '0.7rem 2.5rem 0.7rem 0.9rem', border: `1.5px solid ${passwordsMatch ? '#22c55e' : '#e2e8f0'}`, borderRadius: '10px', fontSize: '0.9rem', fontFamily: 'inherit', outline: 'none', color: '#0f172a', boxSizing: 'border-box', background: passwordsMatch ? '#f0fdf4' : '#fff' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#0ea5e9' }}
+                  >
+                    {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                  </button>
+                </div>
+              </div>
 
               {msg && (
                 <p style={{ fontSize: '0.85rem', fontWeight: 700, color: msgType === 'success' ? '#22c55e' : '#e74c3c', padding: '0.65rem 0.9rem', background: msgType === 'success' ? '#f0fdf4' : '#fff0f0', borderRadius: '8px' }}>
