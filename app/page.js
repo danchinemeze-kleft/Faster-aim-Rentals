@@ -141,7 +141,7 @@ export default function Home() {
                   </div>
                   <div style={s.statDivider}></div>
                   <div style={s.heroStat}>
-                    <span style={s.statValuePink}>36</span>
+                    <span style={s.statValueTeal}>36</span>
                     <span style={s.statLabel}>States</span>
                   </div>
                 </div>
@@ -218,11 +218,11 @@ export default function Home() {
               <div style={{ display:'inline-block', background:`linear-gradient(135deg,${CYAN},#0284c7)`, color:'white', padding:'9px 20px', borderRadius:9, fontWeight:800, fontSize:'0.85rem', marginTop:4 }}>Browse Properties →</div>
               <div style={{ position:'absolute', top:14, right:14, background:'#fbbf24', color:'#080a0f', fontSize:'0.62rem', fontWeight:900, borderRadius:5, padding:'2px 7px', letterSpacing:'0.06em' }}>NEW</div>
             </Link>
-            <Link href="/sell" style={{ background:'#ffffff', border:`2px solid ${PINK}55`, borderRadius:18, padding:'2rem', textDecoration:'none', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:10, boxShadow:`0 4px 24px ${PINK}22`, position:'relative', overflow:'hidden' }}>
+            <Link href="/sell" style={{ background:'#ffffff', border:`2px solid ${TEAL}55`, borderRadius:18, padding:'2rem', textDecoration:'none', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:10, boxShadow:`0 4px 24px ${TEAL}22`, position:'relative', overflow:'hidden' }}>
               <div style={{ fontSize:'2.5rem' }}>💰</div>
               <div style={{ fontWeight:900, fontSize:'1.15rem', color:'#0f172a' }}>Sell Property</div>
               <p style={{ color:'#475569', fontSize:'0.84rem', fontWeight:600, lineHeight:1.7, margin:0, textAlign:'left' }}>List your land or house and reach thousands of serious buyers. One-time fee, listing stays live until sold.</p>
-              <span style={{ background:`${PINK}10`, border:`1px solid ${PINK}44`, color:PINK, borderRadius:20, padding:'3px 12px', fontSize:'0.78rem', fontWeight:800, marginTop:4 }}>₦20,000 listing fee</span>
+              <span style={{ background:`${TEAL}10`, border:`1px solid ${TEAL}44`, color:TEAL, borderRadius:20, padding:'3px 12px', fontSize:'0.78rem', fontWeight:800, marginTop:4 }}>₦20,000 listing fee</span>
               <div style={{ display:'inline-block', background:`linear-gradient(135deg,${TEAL},#0D9488)`, color:'white', padding:'9px 20px', borderRadius:9, fontWeight:800, fontSize:'0.85rem', marginTop:4 }}>List for Sale →</div>
               <div style={{ position:'absolute', top:14, right:14, background:'#fbbf24', color:'#080a0f', fontSize:'0.62rem', fontWeight:900, borderRadius:5, padding:'2px 7px', letterSpacing:'0.06em' }}>NEW</div>
             </Link>
@@ -263,7 +263,7 @@ export default function Home() {
                 <p>✓ AI promotion</p>
                 <p>✓ Cancel anytime</p>
               </div>
-              <a href="/account" style={s.btnPink}>Subscribe Now</a>
+              <a href="/account" style={s.btnTeal}>Subscribe Now</a>
             </div>
           </div>
         </div>
@@ -276,9 +276,9 @@ export default function Home() {
         <p style={s.ctaSubtitle}>Join thousands of Nigerians finding and listing homes on Mr. Rent</p>
         <div style={{ ...s.heroActions, margin: '0 auto 2.5rem' }}>
           <a href="/browse" style={s.btnCyan}>Browse Listings</a>
-          <a href="/search" style={s.btnPink}>Ask Mr. Rent AI 🤖</a>
+          <a href="/search" style={s.btnTeal}>Ask Mr. Rent AI 🤖</a>
           <a href="/list" style={s.btnOutline}>Add Your Property 🏠</a>
-          <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={s.btnPurple}>Learn AI Skills 🎓</a>
+          <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={s.btnCyan}>Learn AI Skills 🎓</a>
         </div>
       </section>
 
@@ -501,7 +501,7 @@ const s = {
   },
   navBrand: {
     fontSize: '1.4rem', fontWeight: '800',
-    background: `linear-gradient(90deg, ${CYAN}, ${PINK})`,
+    background: `linear-gradient(90deg, ${CYAN}, ${TEAL})`,
     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
   },
   navLinks: { display: 'flex', alignItems: 'center', gap: '1.5rem' },
@@ -518,7 +518,7 @@ const s = {
     display: 'flex', justifyContent: 'center',
   },
   heroOuter: {
-    border: `1.5px solid ${PINK}55`, borderRadius: '24px',
+    border: `1.5px solid ${TEAL}55`, borderRadius: '24px',
     padding: '4px', maxWidth: '1100px', width: '100%',
   },
   heroInner: {
@@ -590,7 +590,7 @@ const s = {
   heroStats: { display: 'flex', alignItems: 'center', gap: '2rem' },
   heroStat: { display: 'flex', flexDirection: 'column', gap: '4px' },
   statValueCyan: { fontSize: '1.5rem', fontWeight: '800', color: CYAN },
-  statValuePink: { fontSize: '1.5rem', fontWeight: '800', color: PINK },
+  statValueTeal: { fontSize: '1.5rem', fontWeight: '800', color: TEAL },
   statLabel: { fontSize: '0.7rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em' },
   statDivider: { width: '1px', height: '36px', background: '#e2e8f0' },
 
@@ -677,8 +677,8 @@ const s = {
   },
   pricingLabel: { color: '#64748b', fontSize: '0.7rem', letterSpacing: '0.15em', fontWeight: '800', marginBottom: '0.75rem' },
   pricingAmount: { display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: '4px' },
-  pricingCurrency: { color: PINK, fontSize: '1.2rem', fontWeight: '700', marginTop: '8px' },
-  pricingValue: { color: PINK, fontSize: '2.8rem', fontWeight: '900', lineHeight: 1 },
+  pricingCurrency: { color: TEAL, fontSize: '1.2rem', fontWeight: '700', marginTop: '8px' },
+  pricingValue: { color: TEAL, fontSize: '2.8rem', fontWeight: '900', lineHeight: 1 },
   pricingPer: { color: '#64748b', fontSize: '0.8rem', fontWeight: '700', marginTop: '4px', marginBottom: '1.5rem' },
   pricingFeatures: { display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '1.5rem', color: '#475569', fontSize: '0.82rem', fontWeight: '600' },
 
@@ -706,7 +706,7 @@ const s = {
   },
   footerBrand: {
     fontSize: '1.2rem', fontWeight: '800',
-    background: `linear-gradient(90deg, ${CYAN}, ${PINK})`,
+    background: `linear-gradient(90deg, ${CYAN}, ${TEAL})`,
     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
   },
   footerLink: { color: '#64748b', fontSize: '0.82rem', fontWeight: '600' },
