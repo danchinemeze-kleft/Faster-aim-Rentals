@@ -92,6 +92,7 @@ export default function Home() {
           </Link>
           <a href="/search" style={s.navLink} onClick={() => setMenuOpen(false)}>AI Chat</a>
           <a href="/list" style={s.navLink} onClick={() => setMenuOpen(false)}>List for Rent</a>
+          <a href="/affiliate" style={{ ...s.navLink, color: '#16a34a', fontWeight: 800 }} onClick={() => setMenuOpen(false)}>💰 Make Money</a>
           <a href="/veryland" style={{ ...s.navLink, color: '#1877F2', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }} onClick={() => setMenuOpen(false)}>
             Veryland
             <svg width="18" height="18" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, verticalAlign: 'middle' }}>
@@ -124,7 +125,7 @@ export default function Home() {
                   <a href="/search" style={s.btnPink}>AI Chat (free) 🤖</a>
                   <a href="/list" style={s.btnOutline}>Add Property (free) 🏠</a>
                   <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={s.btnPurple}>Learn AI Skills 🎓</a>
-                  <a href="/affiliate" style={s.btnAffiliate}>💰 Join Associate — Earn Commission</a>
+                  <a href="/affiliate" style={s.btnAffiliate}>💰 Make Money</a>
                   <span className="vl-nav-wrap" style={{gridColumn:'1 / -1', display:'block'}}>
                     <a href="/veryland" style={{background:'linear-gradient(135deg,#1d4ed8,#3B82F6)',color:'white',padding:'0.75rem 1.25rem',borderRadius:'10px',fontWeight:800,fontSize:'0.85rem',boxShadow:'0 4px 16px rgba(59,130,246,0.3)',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',width:'100%'}}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="rgba(255,255,255,0.25)"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -542,7 +543,7 @@ const s = {
   heroActions: {
     display: 'grid',
     gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '0.75rem',
+    gap: '1.25rem',
     marginBottom: '2.5rem',
     maxWidth: '480px',
   },
