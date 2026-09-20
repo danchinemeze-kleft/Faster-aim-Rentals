@@ -78,31 +78,21 @@ export default function Home() {
       <Breadcrumb theme="light" items={[{ label: 'Mr. Rent', href: '/' }]} />
       {/* Navbar */}
       <nav style={s.nav}>
-        <div style={s.navBrand}>🏠 Mr. Rent</div>
+        <div style={s.navBrand}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px', color: '#0ea5e9' }}>
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Mr. Rent
+        </div>
         <div className={`nav-links${menuOpen ? ' open' : ''}`}>
-          <button className="nav-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">✕</button>
+          <button className="nav-close" onClick={() => setMenuOpen(false)} aria-label="Close menu" style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#0f172a' }}>×</button>
           <a href="/browse" style={s.navLink} onClick={() => setMenuOpen(false)}>Browse Rentals</a>
-          <Link href="/buy" style={{ display:'inline-flex', alignItems:'center', gap:5, background:'linear-gradient(135deg,#0ea5e9,#0284c7)', color:'white', padding:'6px 13px', borderRadius:'8px', fontSize:'0.82rem', fontWeight:800, boxShadow:'0 2px 8px rgba(14,165,233,0.3)' }} onClick={() => setMenuOpen(false)}>
-            🏡 Buy Property
-            <span style={{ background:'#0ea5e9', color:'#ffffff', fontSize:'9px', fontWeight:900, borderRadius:'3px', padding:'1px 5px', lineHeight:1.4 }}>NEW</span>
-          </Link>
-          <Link href="/sell" style={{ display:'inline-flex', alignItems:'center', gap:5, background:'linear-gradient(135deg,#14B8A6,#0D9488)', color:'white', padding:'6px 13px', borderRadius:'8px', fontSize:'0.82rem', fontWeight:800, boxShadow:'0 2px 8px rgba(20,184,166,0.3)' }} onClick={() => setMenuOpen(false)}>
-            💰 Sell Property
-            <span style={{ background:'#14B8A6', color:'#ffffff', fontSize:'9px', fontWeight:900, borderRadius:'3px', padding:'1px 5px', lineHeight:1.4 }}>NEW</span>
-          </Link>
-          <a href="/search" style={s.navLink} onClick={() => setMenuOpen(false)}>AI Chat</a>
-          <a href="/list" style={s.navLink} onClick={() => setMenuOpen(false)}>List for Rent</a>
-          <a href="/affiliate" style={{ ...s.navLink, color: '#14B8A6', fontWeight: 800 }} onClick={() => setMenuOpen(false)}>💰 Make Money</a>
-          <a href="/veryland" style={{ ...s.navLink, color: '#0ea5e9', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }} onClick={() => setMenuOpen(false)}>
-            Veryland
-            <svg width="18" height="18" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, verticalAlign: 'middle' }}>
-              <rect width="22" height="22" rx="7" fill="#0ea5e9"/>
-              <path d="M6 11.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </a>
+          <a href="/list" style={s.navLink} onClick={() => setMenuOpen(false)}>List Property</a>
+          <a href="/veryland" style={{ ...s.navLink, color: '#0ea5e9', fontWeight: 700 }} onClick={() => setMenuOpen(false)}>Verified Properties</a>
           <a href="/account" style={s.navBtn} onClick={() => setMenuOpen(false)}>Login / Sign up</a>
         </div>
-        <button className="nav-hamburger" onClick={() => setMenuOpen(true)} aria-label="Open menu">☰</button>
+        <button className="nav-hamburger" onClick={() => setMenuOpen(true)} aria-label="Open menu" style={{ background: 'none', border: '2px solid #e2e8f0', padding: '6px 10px', borderRadius: '8px', cursor: 'pointer', fontSize: '1.2rem', color: '#0f172a' }}>☰</button>
       </nav>
 
       {/* Hero */}
@@ -120,19 +110,14 @@ export default function Home() {
                 <p style={s.heroSubtitle} className="hero-subtitle">
                   Connect with verified landlords across Nigeria. Browse listings, chat with Mr. Rent AI, and find your perfect home today.
                 </p>
-                <div style={s.heroActions}>
-                  <a href="/browse" style={s.btnCyan}>Browse (free)</a>
-                  <a href="/search" style={s.btnTeal}>AI Chat (free) 🤖</a>
-                  <a href="/list" style={s.btnOutline}>Add Property (free) 🏠</a>
-                  <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={s.btnCyan}>Learn AI Skills 🎓</a>
-                  <a href="/affiliate" style={s.btnAffiliate}>💰 Make Money</a>
-                  <span className="vl-nav-wrap" style={{gridColumn:'1 / -1', display:'block'}}>
-                    <a href="/veryland" style={{background:'linear-gradient(135deg,#0ea5e9,#0284c7)',color:'white',padding:'0.75rem 1.25rem',borderRadius:'10px',fontWeight:800,fontSize:'0.85rem',boxShadow:'0 4px 16px rgba(14,165,233,0.3)',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',width:'100%'}}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="rgba(255,255,255,0.25)"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      Veryland — Verify Your Property Documents
-                    </a>
-                    <span className="vl-tooltip">Submit ownership docs (C of O, Survey Plan,<br/>Deed of Assignment) for human review.<br/>Get a verified badge displayed on your listing.</span>
-                  </span>
+                <div style={s.heroActionsPrimary}>
+                  <a href="/browse" style={s.btnCyan}>Browse Rentals</a>
+                  <a href="/list" style={s.btnTeal}>List a Property</a>
+                </div>
+                <div style={s.heroActionsSecondary}>
+                  <a href="/search" style={s.secondaryLink}>AI Chat Assistant</a>
+                  <a href="/veryland" style={s.secondaryLink}>Verify Documents</a>
+                  <a href="/affiliate" style={s.secondaryLink}>Earn with Referrals</a>
                 </div>
                 <div style={s.heroStats}>
                   <div style={s.heroStat}>
@@ -162,14 +147,42 @@ export default function Home() {
                     />
                   </div>
                 </a>
-                <div style={s.floatingBadge}>
-                  <span style={s.floatingDot}></span>
-                  AI Powered
+                <div style={s.verifiedBadge} className="verified-badge">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ color: '#14B8A6', flexShrink: 0 }}>
+                    <path d="M9 16.17L4.83 12m0 0L3 13.83m1.83-1.83l5.34 5.34 9.84-9.84" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '0.75rem' }}>Real People</div>
+                    <div style={{ fontSize: '0.65rem', color: '#999', marginTop: '2px' }}>Verified landlords</div>
+                  </div>
                 </div>
-                <div style={s.floatingCard1}>🏠 2 new listings</div>
-                <div style={s.floatingCard2} className="floating-card-2">✓ Verified Landlord</div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust & Verification */}
+      <section style={{ padding: '4rem 2rem', background: '#ffffff', borderTop: '1px solid #e2e8f0' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', marginBottom: '0.5rem', textAlign: 'center' }}>Every landlord is real</h2>
+          <p style={{ color: '#475569', fontSize: '0.95rem', fontWeight: '500', textAlign: 'center', marginBottom: '3rem', maxWidth: '600px', margin: '0 auto 3rem' }}>
+            We verify identity and property documents on Veryland before you see a listing. No anonymity, no hidden owners.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+            {[
+              { icon: '1', title: 'ID Verified', desc: 'Landlord identity confirmed through official documents' },
+              { icon: '2', title: 'Documents Checked', desc: 'Property ownership validated with C of O or deed' },
+              { icon: '3', title: 'Badge Earned', desc: 'Verified landlords display trusted badge on listings' },
+            ].map((item, i) => (
+              <div key={i} style={{ padding: '2rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <div style={{ width: '48px', height: '48px', background: `${CYAN}15`, border: `2px solid ${CYAN}44`, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', color: CYAN, fontSize: '1.2rem', marginBottom: '1rem' }}>
+                  {item.icon}
+                </div>
+                <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#0f172a', marginBottom: '0.5rem' }}>{item.title}</h3>
+                <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '500', margin: 0 }}>{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -181,14 +194,16 @@ export default function Home() {
           <h2 style={s.sectionTitle}>Simple. Fast. <span style={s.heroCyan}>Secure.</span></h2>
           <div style={s.stepsGrid} className="steps-grid-el">
             {[
-              { icon: '🔍', title: 'Browse Listings', desc: 'Search properties by location, budget, and type across all 36 states.', color: '#0ea5e9', link: '/browse' },
-              { icon: '🤖', title: 'Ask Mr. Rent AI', desc: 'Chat with our AI assistant to find the perfect property for your needs.', color: '#14B8A6', link: '/search' },
-              { icon: '💳', title: 'Reveal Contact', desc: "Pay ₦5,000 to instantly reveal the landlord's contact details.", color: '#0ea5e9', link: '/browse' },
-              { icon: '🏠', title: 'Move In', desc: 'Contact the landlord directly and arrange your inspection and move.', color: '#14B8A6', link: '/browse' },
+              { title: 'Browse Listings', desc: 'Search properties by location, budget, and type across all 36 states.', color: '#0ea5e9', link: '/browse', svgPath: 'M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2z' },
+              { title: 'Connect with AI', desc: 'Use our assistant to ask questions and get personalized property recommendations.', color: '#14B8A6', link: '/search', svgPath: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' },
+              { title: 'Reveal Contact', desc: "Pay ₦5,000 to instantly reveal the landlord's verified contact information.", color: '#0ea5e9', link: '/browse', svgPath: 'M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.172l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z' },
+              { title: 'Move In', desc: 'Contact your verified landlord directly and arrange your inspection and move-in.', color: '#14B8A6', link: '/browse', svgPath: 'M3 12l2.889-2.889m0 0L9.778 3m-5.889 8.889L3 21m16-10.778L21 3m0 0l-2.889 2.889m2.889-2.889l-5.889 5.889M21 21l-2.889-2.889' },
             ].map((step, i) => (
               <a href={step.link} key={i} style={{ ...s.stepCard, borderColor: step.color + '44', textDecoration: 'none', display: 'block' }}>
                 <div style={{ ...s.stepNumber, color: step.color }}>0{i + 1}</div>
-                <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>{step.icon}</div>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={step.color} strokeWidth="1.5" style={{ marginBottom: '1rem', color: step.color }}>
+                  <path d={step.svgPath} strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
                 <h3 style={{ ...s.stepTitle, color: step.color }}>{step.title}</h3>
                 <p style={s.stepDesc}>{step.desc}</p>
               </a>
@@ -201,7 +216,7 @@ export default function Home() {
       <section style={{ padding:'4rem 2rem', background:'linear-gradient(135deg,#f0fdf4 0%,#ecfdf5 40%,#f0f9ff 100%)', borderTop:'1px solid #e2e8f0', borderBottom:'1px solid #e2e8f0' }}>
         <div style={{ maxWidth:'900px', margin:'0 auto', textAlign:'center' }}>
           <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'#fbbf24', color:'#080a0f', padding:'4px 14px', borderRadius:20, fontSize:'0.68rem', fontWeight:900, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'1rem' }}>
-            ✨ New Feature
+            <span style={{ color: '#080a0f' }}>★</span> New Feature
           </div>
           <h2 style={{ fontSize:'2rem', fontWeight:900, color:'#0f172a', margin:'0 0 0.75rem', letterSpacing:'-0.5px' }}>
             Now Also: <span style={s.heroCyan}>Buy</span> &amp; <span style={s.heroPink}>Sell</span> Property
@@ -211,16 +226,16 @@ export default function Home() {
           </p>
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20 }} className="buy-sell-grid">
             <Link href="/buy" style={{ background:'#ffffff', border:`2px solid ${CYAN}55`, borderRadius:18, padding:'2rem', textDecoration:'none', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:10, boxShadow:`0 4px 24px ${CYAN}22`, position:'relative', overflow:'hidden' }}>
-              <div style={{ fontSize:'2.5rem' }}>🏡</div>
-              <div style={{ fontWeight:900, fontSize:'1.15rem', color:'#0f172a' }}>Buy Property</div>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={CYAN} strokeWidth="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" strokeLinecap="round" strokeLinejoin="round"/><polyline points="9 22 9 12 15 12 15 22" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <div style={{ fontWeight: '700', fontSize:'1.15rem', color:'#0f172a' }}>Buy Property</div>
               <p style={{ color:'#475569', fontSize:'0.84rem', fontWeight:600, lineHeight:1.7, margin:0, textAlign:'left' }}>Browse verified land and houses for sale. Contact sellers directly — free for logged-in users. No hidden fees.</p>
               <span style={{ background:`${CYAN}15`, border:`1px solid ${CYAN}44`, color:CYAN, borderRadius:20, padding:'3px 12px', fontSize:'0.78rem', fontWeight:800, marginTop:4 }}>Free to browse</span>
               <div style={{ display:'inline-block', background:`linear-gradient(135deg,${CYAN},#0284c7)`, color:'white', padding:'9px 20px', borderRadius:9, fontWeight:800, fontSize:'0.85rem', marginTop:4 }}>Browse Properties →</div>
               <div style={{ position:'absolute', top:14, right:14, background:'#fbbf24', color:'#080a0f', fontSize:'0.62rem', fontWeight:900, borderRadius:5, padding:'2px 7px', letterSpacing:'0.06em' }}>NEW</div>
             </Link>
             <Link href="/sell" style={{ background:'#ffffff', border:`2px solid ${TEAL}55`, borderRadius:18, padding:'2rem', textDecoration:'none', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:10, boxShadow:`0 4px 24px ${TEAL}22`, position:'relative', overflow:'hidden' }}>
-              <div style={{ fontSize:'2.5rem' }}>💰</div>
-              <div style={{ fontWeight:900, fontSize:'1.15rem', color:'#0f172a' }}>Sell Property</div>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={TEAL} strokeWidth="1.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5m-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11m3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <div style={{ fontWeight: '700', fontSize:'1.15rem', color:'#0f172a' }}>Sell Property</div>
               <p style={{ color:'#475569', fontSize:'0.84rem', fontWeight:600, lineHeight:1.7, margin:0, textAlign:'left' }}>List your land or house and reach thousands of serious buyers. One-time fee, listing stays live until sold.</p>
               <span style={{ background:`${TEAL}10`, border:`1px solid ${TEAL}44`, color:TEAL, borderRadius:20, padding:'3px 12px', fontSize:'0.78rem', fontWeight:800, marginTop:4 }}>₦20,000 listing fee</span>
               <div style={{ display:'inline-block', background:`linear-gradient(135deg,${TEAL},#0D9488)`, color:'white', padding:'9px 20px', borderRadius:9, fontWeight:800, fontSize:'0.85rem', marginTop:4 }}>List for Sale →</div>
@@ -244,8 +259,13 @@ export default function Home() {
                 Subscribe for ₦10,000/month and list unlimited properties. Tenants pay ₦5,000 to reveal your contact — you earn from every serious inquiry.
               </p>
               <ul style={s.featureList}>
-                {['Unlimited property listings', 'Appear in AI-powered searches', 'Earn from contact reveals', 'Professional landlord dashboard', 'Available/unavailable toggle'].map((f, i) => (
-                  <li key={i} style={s.featureItem}><span style={s.featureCheck}>✓</span> {f}</li>
+                {['Unlimited property listings', 'Appear in AI-powered searches', 'Earn from contact reveals', 'Professional landlord dashboard', 'Real-time availability control'].map((f, i) => (
+                  <li key={i} style={s.featureItem}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={CYAN} strokeWidth="2.5" style={{ flexShrink: 0, marginRight: '6px' }}>
+                      <polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    {f}
+                  </li>
                 ))}
               </ul>
               <a href="/account" style={s.btnCyan}>Get Started →</a>
@@ -540,12 +560,23 @@ const s = {
   heroTeal: { color: TEAL },
   heroSubtitle: { fontSize: '0.95rem', color: '#475569', fontWeight: '600', lineHeight: '1.7', marginBottom: '2rem', maxWidth: '480px' },
 
-  heroActions: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '1.25rem',
-    marginBottom: '2.5rem',
-    maxWidth: '480px',
+  heroActionsPrimary: {
+    display: 'flex',
+    gap: '1rem',
+    marginBottom: '2rem',
+    justifyContent: 'flex-start',
+    flexWrap: 'wrap',
+  },
+  heroActionsSecondary: {
+    display: 'flex',
+    gap: '1.5rem',
+    flexWrap: 'wrap',
+    fontSize: '0.9rem',
+  },
+  secondaryLink: {
+    color: '#0f172a', fontWeight: '600', textDecoration: 'none',
+    borderBottom: `2px solid ${CYAN}44`, paddingBottom: '2px',
+    transition: 'all 0.2s',
   },
   btnAffiliate: {
     gridColumn: '1 / -1',
@@ -599,14 +630,14 @@ const s = {
     flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
   },
   ringTeal: {
-    position: 'absolute', width: '320px', height: '320px', borderRadius: '50%',
-    border: '2px solid transparent', borderTop: `2px solid ${TEAL}`, borderRight: `2px solid ${TEAL}`,
-    animation: 'spinSlow 8s linear infinite', boxShadow: `0 0 20px ${TEAL}33`,
+    position: 'absolute', width: '280px', height: '280px', borderRadius: '50%',
+    border: `2px solid ${TEAL}44`,
+    boxShadow: 'none', display: 'none',
   },
   ringCyan: {
-    position: 'absolute', width: '280px', height: '280px', borderRadius: '50%',
-    border: '2px solid transparent', borderBottom: `2px solid ${CYAN}`, borderLeft: `2px solid ${CYAN}`,
-    animation: 'spinSlowReverse 6s linear infinite', boxShadow: `0 0 20px ${CYAN}33`,
+    position: 'absolute', width: '320px', height: '320px', borderRadius: '50%',
+    border: `1px solid ${CYAN}22`,
+    boxShadow: 'none', display: 'block',
   },
   avatarWrapper: {
     position: 'relative', zIndex: 2, animation: 'float 4s ease-in-out infinite',
@@ -614,34 +645,13 @@ const s = {
     border: `3px solid ${CYAN}55`, boxShadow: `0 8px 40px ${CYAN}33, 0 4px 20px ${TEAL}22`,
   },
   avatarImage: { width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' },
-  floatingBadge: {
-    position: 'absolute', bottom: '20px', left: '-20px',
-    background: '#ffffff', border: `1px solid ${CYAN}55`,
-    borderRadius: '20px', padding: '6px 14px',
-    fontSize: '0.75rem', fontWeight: '700', color: CYAN,
-    display: 'flex', alignItems: 'center', gap: '6px',
-    animation: 'floatReverse 3s ease-in-out infinite', zIndex: 3,
-    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-  },
-  floatingDot: {
-    width: '8px', height: '8px', borderRadius: '50%',
-    background: CYAN, display: 'inline-block', animation: 'blink 1.5s ease-in-out infinite',
-  },
-  floatingCard1: {
-    position: 'absolute', top: '20px', right: '-10px',
-    background: '#ffffff', border: `1px solid ${TEAL}44`,
-    borderRadius: '12px', padding: '8px 14px',
-    fontSize: '0.75rem', fontWeight: '700', color: TEAL,
-    animation: 'float 5s ease-in-out infinite', zIndex: 3,
-    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-  },
-  floatingCard2: {
-    position: 'absolute', bottom: '80px', right: '-20px',
-    background: '#ffffff', border: `1px solid ${CYAN}44`,
-    borderRadius: '12px', padding: '8px 14px',
-    fontSize: '0.75rem', fontWeight: '700', color: CYAN,
-    animation: 'floatReverse 4s ease-in-out infinite', zIndex: 3,
-    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+  verifiedBadge: {
+    position: 'absolute', bottom: '-15px', left: '50%', transform: 'translateX(-50%)',
+    background: '#ffffff', border: `1.5px solid ${TEAL}`,
+    borderRadius: '12px', padding: '8px 12px 8px 10px',
+    fontSize: '0.75rem', fontWeight: '600', color: '#0f172a',
+    display: 'flex', alignItems: 'center', gap: '8px',
+    zIndex: 10, boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
   },
 
   section: { padding: '5rem 2rem', background: '#f8fafc' },
