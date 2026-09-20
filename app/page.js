@@ -82,21 +82,21 @@ export default function Home() {
         <div className={`nav-links${menuOpen ? ' open' : ''}`}>
           <button className="nav-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">✕</button>
           <a href="/browse" style={s.navLink} onClick={() => setMenuOpen(false)}>Browse Rentals</a>
-          <Link href="/buy" style={{ display:'inline-flex', alignItems:'center', gap:5, background:'linear-gradient(135deg,#059669,#047857)', color:'white', padding:'6px 13px', borderRadius:'8px', fontSize:'0.82rem', fontWeight:800, boxShadow:'0 2px 8px rgba(5,150,105,0.3)' }} onClick={() => setMenuOpen(false)}>
+          <Link href="/buy" style={{ display:'inline-flex', alignItems:'center', gap:5, background:'linear-gradient(135deg,#0ea5e9,#0284c7)', color:'white', padding:'6px 13px', borderRadius:'8px', fontSize:'0.82rem', fontWeight:800, boxShadow:'0 2px 8px rgba(14,165,233,0.3)' }} onClick={() => setMenuOpen(false)}>
             🏡 Buy Property
-            <span style={{ background:'#fbbf24', color:'#080a0f', fontSize:'9px', fontWeight:900, borderRadius:'3px', padding:'1px 5px', lineHeight:1.4 }}>NEW</span>
+            <span style={{ background:'#0ea5e9', color:'#ffffff', fontSize:'9px', fontWeight:900, borderRadius:'3px', padding:'1px 5px', lineHeight:1.4 }}>NEW</span>
           </Link>
           <Link href="/sell" style={{ display:'inline-flex', alignItems:'center', gap:5, background:'linear-gradient(135deg,#ff2d78,#c0135a)', color:'white', padding:'6px 13px', borderRadius:'8px', fontSize:'0.82rem', fontWeight:800, boxShadow:'0 2px 8px rgba(255,45,120,0.3)' }} onClick={() => setMenuOpen(false)}>
             💰 Sell Property
-            <span style={{ background:'#fbbf24', color:'#080a0f', fontSize:'9px', fontWeight:900, borderRadius:'3px', padding:'1px 5px', lineHeight:1.4 }}>NEW</span>
+            <span style={{ background:'#ff2d78', color:'#ffffff', fontSize:'9px', fontWeight:900, borderRadius:'3px', padding:'1px 5px', lineHeight:1.4 }}>NEW</span>
           </Link>
           <a href="/search" style={s.navLink} onClick={() => setMenuOpen(false)}>AI Chat</a>
           <a href="/list" style={s.navLink} onClick={() => setMenuOpen(false)}>List for Rent</a>
-          <a href="/affiliate" style={{ ...s.navLink, color: '#16a34a', fontWeight: 800 }} onClick={() => setMenuOpen(false)}>💰 Make Money</a>
-          <a href="/veryland" style={{ ...s.navLink, color: '#1877F2', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }} onClick={() => setMenuOpen(false)}>
+          <a href="/affiliate" style={{ ...s.navLink, color: '#ff2d78', fontWeight: 800 }} onClick={() => setMenuOpen(false)}>💰 Make Money</a>
+          <a href="/veryland" style={{ ...s.navLink, color: '#0ea5e9', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }} onClick={() => setMenuOpen(false)}>
             Veryland
             <svg width="18" height="18" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, verticalAlign: 'middle' }}>
-              <rect width="22" height="22" rx="7" fill="#1877F2"/>
+              <rect width="22" height="22" rx="7" fill="#0ea5e9"/>
               <path d="M6 11.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </a>
@@ -124,10 +124,10 @@ export default function Home() {
                   <a href="/browse" style={s.btnCyan}>Browse (free)</a>
                   <a href="/search" style={s.btnPink}>AI Chat (free) 🤖</a>
                   <a href="/list" style={s.btnOutline}>Add Property (free) 🏠</a>
-                  <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={s.btnPurple}>Learn AI Skills 🎓</a>
+                  <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={s.btnCyan}>Learn AI Skills 🎓</a>
                   <a href="/affiliate" style={s.btnAffiliate}>💰 Make Money</a>
                   <span className="vl-nav-wrap" style={{gridColumn:'1 / -1', display:'block'}}>
-                    <a href="/veryland" style={{background:'linear-gradient(135deg,#1d4ed8,#3B82F6)',color:'white',padding:'0.75rem 1.25rem',borderRadius:'10px',fontWeight:800,fontSize:'0.85rem',boxShadow:'0 4px 16px rgba(59,130,246,0.3)',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',width:'100%'}}>
+                    <a href="/veryland" style={{background:'linear-gradient(135deg,#0ea5e9,#0284c7)',color:'white',padding:'0.75rem 1.25rem',borderRadius:'10px',fontWeight:800,fontSize:'0.85rem',boxShadow:'0 4px 16px rgba(14,165,233,0.3)',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',width:'100%'}}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="rgba(255,255,255,0.25)"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                       Veryland — Verify Your Property Documents
                     </a>
@@ -379,17 +379,17 @@ export default function Home() {
         .vl-nav-wrap { position: relative; display: inline-flex; align-items: center; }
         .vl-tooltip {
           display: none; position: absolute; top: calc(100% + 10px); left: 50%;
-          transform: translateX(-50%); background: #1d4ed8; color: white;
+          transform: translateX(-50%); background: #0ea5e9; color: white;
           padding: 10px 14px; border-radius: 10px; font-size: 0.74rem; font-weight: 600;
-          white-space: nowrap; z-index: 9999; box-shadow: 0 4px 20px rgba(29,78,216,0.35);
+          white-space: nowrap; z-index: 9999; box-shadow: 0 4px 20px rgba(14,165,233,0.35);
           line-height: 1.6; pointer-events: none; text-align: center;
         }
         .vl-tooltip::before {
           content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
-          border: 7px solid transparent; border-bottom-color: #1d4ed8;
+          border: 7px solid transparent; border-bottom-color: #0ea5e9;
         }
         .vl-tooltip-up { top: auto; bottom: calc(100% + 10px); }
-        .vl-tooltip-up::before { bottom: auto; top: 100%; border-bottom-color: transparent; border-top-color: #1d4ed8; }
+        .vl-tooltip-up::before { bottom: auto; top: 100%; border-bottom-color: transparent; border-top-color: #0ea5e9; }
         .vl-nav-wrap:hover .vl-tooltip { display: block; }
 
         /* ---- Animations ---- */
@@ -549,17 +549,17 @@ const s = {
   },
   btnAffiliate: {
     gridColumn: '1 / -1',
-    background: 'linear-gradient(135deg, #16a34a, #15803d)',
+    background: `linear-gradient(135deg, ${PINK}, #c0135a)`,
     color: 'white', padding: '0.75rem 1.25rem',
     borderRadius: '10px', fontWeight: '800', fontSize: '0.85rem',
-    boxShadow: '0 4px 16px rgba(22,163,74,0.3)', textAlign: 'center',
+    boxShadow: `0 4px 16px ${PINK}44`, textAlign: 'center',
   },
   btnVeryland: {
     gridColumn: '1 / -1',
-    background: 'linear-gradient(135deg, #1d4ed8, #3B82F6)',
+    background: `linear-gradient(135deg, ${CYAN}, #0284c7)`,
     color: 'white', padding: '0.75rem 1.25rem',
     borderRadius: '10px', fontWeight: '800', fontSize: '0.85rem',
-    boxShadow: '0 4px 16px rgba(59,130,246,0.3)', textAlign: 'center',
+    boxShadow: `0 4px 16px ${CYAN}44`, textAlign: 'center',
   },
 
   btnCyan: {
