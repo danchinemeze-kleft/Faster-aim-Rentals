@@ -2,19 +2,22 @@
 
 import Link from 'next/link'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from './components/Breadcrumb'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+const useSupabase = () => {
+  return useMemo(() => createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ), [])
+}
 
 export default function Home() {
   const router = useRouter()
+  const supabase = useSupabase()
   const [listingCount, setListingCount] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [showBubble, setShowBubble] = useState(false)
