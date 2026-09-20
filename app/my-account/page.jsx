@@ -18,17 +18,37 @@ export default function MyAccountPage() {
   const [activeTab, setActiveTab] = useState('overview')
 
   const fetchProfile = async (userId) => {
-    const { data } = await supabase.from('Profiles').select('*').eq('id', userId).single()
-    setProfile(data)
+    try {
+      const { data, error } = await supabase.from('Profiles').select('*').eq('id', userId).single()
+      if (error) {
+        console.error('Profile fetch error:', error)
+        return
+      }
+      setProfile(data)
+    } catch (err) {
+      console.error('Profile fetch exception:', err)
+    }
   }
 
   const fetchReveals = async (userId) => {
-    const { data } = await supabase
-      .from('Contact_reveals')
-      .select('*, listings(*), landlord_profile:Profiles!landlord_id(phone, full_name)')
-      .eq('tenant_id', userId)
-      .order('created_at', { ascending: false })
-    setReveals(data || [])
+    try {
+      const { data, error } = await supabase
+        .from('Contact_reveals')
+        .select('*, listings(*), landlord_profile:Profiles!landlord_id(phone, full_name)')
+        .eq('tenant_id', userId)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Reveals fetch error:', error)
+        setReveals([])
+        return
+      }
+
+      setReveals(data || [])
+    } catch (err) {
+      console.error('Reveals fetch exception:', err)
+      setReveals([])
+    }
   }
 
   useEffect(() => {

@@ -1,14 +1,17 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import Image from 'next/image'
 import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from '../components/Breadcrumb'
 
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+// Use useMemo to prevent recreating supabase client on every render
+const useSupabase = () => {
+  return useMemo(() => createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ), [])
+}
 
 
 function Avatar({ size = 40 }) {
@@ -74,6 +77,7 @@ function ListingCard({ listing: l, revealLoading, onReveal }) {
 }
 
 export default function SearchPage() {
+  const supabase = useSupabase()
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
@@ -93,7 +97,7 @@ export default function SearchPage() {
       setUser(session?.user || null)
     }
     getUser()
-  }, [])
+  }, [supabase])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })

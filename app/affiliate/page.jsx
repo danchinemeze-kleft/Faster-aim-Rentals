@@ -1,17 +1,20 @@
 'use client'
 export const dynamic = 'force-dynamic'
 
-import { useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { useState, useEffect, useMemo } from 'react'
+import { createBrowserClient } from '@supabase/ssr'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+const useSupabase = () => {
+  return useMemo(() => createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ), [])
+}
 
 const BASE_URL = 'https://rent.fasteraim.com'
 
 export default function AffiliatePage() {
+  const supabase = useSupabase()
   const [user, setUser] = useState(null)
   const [affiliate, setAffiliate] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -23,16 +26,35 @@ export default function AffiliatePage() {
   })
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (session) {
-        setUser(session.user)
-        const { data } = await supabase.from('affiliates').select('*').eq('id', session.user.id).maybeSingle()
-        if (data) setAffiliate(data)
-        setForm(f => ({ ...f, full_name: session.user.user_metadata?.full_name || '' }))
+    const loadAffiliate = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session) {
+          setUser(session.user)
+          // Query affiliates with error handling
+          const { data, error } = await supabase
+            .from('affiliates')
+            .select('*')
+            .eq('id', session.user.id)
+            .maybeSingle()
+
+          if (error) {
+            console.error('Affiliate fetch error:', error)
+          } else if (data) {
+            setAffiliate(data)
+          }
+
+          setForm(f => ({ ...f, full_name: session.user.user_metadata?.full_name || '' }))
+        }
+      } catch (err) {
+        console.error('Affiliate load error:', err)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
-    })
-  }, [])
+    }
+
+    loadAffiliate()
+  }, [supabase])
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 

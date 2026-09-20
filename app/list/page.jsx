@@ -144,26 +144,40 @@ function ListPageInner() {
   }
 
   const recheckSubscription = async (userId) => {
-    if (!userId) return
-    const now = new Date()
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-    const [{ data: sub }, { data: monthListings }] = await Promise.all([
-      supabase
-        .from('Subscription')
-        .select('expiry_date')
-        .eq('landlord_id', userId)
-        .gte('expiry_date', now.toISOString())
-        .order('expiry_date', { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-      supabase
-        .from('listings')
-        .select('id')
-        .eq('landlord_id', userId)
-        .gte('created_at', startOfMonth.toISOString()),
-    ])
-    setIsSubscribed(!!sub)
-    setMonthlyCount(monthListings?.length || 0)
+    if (!userId) return false
+    try {
+      const now = new Date()
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+      const [subResult, listingsResult] = await Promise.all([
+        supabase
+          .from('Subscription')
+          .select('expiry_date')
+          .eq('landlord_id', userId)
+          .gte('expiry_date', now.toISOString())
+          .order('expiry_date', { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from('listings')
+          .select('id')
+          .eq('landlord_id', userId)
+          .gte('created_at', startOfMonth.toISOString()),
+      ])
+
+      if (subResult.error || listingsResult.error) {
+        console.error('Subscription check error:', subResult.error || listingsResult.error)
+        return false
+      }
+
+      const subscribed = !!subResult.data
+      const count = listingsResult.data?.length || 0
+      setIsSubscribed(subscribed)
+      setMonthlyCount(count)
+      return subscribed
+    } catch (err) {
+      console.error('Subscription recheck failed:', err)
+      return false
+    }
   }
 
   const fetchListings = async (userId) => {
@@ -498,20 +512,18 @@ videoEl.src = URL.createObjectURL(file)
         is_available: formData.available,
         video_url,
         images: [...existingPhotos, ...new_photo_urls],
+        id: editingListing?.id || null,
       }
 
       const wasEditing = !!editingListing
-      if (editingListing) {
-        const { error } = await supabase.from('listings').update(payload).eq('id', editingListing.id)
-        if (error) throw error
-      } else {
-        const { error } = await supabase.from('listings').insert([{
-          landlord_id: user.id,
-          ...payload,
-          status: 'pending',
-        }])
-        if (error) throw error
-      }
+      const res = await fetch('/api/submit-listing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ listing: payload }),
+      })
+
+      const result = await res.json()
+      if (!res.ok) throw new Error(result.error || 'Submission failed')
 
       setFormData(emptyForm)
       setVideoFile(null)

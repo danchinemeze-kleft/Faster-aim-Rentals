@@ -1,17 +1,20 @@
 ﻿'use client'
 export const dynamic = 'force-dynamic'
 
-import { useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { useState, useEffect, useMemo } from 'react'
+import { createBrowserClient } from '@supabase/ssr'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+const useSupabase = () => {
+  return useMemo(() => createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ), [])
+}
 
 const BASE_URL = 'https://rent.fasteraim.com'
 
 export default function AffiliateDashboard() {
+  const supabase = useSupabase()
   const [user, setUser] = useState(null)
   const [affiliate, setAffiliate] = useState(null)
   const [commissions, setCommissions] = useState([])
@@ -21,57 +24,70 @@ export default function AffiliateDashboard() {
 
   useEffect(() => {
     async function loadDashboard() {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        window.location.href = '/account?redirect=/affiliate/dashboard'
-        return
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) {
+          window.location.href = '/account?redirect=/affiliate/dashboard'
+          return
+        }
+
+        setUser(session.user)
+
+        // Load affiliate profile with error handling
+        const { data: aff, error: affError } = await supabase
+          .from('affiliates')
+          .select('*')
+          .eq('id', session.user.id)
+          .maybeSingle()
+
+        if (affError) {
+          console.error('Affiliate profile fetch error:', affError)
+          window.location.href = '/affiliate'
+          return
+        }
+
+        if (!aff) {
+          window.location.href = '/affiliate'
+          return
+        }
+
+        setAffiliate(aff)
+
+        // Load commissions with error handling
+        const { data: comms, error: commsError } = await supabase
+          .from('affiliate_commissions')
+          .select('*')
+          .eq('affiliate_id', session.user.id)
+          .order('created_at', { ascending: false })
+
+        if (commsError) {
+          console.error('Commissions fetch error:', commsError)
+          setCommissions([])
+        } else if (comms) {
+          setCommissions(comms)
+
+          // Calculate stats
+          const total = comms.reduce((sum, c) => sum + (c.commission_amount || 0), 0)
+          const pending = comms
+            .filter(c => c.status === 'pending')
+            .reduce((sum, c) => sum + (c.commission_amount || 0), 0)
+          const paid = comms
+            .filter(c => c.status === 'paid')
+            .reduce((sum, c) => sum + (c.commission_amount || 0), 0)
+          const reveals = comms.filter(c => c.transaction_type === 'reveal').length
+          const subscriptions = comms.filter(c => c.transaction_type === 'landlord_subscription').length
+
+          setStats({ total, pending, paid, reveals, subscriptions })
+        }
+      } catch (err) {
+        console.error('Dashboard load error:', err)
+      } finally {
+        setLoading(false)
       }
-
-      setUser(session.user)
-
-      // Load affiliate profile
-      const { data: aff } = await supabase
-        .from('affiliates')
-        .select('*')
-        .eq('id', session.user.id)
-        .maybeSingle()
-
-      if (!aff) {
-        window.location.href = '/affiliate'
-        return
-      }
-
-      setAffiliate(aff)
-
-      // Load commissions
-      const { data: comms } = await supabase
-        .from('affiliate_commissions')
-        .select('*')
-        .eq('affiliate_id', session.user.id)
-        .order('created_at', { ascending: false })
-
-      if (comms) {
-        setCommissions(comms)
-
-        // Calculate stats
-        const total = comms.reduce((sum, c) => sum + c.commission_amount, 0)
-        const pending = comms
-          .filter(c => c.status === 'pending')
-          .reduce((sum, c) => sum + c.commission_amount, 0)
-        const paid = comms
-          .filter(c => c.status === 'paid')
-          .reduce((sum, c) => sum + c.commission_amount, 0)
-        const reveals = comms.filter(c => c.transaction_type === 'reveal').length
-        const subscriptions = comms.filter(c => c.transaction_type === 'landlord_subscription').length
-
-        setStats({ total, pending, paid, reveals, subscriptions })
-      }
-
-      setLoading(false)
     }
 
     loadDashboard()
-  }, [])
+  }, [supabase])
 
   const refLink = affiliate ? `${BASE_URL}?ref=${affiliate.ref_code}` : ''
 
