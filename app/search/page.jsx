@@ -22,7 +22,7 @@ function Avatar({ size = 40 }) {
       borderRadius: '50%',
       overflow: 'hidden',
       flexShrink: 0,
-      border: '2px solid #ff2d78',
+      border: '2px solid #14B8A6',
       outline: '1.5px solid #0ef6cc',
       outlineOffset: '1px',
     }}>

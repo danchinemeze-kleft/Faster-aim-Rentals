@@ -83,12 +83,12 @@ export default function TermsOfService() {
           background: white;
           border-radius: 12px;
           padding: 40px;
-          border-top: 3px solid #ff2d78;
+          border-top: 3px solid #14B8A6;
           outline: 1.5px solid #0ef6cc;
           outline-offset: -5px;
         }
         .faim-back-link {
-          color: #ff2d78;
+          color: #14B8A6;
           text-decoration: none;
           font-size: 0.85rem;
           font-weight: 600;

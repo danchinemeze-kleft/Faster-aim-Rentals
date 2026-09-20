@@ -63,11 +63,11 @@ export default function BrowseLightPage() {
 
       {/* Nav */}
       <nav style={{ background: '#ffffff', borderBottom: '1px solid #e2e8f0', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
-        <a href="/light" style={{ fontSize: '1.3rem', fontWeight: 800, background: 'linear-gradient(90deg,#0ea5e9,#ff2d78)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textDecoration: 'none' }}>🏠 Mr. Rent</a>
+        <a href="/light" style={{ fontSize: '1.3rem', fontWeight: 800, background: 'linear-gradient(90deg,#0ea5e9,#14B8A6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textDecoration: 'none' }}>🏠 Mr. Rent</a>
         <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
           <a href="/light/browse" style={{ color: '#0ea5e9', fontWeight: 700, fontSize: '0.88rem', textDecoration: 'none' }}>Browse</a>
           <a href="/search" style={{ color: '#374151', fontWeight: 700, fontSize: '0.88rem', textDecoration: 'none' }}>AI Chat</a>
-          <a href="/account" style={{ background: 'linear-gradient(135deg,#ff2d78,#c0135a)', color: '#fff', padding: '0.5rem 1.25rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>
+          <a href="/account" style={{ background: 'linear-gradient(135deg,#14B8A6,#0D9488)', color: '#fff', padding: '0.5rem 1.25rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>
             {user ? (user.user_metadata?.full_name?.split(' ')[0] || 'Account') : 'Login / Sign up'}
           </a>
           <a href="/browse" title="Switch to dark mode" style={{ fontSize: '1.1rem', background: 'rgba(0,0,0,0.06)', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '6px 10px', textDecoration: 'none' }}>🌙</a>
@@ -179,7 +179,7 @@ export default function BrowseLightPage() {
                   <div style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600, marginBottom: '1rem' }}>📍 {l.location}, {l.state}</div>
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
                     <a href={`/listing/${l.id}`} style={{ flex: 1, padding: '10px 8px', borderRadius: '8px', border: '1.5px solid #e2e8f0', background: '#f8fafc', color: '#374151', fontSize: '0.78rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>View Details</a>
-                    <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '10px 8px', borderRadius: '8px', border: 'none', background: '#ff2d78', color: '#fff', fontSize: '0.82rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1 }}>
+                    <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '10px 8px', borderRadius: '8px', border: 'none', background: '#14B8A6', color: '#fff', fontSize: '0.82rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1 }}>
                       {paying === l.id ? 'Please wait…' : 'Meet Landlord • ₦5k'}
                     </button>
                   </div>

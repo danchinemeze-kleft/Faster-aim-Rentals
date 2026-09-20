@@ -385,7 +385,7 @@ export default function AdminDashboard() {
             { label: 'Total listings', value: stats.totalListings, color: '#e8e8e8' },
             { label: 'Active listings', value: stats.activeListings, color: '#0ef6cc' },
             { label: 'Pending review', value: stats.pendingListings, color: stats.pendingListings > 0 ? '#EF9F27' : '#e8e8e8' },
-            { label: 'Landlords', value: stats.totalLandlords, color: '#ff2d78' },
+            { label: 'Landlords', value: stats.totalLandlords, color: '#14B8A6' },
             { label: 'Active subscriptions', value: activeSubs.length, color: activeSubs.length > 0 ? '#0ef6cc' : '#555' },
             { label: 'Veryland queue', value: verylandPending.length, color: verylandPending.length > 0 ? '#3B82F6' : '#555' },
           ].map(s => (

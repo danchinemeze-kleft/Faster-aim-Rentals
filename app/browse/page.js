@@ -261,11 +261,11 @@ export default function BrowsePage() {
         <div className="browse-filters" style={{ background: 'var(--card-bg)', border: '2px solid #0ef6cc', borderRadius: '16px', padding: '20px', marginBottom: '28px', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '14px', alignItems: 'flex-end' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-1)', marginBottom: '10px', letterSpacing: '1px' }}>Search</label>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Location, area or title..." style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }} />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Location, area or title..." style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #14B8A6', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }} />
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-1)', marginBottom: '10px', letterSpacing: '1px' }}>Type</label>
-            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
+            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #14B8A6', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
               <option value="">All Types</option>
               <option value="flat">Flat / Apartment</option>
               <option value="self_contain">Self Contain</option>
@@ -279,7 +279,7 @@ export default function BrowsePage() {
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-1)', marginBottom: '10px', letterSpacing: '1px' }}>State</label>
-            <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
+            <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #14B8A6', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
               <option value="">All States</option>
               <option value="Anambra">Anambra</option>
               <option value="Lagos">Lagos</option>
@@ -294,7 +294,7 @@ export default function BrowsePage() {
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-1)', marginBottom: '10px', letterSpacing: '1px' }}>Budget</label>
-            <select value={priceFilter} onChange={e => setPriceFilter(e.target.value)} style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #ff2d78', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
+            <select value={priceFilter} onChange={e => setPriceFilter(e.target.value)} style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #14B8A6', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
               <option value="">Any Budget</option>
               <option value="100000">Under N100,000</option>
               <option value="300000">Under N300,000</option>
@@ -378,7 +378,7 @@ export default function BrowsePage() {
                   )}
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
                     <a href={`/listing/${l.id}`} style={{ flex: 1, padding: '11px 8px', borderRadius: '8px', border: '2px solid #333', background: '#1a1d24', color: '#ffffff', fontSize: '0.88rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>View Details</a>
-                    <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '13px 8px', borderRadius: '8px', border: 'none', background: '#ff2d78', color: '#fff', fontSize: '0.88rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif', minHeight: 48 }}>{paying === l.id ? 'Please wait...' : 'Meet Landlord • ₦5k'}</button>
+                    <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '13px 8px', borderRadius: '8px', border: 'none', background: '#14B8A6', color: '#fff', fontSize: '0.88rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif', minHeight: 48 }}>{paying === l.id ? 'Please wait...' : 'Meet Landlord • ₦5k'}</button>
                   </div>
                 </div>
               </div>

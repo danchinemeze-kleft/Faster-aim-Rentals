@@ -173,7 +173,7 @@ export default function AffiliateAuthPage() {
     <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#0f172a' }}>
       
       <nav style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <a href="/" style={{ fontSize: '1.2rem', fontWeight: 800, background: 'linear-gradient(90deg,#0ea5e9,#ff2d78)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textDecoration: 'none' }}>🏠 Mr. Rent</a>
+        <a href="/" style={{ fontSize: '1.2rem', fontWeight: 800, background: 'linear-gradient(90deg,#0ea5e9,#14B8A6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textDecoration: 'none' }}>🏠 Mr. Rent</a>
         <a href="/affiliate" style={{ color: '#0ea5e9', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none' }}>← Back</a>
       </nav>
 
@@ -201,7 +201,7 @@ export default function AffiliateAuthPage() {
               style={{
                 padding: '0.75rem 1.5rem',
                 border: 'none',
-                background: mode === 'login' ? 'linear-gradient(135deg,#ff2d78,#c0135a)' : 'transparent',
+                background: mode === 'login' ? 'linear-gradient(135deg,#14B8A6,#0D9488)' : 'transparent',
                 color: mode === 'login' ? '#fff' : '#64748b',
                 fontWeight: 800,
                 fontSize: '1rem',
@@ -344,7 +344,7 @@ export default function AffiliateAuthPage() {
               <button 
                 type="submit" 
                 disabled={loading}
-                style={{ background: 'linear-gradient(135deg,#ff2d78,#c0135a)', color: '#fff', border: 'none', padding: '0.9rem', borderRadius: '12px', fontWeight: 800, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
+                style={{ background: 'linear-gradient(135deg,#14B8A6,#0D9488)', color: '#fff', border: 'none', padding: '0.9rem', borderRadius: '12px', fontWeight: 800, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
               >
                 {loading ? 'Logging in...' : 'Login'}
               </button>

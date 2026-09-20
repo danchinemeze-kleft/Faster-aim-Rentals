@@ -106,7 +106,7 @@ export default function BuyPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#ffffff' }}>
-      <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)' }} />
+      <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)' }} />
       <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60, background: 'var(--card-bg)', position: 'sticky', top: 3, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <a href="/" style={{ color: '#cccccc', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</a>
@@ -213,7 +213,7 @@ export default function BuyPage() {
                       )}
 
                       {/* FOR SALE badge */}
-                      <div style={{ position: 'absolute', top: 10, left: 10, background: '#ff2d78', color: '#fff', fontSize: 11, fontWeight: 800, padding: '4px 10px', borderRadius: 20, letterSpacing: '0.05em' }}>
+                      <div style={{ position: 'absolute', top: 10, left: 10, background: '#14B8A6', color: '#fff', fontSize: 11, fontWeight: 800, padding: '4px 10px', borderRadius: 20, letterSpacing: '0.05em' }}>
                         FOR SALE
                       </div>
 

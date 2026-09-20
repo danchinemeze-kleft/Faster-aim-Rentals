@@ -89,7 +89,7 @@ export default function Contact() {
           margin: 0 auto;
         }
         .faim-back-link {
-          color: #ff2d78;
+          color: #14B8A6;
           text-decoration: none;
           font-size: 0.85rem;
           font-weight: 600;
@@ -124,7 +124,7 @@ export default function Contact() {
           text-decoration: none;
           border: 1.5px solid transparent;
           transition: all 0.15s;
-          border-top: 3px solid #ff2d78;
+          border-top: 3px solid #14B8A6;
         }
         .faim-contact-card:hover {
           border-color: #0ef6cc;
@@ -209,7 +209,7 @@ export default function Contact() {
           color: #999;
         }
         .faim-legal-links a {
-          color: #ff2d78;
+          color: #14B8A6;
           text-decoration: none;
         }
         .faim-legal-links a:hover { text-decoration: underline; }

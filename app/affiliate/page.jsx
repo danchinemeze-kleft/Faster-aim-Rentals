@@ -100,18 +100,18 @@ export default function AffiliatePage() {
 
       {/* Nav */}
       <nav style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
-        <a href="/" style={{ fontSize: '1.2rem', fontWeight: 800, background: 'linear-gradient(90deg,#0ea5e9,#ff2d78)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textDecoration: 'none' }}>🏠 Mr. Rent</a>
+        <a href="/" style={{ fontSize: '1.2rem', fontWeight: 800, background: 'linear-gradient(90deg,#0ea5e9,#14B8A6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textDecoration: 'none' }}>🏠 Mr. Rent</a>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           {affiliate && <a href="/affiliate/dashboard" style={{ color: '#0ea5e9', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none' }}>My Dashboard →</a>}
           {user
             ? <span style={{ fontSize: '0.85rem', color: '#64748b' }}>{user.email}</span>
-            : <a href="/affiliate/auth" style={{ background: 'linear-gradient(135deg,#ff2d78,#c0135a)', color: '#fff', padding: '0.5rem 1.25rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>Login / Sign up</a>
+            : <a href="/affiliate/auth" style={{ background: 'linear-gradient(135deg,#14B8A6,#0D9488)', color: '#fff', padding: '0.5rem 1.25rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>Login / Sign up</a>
           }
         </div>
       </nav>
 
       {/* Hero */}
-      <section style={{ padding: '4rem 2rem', textAlign: 'center', background: 'linear-gradient(135deg, #0ea5e911, #ff2d7811)', borderBottom: '1px solid #e2e8f0' }}>
+      <section style={{ padding: '4rem 2rem', textAlign: 'center', background: 'linear-gradient(135deg, #0ea5e911, #14B8A611)', borderBottom: '1px solid #e2e8f0' }}>
         <div style={{ display: 'inline-block', background: '#0ea5e915', border: '1px solid #0ea5e944', color: '#0ea5e9', padding: '0.35rem 1rem', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '1.5rem', textTransform: 'uppercase' }}>
           💰 Affiliate Program
         </div>
@@ -127,8 +127,8 @@ export default function AffiliatePage() {
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0ea5e9' }}>₦500</div>
             <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 700, marginTop: 4 }}>Per Contact Reveal</div>
           </div>
-          <div style={{ background: '#fff', border: '1.5px solid #ff2d7844', borderRadius: '14px', padding: '1.25rem 2rem', textAlign: 'center', minWidth: 140 }}>
-            <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ff2d78' }}>₦2,000</div>
+          <div style={{ background: '#fff', border: '1.5px solid #14B8A644', borderRadius: '14px', padding: '1.25rem 2rem', textAlign: 'center', minWidth: 140 }}>
+            <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#14B8A6' }}>₦2,000</div>
             <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 700, marginTop: 4 }}>Per Landlord Signup</div>
           </div>
           <div style={{ background: '#fff', border: '1.5px solid #7c3aed44', borderRadius: '14px', padding: '1.25rem 2rem', textAlign: 'center', minWidth: 140 }}>
@@ -188,7 +188,7 @@ export default function AffiliatePage() {
             </p>
 
             {!user ? (
-              <a href="/affiliate/auth" style={{ display: 'block', textAlign: 'center', background: 'linear-gradient(135deg,#ff2d78,#c0135a)', color: '#fff', padding: '0.875rem', borderRadius: '12px', fontWeight: 800, fontSize: '1rem', textDecoration: 'none' }}>
+              <a href="/affiliate/auth" style={{ display: 'block', textAlign: 'center', background: 'linear-gradient(135deg,#14B8A6,#0D9488)', color: '#fff', padding: '0.875rem', borderRadius: '12px', fontWeight: 800, fontSize: '1rem', textDecoration: 'none' }}>
                 Create Account / Login →
               </a>
             ) : (

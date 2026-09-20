@@ -13,7 +13,7 @@ export default function Loading() {
         {/* Top accent bar */}
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, height: 3,
-          background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)',
+          background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)',
         }} />
   
         {/* Brand mark */}
@@ -32,7 +32,7 @@ export default function Loading() {
         <h1 style={{
           fontSize: '2rem', fontWeight: 900, letterSpacing: '-0.5px',
           margin: '0 0 4px',
-          background: 'linear-gradient(135deg, #0ef6cc, #ff2d78)',
+          background: 'linear-gradient(135deg, #0ef6cc, #14B8A6)',
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
         }}>
           Fasteraim

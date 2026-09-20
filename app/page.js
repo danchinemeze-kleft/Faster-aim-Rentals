@@ -86,13 +86,13 @@ export default function Home() {
             🏡 Buy Property
             <span style={{ background:'#0ea5e9', color:'#ffffff', fontSize:'9px', fontWeight:900, borderRadius:'3px', padding:'1px 5px', lineHeight:1.4 }}>NEW</span>
           </Link>
-          <Link href="/sell" style={{ display:'inline-flex', alignItems:'center', gap:5, background:'linear-gradient(135deg,#ff2d78,#c0135a)', color:'white', padding:'6px 13px', borderRadius:'8px', fontSize:'0.82rem', fontWeight:800, boxShadow:'0 2px 8px rgba(255,45,120,0.3)' }} onClick={() => setMenuOpen(false)}>
+          <Link href="/sell" style={{ display:'inline-flex', alignItems:'center', gap:5, background:'linear-gradient(135deg,#14B8A6,#0D9488)', color:'white', padding:'6px 13px', borderRadius:'8px', fontSize:'0.82rem', fontWeight:800, boxShadow:'0 2px 8px rgba(20,184,166,0.3)' }} onClick={() => setMenuOpen(false)}>
             💰 Sell Property
-            <span style={{ background:'#ff2d78', color:'#ffffff', fontSize:'9px', fontWeight:900, borderRadius:'3px', padding:'1px 5px', lineHeight:1.4 }}>NEW</span>
+            <span style={{ background:'#14B8A6', color:'#ffffff', fontSize:'9px', fontWeight:900, borderRadius:'3px', padding:'1px 5px', lineHeight:1.4 }}>NEW</span>
           </Link>
           <a href="/search" style={s.navLink} onClick={() => setMenuOpen(false)}>AI Chat</a>
           <a href="/list" style={s.navLink} onClick={() => setMenuOpen(false)}>List for Rent</a>
-          <a href="/affiliate" style={{ ...s.navLink, color: '#ff2d78', fontWeight: 800 }} onClick={() => setMenuOpen(false)}>💰 Make Money</a>
+          <a href="/affiliate" style={{ ...s.navLink, color: '#14B8A6', fontWeight: 800 }} onClick={() => setMenuOpen(false)}>💰 Make Money</a>
           <a href="/veryland" style={{ ...s.navLink, color: '#0ea5e9', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }} onClick={() => setMenuOpen(false)}>
             Veryland
             <svg width="18" height="18" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, verticalAlign: 'middle' }}>
@@ -115,14 +115,14 @@ export default function Home() {
                 <h1 style={s.heroTitle} className="hero-title-el">
                   Find or List<br />
                   <span style={s.heroCyan}>Property for Rent</span><br />
-                  <span style={s.heroPink}>Quickly & Securely</span>
+                  <span style={s.heroTeal}>Quickly & Securely</span>
                 </h1>
                 <p style={s.heroSubtitle} className="hero-subtitle">
                   Connect with verified landlords across Nigeria. Browse listings, chat with Mr. Rent AI, and find your perfect home today.
                 </p>
                 <div style={s.heroActions}>
                   <a href="/browse" style={s.btnCyan}>Browse (free)</a>
-                  <a href="/search" style={s.btnPink}>AI Chat (free) 🤖</a>
+                  <a href="/search" style={s.btnTeal}>AI Chat (free) 🤖</a>
                   <a href="/list" style={s.btnOutline}>Add Property (free) 🏠</a>
                   <a href="https://fasteraim.com" target="_blank" rel="noopener noreferrer" style={s.btnCyan}>Learn AI Skills 🎓</a>
                   <a href="/affiliate" style={s.btnAffiliate}>💰 Make Money</a>
@@ -148,7 +148,7 @@ export default function Home() {
               </div>
 
               <div style={s.avatarContainer} className="avatar-cont">
-                <div style={s.ringPink} className="ring-pink"></div>
+                <div style={s.ringTeal} className="ring-teal"></div>
                 <div style={s.ringCyan} className="ring-cyan"></div>
                 <a href="/search" style={{ display: 'block', borderRadius: '50%' }}>
                   <div style={s.avatarWrapper} className="avatar-wrap">
@@ -182,9 +182,9 @@ export default function Home() {
           <div style={s.stepsGrid} className="steps-grid-el">
             {[
               { icon: '🔍', title: 'Browse Listings', desc: 'Search properties by location, budget, and type across all 36 states.', color: '#0ea5e9', link: '/browse' },
-              { icon: '🤖', title: 'Ask Mr. Rent AI', desc: 'Chat with our AI assistant to find the perfect property for your needs.', color: '#ff2d78', link: '/search' },
+              { icon: '🤖', title: 'Ask Mr. Rent AI', desc: 'Chat with our AI assistant to find the perfect property for your needs.', color: '#14B8A6', link: '/search' },
               { icon: '💳', title: 'Reveal Contact', desc: "Pay ₦5,000 to instantly reveal the landlord's contact details.", color: '#0ea5e9', link: '/browse' },
-              { icon: '🏠', title: 'Move In', desc: 'Contact the landlord directly and arrange your inspection and move.', color: '#ff2d78', link: '/browse' },
+              { icon: '🏠', title: 'Move In', desc: 'Contact the landlord directly and arrange your inspection and move.', color: '#14B8A6', link: '/browse' },
             ].map((step, i) => (
               <a href={step.link} key={i} style={{ ...s.stepCard, borderColor: step.color + '44', textDecoration: 'none', display: 'block' }}>
                 <div style={{ ...s.stepNumber, color: step.color }}>0{i + 1}</div>
@@ -223,7 +223,7 @@ export default function Home() {
               <div style={{ fontWeight:900, fontSize:'1.15rem', color:'#0f172a' }}>Sell Property</div>
               <p style={{ color:'#475569', fontSize:'0.84rem', fontWeight:600, lineHeight:1.7, margin:0, textAlign:'left' }}>List your land or house and reach thousands of serious buyers. One-time fee, listing stays live until sold.</p>
               <span style={{ background:`${PINK}10`, border:`1px solid ${PINK}44`, color:PINK, borderRadius:20, padding:'3px 12px', fontSize:'0.78rem', fontWeight:800, marginTop:4 }}>₦20,000 listing fee</span>
-              <div style={{ display:'inline-block', background:`linear-gradient(135deg,${PINK},#c0135a)`, color:'white', padding:'9px 20px', borderRadius:9, fontWeight:800, fontSize:'0.85rem', marginTop:4 }}>List for Sale →</div>
+              <div style={{ display:'inline-block', background:`linear-gradient(135deg,${TEAL},#0D9488)`, color:'white', padding:'9px 20px', borderRadius:9, fontWeight:800, fontSize:'0.85rem', marginTop:4 }}>List for Sale →</div>
               <div style={{ position:'absolute', top:14, right:14, background:'#fbbf24', color:'#080a0f', fontSize:'0.62rem', fontWeight:900, borderRadius:5, padding:'2px 7px', letterSpacing:'0.06em' }}>NEW</div>
             </Link>
           </div>
@@ -304,7 +304,7 @@ export default function Home() {
             <p style={s.footerColTitle}>Account</p>
             <a href="/account" style={s.footerLink}>Login / Sign Up</a>
             <a href="/my-account" style={s.footerLink}>My Account</a>
-            <a href="/affiliate" style={{ ...s.footerLink, color: '#7c3aed', fontWeight: 700 }}>💰 Earn — Affiliate</a>
+            <a href="/affiliate" style={{ ...s.footerLink, color: '#14B8A6', fontWeight: 700 }}>💰 Earn — Affiliate</a>
             <a href="/admin" style={s.footerAdminLink}>⚙ Admin</a>
           </div>
 
@@ -489,7 +489,7 @@ export default function Home() {
 }
 
 const CYAN = '#0ea5e9'
-const PINK = '#ff2d78'
+const TEAL = '#14B8A6'
 
 const s = {
   main: { minHeight: '100vh', background: '#ffffff', color: '#0f172a', fontFamily: "'Segoe UI', system-ui, sans-serif" },
@@ -507,14 +507,14 @@ const s = {
   navLinks: { display: 'flex', alignItems: 'center', gap: '1.5rem' },
   navLink: { color: '#374151', fontSize: '0.88rem', fontWeight: '700' },
   navBtn: {
-    background: `linear-gradient(135deg, ${PINK}, #c0135a)`,
+    background: `linear-gradient(135deg, ${TEAL}, #0D9488)`,
     color: 'white', padding: '0.55rem 1.25rem',
     borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700',
   },
 
   heroSection: {
     padding: '3rem 2rem',
-    background: `radial-gradient(ellipse at top left, ${CYAN}11 0%, transparent 50%), radial-gradient(ellipse at bottom right, ${PINK}11 0%, transparent 50%)`,
+    background: `radial-gradient(ellipse at top left, ${CYAN}11 0%, transparent 50%), radial-gradient(ellipse at bottom right, ${TEAL}11 0%, transparent 50%)`,
     display: 'flex', justifyContent: 'center',
   },
   heroOuter: {
@@ -537,7 +537,7 @@ const s = {
   },
   heroTitle: { fontSize: '3rem', fontWeight: '900', lineHeight: '1.15', marginBottom: '1.25rem', letterSpacing: '-1px', color: '#0f172a' },
   heroCyan: { color: CYAN },
-  heroPink: { color: PINK },
+  heroTeal: { color: TEAL },
   heroSubtitle: { fontSize: '0.95rem', color: '#475569', fontWeight: '600', lineHeight: '1.7', marginBottom: '2rem', maxWidth: '480px' },
 
   heroActions: {
@@ -549,10 +549,10 @@ const s = {
   },
   btnAffiliate: {
     gridColumn: '1 / -1',
-    background: `linear-gradient(135deg, ${PINK}, #c0135a)`,
+    background: `linear-gradient(135deg, ${TEAL}, #0D9488)`,
     color: 'white', padding: '0.75rem 1.25rem',
     borderRadius: '10px', fontWeight: '800', fontSize: '0.85rem',
-    boxShadow: `0 4px 16px ${PINK}44`, textAlign: 'center',
+    boxShadow: `0 4px 16px ${TEAL}44`, textAlign: 'center',
   },
   btnVeryland: {
     gridColumn: '1 / -1',
@@ -568,11 +568,11 @@ const s = {
     borderRadius: '10px', fontWeight: '800', fontSize: '0.85rem',
     boxShadow: `0 4px 16px ${CYAN}44`, textAlign: 'center',
   },
-  btnPink: {
-    background: `linear-gradient(135deg, ${PINK}, #c0135a)`,
+  btnTeal: {
+    background: `linear-gradient(135deg, ${TEAL}, #0D9488)`,
     color: 'white', padding: '0.75rem 1.25rem',
     borderRadius: '10px', fontWeight: '800', fontSize: '0.85rem',
-    boxShadow: `0 4px 16px ${PINK}44`, textAlign: 'center',
+    boxShadow: `0 4px 16px ${TEAL}44`, textAlign: 'center',
   },
   btnOutline: {
     background: '#ffffff', color: '#0f172a',
@@ -598,10 +598,10 @@ const s = {
     position: 'relative', width: '340px', height: '400px',
     flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
   },
-  ringPink: {
+  ringTeal: {
     position: 'absolute', width: '320px', height: '320px', borderRadius: '50%',
-    border: '2px solid transparent', borderTop: `2px solid ${PINK}`, borderRight: `2px solid ${PINK}`,
-    animation: 'spinSlow 8s linear infinite', boxShadow: `0 0 20px ${PINK}33`,
+    border: '2px solid transparent', borderTop: `2px solid ${TEAL}`, borderRight: `2px solid ${TEAL}`,
+    animation: 'spinSlow 8s linear infinite', boxShadow: `0 0 20px ${TEAL}33`,
   },
   ringCyan: {
     position: 'absolute', width: '280px', height: '280px', borderRadius: '50%',
@@ -611,7 +611,7 @@ const s = {
   avatarWrapper: {
     position: 'relative', zIndex: 2, animation: 'float 4s ease-in-out infinite',
     borderRadius: '50%', overflow: 'hidden', width: '240px', height: '240px',
-    border: `3px solid ${CYAN}55`, boxShadow: `0 8px 40px ${CYAN}33, 0 4px 20px ${PINK}22`,
+    border: `3px solid ${CYAN}55`, boxShadow: `0 8px 40px ${CYAN}33, 0 4px 20px ${TEAL}22`,
   },
   avatarImage: { width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' },
   floatingBadge: {
@@ -629,9 +629,9 @@ const s = {
   },
   floatingCard1: {
     position: 'absolute', top: '20px', right: '-10px',
-    background: '#ffffff', border: `1px solid ${PINK}44`,
+    background: '#ffffff', border: `1px solid ${TEAL}44`,
     borderRadius: '12px', padding: '8px 14px',
-    fontSize: '0.75rem', fontWeight: '700', color: PINK,
+    fontSize: '0.75rem', fontWeight: '700', color: TEAL,
     animation: 'float 5s ease-in-out infinite', zIndex: 3,
     boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
   },
@@ -671,9 +671,9 @@ const s = {
   featureItem: { color: '#0f172a', fontWeight: '600', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '0.5rem' },
   featureCheck: { color: CYAN, fontWeight: '800' },
   pricingCard: {
-    background: '#ffffff', border: `1.5px solid ${PINK}33`,
+    background: '#ffffff', border: `1.5px solid ${TEAL}33`,
     borderRadius: '16px', padding: '2rem', minWidth: '220px', textAlign: 'center',
-    boxShadow: `0 4px 24px ${PINK}22`,
+    boxShadow: `0 4px 24px ${TEAL}22`,
   },
   pricingLabel: { color: '#64748b', fontSize: '0.7rem', letterSpacing: '0.15em', fontWeight: '800', marginBottom: '0.75rem' },
   pricingAmount: { display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: '4px' },
@@ -684,7 +684,7 @@ const s = {
 
   ctaSection: {
     padding: '6rem 2rem', textAlign: 'center',
-    background: `linear-gradient(135deg, ${CYAN}08, ${PINK}08)`,
+    background: `linear-gradient(135deg, ${CYAN}08, ${TEAL}08)`,
     borderTop: '1px solid #e2e8f0',
   },
   ctaTitle: { fontSize: '2.5rem', fontWeight: '900', marginBottom: '1rem', letterSpacing: '-1px', color: '#0f172a' },

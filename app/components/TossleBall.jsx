@@ -39,7 +39,7 @@ const TossleBall = () => {
             animation-delay: -0.8s;
         }
         .ball:nth-child(2) {
-            background-color: #ff2d78;
+            background-color: #14B8A6;
             animation-delay: -0.4s;
         }
         .ball:nth-child(3) {

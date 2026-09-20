@@ -184,7 +184,7 @@ export default function VerylandSubmitPage() {
   if (screen === 'uploading') {
     return (
       <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', flexDirection: 'column', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
-        <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)', flexShrink: 0 }} />
+        <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)', flexShrink: 0 }} />
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ width: 52, height: 52, borderRadius: '50%', border: `4px solid ${GREEN_LIGHT}`, borderTopColor: GREEN, animation: 'spin 0.9s linear infinite', margin: '0 auto 20px' }} />
@@ -200,7 +200,7 @@ export default function VerylandSubmitPage() {
   if (screen === 'success') {
     return (
       <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', flexDirection: 'column', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
-        <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)', flexShrink: 0 }} />
+        <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)', flexShrink: 0 }} />
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <div style={{ maxWidth: 520, width: '100%', textAlign: 'center', background: '#fff', border: '1.5px solid #d1fae5', borderRadius: 20, padding: '3rem 2.5rem', boxShadow: '0 8px 32px rgba(5,150,105,0.1)' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
@@ -239,7 +239,7 @@ export default function VerylandSubmitPage() {
     <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: "'Segoe UI', system-ui, sans-serif", color: 'var(--text-1)' }}>
 
       {/* Nav */}
-      <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)' }} />
+      <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)' }} />
       <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: 'var(--card-bg)', position: 'sticky', top: 3, zIndex: 100 }}>
         <a href="/" style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</a>
         <span style={{ color: 'var(--border-2)', margin: '0 8px' }}>/</span>

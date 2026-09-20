@@ -137,7 +137,7 @@ export default function SaleDetailPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#ffffff' }}>
-      <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #ff2d78)' }} />
+      <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)' }} />
       <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 1.5rem', display: 'flex', alignItems: 'center', height: 60, background: 'var(--card-bg)', position: 'sticky', top: 3, zIndex: 100 }}>
         <a href="/" style={{ color: '#cccccc', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</a>
         <span style={{ color: '#555', margin: '0 8px' }}>/</span>
@@ -166,7 +166,7 @@ export default function SaleDetailPage() {
         )}
 
         {/* FOR SALE tag + title */}
-        <div style={{ display: 'inline-block', background: '#ff2d78', color: '#fff', fontSize: 11, fontWeight: 900, padding: '4px 12px', borderRadius: 20, letterSpacing: '0.06em', marginBottom: 14 }}>
+        <div style={{ display: 'inline-block', background: '#14B8A6', color: '#fff', fontSize: 11, fontWeight: 900, padding: '4px 12px', borderRadius: 20, letterSpacing: '0.06em', marginBottom: 14 }}>
           FOR SALE
         </div>
 

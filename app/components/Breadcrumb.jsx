@@ -30,7 +30,7 @@ export default function Breadcrumb({ items, theme = 'light' }) {
   return (
     <>
       {/* Brand accent stripe — top of every page using Breadcrumb */}
-      <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc 0%, #ff2d78 100%)', width: '100%' }} />
+      <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc 0%, #14B8A6 100%)', width: '100%' }} />
       <nav aria-label="Breadcrumb" style={{ padding: '8px 0', marginBottom: '4px' }}>
         <ol style={{
           display: 'flex',

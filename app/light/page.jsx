@@ -130,9 +130,9 @@ export default function HomeDarkPage() {
           <div style={styles.stepsGrid}>
             {[
               { icon: '🔍', title: 'Browse Listings', desc: 'Search properties by location, budget, and type across all 36 states.', color: '#00d9d9', link: '/browse' },
-              { icon: '🤖', title: 'Ask Mr. Rent AI', desc: 'Chat with our AI assistant to find the perfect property for your needs.', color: '#ff2d78', link: '/search' },
+              { icon: '🤖', title: 'Ask Mr. Rent AI', desc: 'Chat with our AI assistant to find the perfect property for your needs.', color: '#14B8A6', link: '/search' },
               { icon: '💳', title: 'Reveal Contact', desc: 'Pay ₦5,000 to instantly reveal the landlord\'s contact details.', color: '#00d9d9', link: '/browse' },
-              { icon: '🏠', title: 'Move In', desc: 'Contact the landlord directly and arrange your inspection and move.', color: '#ff2d78', link: '/browse' },
+              { icon: '🏠', title: 'Move In', desc: 'Contact the landlord directly and arrange your inspection and move.', color: '#14B8A6', link: '/browse' },
             ].map((step, i) => (
               <a href={step.link} key={i} style={{...styles.stepCard, borderColor: step.color + '33', textDecoration: 'none', display: 'block', cursor: 'pointer'}}>
                 <div style={{...styles.stepNumber, color: step.color}}>0{i + 1}</div>
@@ -324,7 +324,7 @@ const styles = {
   navBrand: {
     fontSize: '1.4rem',
     fontWeight: '800',
-    background: 'linear-gradient(90deg, #00d9d9, #ff2d78)',
+    background: 'linear-gradient(90deg, #00d9d9, #14B8A6)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
   },
@@ -339,7 +339,7 @@ const styles = {
     fontWeight: '700',
   },
   navBtn: {
-    background: 'linear-gradient(135deg, #ff2d78, #c0135a)',
+    background: 'linear-gradient(135deg, #14B8A6, #0D9488)',
     color: 'white',
     padding: '0.55rem 1.25rem',
     borderRadius: '8px',
@@ -355,7 +355,7 @@ const styles = {
     justifyContent: 'center',
   },
   heroOuter: {
-    border: '1.5px solid #ff2d78',
+    border: '1.5px solid #14B8A6',
     borderRadius: '24px',
     padding: '4px',
     maxWidth: '1100px',
@@ -402,7 +402,7 @@ const styles = {
     textShadow: '0 0 40px rgba(0,217,217,0.4)',
   },
   heroPink: {
-    color: '#ff2d78',
+    color: '#14B8A6',
     textShadow: '0 0 40px rgba(255,45,120,0.4)',
   },
   heroSubtitle: {
@@ -431,7 +431,7 @@ const styles = {
     textAlign: 'center',
   },
   btnPink: {
-    background: 'linear-gradient(135deg, #ff2d78, #c0135a)',
+    background: 'linear-gradient(135deg, #14B8A6, #0D9488)',
     color: 'white',
     padding: '0.75rem 1.25rem',
     borderRadius: '10px',
@@ -491,7 +491,7 @@ const styles = {
   statValuePink: {
     fontSize: '1.5rem',
     fontWeight: '800',
-    color: '#ff2d78',
+    color: '#14B8A6',
     textShadow: '0 0 20px rgba(255,45,120,0.5)',
   },
   statLabel: {
@@ -523,8 +523,8 @@ const styles = {
     height: '320px',
     borderRadius: '50%',
     border: '2px solid transparent',
-    borderTop: '2px solid #ff2d78',
-    borderRight: '2px solid #ff2d78',
+    borderTop: '2px solid #14B8A6',
+    borderRight: '2px solid #14B8A6',
     animation: 'spinSlow 8s linear infinite',
     boxShadow: '0 0 20px rgba(255,45,120,0.3)',
   },
@@ -593,7 +593,7 @@ const styles = {
     padding: '8px 14px',
     fontSize: '0.75rem',
     fontWeight: '700',
-    color: '#ff2d78',
+    color: '#14B8A6',
     animation: 'float 5s ease-in-out infinite',
     zIndex: 3,
     backdropFilter: 'blur(10px)',
@@ -673,7 +673,7 @@ const styles = {
     margin: '0 auto',
   },
   landlordInner: {
-    border: '1.5px solid #ff2d78',
+    border: '1.5px solid #14B8A6',
     borderRadius: '20px',
     padding: '3rem',
     background: 'rgba(0,0,0,0.98)',
@@ -700,8 +700,8 @@ const styles = {
   pricingTop: { marginBottom: '1.5rem' },
   pricingLabel: { color: '#ffffff', fontSize: '0.7rem', letterSpacing: '0.15em', fontWeight: '800', marginBottom: '0.75rem' },
   pricingAmount: { display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: '4px' },
-  pricingCurrency: { color: '#ff2d78', fontSize: '1.2rem', fontWeight: '700', marginTop: '8px' },
-  pricingValue: { color: '#ff2d78', fontSize: '2.8rem', fontWeight: '900', lineHeight: 1, textShadow: '0 0 30px rgba(255,45,120,0.4)' },
+  pricingCurrency: { color: '#14B8A6', fontSize: '1.2rem', fontWeight: '700', marginTop: '8px' },
+  pricingValue: { color: '#14B8A6', fontSize: '2.8rem', fontWeight: '900', lineHeight: 1, textShadow: '0 0 30px rgba(255,45,120,0.4)' },
   pricingPer: { color: '#ffffff', fontSize: '0.8rem', fontWeight: '700', marginTop: '4px' },
   pricingFeatures: { display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '1.5rem', color: '#cccccc', fontSize: '0.82rem', fontWeight: '600' },
 
@@ -723,7 +723,7 @@ const styles = {
   },
   footerBrand: {
     fontSize: '1.2rem', fontWeight: '800',
-    background: 'linear-gradient(90deg, #00d9d9, #ff2d78)',
+    background: 'linear-gradient(90deg, #00d9d9, #14B8A6)',
     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
   },
   footerLinks: { display: 'flex', gap: '1.5rem', alignItems: 'center' },

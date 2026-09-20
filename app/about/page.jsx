@@ -76,7 +76,7 @@ export default function About() {
           margin: 0 auto;
         }
         .faim-back-link {
-          color: #ff2d78;
+          color: #14B8A6;
           text-decoration: none;
           font-size: 0.85rem;
           font-weight: 600;
@@ -90,13 +90,13 @@ export default function About() {
           border-radius: 16px;
           padding: 48px 40px;
           margin-bottom: 24px;
-          border-bottom: 3px solid #ff2d78;
+          border-bottom: 3px solid #14B8A6;
           outline: 1.5px solid #0ef6cc;
           outline-offset: -5px;
         }
         .faim-hero-badge {
           display: inline-block;
-          background: #ff2d78;
+          background: #14B8A6;
           color: white;
           font-size: 0.8rem;
           font-weight: 700;
@@ -130,7 +130,7 @@ export default function About() {
           margin-bottom: 14px;
         }
         p { color: #444; line-height: 1.7; margin-bottom: 12px; }
-        a { color: #ff2d78; }
+        a { color: #14B8A6; }
 
         .faim-steps {
           display: flex;
@@ -175,10 +175,10 @@ export default function About() {
           transition: all 0.15s;
         }
         .faim-cta-primary {
-          background: #ff2d78;
+          background: #14B8A6;
           color: white;
         }
-        .faim-cta-primary:hover { background: #e0205f; }
+        .faim-cta-primary:hover { background: #0D7B75; }
         .faim-cta-secondary {
           background: white;
           color: #080a0f;

@@ -285,7 +285,7 @@ export default function ListingLightPage() {
               )}
             </div>
 
-            <button onClick={handleLike} style={{ width: '100%', padding: '12px 16px', background: liked ? '#fff1f2' : '#f8fafc', border: liked ? '1px solid #fda4af' : '1px solid #e2e8f0', borderRadius: 12, cursor: 'pointer', color: liked ? '#ff2d78' : '#64748b', fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <button onClick={handleLike} style={{ width: '100%', padding: '12px 16px', background: liked ? '#fff1f2' : '#f8fafc', border: liked ? '1px solid #fda4af' : '1px solid #e2e8f0', borderRadius: 12, cursor: 'pointer', color: liked ? '#14B8A6' : '#64748b', fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               <span style={{ fontSize: 18 }}>{liked ? '♥' : '♡'}</span>
               {liked ? 'Saved' : 'Save this listing'}
               {likes > 0 && <span style={{ fontSize: 12, marginLeft: 2, opacity: 0.7 }}>· {likes}</span>}

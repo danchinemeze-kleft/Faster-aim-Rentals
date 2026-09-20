@@ -60,7 +60,7 @@ Starting with Southeast Nigeria (Anambra, Enugu, Imo, Abia, Delta), expanding na
 | AI Primary | Gemini 3.5 Flash — API string `gemini-3.5-flash` |
 | AI Fallback | DeepSeek |
 | Styling | Inline styles (no Tailwind, no CSS modules) |
-| Brand Colors | Cyan #0ef6cc, Pink #ff2d78, Dark #080a0f / #050510 |
+| Brand Colors | Cyan #0ef6cc, Teal #14B8A6, Dark #080a0f / #050510 |
 | Fonts | Segoe UI / system-ui |
 
 ---
@@ -137,7 +137,7 @@ app/
 - JS/PHP function prefix: `faim_`
 - WordPress REST routes prefix: `mrrent`
 - Always use inline styles in Next.js components (no external CSS files)
-- Brand: cyan `#0ef6cc` + pink `#ff2d78` on dark obsidian `#080a0f`
+- Brand: cyan `#0ef6cc` + teal `#14B8A6` on dark obsidian `#080a0f`
 
 ---
 
