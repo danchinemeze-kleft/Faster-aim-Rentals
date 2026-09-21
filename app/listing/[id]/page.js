@@ -14,10 +14,11 @@ const supabase = createBrowserClient(
 )
 
 const VERYLAND_BADGE = {
-  white:  { fill: '#d0d0d0', check: '#888', label: 'Veryland: Submitted' },
-  yellow: { fill: '#F59E0B', check: '#fff', label: 'Veryland: Partial Verified' },
-  green:  { fill: '#10B981', check: '#fff', label: 'Veryland: Verified' },
-  blue:   { fill: '#3B82F6', check: '#fff', label: 'Veryland: Premium Verified' },
+  white:      { fill: '#d0d0d0', check: '#888', label: 'Veryland: Submitted' },
+  yellow:     { fill: '#F59E0B', check: '#fff', label: 'Veryland: Partial Verified' },
+  green:      { fill: '#10B981', check: '#fff', label: 'Veryland: Verified' },
+  deep_green: { fill: '#059669', check: '#fff', label: 'Veryland: Verified (Gazette)' },
+  blue:       { fill: '#3B82F6', check: '#fff', label: 'Veryland: Premium Verified (C of O)' },
 }
 
 function VerylandBadge({ level }) {

@@ -100,6 +100,15 @@ export async function POST(request) {
           veryland_badge: badgeTier,
         })
         .eq('id', userId)
+
+      // Also update landlord's listings so badge appears publicly on browse and listing pages
+      await supabase
+        .from('listings')
+        .update({
+          veryland_badge: badgeTier,
+          verification_id: verificationId,
+        })
+        .eq('landlord_id', userId)
     }
 
     return Response.json({
