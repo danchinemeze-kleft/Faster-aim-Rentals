@@ -176,8 +176,8 @@ app/
 ## What Is Missing / Broken (Priority Order)
 
 ### Priority 1 — Revenue protection
-- [ ] Tenant reveal limit enforcement — no logic currently prevents unlimited free reveals
-- [ ] `/api/subscription-webhook` — Paystack webhook to auto-update Subscription table on renewal/cancellation/failure
+- [x] Tenant reveal limit enforcement — 20 reveals/24h fair-usage rate limit implemented in /api/free-reveal
+- [x] `/api/subscription-webhook` — Complete Paystack webhook (charge.success, subscription.disable, invoice.payment_failed, affiliate commissions)
 - [ ] Fix routing: `/search`, `/list`, `/account` are still intercepted by old WordPress. Next.js versions exist but WordPress wins the route. Needs DNS/hosting fix on Hostinger side.
 
 ### Priority 2 — Growth

@@ -93,6 +93,7 @@ export default function BrowsePage() {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [switchingRole, setSwitchingRole] = useState(false);
   const [pendingListing, setPendingListing] = useState(null);
+  const [hasTenantSub, setHasTenantSub] = useState(false);
 
   const filtered = useMemo(() => {
     let result = listings;
@@ -112,8 +113,20 @@ export default function BrowsePage() {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
       setUser(session.user);
-      const { data: profile } = await supabase.from('Profiles').select('role').eq('id', session.user.id).single();
+      const [{ data: profile }, { data: sub }] = await Promise.all([
+        supabase.from('Profiles').select('role').eq('id', session.user.id).single(),
+        supabase
+          .from('Tenant_subscription')
+          .select('id')
+          .eq('user_id', session.user.id)
+          .eq('status', 'active')
+          .gte('expiry_date', new Date().toISOString())
+          .order('expiry_date', { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ]);
       setUserRole(profile?.role || 'tenant');
+      setHasTenantSub(!!sub);
     }
   }
 
@@ -183,14 +196,31 @@ export default function BrowsePage() {
       return;
     }
 
-    // If already paid, go straight to listing detail which shows the contact
+    // If already revealed or user has an active Tenant Pass, go straight to listing detail
     const { data: existing } = await supabase
       .from('Contact_reveals')
       .select('id')
       .eq('tenant_id', session.user.id)
       .eq('listing_id', listing.id)
       .maybeSingle();
-    if (existing) {
+
+    if (existing || hasTenantSub) {
+      router.push(`/listing/${listing.id}`);
+      return;
+    }
+
+    // Double-check active subscription on-the-fly
+    const { data: activeSub } = await supabase
+      .from('Tenant_subscription')
+      .select('id')
+      .eq('user_id', session.user.id)
+      .eq('status', 'active')
+      .gte('expiry_date', new Date().toISOString())
+      .limit(1)
+      .maybeSingle();
+
+    if (activeSub) {
+      setHasTenantSub(true);
       router.push(`/listing/${listing.id}`);
       return;
     }
@@ -211,7 +241,7 @@ export default function BrowsePage() {
         const { data: existing } = await supabase
           .from('Contact_reveals').select('id')
           .eq('tenant_id', user.id).eq('listing_id', listing.id).maybeSingle();
-        if (existing) { router.push(`/listing/${listing.id}`); return; }
+        if (existing || hasTenantSub) { router.push(`/listing/${listing.id}`); return; }
         await initiatePayment(user, listing.id);
       }
     } catch {
@@ -378,7 +408,7 @@ export default function BrowsePage() {
                   )}
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
                     <a href={`/listing/${l.id}`} style={{ flex: 1, padding: '11px 8px', borderRadius: '8px', border: '2px solid #333', background: '#1a1d24', color: '#ffffff', fontSize: '0.88rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>View Details</a>
-                    <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '13px 8px', borderRadius: '8px', border: 'none', background: '#14B8A6', color: '#fff', fontSize: '0.88rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif', minHeight: 48 }}>{paying === l.id ? 'Please wait...' : 'Meet Landlord • ₦5k'}</button>
+                    <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '13px 8px', borderRadius: '8px', border: 'none', background: '#14B8A6', color: '#fff', fontSize: '0.88rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif', minHeight: 48 }}>{paying === l.id ? 'Please wait...' : hasTenantSub ? 'Meet Landlord • Free' : 'Meet Landlord • ₦5k'}</button>
                   </div>
                 </div>
               </div>

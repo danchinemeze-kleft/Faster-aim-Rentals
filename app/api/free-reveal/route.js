@@ -2,6 +2,9 @@ import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
+// Fair-usage daily limit for active Tenant Pass holders to prevent scrapers
+const DAILY_REVEAL_LIMIT = 20
+
 export async function POST(request) {
   try {
     const { listing_id } = await request.json()
@@ -10,14 +13,23 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'Missing listing_id' }, { status: 400 })
     }
 
-    // Get authenticated user from session cookie
-    const cookieStore = cookies()
+    // Next.js 15/16 requires awaiting cookies()
+    const cookieStore = await cookies()
     const authClient = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       {
         cookies: {
-          get(name) { return cookieStore.get(name)?.value },
+          getAll() {
+            return cookieStore.getAll()
+          },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              )
+            } catch {}
+          },
         },
       }
     )
@@ -48,13 +60,30 @@ export async function POST(request) {
       return Response.json({ success: false, error: 'No active subscription' }, { status: 403 })
     }
 
-    // Skip insert if already revealed for this listing
+    // Check if already revealed for this listing (unlimited repeat views of already unlocked contacts)
     const { data: existing } = await supabase
       .from('Contact_reveals')
       .select('landlord_phone, landlord_email')
       .eq('tenant_id', user.id)
       .eq('listing_id', listing_id)
       .maybeSingle()
+
+    // If this is a new reveal, enforce daily fair-use quota to stop scraper bots
+    if (!existing) {
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+      const { count: dailyCount, error: countErr } = await supabase
+        .from('Contact_reveals')
+        .select('id', { count: 'exact', head: true })
+        .eq('tenant_id', user.id)
+        .gte('created_at', oneDayAgo)
+
+      if (!countErr && dailyCount !== null && dailyCount >= DAILY_REVEAL_LIMIT) {
+        return Response.json({
+          success: false,
+          error: `Daily limit reached (${DAILY_REVEAL_LIMIT} reveals per 24 hours). Please check back tomorrow.`,
+        }, { status: 429 })
+      }
+    }
 
     // Get listing
     const { data: listing, error: listingError } = await supabase
