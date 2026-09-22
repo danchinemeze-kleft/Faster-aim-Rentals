@@ -39,39 +39,33 @@ export async function GET(request) {
     const pending = list.filter(c => c.status === 'pending').reduce((s, c) => s + c.commission_amount, 0)
     const paid_out = list.filter(c => c.status === 'paid').reduce((s, c) => s + c.commission_amount, 0)
 
-    // Calculate total invites (signups)
+    // 1. Calculate total invites (signups) from the referrals table
     let total_invites = 0
+    let referredUserIds = []
     try {
-      const { count, error } = await serviceSupabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('referred_by', affiliate.ref_code)
+      const { data: refs, error: refErr } = await serviceSupabase
+        .from('referrals')
+        .select('referred_user_id')
+        .eq('affiliate_id', affiliate.id)
       
-      if (!error && count !== null) {
-        total_invites = count
-      } else {
-        // Fallback to referrals table if profiles doesn't have referred_by
-        const { count: refCount, error: refErr } = await serviceSupabase
-          .from('referrals')
-          .select('*', { count: 'exact', head: true })
-          .eq('affiliate_id', affiliate.id)
-        if (!refErr && refCount !== null) {
-          total_invites = refCount
-        }
+      if (!refErr && refs) {
+        total_invites = refs.length
+        referredUserIds = refs.map(r => r.referred_user_id).filter(Boolean)
       }
     } catch (e) {
       console.error('Error fetching invites:', e)
     }
 
-    // Calculate total successful (unique referred users who paid)
-    const uniquePayers = new Set()
+    // 2. Calculate total successful (referred users who went on to make a payment)
+    const paidUserIds = new Set()
     list.forEach(c => {
-      const payer = c.payer_id || c.user_id || c.buyer_id || c.referred_user_id || c.id
+      const payer = c.payer_id || c.user_id || c.buyer_id || c.referred_user_id
       if (payer) {
-        uniquePayers.add(payer)
+        paidUserIds.add(payer)
       }
     })
-    const total_successful = uniquePayers.size
+    
+    const total_successful = referredUserIds.filter(id => paidUserIds.has(id)).length
 
     return Response.json({
       affiliate,
