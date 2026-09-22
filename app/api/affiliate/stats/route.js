@@ -57,15 +57,50 @@ export async function GET(request) {
     }
 
     // 2. Calculate total successful (referred users who went on to make a payment)
-    const paidUserIds = new Set()
-    list.forEach(c => {
-      const payer = c.payer_id || c.user_id || c.buyer_id || c.referred_user_id
-      if (payer) {
-        paidUserIds.add(payer)
+    let total_successful = 0
+    if (referredUserIds.length > 0) {
+      const paidUserIds = new Set()
+
+      // Check from already fetched commissions list
+      list.forEach(c => {
+        const payer = c.payer_id || c.user_id || c.buyer_id || c.referred_user_id
+        if (payer) {
+          paidUserIds.add(payer)
+        }
+      })
+
+      // Query Subscription table for any of these user_ids
+      try {
+        const { data: subs } = await serviceSupabase
+          .from('Subscription')
+          .select('user_id')
+          .in('user_id', referredUserIds)
+        if (subs) {
+          subs.forEach(s => {
+            if (s.user_id) paidUserIds.add(s.user_id)
+          })
+        }
+      } catch (e) {
+        console.error('Error querying Subscription:', e)
       }
-    })
-    
-    const total_successful = referredUserIds.filter(id => paidUserIds.has(id)).length
+
+      // Query Tenant_subscription table for any of these user_ids
+      try {
+        const { data: tenantSubs } = await serviceSupabase
+          .from('Tenant_subscription')
+          .select('user_id')
+          .in('user_id', referredUserIds)
+        if (tenantSubs) {
+          tenantSubs.forEach(ts => {
+            if (ts.user_id) paidUserIds.add(ts.user_id)
+          })
+        }
+      } catch (e) {
+        console.error('Error querying Tenant_subscription:', e)
+      }
+
+      total_successful = referredUserIds.filter(id => paidUserIds.has(id)).length
+    }
 
     return Response.json({
       affiliate,

@@ -21,8 +21,14 @@ export default function RefCapture() {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
-        const match = document.cookie.match(new RegExp('(^| )mrrent_ref=([^;]+)'))
-        const refCode = match ? match[2] : null
+        // Try to get ref code from URL first, then fall back to cookie
+        const urlParams = new URLSearchParams(window.location.search)
+        let refCode = urlParams.get('ref')
+        if (!refCode || !/^[A-Z0-9]{6,12}$/.test(refCode)) {
+          const match = document.cookie.match(new RegExp('(^| )mrrent_ref=([^;]+)'))
+          refCode = match ? match[2] : null
+        }
+
         if (refCode) {
           try {
             // 1. Find the affiliate with this ref_code
