@@ -85,15 +85,72 @@ export default function Home() {
           </svg>
           Mr. Rent
         </div>
-        <div className={`nav-links${menuOpen ? ' open' : ''}`}>
-          <button className="nav-close" onClick={() => setMenuOpen(false)} aria-label="Close menu" style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#0f172a' }}>×</button>
-          <a href="/browse" style={s.navLink} onClick={() => setMenuOpen(false)}>Browse Rentals</a>
-          <a href="/list" style={s.navLink} onClick={() => setMenuOpen(false)}>List Property</a>
-          <a href="/veryland" style={{ ...s.navLink, color: '#0ea5e9', fontWeight: 700 }} onClick={() => setMenuOpen(false)}>Verified Properties</a>
-          <a href="/account" style={s.navBtn} onClick={() => setMenuOpen(false)}>Login / Sign up</a>
+        
+        {/* Desktop Navigation Links */}
+        <div className="nav-links-desktop">
+          <a href="/browse" style={s.navLink}>Browse Rentals</a>
+          <a href="/list" style={s.navLink}>List Property</a>
+          <a href="/veryland" style={{ ...s.navLink, color: '#0ea5e9', fontWeight: 700 }}>Verified Properties</a>
+          <a href="/account" style={s.navBtn}>Login / Sign up</a>
         </div>
+
         <button className="nav-hamburger" onClick={() => setMenuOpen(true)} aria-label="Open menu" style={{ background: 'none', border: '2px solid #e2e8f0', padding: '6px 10px', borderRadius: '8px', cursor: 'pointer', fontSize: '1.2rem', color: '#0f172a' }}>☰</button>
       </nav>
+
+      {/* Redesigned Mobile Navigation Menu Overlay */}
+      {menuOpen && (
+        <div className="mobile-menu-overlay" onClick={() => setMenuOpen(false)}>
+          <div className="mobile-menu-panel" onClick={(e) => e.stopPropagation()}>
+            {/* 1. Header Row */}
+            <div className="mobile-menu-header">
+              <div style={s.navBrand}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ marginRight: '6px', color: '#0ea5e9', display: 'inline-block', verticalAlign: 'middle' }}>
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span style={{ verticalAlign: 'middle' }}>Mr. Rent</span>
+              </div>
+              <button className="mobile-menu-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button>
+            </div>
+
+            {/* 2. Grouped Navigation Links Container */}
+            <div className="mobile-menu-group">
+              {/* Browse Rentals */}
+              <a href="/browse" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span>Browse Rentals</span>
+              </a>
+              
+              {/* List Property */}
+              <a href="/list" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+                  <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+                </svg>
+                <span>List Property</span>
+              </a>
+
+              {/* Verified Properties */}
+              <a href="/veryland" className="mobile-menu-item mobile-menu-item-highlight" onClick={() => setMenuOpen(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 11 2 2 4-4"/>
+                </svg>
+                <span>Verified Properties</span>
+              </a>
+            </div>
+
+            {/* 5. Login/Sign-up Button */}
+            <div className="mobile-menu-footer">
+              <a href="/account" style={{ ...s.navBtn, display: 'block', textAlign: 'center', width: '100%', padding: '0.8rem' }} onClick={() => setMenuOpen(false)}>
+                Login / Sign up
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero */}
       <section style={s.heroSection} className="hero-section">
@@ -381,18 +438,107 @@ export default function Home() {
         body { background: #ffffff; }
         a { text-decoration: none; }
 
+        /* ---- Desktop vs Mobile Nav ---- */
+        .nav-links-desktop {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+        }
+        @media (max-width: 768px) {
+          .nav-links-desktop {
+            display: none;
+          }
+          .nav-hamburger {
+            display: flex !important;
+          }
+        }
+
+        /* ---- Redesigned Mobile Menu Overlay ---- */
+        .mobile-menu-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(15, 23, 42, 0.4);
+          backdrop-filter: blur(4px);
+          z-index: 1000;
+          display: flex;
+          justify-content: flex-end;
+        }
+        .mobile-menu-panel {
+          background: #ffffff;
+          width: 100%;
+          max-width: 320px;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          padding: 1.25rem;
+          box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+          animation: slideIn 0.25s ease-out;
+        }
+        @keyframes slideIn {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+        .mobile-menu-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid #f1f5f9;
+          margin-bottom: 1.25rem;
+        }
+        .mobile-menu-close {
+          background: none;
+          border: none;
+          font-size: 1.75rem;
+          cursor: pointer;
+          color: #64748b;
+          line-height: 1;
+          padding: 4px;
+        }
+        .mobile-menu-group {
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          overflow: hidden;
+          background: #f8fafc;
+          margin-bottom: 1.5rem;
+        }
+        .mobile-menu-item {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 1rem;
+          color: #334155;
+          font-weight: 600;
+          font-size: 0.95rem;
+          text-decoration: none;
+          transition: background 0.2s;
+        }
+        .mobile-menu-item:not(:last-child) {
+          border-bottom: 1px solid #e2e8f0;
+        }
+        .mobile-menu-item:hover {
+          background: #f1f5f9;
+        }
+        .mobile-menu-item-highlight {
+          color: #14B8A6 !important; /* Brand teal/emerald */
+        }
+        .mobile-menu-icon {
+          flex-shrink: 0;
+          color: #64748b;
+        }
+        .mobile-menu-item-highlight .mobile-menu-icon {
+          color: #14B8A6;
+        }
+        .mobile-menu-footer {
+          margin-top: auto;
+          padding-top: 1rem;
+        }
+
         /* ---- Hamburger nav ---- */
         .nav-hamburger {
           display: none; background: none; border: 2px solid #e2e8f0;
           border-radius: 8px; font-size: 1.3rem; cursor: pointer; color: #0f172a;
           padding: 6px 10px; line-height: 1; flex-shrink: 0;
-        }
-        .nav-close {
-          display: none; background: none; border: none; font-size: 1.4rem;
-          cursor: pointer; color: #0f172a; align-self: flex-end; padding: 4px 8px;
-        }
-        .nav-links {
-          display: flex; align-items: center; gap: 1.5rem;
         }
 
         /* ---- Veryland tooltip ---- */
@@ -453,17 +599,6 @@ export default function Home() {
 
         /* ---- Mobile (≤768px) ---- */
         @media (max-width: 768px) {
-          /* Nav */
-          .nav-hamburger { display: flex; align-items: center; justify-content: center; }
-          .nav-close { display: flex; }
-          .nav-links {
-            display: none; position: fixed; inset: 0; background: #ffffff;
-            flex-direction: column; align-items: center; justify-content: center;
-            gap: 2rem; z-index: 500; padding: 2rem;
-          }
-          .nav-links.open { display: flex; }
-          .nav-links a { font-size: 1.15rem !important; font-weight: 700 !important; padding: 8px 0; }
-
           /* Hero */
           .hero-section { padding: 1.25rem 0.75rem !important; }
           .hero-outer { border-radius: 14px !important; }
