@@ -18,7 +18,7 @@ export default function AffiliateDashboard() {
   const [user, setUser] = useState(null)
   const [affiliate, setAffiliate] = useState(null)
   const [commissions, setCommissions] = useState([])
-  const [stats, setStats] = useState({ total: 0, pending: 0, paid: 0, reveals: 0, subscriptions: 0 })
+  const [stats, setStats] = useState({ total: 0, pending: 0, paid: 0, reveals: 0, subscriptions: 0, totalInvites: 0, totalSuccessful: 0 })
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
 
@@ -33,52 +33,40 @@ export default function AffiliateDashboard() {
 
         setUser(session.user)
 
-        // Load affiliate profile with error handling
-        const { data: aff, error: affError } = await supabase
-          .from('affiliates')
-          .select('*')
-          .eq('id', session.user.id)
-          .maybeSingle()
+        // Fetch affiliate stats and profile from the API route
+        const res = await fetch('/api/affiliate/stats', {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        })
+        const data = await res.json()
 
-        if (affError) {
-          console.error('Affiliate profile fetch error:', affError)
+        if (data.error || !data.affiliate) {
           window.location.href = '/affiliate'
           return
         }
 
-        if (!aff) {
-          window.location.href = '/affiliate'
-          return
-        }
+        setAffiliate(data.affiliate)
+        setCommissions(data.commissions || [])
 
-        setAffiliate(aff)
+        // Calculate stats
+        const total = data.stats.total_earned || 0
+        const pending = data.stats.pending || 0
+        const paid = data.stats.paid_out || 0
+        const reveals = (data.commissions || []).filter(c => c.transaction_type === 'reveal').length
+        const subscriptions = (data.commissions || []).filter(c => c.transaction_type === 'landlord_subscription').length
+        const totalInvites = data.stats.total_invites || 0
+        const totalSuccessful = data.stats.total_successful || 0
 
-        // Load commissions with error handling
-        const { data: comms, error: commsError } = await supabase
-          .from('affiliate_commissions')
-          .select('*')
-          .eq('affiliate_id', session.user.id)
-          .order('created_at', { ascending: false })
-
-        if (commsError) {
-          console.error('Commissions fetch error:', commsError)
-          setCommissions([])
-        } else if (comms) {
-          setCommissions(comms)
-
-          // Calculate stats
-          const total = comms.reduce((sum, c) => sum + (c.commission_amount || 0), 0)
-          const pending = comms
-            .filter(c => c.status === 'pending')
-            .reduce((sum, c) => sum + (c.commission_amount || 0), 0)
-          const paid = comms
-            .filter(c => c.status === 'paid')
-            .reduce((sum, c) => sum + (c.commission_amount || 0), 0)
-          const reveals = comms.filter(c => c.transaction_type === 'reveal').length
-          const subscriptions = comms.filter(c => c.transaction_type === 'landlord_subscription').length
-
-          setStats({ total, pending, paid, reveals, subscriptions })
-        }
+        setStats({ 
+          total, 
+          pending, 
+          paid, 
+          reveals, 
+          subscriptions,
+          totalInvites,
+          totalSuccessful
+        })
       } catch (err) {
         console.error('Dashboard load error:', err)
       } finally {
@@ -148,6 +136,18 @@ export default function AffiliateDashboard() {
             <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 700, marginBottom: '0.5rem' }}>PAID</div>
             <div style={{ fontSize: '2rem', fontWeight: 900, color: '#22c55e', marginBottom: '0.25rem' }}>₦{(stats.paid).toLocaleString()}</div>
             <div style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600 }}>successfully paid</div>
+          </div>
+
+          <div style={{ background: '#fff', borderRadius: '16px', padding: '2rem', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 700, marginBottom: '0.5rem' }}>TOTAL INVITES</div>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#6366f1', marginBottom: '0.25rem' }}>{stats.totalInvites}</div>
+            <div style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600 }}>signups via your link</div>
+          </div>
+
+          <div style={{ background: '#fff', borderRadius: '16px', padding: '2rem', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 700, marginBottom: '0.5rem' }}>TOTAL SUCCESSFUL</div>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#ec4899', marginBottom: '0.25rem' }}>{stats.totalSuccessful}</div>
+            <div style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600 }}>referrals who paid</div>
           </div>
           
           <div style={{ background: '#fff', borderRadius: '16px', padding: '2rem', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>

@@ -39,10 +39,51 @@ export async function GET(request) {
     const pending = list.filter(c => c.status === 'pending').reduce((s, c) => s + c.commission_amount, 0)
     const paid_out = list.filter(c => c.status === 'paid').reduce((s, c) => s + c.commission_amount, 0)
 
+    // Calculate total invites (signups)
+    let total_invites = 0
+    try {
+      const { count, error } = await serviceSupabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('referred_by', affiliate.ref_code)
+      
+      if (!error && count !== null) {
+        total_invites = count
+      } else {
+        // Fallback to referrals table if profiles doesn't have referred_by
+        const { count: refCount, error: refErr } = await serviceSupabase
+          .from('referrals')
+          .select('*', { count: 'exact', head: true })
+          .eq('affiliate_id', affiliate.id)
+        if (!refErr && refCount !== null) {
+          total_invites = refCount
+        }
+      }
+    } catch (e) {
+      console.error('Error fetching invites:', e)
+    }
+
+    // Calculate total successful (unique referred users who paid)
+    const uniquePayers = new Set()
+    list.forEach(c => {
+      const payer = c.payer_id || c.user_id || c.buyer_id || c.referred_user_id || c.id
+      if (payer) {
+        uniquePayers.add(payer)
+      }
+    })
+    const total_successful = uniquePayers.size
+
     return Response.json({
       affiliate,
       commissions: list,
-      stats: { total_earned, pending, paid_out, count: list.length },
+      stats: { 
+        total_earned, 
+        pending, 
+        paid_out, 
+        count: list.length,
+        total_invites,
+        total_successful
+      },
     })
 
   } catch (err) {
