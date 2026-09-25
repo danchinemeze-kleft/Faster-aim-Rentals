@@ -679,35 +679,26 @@ const s = {
     fontSize: '0.9rem',
     fontWeight: '600',
   },
-  heroStats: {
+   trustRow: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '0.6rem',
+    marginTop: '0.5rem',
+  },
+  trustPill: {
     display: 'flex',
     alignItems: 'center',
-    gap: '1.5rem',
-    marginTop: '1rem',
+    gap: '0.4rem',
+    backgroundColor: '#f1f5f9',
+    border: '1px solid #e2e8f0',
+    borderRadius: '9999px',
+    padding: '0.4rem 0.8rem',
   },
-  heroStat: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  statValueCyan: {
-    fontSize: '1.75rem',
-    fontWeight: '800',
-    color: '#0ea5e9',
-  },
-  statValueTeal: {
-    fontSize: '1.75rem',
-    fontWeight: '800',
-    color: '#14b8a6',
-  },
-  statLabel: {
-    fontSize: '0.85rem',
-    color: '#64748b',
-    fontWeight: '500',
-  },
-  statDivider: {
-    width: '1px',
-    height: '2rem',
-    backgroundColor: '#e2e8f0',
+  trustText: {
+    fontSize: '0.8rem',
+    fontWeight: '700',
+    color: '#334155',
+    whiteSpace: 'nowrap',
   },
   avatarContainer: {
     position: 'relative',
