@@ -87,6 +87,99 @@ export default function Home() {
 
   return (
     <main style={s.main}>
+      <style>{`
+        .mobile-menu-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(15, 23, 42, 0.6);
+          z-index: 9999;
+          display: flex;
+          justify-content: flex-end;
+        }
+        .mobile-menu-panel {
+          background-color: #ffffff;
+          width: 85%;
+          max-width: 360px;
+          height: 100%;
+          box-shadow: -4px 0 25px rgba(0, 0, 0, 0.15);
+          display: flex;
+          flex-direction: column;
+          padding: 1.5rem;
+          overflow-y: auto;
+          box-sizing: border-box;
+        }
+        .mobile-menu-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid #e2e8f0;
+          padding-bottom: 1rem;
+          margin-bottom: 1rem;
+        }
+        .mobile-menu-close {
+          background: none;
+          border: none;
+          font-size: 2rem;
+          color: #64748b;
+          cursor: pointer;
+          line-height: 1;
+        }
+        .mobile-menu-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        .mobile-menu-item {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.75rem 1rem;
+          border-radius: 8px;
+          text-decoration: none;
+          color: #475569;
+          font-weight: 600;
+          font-size: 0.95rem;
+          transition: background-color 0.2s;
+        }
+        .mobile-menu-item:hover {
+          background-color: #f1f5f9;
+          color: #0f172a;
+        }
+        .mobile-menu-item-highlight {
+          color: #0ea5e9;
+          background-color: rgba(14, 165, 233, 0.05);
+        }
+        .mobile-menu-item-highlight:hover {
+          background-color: rgba(14, 165, 233, 0.1);
+        }
+        .mobile-menu-icon {
+          flex-shrink: 0;
+          color: #64748b;
+        }
+        .mobile-menu-item-highlight .mobile-menu-icon {
+          color: #0ea5e9;
+        }
+        .mobile-menu-footer {
+          margin-top: 1.5rem;
+        }
+        @media (min-width: 769px) {
+          .nav-hamburger {
+            display: none !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .nav-links-desktop {
+            display: none !important;
+          }
+          .hero-layout {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
+
       <Breadcrumb theme="light" items={[{ label: 'Mr. Rent', href: '/' }]} />
       {/* Navbar */}
       <nav style={s.nav}>
