@@ -291,4 +291,211 @@ export default function Home() {
                     <path d="M9 16.17L4.83 12m0 0L3 13.83m1.83-1.83l5.34 5.34 9.84-9.84" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.75rem'
+                    <div style={{ fontWeight: 700, fontSize: '0.75rem' }}>Verified Landlord</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+const s = {
+  main: {
+    minHeight: '100vh',
+    backgroundColor: '#f8fafc',
+    color: '#0f172a',
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+  },
+  nav: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '1rem 2rem',
+    borderBottom: '1px solid #e2e8f0',
+    backgroundColor: '#ffffff',
+  },
+  navBrand: {
+    display: 'flex',
+    alignItems: 'center',
+    fontWeight: '800',
+    fontSize: '1.25rem',
+    color: '#0f172a',
+  },
+  navLink: {
+    textDecoration: 'none',
+    color: '#475569',
+    fontWeight: '600',
+    fontSize: '0.95rem',
+    marginRight: '1.5rem',
+  },
+  navBtn: {
+    textDecoration: 'none',
+    backgroundColor: '#0f172a',
+    color: '#ffffff',
+    padding: '0.5rem 1rem',
+    borderRadius: '8px',
+    fontWeight: '600',
+    fontSize: '0.95rem',
+  },
+  heroSection: {
+    padding: '2rem 1rem',
+  },
+  heroOuter: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+  },
+  heroInner: {
+    background: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><path d='M15 25 L25 15 L35 25 L35 40 L15 40 Z M21 40 L21 32 L29 32 L29 40' fill='none' stroke='%230ea5e9' stroke-width='1.2' opacity='0.07'/><path d='M75 20 A 4 4 0 1 0 75 28 A 4 4 0 1 0 75 20 M79 24 L92 24 L92 28 L88 28 L88 24' fill='none' stroke='%2314B8A6' stroke-width='1.2' opacity='0.07'/><path d='M20 70 A 5 5 0 0 1 30 70 C 30 77 25 83 25 83 C 25 83 20 77 20 70 Z' fill='none' stroke='%2314B8A6' stroke-width='1.2' opacity='0.07'/><path d='M65 60 L65 90 L85 90 L85 60 Z M70 66 L74 66 L74 70 L70 70 Z M76 66 L80 66 L80 70 L76 70 Z M70 76 L74 76 L74 80 L70 80 Z M76 76 L80 76 L80 80 L76 80 Z' fill='none' stroke='%230ea5e9' stroke-width='1.2' opacity='0.07'/></svg>") repeat, radial-gradient(circle at top right, rgba(14, 165, 233, 0.05), transparent 40%), radial-gradient(circle at bottom left, rgba(20, 184, 166, 0.05), transparent 40%), #ffffff`,
+    borderRadius: '24px',
+    padding: '3rem 2rem',
+    border: '1px solid #e2e8f0',
+  },
+  heroLayout: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '2rem',
+    alignItems: 'center',
+  },
+  heroText: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.5rem',
+  },
+  heroBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#f1f5f9',
+    color: '#475569',
+    padding: '0.25rem 0.75rem',
+    borderRadius: '9999px',
+    fontSize: '0.85rem',
+    fontWeight: '600',
+  },
+  heroTitle: {
+    fontSize: '3rem',
+    fontWeight: '800',
+    lineHeight: '1.15',
+    color: '#0f172a',
+  },
+  heroCyan: {
+    color: '#0ea5e9',
+  },
+  heroTeal: {
+    color: '#14b8a6',
+  },
+  heroSubtitle: {
+    fontSize: '1.1rem',
+    color: '#475569',
+    lineHeight: '1.6',
+  },
+  heroActionsPrimary: {
+    display: 'flex',
+    gap: '1rem',
+  },
+  btnCyan: {
+    textDecoration: 'none',
+    backgroundColor: '#0ea5e9',
+    color: '#ffffff',
+    padding: '0.75rem 1.5rem',
+    borderRadius: '12px',
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  btnTeal: {
+    textDecoration: 'none',
+    backgroundColor: '#14b8a6',
+    color: '#ffffff',
+    padding: '0.75rem 1.5rem',
+    borderRadius: '12px',
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  heroActionsSecondary: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '1rem',
+  },
+  secondaryLink: {
+    textDecoration: 'none',
+    color: '#64748b',
+    fontSize: '0.9rem',
+    fontWeight: '600',
+  },
+  heroStats: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1.5rem',
+    marginTop: '1rem',
+  },
+  heroStat: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  statValueCyan: {
+    fontSize: '1.75rem',
+    fontWeight: '800',
+    color: '#0ea5e9',
+  },
+  statValueTeal: {
+    fontSize: '1.75rem',
+    fontWeight: '800',
+    color: '#14b8a6',
+  },
+  statLabel: {
+    fontSize: '0.85rem',
+    color: '#64748b',
+    fontWeight: '500',
+  },
+  statDivider: {
+    width: '1px',
+    height: '2rem',
+    backgroundColor: '#e2e8f0',
+  },
+  avatarContainer: {
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ringTeal: {
+    position: 'absolute',
+    width: '340px',
+    height: '340px',
+    borderRadius: '50%',
+    border: '2px dashed rgba(20, 184, 166, 0.2)',
+  },
+  ringCyan: {
+    position: 'absolute',
+    width: '380px',
+    height: '380px',
+    borderRadius: '50%',
+    border: '2px dashed rgba(14, 165, 233, 0.2)',
+  },
+  avatarWrapper: {
+    position: 'relative',
+    borderRadius: '50%',
+    overflow: 'hidden',
+    backgroundColor: '#f1f5f9',
+    border: '4px solid #ffffff',
+    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+  },
+  avatarImage: {
+    objectFit: 'cover',
+  },
+  verifiedBadge: {
+    position: 'absolute',
+    bottom: '10px',
+    right: '10px',
+    backgroundColor: '#ffffff',
+    padding: '0.5rem 1rem',
+    borderRadius: '9999px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+    border: '1px solid #e2e8f0',
+  },
+}
