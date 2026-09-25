@@ -365,17 +365,35 @@ export default function Home() {
                   <a href="/veryland" style={s.secondaryLink}>Verify Documents</a>
                   <a href="/affiliate" style={s.secondaryLink}>Earn with Referrals</a>
                 </div>
-                <div style={s.heroStats}>
-                  <div style={s.heroStat}>
-                    <span style={s.statValueCyan}>{displayCount}</span>
-                    <span style={s.statLabel}>Active Homes</span>
-                  </div>
-                  <div style={s.statDivider}></div>
-                  <div style={s.heroStat}>
-                    <span style={s.statValueTeal}>36</span>
-                    <span style={s.statLabel}>States</span>
-                  </div>
-                </div>
+                <div style={s.trustRow}>
+  <div style={s.trustPill}>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    </svg>
+    <span style={s.trustText}>{displayCount} real spaces available for rent</span>
+  </div>
+  <div style={s.trustPill}>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/>
+      <circle cx="12" cy="9" r="2.5"/>
+    </svg>
+    <span style={s.trustText}>Available Nationwide</span>
+  </div>
+  <div style={s.trustPill}>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <polyline points="12 6 12 12 16 14"/>
+    </svg>
+    <span style={s.trustText}>Active 24 Hours</span>
+  </div>
+  <div style={s.trustPill}>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <span style={s.trustText}>Free Search, No Agent Fee</span>
+  </div>
+</div>
               </div>
 
               <div style={s.avatarContainer} className="avatar-cont">
