@@ -201,7 +201,7 @@ export default function Home() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
                 </svg>
-                <span>Contact & Support</span>
+                <span>Contact &amp; Support</span>
               </a>
 
               {/* FAQ */}
@@ -217,7 +217,7 @@ export default function Home() {
 
             {/* Secondary Legal Section */}
             <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1rem', marginTop: 'auto', marginBottom: '1rem' }}>
-              <p style={{ fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', paddingLeft: '0.5rem' }}>Legal & Info</p>
+              <p style={{ fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', paddingLeft: '0.5rem' }}>Legal &amp; Info</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 <a href="/privacy-policy" style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }} onClick={() => setMenuOpen(false)}>Privacy Policy</a>
                 <a href="/terms" style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }} onClick={() => setMenuOpen(false)}>Terms of Service</a>
@@ -244,7 +244,7 @@ export default function Home() {
                 <h1 style={s.heroTitle} className="hero-title-el">
                   Find or List<br />
                   <span style={s.heroCyan}>Property for Rent</span><br />
-                  <span style={s.heroTeal}>Quickly & Securely</span>
+                  <span style={s.heroTeal}>Quickly &amp; Securely</span>
                 </h1>
                 <p style={s.heroSubtitle} className="hero-subtitle">
                   Connect with verified landlords across Nigeria. Browse listings, chat with Mr. Rent AI, and find your perfect home today.
