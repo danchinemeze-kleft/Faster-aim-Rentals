@@ -21,6 +21,18 @@ export default function Home() {
   const [listingCount, setListingCount] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [showBubble, setShowBubble] = useState(false)
+  const [user, setUser] = useState(null)
+
+  // Fetch user session
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+    return () => subscription.unsubscribe()
+  }, [supabase])
 
   useEffect(() => {
     supabase
@@ -140,6 +152,76 @@ export default function Home() {
                 </svg>
                 <span>Verified Properties</span>
               </a>
+
+              {/* Dashboard (Conditional) */}
+              {user && (
+                <a href="/dashboard" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+                    <rect x="3" y="3" width="7" height="9"/>
+                    <rect x="14" y="3" width="7" height="5"/>
+                    <rect x="14" y="12" width="7" height="9"/>
+                    <rect x="3" y="16" width="7" height="5"/>
+                  </svg>
+                  <span>Dashboard</span>
+                </a>
+              )}
+
+              {/* My Account (Conditional) */}
+              {user && (
+                <a href="/my-account" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <span>My Account</span>
+                </a>
+              )}
+
+              {/* Search / AI Chat */}
+              <a href="/search" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <span>Search / AI Chat</span>
+              </a>
+
+              {/* About Us */}
+              <a href="/about" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="16" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                <span>About Us</span>
+              </a>
+
+              {/* Contact / Support */}
+              <a href="/support" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                </svg>
+                <span>Contact & Support</span>
+              </a>
+
+              {/* FAQ */}
+              <a href="/faq" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>FAQ</span>
+              </a>
+            </div>
+
+            {/* Secondary Legal Section */}
+            <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1rem', marginTop: 'auto', marginBottom: '1rem' }}>
+              <p style={{ fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', paddingLeft: '0.5rem' }}>Legal & Info</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <a href="/privacy-policy" style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }} onClick={() => setMenuOpen(false)}>Privacy Policy</a>
+                <a href="/terms" style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }} onClick={() => setMenuOpen(false)}>Terms of Service</a>
+              </div>
             </div>
 
             {/* 5. Login/Sign-up Button */}
@@ -473,6 +555,7 @@ export default function Home() {
           padding: 1.25rem;
           box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
           animation: slideIn 0.25s ease-out;
+          overflow-y: auto;
         }
         @keyframes slideIn {
           from { transform: translateX(100%); }
@@ -485,6 +568,7 @@ export default function Home() {
           padding-bottom: 1rem;
           border-bottom: 1px solid #f1f5f9;
           margin-bottom: 1.25rem;
+          flex-shrink: 0;
         }
         .mobile-menu-close {
           background: none;
@@ -501,6 +585,7 @@ export default function Home() {
           overflow: hidden;
           background: #f8fafc;
           margin-bottom: 1.5rem;
+          flex-shrink: 0;
         }
         .mobile-menu-item {
           display: flex;
@@ -532,6 +617,7 @@ export default function Home() {
         .mobile-menu-footer {
           margin-top: auto;
           padding-top: 1rem;
+          flex-shrink: 0;
         }
 
         /* ---- Hamburger nav ---- */
