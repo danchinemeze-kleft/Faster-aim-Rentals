@@ -437,6 +437,7 @@ export default function Home() {
                   </svg>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: '0.75rem', color: '#0f172a' }}>Chat Free — Ask About Real Estate</div>
+                    <div style={{ fontWeight: 600, fontSize: '0.68rem', color: '#64748b', marginTop: '0.1rem' }}>Find available homes</div>
                   </div>
                 </a>
               </div>
@@ -766,14 +767,14 @@ const s = {
     left: '50%',
     transform: 'translateX(-50%)',
     backgroundColor: '#ffffff',
-    padding: '0.6rem 1.1rem',
-    borderRadius: '9999px',
+    padding: '0.6rem 1.2rem',
+    borderRadius: '18px',
     display: 'flex',
     alignItems: 'center',
     gap: '0.5rem',
     boxShadow: '0 8px 18px rgba(0, 0, 0, 0.1)',
     border: '1px solid #e2e8f0',
-    maxWidth: '90%',
+    maxWidth: '92%',
     whiteSpace: 'nowrap',
   },
 
