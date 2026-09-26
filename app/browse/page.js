@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useLoadingRouter } from '../hooks/useLoadingRouter';
 import { createBrowserClient } from '@supabase/ssr';
 import Breadcrumb from '../components/Breadcrumb';
@@ -12,11 +12,11 @@ const supabase = createBrowserClient(
 );
 
 const VERYLAND_BADGE = {
-  white:      { fill: '#d0d0d0', check: '#888', label: 'Submitted' },
-  yellow:     { fill: '#F59E0B', check: '#fff', label: 'Partial Verified' },
-  green:      { fill: '#10B981', check: '#fff', label: 'Verified' },
-  deep_green: { fill: '#10B981', check: '#fff', label: 'Verified (Gazette)' },
-  blue:       { fill: '#3B82F6', check: '#fff', label: 'Premium Verified (C of O)' },
+  white:       { fill: '#d0d0d0', check: '#888', label: 'Submitted' },
+  yellow:      { fill: '#F59E0B', check: '#fff', label: 'Partial Verified' },
+  green:       { fill: '#10B981', check: '#fff', label: 'Verified' },
+  deep_green:  { fill: '#10B981', check: '#fff', label: 'Verified (Gazette)' },
+  blue:        { fill: '#3B82F6', check: '#fff', label: 'Premium Verified (C of O)' },
 };
 
 function VerylandBadge({ level }) {
@@ -37,8 +37,8 @@ function VerylandBadge({ level }) {
 }
 
 function BrowseVideoPlayer({ src }) {
-  const [state, setState] = useState('loading')
-  if (!src) return null
+  const [state, setState] = useState('loading');
+  if (!src) return null;
   return (
     <div style={{ background: '#0a0a0a', borderTop: '2px solid #0ef6cc', position: 'relative' }}>
       <div style={{ padding: '5px 12px 3px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -77,7 +77,7 @@ function BrowseVideoPlayer({ src }) {
       </video>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
-  )
+  );
 }
 
 export default function BrowsePage() {
@@ -110,50 +110,51 @@ export default function BrowsePage() {
     return result;
   }, [search, typeFilter, stateFilter, priceFilter, listings]);
 
-  async function loadUser() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      setUser(session.user);
-      const [{ data: profile }, { data: sub }] = await Promise.all([
-        supabase.from('Profiles').select('role').eq('id', session.user.id).single(),
-        supabase
-          .from('Tenant_subscription')
-          .select('id')
-          .eq('user_id', session.user.id)
-          .eq('status', 'active')
-          .gte('expiry_date', new Date().toISOString())
-          .order('expiry_date', { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-      ]);
-      setUserRole(profile?.role || 'tenant');
-      setHasTenantSub(!!sub);
-    }
-  }
-
-  async function loadListings() {
-    const { data, error } = await supabase
-      .from('listings')
-      .select('*')
-      .eq('status', 'approved')
-      .order('created_at', { ascending: false })
-      .limit(500);
-    if (!error && data) setListings(data);
-    setLoading(false);
-  }
-
   useEffect(() => {
+    async function loadUser() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setUser(session.user);
+        const [{ data: profile }, { data: sub }] = await Promise.all([
+          supabase.from('Profiles').select('role').eq('id', session.user.id).single(),
+          supabase
+            .from('Tenant_subscription')
+            .select('id')
+            .eq('user_id', session.user.id)
+            .eq('status', 'active')
+            .gte('expiry_date', new Date().toISOString())
+            .order('expiry_date', { ascending: false })
+            .limit(1)
+            .maybeSingle(),
+        ]);
+        setUserRole(profile?.role || 'tenant');
+        if (sub) {
+          setHasTenantSub(true);
+        }
+      }
+    }
+
+    async function loadListings() {
+      const { data, error } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false })
+        .limit(500);
+      if (!error && data) setListings(data);
+      setLoading(false);
+    }
+
     loadUser();
     loadListings();
-    // Capture affiliate ref parameter from URL
+
     try {
       const params = new URLSearchParams(window.location.search);
       const ref = params.get('ref');
       if (ref) {
         localStorage.setItem('mrRentAffiliate', ref);
       }
-    } catch (e) {}
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    } catch {}
   }, []);
 
   async function initiatePayment(userObj, listingId) {
@@ -197,7 +198,6 @@ export default function BrowsePage() {
       return;
     }
 
-    // If already revealed or user has an active Tenant Pass, go straight to listing detail
     const { data: existing } = await supabase
       .from('Contact_reveals')
       .select('id')
@@ -210,7 +210,6 @@ export default function BrowsePage() {
       return;
     }
 
-    // Double-check active subscription on-the-fly
     const { data: activeSub } = await supabase
       .from('Tenant_subscription')
       .select('id')
@@ -221,7 +220,6 @@ export default function BrowsePage() {
       .maybeSingle();
 
     if (activeSub) {
-      setHasTenantSub(true);
       router.push(`/listing/${listing.id}`);
       return;
     }
@@ -252,14 +250,12 @@ export default function BrowsePage() {
     }
   }
 
-  // Resume pending payment after login redirect
   useEffect(() => {
     if (!user || loading) return;
     const listingId = sessionStorage.getItem('pendingReveal');
     if (!listingId) return;
     sessionStorage.removeItem('pendingReveal');
     initiatePayment(user, listingId);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, loading]);
 
   return (
@@ -286,6 +282,12 @@ export default function BrowsePage() {
             </div>
             <span style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '1px' }}>{user ? 'Account' : 'Login'}</span>
           </a>
+        </div>
+
+        {/* Dynamic Scroll Indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px', color: '#0ef6cc', fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>
+          <span>Scroll to explore listings</span>
+          <span style={{ display: 'inline-block', fontSize: '1.2rem', animation: 'bounceFinger 1.5s infinite' }}>👇</span>
         </div>
 
         {/* Filters */}
@@ -388,6 +390,7 @@ export default function BrowsePage() {
               <div key={l.id} style={{ background: 'var(--card-bg)', borderRadius: '14px', border: '1px solid var(--border-1)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <a href={`/listing/${l.id}`} style={{ display: 'block', position: 'relative', height: '220px', background: '#111318', textDecoration: 'none' }}>
                   {l.images && l.images.length > 0 ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
                     <img src={l.images[0]} alt={l.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3.5rem' }}>🏠</div>
@@ -428,6 +431,10 @@ export default function BrowsePage() {
       )}
 
       <style>{`
+        @keyframes bounceFinger {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(6px); }
+        }
         @media (max-width: 768px) {
           .browse-filters {
             grid-template-columns: 1fr 1fr !important;
