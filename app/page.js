@@ -47,6 +47,7 @@ export default function Home() {
       .select('id', { count: 'exact', head: true })
       .eq('status', 'active')
       .then(({ count }) => { if (count !== null) setListingCount(count) })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Floating welcome chat bubble — first-time visitors only, after 6s
@@ -457,7 +458,7 @@ export default function Home() {
             <div style={s.stepCard} className="feature-card">
               <div style={{ ...s.stepNumber, backgroundColor: '#0ea5e9' }}>1</div>
               <h3 style={s.stepTitle}>Search or Chat</h3>
-              <p style={s.stepText}>Tell Mr. Rent AI what you're looking for, or browse listings yourself. Either way, you'll find homes that fit your budget and area.</p>
+              <p style={s.stepText}>Tell Mr. Rent AI what you&apos;re looking for, or browse listings yourself. Either way, you&apos;ll find homes that fit your budget and area.</p>
             </div>
             <div style={s.stepCard} className="feature-card">
               <div style={{ ...s.stepNumber, backgroundColor: '#14b8a6' }}>2</div>
@@ -467,7 +468,7 @@ export default function Home() {
             <div style={s.stepCard} className="feature-card">
               <div style={{ ...s.stepNumber, backgroundColor: '#0f172a' }}>3</div>
               <h3 style={s.stepTitle}>Move In Safely</h3>
-              <p style={s.stepText}>Agree terms directly with a verified landlord and move in with confidence, knowing you didn't pay a scammer along the way.</p>
+              <p style={s.stepText}>Agree terms directly with a verified landlord and move in with confidence, knowing you didn&apos;t pay a scammer along the way.</p>
             </div>
           </div>
         </div>
@@ -489,7 +490,7 @@ export default function Home() {
                 </svg>
               </div>
               <h3 style={s.featureTitle}>Verified Landlords Only</h3>
-              <p style={s.featureText}>Documents are checked before a landlord can list, so you know who you're really dealing with.</p>
+              <p style={s.featureText}>Documents are checked before a landlord can list, so you know who you&apos;re really dealing with.</p>
             </div>
             <div style={s.featureCard} className="feature-card">
               <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(20, 184, 166, 0.1)' }}>
