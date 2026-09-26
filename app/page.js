@@ -5,8 +5,15 @@ import Link from 'next/link'
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { Plus_Jakarta_Sans } from 'next/font/google'
 import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from './components/Breadcrumb'
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '800'],
+  display: 'swap',
+})
 
 const useSupabase = () => {
   return useMemo(() => createBrowserClient(
@@ -83,10 +90,10 @@ export default function Home() {
     router.push('/terms')
   }
 
-  const displayCount = listingCount === null ? '...' : listingCount > 0 ? `${listingCount}+` : 'New'
+  const displayCount = listingCount === null ? '...' : listingCount > 0 ? `${listingCount}+ real spaces available for rent` : 'New real spaces added weekly'
 
   return (
-    <main style={s.main}>
+    <main className={jakarta.className} style={s.main}>
       <style>{`
         .mobile-menu-overlay {
           position: fixed;
@@ -172,6 +179,9 @@ export default function Home() {
           transform: translateY(-4px);
           box-shadow: 0 12px 24px -8px rgba(15, 23, 42, 0.12);
         }
+        .footer-link:hover {
+          color: #0ea5e9;
+        }
         @media (min-width: 769px) {
           .nav-hamburger {
             display: none !important;
@@ -183,6 +193,10 @@ export default function Home() {
           }
           .hero-layout {
             grid-template-columns: 1fr !important;
+          }
+          .hero-title-el {
+            font-size: 2.1rem !important;
+            line-height: 1.15 !important;
           }
           .steps-grid, .features-grid {
             grid-template-columns: 1fr !important;
@@ -347,7 +361,13 @@ export default function Home() {
           <div style={s.heroInner} className="hero-inner">
             <div style={s.heroLayout} className="hero-layout">
               <div style={s.heroText}>
-                <div style={s.heroBadge}>🇳🇬 Nigeria Nationwide</div>
+                <div style={s.heroBadge}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/>
+                    <circle cx="12" cy="9" r="2.5"/>
+                  </svg>
+                  <span>Nigeria Nationwide</span>
+                </div>
                 <h1 style={s.heroTitle} className="hero-title-el">
                   Find or List<br />
                   <span style={s.heroCyan}>Property for Rent</span><br />
@@ -366,34 +386,34 @@ export default function Home() {
                   <a href="/affiliate" style={s.secondaryLink}>Earn with Referrals</a>
                 </div>
                 <div style={s.trustRow}>
-  <div style={s.trustPill}>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-    </svg>
-    <span style={s.trustText}>{displayCount} real spaces available for rent</span>
-  </div>
-  <div style={s.trustPill}>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/>
-      <circle cx="12" cy="9" r="2.5"/>
-    </svg>
-    <span style={s.trustText}>Available Nationwide</span>
-  </div>
-  <div style={s.trustPill}>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <polyline points="12 6 12 12 16 14"/>
-    </svg>
-    <span style={s.trustText}>Active 24 Hours</span>
-  </div>
-  <div style={s.trustPill}>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8"/>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-    <span style={s.trustText}>Free Search, No Agent Fee</span>
-  </div>
-</div>
+                  <div style={s.trustPill}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    </svg>
+                    <span style={s.trustText}>{displayCount}</span>
+                  </div>
+                  <div style={s.trustPill}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/>
+                      <circle cx="12" cy="9" r="2.5"/>
+                    </svg>
+                    <span style={s.trustText}>Available Nationwide</span>
+                  </div>
+                  <div style={s.trustPill}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"/>
+                      <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <span style={s.trustText}>Active 24 Hours</span>
+                  </div>
+                  <div style={s.trustPill}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8"/>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <span style={s.trustText}>Free Search, No Agent Fee</span>
+                  </div>
+                </div>
               </div>
 
               <div style={s.avatarContainer} className="avatar-cont">
@@ -411,14 +431,14 @@ export default function Home() {
                     />
                   </div>
                 </a>
-                <div style={s.verifiedBadge} className="verified-badge">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ color: '#14B8A6', flexShrink: 0 }}>
-                    <path d="M9 16.17L4.83 12m0 0L3 13.83m1.83-1.83l5.34 5.34 9.84-9.84" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <a href="/search" style={{ ...s.verifiedBadge, textDecoration: 'none', cursor: 'pointer' }} className="verified-badge">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ color: '#14B8A6', flexShrink: 0 }} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
                   </svg>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.75rem' }}>Verified Landlord</div>
+                    <div style={{ fontWeight: 700, fontSize: '0.75rem', color: '#0f172a' }}>Chat Free — Ask About Real Estate</div>
                   </div>
-                </div>
+                </a>
               </div>
             </div>
           </div>
@@ -517,36 +537,36 @@ export default function Home() {
 
       {/* Footer */}
       <footer style={s.footer}>
-        <div style={s.footerInner}>
+        <div style={s.footerCard}>
+          <div style={s.footerTop}>
+            <div style={{ ...s.navBrand, color: '#0f172a', marginBottom: '0.5rem' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px', color: '#0ea5e9' }}>
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Mr. Rent
+            </div>
+            <p style={s.footerTagline}>Find or list property for rent across Nigeria, quickly and securely.</p>
+          </div>
           <div style={s.footerGrid} className="footer-grid">
             <div>
-              <div style={{ ...s.navBrand, color: '#ffffff', marginBottom: '0.75rem' }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px', color: '#0ea5e9' }}>
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                Mr. Rent
-              </div>
-              <p style={s.footerText}>Find or list property for rent across Nigeria, quickly and securely.</p>
-            </div>
-            <div>
               <p style={s.footerHeading}>Explore</p>
-              <a href="/browse" style={s.footerLink}>Browse Rentals</a>
-              <a href="/list" style={s.footerLink}>List Property</a>
-              <a href="/veryland" style={s.footerLink}>Verified Properties</a>
-              <a href="/search" style={s.footerLink}>AI Chat Assistant</a>
+              <a href="/browse" className="footer-link" style={s.footerLink}>Browse Rentals</a>
+              <a href="/list" className="footer-link" style={s.footerLink}>List Property</a>
+              <a href="/veryland" className="footer-link" style={s.footerLink}>Verified Properties</a>
+              <a href="/search" className="footer-link" style={s.footerLink}>AI Chat Assistant</a>
             </div>
             <div>
               <p style={s.footerHeading}>Company</p>
-              <a href="/about" style={s.footerLink}>About Us</a>
-              <a href="/support" style={s.footerLink}>Contact &amp; Support</a>
-              <a href="/faq" style={s.footerLink}>FAQ</a>
-              <a href="/affiliate" style={s.footerLink}>Earn with Referrals</a>
+              <a href="/about" className="footer-link" style={s.footerLink}>About Us</a>
+              <a href="/support" className="footer-link" style={s.footerLink}>Contact &amp; Support</a>
+              <a href="/faq" className="footer-link" style={s.footerLink}>FAQ</a>
+              <a href="/affiliate" className="footer-link" style={s.footerLink}>Earn with Referrals</a>
             </div>
             <div>
               <p style={s.footerHeading}>Legal</p>
-              <a href="/privacy-policy" style={s.footerLink}>Privacy Policy</a>
-              <a href="/terms" style={s.footerLink}>Terms of Service</a>
+              <a href="/privacy-policy" className="footer-link" style={s.footerLink}>Privacy Policy</a>
+              <a href="/terms" className="footer-link" style={s.footerLink}>Terms of Service</a>
             </div>
           </div>
           <div style={s.footerBottom}>
@@ -563,7 +583,6 @@ const s = {
     minHeight: '100vh',
     backgroundColor: '#f8fafc',
     color: '#0f172a',
-    fontFamily: 'system-ui, -apple-system, sans-serif',
   },
   nav: {
     display: 'flex',
@@ -608,6 +627,7 @@ const s = {
     borderRadius: '24px',
     padding: '3rem 2rem',
     border: '1px solid #e2e8f0',
+    boxShadow: '0 20px 45px -20px rgba(15, 23, 42, 0.12)',
   },
   heroLayout: {
     display: 'grid',
@@ -622,6 +642,9 @@ const s = {
   },
   heroBadge: {
     alignSelf: 'flex-start',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.4rem',
     backgroundColor: '#f1f5f9',
     color: '#475569',
     padding: '0.25rem 0.75rem',
@@ -632,7 +655,8 @@ const s = {
   heroTitle: {
     fontSize: '3rem',
     fontWeight: '800',
-    lineHeight: '1.15',
+    lineHeight: '1.08',
+    letterSpacing: '-0.01em',
     color: '#0f172a',
   },
   heroCyan: {
@@ -658,6 +682,7 @@ const s = {
     borderRadius: '12px',
     fontWeight: '700',
     textAlign: 'center',
+    boxShadow: '0 8px 20px -6px rgba(14, 165, 233, 0.5)',
   },
   btnTeal: {
     textDecoration: 'none',
@@ -667,6 +692,7 @@ const s = {
     borderRadius: '12px',
     fontWeight: '700',
     textAlign: 'center',
+    boxShadow: '0 8px 20px -6px rgba(20, 184, 166, 0.5)',
   },
   heroActionsSecondary: {
     display: 'flex',
@@ -679,7 +705,7 @@ const s = {
     fontSize: '0.9rem',
     fontWeight: '600',
   },
-   trustRow: {
+  trustRow: {
     display: 'flex',
     flexWrap: 'wrap',
     gap: '0.6rem',
@@ -728,7 +754,7 @@ const s = {
     overflow: 'hidden',
     backgroundColor: '#f1f5f9',
     border: '4px solid #ffffff',
-    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 20px 40px -12px rgba(15, 23, 42, 0.25)',
   },
   avatarImage: {
     objectFit: 'cover',
@@ -736,16 +762,19 @@ const s = {
   },
   verifiedBadge: {
     position: 'absolute',
-    bottom: '10px',
-    right: '10px',
+    bottom: '0px',
+    left: '50%',
+    transform: 'translateX(-50%)',
     backgroundColor: '#ffffff',
-    padding: '0.5rem 1rem',
+    padding: '0.6rem 1.1rem',
     borderRadius: '9999px',
     display: 'flex',
     alignItems: 'center',
     gap: '0.5rem',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+    boxShadow: '0 8px 18px rgba(0, 0, 0, 0.1)',
     border: '1px solid #e2e8f0',
+    maxWidth: '90%',
+    whiteSpace: 'nowrap',
   },
 
   // Shared section styles
@@ -766,6 +795,7 @@ const s = {
     fontWeight: '800',
     color: '#0f172a',
     marginBottom: '0.5rem',
+    letterSpacing: '-0.01em',
   },
   sectionSubtitle: {
     fontSize: '1rem',
@@ -783,6 +813,7 @@ const s = {
     border: '1px solid #e2e8f0',
     borderRadius: '16px',
     padding: '2rem',
+    boxShadow: '0 8px 24px -16px rgba(15, 23, 42, 0.15)',
   },
   stepNumber: {
     width: '36px',
@@ -855,6 +886,7 @@ const s = {
     fontWeight: '800',
     color: '#ffffff',
     marginBottom: '0.75rem',
+    letterSpacing: '-0.01em',
   },
   ctaSubtitle: {
     fontSize: '1rem',
@@ -870,44 +902,57 @@ const s = {
 
   // Footer
   footer: {
-    backgroundColor: '#0f172a',
-    padding: '3rem 1rem 1.5rem',
+    backgroundColor: '#f8fafc',
+    padding: '3rem 1rem 4rem',
   },
-  footerInner: {
+  footerCard: {
     maxWidth: '1200px',
     margin: '0 auto',
+    backgroundColor: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: '24px',
+    padding: '3rem 2rem',
+    boxShadow: '0 20px 45px -25px rgba(15, 23, 42, 0.12)',
+  },
+  footerTop: {
+    borderBottom: '1px solid #e2e8f0',
+    paddingBottom: '2rem',
+    marginBottom: '2rem',
+  },
+  footerTagline: {
+    fontSize: '0.95rem',
+    color: '#64748b',
+    maxWidth: '420px',
+    lineHeight: '1.6',
+    margin: 0,
   },
   footerGrid: {
     display: 'grid',
-    gridTemplateColumns: '1.5fr 1fr 1fr 1fr',
+    gridTemplateColumns: 'repeat(3, 1fr)',
     gap: '2rem',
-    marginBottom: '2.5rem',
-  },
-  footerText: {
-    fontSize: '0.9rem',
-    color: '#94a3b8',
-    lineHeight: '1.6',
+    paddingBottom: '2rem',
+    borderBottom: '1px solid #e2e8f0',
+    marginBottom: '1.5rem',
   },
   footerHeading: {
-    fontSize: '0.85rem',
+    fontSize: '0.8rem',
     fontWeight: '700',
-    color: '#ffffff',
+    color: '#0f172a',
     marginBottom: '0.9rem',
     textTransform: 'uppercase',
-    letterSpacing: '0.03em',
+    letterSpacing: '0.04em',
   },
   footerLink: {
     display: 'block',
     fontSize: '0.9rem',
-    color: '#94a3b8',
+    color: '#64748b',
     textDecoration: 'none',
     marginBottom: '0.6rem',
+    transition: 'color 0.2s',
   },
   footerBottom: {
-    borderTop: '1px solid rgba(255,255,255,0.1)',
-    paddingTop: '1.5rem',
     fontSize: '0.85rem',
-    color: '#64748b',
+    color: '#94a3b8',
     textAlign: 'center',
   },
 }
