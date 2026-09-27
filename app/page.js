@@ -29,6 +29,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [showBubble, setShowBubble] = useState(false)
   const [user, setUser] = useState(null)
+  const [featured, setFeatured] = useState([])
 
   // Fetch user session
   useEffect(() => {
@@ -47,6 +48,70 @@ export default function Home() {
       .select('id', { count: 'exact', head: true })
       .eq('status', 'active')
       .then(({ count }) => { if (count !== null) setListingCount(count) })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Fetch featured properties (top 3 across rentals + sales, verified first, newest first)
+  useEffect(() => {
+    async function loadFeatured() {
+      const [{ data: rentRows }, { data: saleRows }] = await Promise.all([
+        supabase
+          .from('listings')
+          .select('id, title, location, price, price_period, images, bedrooms, bathrooms, property_type, veryland_badge, created_at')
+          .eq('status', 'active')
+          .eq('is_available', true)
+          .order('created_at', { ascending: false })
+          .limit(6),
+        supabase
+          .from('property_sales')
+          .select('id, title, location, price, images, bedrooms, bathrooms, property_type, veryland_verified, created_at')
+          .eq('status', 'active')
+          .eq('available', true)
+          .order('created_at', { ascending: false })
+          .limit(6),
+      ])
+
+      const rent = (rentRows || []).map((r) => ({
+        id: r.id,
+        kind: 'rent',
+        title: r.title || 'Untitled listing',
+        location: r.location,
+        price: r.price || 0,
+        pricePeriod: r.price_period,
+        image: r.images && r.images[0] ? r.images[0] : null,
+        bedrooms: r.bedrooms,
+        bathrooms: r.bathrooms,
+        propertyType: r.property_type,
+        verified: Boolean(r.veryland_badge),
+        createdAt: r.created_at,
+      }))
+
+      const sale = (saleRows || []).map((r) => ({
+        id: r.id,
+        kind: 'sale',
+        title: r.title,
+        location: r.location,
+        price: r.price,
+        pricePeriod: null,
+        image: r.images && r.images[0] ? r.images[0] : null,
+        bedrooms: r.bedrooms,
+        bathrooms: r.bathrooms,
+        propertyType: r.property_type,
+        verified: Boolean(r.veryland_verified),
+        createdAt: r.created_at,
+      }))
+
+      const combined = [...rent, ...sale]
+        .sort((a, b) => {
+          if (a.verified !== b.verified) return a.verified ? -1 : 1
+          return new Date(b.createdAt) - new Date(a.createdAt)
+        })
+        .slice(0, 3)
+
+      setFeatured(combined)
+    }
+
+    loadFeatured()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -89,6 +154,14 @@ export default function Home() {
   const handleBubbleNo = () => {
     dismissBubble()
     router.push('/terms')
+  }
+
+  function formatNaira(amount) {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      maximumFractionDigits: 0,
+    }).format(amount)
   }
 
   const displayCount = listingCount === null ? '...' : listingCount > 0 ? `${listingCount}+ real spaces available for rent` : 'New real spaces added weekly'
@@ -183,6 +256,22 @@ export default function Home() {
         .footer-link:hover {
           color: #0ea5e9;
         }
+        @keyframes bounceDown {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(6px); }
+        }
+        .scroll-down-btn {
+          animation: bounceDown 1.8s ease-in-out infinite;
+        }
+        .featured-grid {
+          scrollbar-width: none;
+        }
+        .featured-grid::-webkit-scrollbar {
+          display: none;
+        }
+        .featured-more-mobile {
+          display: none;
+        }
         @media (min-width: 769px) {
           .nav-hamburger {
             display: none !important;
@@ -205,6 +294,25 @@ export default function Home() {
           .footer-grid {
             grid-template-columns: 1fr !important;
             gap: 2rem !important;
+          }
+          .featured-grid {
+            display: flex !important;
+            grid-template-columns: unset !important;
+            overflow-x: auto !important;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            gap: 1rem !important;
+            padding-bottom: 0.25rem;
+          }
+          .featured-card-item {
+            flex: 0 0 82% !important;
+            scroll-snap-align: start;
+          }
+          .featured-more-desktop {
+            display: none !important;
+          }
+          .featured-more-mobile {
+            display: flex !important;
           }
         }
       `}</style>
@@ -463,8 +571,88 @@ export default function Home() {
               </div>
             </div>
           </div>
+          <div style={s.scrollDownWrap}>
+            <button
+              type="button"
+              onClick={() => window.scrollBy({ top: window.innerHeight * 0.72, behavior: 'smooth' })}
+              aria-label="Scroll down"
+              className="scroll-down-btn"
+              style={s.scrollDownBtn}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </section>
+
+      {/* Featured Properties */}
+      {featured.length > 0 && (
+        <section style={s.sectionWrap}>
+          <div style={s.sectionInner}>
+            <div style={s.featuredHeadRow}>
+              <div style={s.featuredSectionHead}>
+                <h2 style={s.sectionTitle}>Featured Properties</h2>
+                <p style={s.sectionSubtitle}>Verified listings, handpicked for you — to rent or to buy.</p>
+              </div>
+              <Link href="/browse" style={s.moreBtnDesktop} className="featured-more-desktop">
+                More <span aria-hidden="true">&raquo;</span>
+              </Link>
+            </div>
+            <div style={s.featuredGrid} className="featured-grid">
+              {featured.map((property) => (
+                <Link
+                  key={property.id}
+                  href={property.kind === 'rent' ? `/listing/${property.id}` : `/property-for-sale/${property.id}`}
+                  style={s.featuredCard}
+                  className="feature-card featured-card-item"
+                >
+                  <div style={s.featuredImageWrap}>
+                    {property.image ? (
+                      <Image
+                        src={property.image}
+                        alt={property.title}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        sizes="400px"
+                      />
+                    ) : (
+                      <div style={s.featuredNoImage}>No image</div>
+                    )}
+                    <span style={s.featuredKindBadge}>
+                      {property.kind === 'rent' ? 'For Rent' : 'For Sale'}
+                    </span>
+                    {property.verified && (
+                      <span style={s.featuredVerifiedBadge}>Verified</span>
+                    )}
+                  </div>
+                  <div style={s.featuredBody}>
+                    <h3 style={s.featuredTitle}>{property.title}</h3>
+                    <p style={s.featuredLocation}>{property.location}</p>
+                    <div style={s.featuredPriceRow}>
+                      <span style={s.featuredPrice}>
+                        {formatNaira(property.price)}
+                        {property.pricePeriod && (
+                          <span style={s.featuredPricePeriod}>/{property.pricePeriod}</span>
+                        )}
+                      </span>
+                      {(property.bedrooms || property.bathrooms) && (
+                        <span style={s.featuredBeds}>
+                          {property.bedrooms || '-'} bd &middot; {property.bathrooms || '-'} ba
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <Link href="/browse" style={s.moreBtnMobile} className="featured-more-mobile">
+              More properties <span aria-hidden="true">&raquo;</span>
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* How It Works */}
       <section style={s.sectionWrap}>
@@ -821,6 +1009,157 @@ const s = {
   sectionSubtitle: {
     fontSize: '1rem',
     color: '#64748b',
+  },
+
+  // Hero scroll-down indicator
+  scrollDownWrap: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '1.5rem',
+  },
+  scrollDownBtn: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    backgroundColor: '#ffffff',
+    border: '1px solid #e2e8f0',
+    color: '#64748b',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    boxShadow: '0 8px 18px -10px rgba(15, 23, 42, 0.25)',
+    padding: 0,
+  },
+
+  // Featured Properties
+  featuredHeadRow: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: '1rem',
+    marginBottom: '2rem',
+  },
+  featuredSectionHead: {
+    textAlign: 'left',
+    maxWidth: '560px',
+  },
+  moreBtnDesktop: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.3rem',
+    textDecoration: 'none',
+    color: '#0ea5e9',
+    fontWeight: '700',
+    fontSize: '0.95rem',
+    whiteSpace: 'nowrap',
+    marginTop: '0.25rem',
+  },
+  moreBtnMobile: {
+    display: 'none',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.3rem',
+    textDecoration: 'none',
+    color: '#0ea5e9',
+    fontWeight: '700',
+    fontSize: '0.95rem',
+    marginTop: '1.25rem',
+    padding: '0.6rem 1rem',
+    borderRadius: '9999px',
+    border: '1px solid #e2e8f0',
+    backgroundColor: '#f1f5f9',
+    width: 'fit-content',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  featuredGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '1.5rem',
+  },
+  featuredCard: {
+    display: 'block',
+    textDecoration: 'none',
+    backgroundColor: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: '16px',
+    overflow: 'hidden',
+    boxShadow: '0 8px 24px -16px rgba(15, 23, 42, 0.15)',
+  },
+  featuredImageWrap: {
+    position: 'relative',
+    width: '100%',
+    aspectRatio: '4 / 3',
+    backgroundColor: '#f1f5f9',
+  },
+  featuredNoImage: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#94a3b8',
+    fontSize: '0.85rem',
+  },
+  featuredKindBadge: {
+    position: 'absolute',
+    top: '0.75rem',
+    left: '0.75rem',
+    backgroundColor: '#0f172a',
+    color: '#ffffff',
+    fontSize: '0.7rem',
+    fontWeight: '700',
+    padding: '0.25rem 0.6rem',
+    borderRadius: '9999px',
+  },
+  featuredVerifiedBadge: {
+    position: 'absolute',
+    top: '0.75rem',
+    right: '0.75rem',
+    backgroundColor: '#14b8a6',
+    color: '#ffffff',
+    fontSize: '0.7rem',
+    fontWeight: '700',
+    padding: '0.25rem 0.6rem',
+    borderRadius: '9999px',
+  },
+  featuredBody: {
+    padding: '1.25rem',
+  },
+  featuredTitle: {
+    fontSize: '1.05rem',
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: '0.25rem',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  featuredLocation: {
+    fontSize: '0.9rem',
+    color: '#64748b',
+    marginBottom: '0.75rem',
+  },
+  featuredPriceRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  featuredPrice: {
+    fontWeight: '800',
+    color: '#0ea5e9',
+    fontSize: '1rem',
+  },
+  featuredPricePeriod: {
+    fontWeight: '600',
+    color: '#94a3b8',
+    fontSize: '0.75rem',
+  },
+  featuredBeds: {
+    fontSize: '0.78rem',
+    color: '#64748b',
+    fontWeight: '600',
   },
 
   // How It Works
