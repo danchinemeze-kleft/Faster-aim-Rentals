@@ -1,8 +1,3 @@
-# Mr. Rent — Homepage Code (page.js)
-
-Copy everything inside the code block below and paste it into your `app/page.js` file, replacing everything that's currently there.
-
-```javascript
 'use client'
 
 import Link from 'next/link'
@@ -963,4 +958,3 @@ const s = {
     textAlign: 'center',
   },
 }
-```
