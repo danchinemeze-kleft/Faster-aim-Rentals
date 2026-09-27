@@ -589,7 +589,10 @@ const s: Record<string, CSSProperties> = {
     padding: '0.65rem 0.85rem',
     borderRadius: '8px',
     border: '1px solid #cbd5e1',
+    backgroundColor: '#ffffff',
+    color: '#0f172a', // Explicit dark text color
     fontSize: '0.9rem',
+    fontWeight: 500,
     outline: 'none',
     boxSizing: 'border-box',
   },
