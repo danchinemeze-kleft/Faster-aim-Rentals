@@ -2,26 +2,23 @@ import ContactClient from './ContactClient';
 
 /** @type {import('next').Metadata} */
 export const metadata = {
-  title: 'Buy Land & Property - Mr. Rent',
-  description:
-    'Browse verified land and properties for sale across Nigeria. Verified listings show seller contact freely — no payment needed.',
+  title: 'Contact Us - Mr. Rent',
+  description: 'Get in touch with Mr. Rent. Have questions, complaints, or partnership proposals? We would love to hear from you.',
   alternates: {
-    canonical: 'https://rent.fasteraim.com/buy',
+    canonical: 'https://rent.fasteraim.com/contact',
   },
   openGraph: {
-    title: 'Buy Land & Property - Mr. Rent',
-    description:
-      'Browse verified land and properties for sale across Nigeria. Verified listings show seller contact freely — no payment needed.',
-    url: 'https://rent.fasteraim.com/buy',
+    title: 'Contact Us - Mr. Rent',
+    description: 'Get in touch with Mr. Rent. Have questions, complaints, or partnership proposals? We would love to hear from you.',
+    url: 'https://rent.fasteraim.com/contact',
     siteName: 'Mr. Rent',
     locale: 'en_NG',
     type: 'website',
   },
   twitter: {
     card: 'summary',
-    title: 'Buy Land & Property - Mr. Rent',
-    description:
-      'Browse verified land and properties for sale across Nigeria.',
+    title: 'Contact Us - Mr. Rent',
+    description: 'Get in touch with Mr. Rent.',
   },
 };
 
