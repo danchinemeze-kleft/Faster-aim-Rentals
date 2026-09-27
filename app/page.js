@@ -15,22 +15,4 @@ const jakarta = Plus_Jakarta_Sans({
 })
 
 const useSupabase = () => {
-  return useMemo(() => createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ), [])
-}
-
-export default function Home() {
-  const router = useRouter()
-  const supabase = useSupabase()
-  const [listingCount, setListingCount] = useState(null)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [showBubble, setShowBubble] = useState(false)
-  const [user, setUser] = useState(null)
-  const [showScrollIndicator, setShowScrollIndicator] = useState(true)
-  const [isFadingOut, setIsFadingOut] = useState(false)
-
-  // Fetch user session
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data:
+  return useMemo(() => createBrowser
