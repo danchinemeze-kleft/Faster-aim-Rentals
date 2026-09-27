@@ -1,5 +1,5 @@
 'use client'
-
+import GoBackButton from '../../components/GoBackButton'
 import Link from 'next/link'
 
 export default function TermsOfServicePage() {

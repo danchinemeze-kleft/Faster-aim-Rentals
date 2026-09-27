@@ -1,4 +1,4 @@
-import GoBackButton from '../components/GoBackButton'
+import GoBackButton from '../../components/GoBackButton'
 export default function SupportPage() {
   return (
     <div style={{ padding: "60px 20px", textAlign: "center" }}>
