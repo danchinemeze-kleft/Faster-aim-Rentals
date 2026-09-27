@@ -57,7 +57,7 @@ function formatPrice(price, negotiable) {
   return negotiable ? formatted + ' (neg.)' : formatted;
 }
 
-export default function BuyPage() {
+export default function BuyClient() {
   const supabase = useMemo(() => createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
