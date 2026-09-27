@@ -1,4 +1,4 @@
-import AboutClient from './AboutClient';
+import AccountClient from './AccountClient';
 
 export const metadata = {
   title: 'About Us',
@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function AboutPage() {
-  return <AboutClient />;
+  return <AccountClient />;
 }
