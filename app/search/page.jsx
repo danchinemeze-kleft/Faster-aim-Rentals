@@ -1,5 +1,6 @@
 'use client'
 
+import GoBackButton from '../components/GoBackButton'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import Image from 'next/image'
 import { createBrowserClient } from '@supabase/ssr'

@@ -1,5 +1,5 @@
 'use client';
-
+import GoBackButton from '../components/GoBackButton'
 import { useEffect, useState } from 'react';
 
 // All write actions go through /api/admin-action, which uses the Supabase
