@@ -174,6 +174,7 @@ export default function BrowsePage() {
       });
       const data = await res.json();
       if (data.authorization_url) {
+        // eslint-disable-next-line react-hooks/immutability -- browser navigation, not a render-time mutation
         window.location.href = data.authorization_url;
       } else {
         alert('Payment could not be started. Please try again.');
@@ -255,7 +256,8 @@ export default function BrowsePage() {
     const listingId = sessionStorage.getItem('pendingReveal');
     if (!listingId) return;
     sessionStorage.removeItem('pendingReveal');
-    initiatePayment(user, listingId);
+    const timer = setTimeout(() => initiatePayment(user, listingId), 0);
+    return () => clearTimeout(timer);
   }, [user, loading]);
 
   return (
