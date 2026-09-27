@@ -208,7 +208,26 @@ export default function Home() {
           }
         }
       `}</style>
-
+{/* 5-Star Rating Bar */}
+<div style={{
+  width: '100%',
+  background: 'linear-gradient(90deg, #0ea5e9 0%, #0ef6cc 100%)',
+  color: '#ffffff',
+  textAlign: 'center',
+  padding: '0.5rem 1rem',
+  fontSize: '0.85rem',
+  fontWeight: 700,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '0.4rem',
+  cursor: 'pointer',
+}}
+  onClick={() => router.push('/reviews')} // change target as needed
+>
+  <span style={{ letterSpacing: '1px' }}>★★★★★</span>
+  <span>Rated 5 Stars by Verified Renters — See Reviews</span>
+</div>
       <Breadcrumb theme="light" items={[{ label: 'Mr. Rent', href: '/' }]} />
       {/* Navbar */}
       <nav style={s.nav}>
