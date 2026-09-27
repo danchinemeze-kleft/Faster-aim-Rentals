@@ -360,25 +360,4 @@ export default function Home() {
                 <div className="mobile-menu-item">
                   <svg className="mobile-menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                  Browse Rentals
-                </div>
-              </Link>
-              <Link href="/list" style={{ textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
-                <div className="mobile-menu-item">
-                  <svg className="mobile-menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                  </svg>
-                  List Property
-                </div>
-              </Link>
-              <Link href="/veryland" style={{ textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
-                <div className="mobile-menu-item mobile-menu-item-highlight">
-                  <svg className="mobile-menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    <path d="M9 12l2 2 4-4"></path>
-                  </svg>
-                  Verified Properties
-                </div>
+                    <line x
