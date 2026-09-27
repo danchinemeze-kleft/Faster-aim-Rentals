@@ -1,4 +1,4 @@
-import BuyClient from './BuyClient';
+import ContactClient from './ContactClient';
 
 /** @type {import('next').Metadata} */
 export const metadata = {
@@ -26,5 +26,5 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <BuyClient />;
+  return <ContactClient />;
 }
