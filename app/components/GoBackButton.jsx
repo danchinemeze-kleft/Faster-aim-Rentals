@@ -1,23 +1,15 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { CSSProperties } from 'react'
-
-interface GoBackButtonProps {
-  label?: string
-  fallbackHref?: string
-  style?: CSSProperties
-}
 
 export default function GoBackButton({
   label = 'Go Back',
   fallbackHref = '/',
   style,
-}: GoBackButtonProps) {
+}) {
   const router = useRouter()
 
   const handleGoBack = () => {
-    // Check if browser history has a previous page in the same domain
     if (typeof window !== 'undefined' && window.history.length > 1) {
       router.back()
     } else {
@@ -35,7 +27,7 @@ export default function GoBackButton({
         gap: '0.4rem',
         padding: '0.45rem 0.85rem',
         backgroundColor: '#ffffff',
-        color: '#0f172a', // Dark slate text for clear visibility
+        color: '#0f172a',
         border: '1px solid #cbd5e1',
         borderRadius: '8px',
         fontSize: '0.85rem',
