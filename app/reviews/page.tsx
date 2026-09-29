@@ -1,6 +1,6 @@
 'use client'
 
-import GoBackButton from '../../components/GoBackButton'
+import GoBackButton from '@/app/components/GoBackButton'
 import Link from 'next/link'
 import { useState, useEffect, useMemo, CSSProperties, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'

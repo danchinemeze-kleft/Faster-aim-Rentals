@@ -1,6 +1,6 @@
 'use client'
 
-import GoBackButton from '../../components/GoBackButton'
+import GoBackButton from '@/app/components/GoBackButton'
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Breadcrumb from '../components/Breadcrumb'

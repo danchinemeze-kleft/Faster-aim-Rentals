@@ -1,6 +1,6 @@
 'use client'
 
-import GoBackButton from '../../components/GoBackButton'
+import GoBackButton from '@/app/components/GoBackButton'
 import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { useLoadingRouter } from '../hooks/useLoadingRouter';
 import { useSearchParams } from 'next/navigation';

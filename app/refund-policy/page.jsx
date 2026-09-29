@@ -1,7 +1,7 @@
 'use client'
 
-import GoBackButton from '../../components/GoBackButton'
-import Breadcrumb from '../../components/Breadcrumb'
+import GoBackButton from '@/app/components/GoBackButton'
+import Breadcrumb from '@/app/components/Breadcrumb'
 
 export default function RefundPolicy() {
   return (

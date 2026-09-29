@@ -1,6 +1,6 @@
 'use client'
 
-import GoBackButton from '../../components/GoBackButton'
+import GoBackButton from '@/app/components/GoBackButton'
 import Breadcrumb from '../components/Breadcrumb'
 
 export default function Contact() {

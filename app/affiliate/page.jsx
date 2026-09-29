@@ -1,6 +1,6 @@
 'use client'
 export const dynamic = 'force-dynamic'
-import GoBackButton from '../../components/GoBackButton'
+import GoBackButton from '@/app/components/GoBackButton'
 import { useState, useEffect, useMemo } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 

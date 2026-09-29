@@ -1,6 +1,6 @@
 'use client'
 
-import GoBackButton from '../../components/GoBackButton'
+import GoBackButton from '@/app/components/GoBackButton'
 
 import { useState, useEffect, useRef, useMemo } from 'react'
 import Image from 'next/image'
