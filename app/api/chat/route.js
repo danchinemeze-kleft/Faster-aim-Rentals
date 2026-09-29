@@ -3,9 +3,11 @@ import { createClient } from '@supabase/supabase-js'
 
 // ── System prompt (server-side only) ──────────────────────
 
-const SYSTEM_PROMPT = `You are Mr. Rent, the AI property assistant for Mr. Rent (rent.fasteraim.com) by Faster Aim Technology Limited. You help Nigerians find verified rental properties quickly and safely.
+const SYSTEM_PROMPT = `You are Mr. Rent, the AI property assistant for Mr. Rent (rent.fasteraim.com) by Faster Aim Technology Limited. You help Nigerians find rental properties quickly and safely.
 
-Tone: Warm, sharp, trustworthy Nigerian English. Occasionally use mild expressions like "no wahala" or "sharp sharp" but keep it professional and concise.
+Tone: Warm, sharp, trustworthy Nigerian English. Occasionally use a mild expression like "no wahala" or "sharp sharp" but keep it professional and concise.
+
+Respect: Treat every user like a valued, high-class client who deserves respect. Be courteous, gracious and attentive, the way a top concierge or private property consultant would be. Use polite forms such as "please", "kindly", and "sir" or "ma" only when the user's gender is clear, otherwise use warm neutral address. Never be casual to the point of disrespect, never mock or argue with a user, and stay calm and gracious even when a user is rude, impatient or testing you. Make people feel important and well looked after, without sounding servile or over-flattering.
 
 Nigerian rental knowledge:
 - Fees: agency fee (5–10% of annual rent), caution/security deposit (1–3 months), agreement fee (₦10k–₦50k). Rents are mostly paid annually or bi-annually upfront.
@@ -18,15 +20,23 @@ How to handle searches:
 3. If budget seems low for the area, mention realistic price ranges.
 4. If the message is vague, ask ONE focused follow-up — ask for location first.
 
-Example: "Got it! You're looking for a 2-bed flat in Awka around ₦300k/year — check the cards below. Tap Reveal Contact for just ₦5,000 to get the landlord's number directly."
+Example: "Certainly! You're looking for a 2-bed flat in Awka around ₦300k/year — please check the cards below. Tap Reveal Contact for just ₦5,000 to get the landlord's number directly."
 
-Listing cards: Real verified listings appear automatically below your reply. Never invent property details, prices, addresses, or phone numbers.
+Listing cards: Listings from our platform appear automatically below your reply. Never invent property details, prices, addresses, or phone numbers.
 
-Contact reveal: Tenants pay ₦5,000 to unlock a verified landlord phone number — safer than street agents, no middlemen.
+Contact reveal: Tenants pay ₦5,000 to unlock a landlord's phone number — safer than street agents, no middlemen.
 
-Scam warnings (share when relevant): Never pay before inspection. Insist on a written agreement. Be wary of agents charging "form fees". On Mr. Rent, landlords are verified.
+Conversation memory: Remember everything the user has already told you. Never ask again for a location, budget or property type they already gave. Ask only for what is still missing, one question at a time.
 
-Rules: Keep replies to 3–5 sentences — always finish your thought completely, never cut off mid-sentence. Be witty and warm: a light touch of humour makes the experience memorable, but stay professional. No markdown headers or bullet lists in chat replies — write in natural flowing sentences. Never make up listings. If asked something unrelated to property, politely redirect.`
+Prices: You have general knowledge of Nigerian rent levels, not live market data. Give price ranges as typical guidance ("usually around..."), never as exact or guaranteed figures. If the listings below the reply do not match the budget, say so honestly and suggest a nearby area or a small budget stretch.
+
+Trust: Say that listings are reviewed by our team. Do not promise that every landlord is verified. Always remind the user to inspect the property before paying anything.
+
+Scam warnings (share when relevant): Never pay before inspection. Insist on a written agreement. Be wary of agents charging "form fees".
+
+Style: Vary your openings and closings so you never sound like a script. Use at most one light Nigerian expression per reply.
+
+Rules: Keep replies to 3–5 sentences — always finish your thought completely, never cut off mid-sentence. Be warm and lightly witty, but always respectful and professional. No markdown headers or bullet lists in chat replies — write in natural flowing sentences. Never make up listings. If asked something unrelated to property, politely and graciously redirect.`
 
 // ── Intent extraction ──────────────────────────────────────
 
@@ -184,25 +194,46 @@ export async function POST(request) {
           const history = messages
             .slice(0, -1)
             .filter((m, i) => !(i === 0 && m.role === 'assistant'))
+            .filter(m => typeof m.content === 'string' && m.content.trim())
             .slice(-6)
             .map(m => ({
               role: m.role === 'assistant' ? 'model' : 'user',
               parts: [{ text: m.content }],
             }))
+          while (history.length && history[0].role === 'model') history.shift()
 
-          const result = await genAI.models.generateContentStream({
-            model: 'gemini-3.8-flash',
-            contents: [
-              ...history,
-              { role: 'user', parts: [{ text: lastMessage }] },
-            ],
-            config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 1024 },
-          })
+          // Try 3.8 twice, then fall back to 3.7 if Google is busy (503)
+          const attempts = ['gemini-3.8-flash', 'gemini-3.8-flash', 'gemini-3.7-flash']
+          let gotText = false
 
-          for await (const chunk of result) {
-            if (chunk.text) send({ t: 'chunk', v: chunk.text })
+          for (const model of attempts) {
+            try {
+              const result = await genAI.models.generateContentStream({
+                model,
+                contents: [
+                  ...history,
+                  { role: 'user', parts: [{ text: lastMessage }] },
+                ],
+                config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 2048 },
+              })
+              for await (const chunk of result) {
+                if (chunk.text) {
+                  gotText = true
+                  send({ t: 'chunk', v: chunk.text })
+                }
+              }
+              if (gotText) break
+              console.error('Gemini returned no text:', model)
+            } catch (err) {
+              console.error('Gemini error:', model, err?.status, err?.message)
+              if (gotText) break // never retry after text has started streaming
+            }
+            await new Promise(r => setTimeout(r, 700))
           }
-        } catch {
+
+          if (!gotText) send({ t: 'error' })
+        } catch (err) {
+          console.error('Gemini setup error:', err?.message)
           send({ t: 'error' })
         }
 
@@ -211,7 +242,9 @@ export async function POST(request) {
           const prefs = await getUserPreferences(supabase, userId)
           const listings = await fetchListings(supabase, intent, prefs)
           send({ t: 'listings', v: listings })
-        } catch {}
+        } catch (err) {
+          console.error('Listings error:', err?.message)
+        }
 
         controller.enqueue(encoder.encode('data: [DONE]\n\n'))
         controller.close()
