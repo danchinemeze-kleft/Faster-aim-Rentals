@@ -1,6 +1,6 @@
 import BrowseClient from './BrowseClient';
 
-import GoBackButton from '@/app/components/GoBackButton'
+import GoBackButton from '../components/GoBackButton'
 export const metadata = {
   title: 'Available Properties - Browse Rental Properties in Nigeria | ',
   description:

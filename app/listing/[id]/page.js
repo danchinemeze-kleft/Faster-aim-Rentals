@@ -2,11 +2,11 @@
 
 // NOTE: Run this in Supabase SQL editor to enable the likes feature:
 // ALTER TABLE listings ADD COLUMN IF NOT EXISTS likes integer DEFAULT 0;
-import GoBackButton from '@/app/components/GoBackButton'
+import GoBackButton from '../../components/GoBackButton'
 import { useState, useEffect } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import SwitchRoleModal from '@/app/components/SwitchRoleModal'
+import SwitchRoleModal from '../../components/SwitchRoleModal'
 
 const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
