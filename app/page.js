@@ -686,7 +686,7 @@ export default function Home() {
         <div style={s.sectionInner}>
           <div style={s.sectionHead}>
             <h2 style={s.sectionTitle}>Why People Trust Mr. Rent</h2>
-            <p style={s.sectionSubtitle}>Built to keep house-hunting simple and scam-free.</p>
+            <p style={s.sectionSubtitle}>We built Mr. Rent to eliminate the stress, hidden fees, and fraudulent listings of traditional real estate—giving you a safe, smooth path to your next home</p>
           </div>
           <div style={s.featuresGrid} className="features-grid">
             <div style={s.featureCard} className="feature-card">
@@ -697,7 +697,7 @@ export default function Home() {
                 </svg>
               </div>
               <h3 style={s.featureTitle}>Verified Landlords Only</h3>
-              <p style={s.featureText}>Documents are checked before a landlord can list, so you know who you&apos;re really dealing with.</p>
+              <p style={s.featureText}>No fake listings, no mystery landlords. Every property owner undergoes thorough document and identity verification before posting, giving you total confidence in who you&apos;re dealing with every step of the way</p>
             </div>
             <div style={s.featureCard} className="feature-card">
               <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(20, 184, 166, 0.1)' }}>
@@ -707,7 +707,7 @@ export default function Home() {
                 </svg>
               </div>
               <h3 style={s.featureTitle}>AI That Actually Helps</h3>
-              <p style={s.featureText}>Chat with Mr. Rent AI in plain language and get matched to homes that fit what you actually need.</p>
+              <p style={s.featureText}>House hunting made as easy as sending a WhatsApp message. Just tell Mr. Rent AI what you&apos;re looking for in your own words, and let our smart matching engine find properties tailored precisely to your budget and needs—no confusing property jargon required.</p>
             </div>
             <div style={s.featureCard} className="feature-card">
               <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(15, 23, 42, 0.06)' }}>
@@ -717,7 +717,7 @@ export default function Home() {
                 </svg>
               </div>
               <h3 style={s.featureTitle}>Nationwide Coverage</h3>
-              <p style={s.featureText}>From Lagos to Abuja to Anambra, find and list homes across all 36 states.</p>
+              <p style={s.featureText}>Whether you&apos;re looking in the bustling streets of Lagos, the heart of Abuja, or thriving communities in Anambra—find, list, and secure properties across all 36 states and the FCT. Nationwide coverage, zero stress. Seamlessly search and list homes from commercial hubs like Lagos and Abuja to vibrant cities across every state in Nigeria</p>
             </div>
             <div style={s.featureCard} className="feature-card">
               <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(14, 165, 233, 0.1)' }}>
@@ -726,7 +726,7 @@ export default function Home() {
                 </svg>
               </div>
               <h3 style={s.featureTitle}>List in Minutes</h3>
-              <p style={s.featureText}>Landlords can list a property quickly and start receiving genuine, verified inquiries.</p>
+              <p style={s.featureText}>List your property in under five minutes and connect directly with pre-screened, serious tenants. Mr. Rent cuts through the noise, delivering verified inquiries straight to your dashboard—so you fill vacancies faster with zero hassle.</p>
             </div>
           </div>
         </div>
@@ -736,7 +736,7 @@ export default function Home() {
       <section style={s.ctaSection}>
         <div style={s.ctaInner}>
           <h2 style={s.ctaTitle}>Ready to find your next home?</h2>
-          <p style={s.ctaSubtitle}>Join thousands of Nigerians using Mr. Rent to rent, list, and move without the stress.</p>
+          <p style={s.ctaSubtitle}>Join hundreds of thousands of Nigerians who are already using Mr. Rent to find homes, list properties, and move in completely stress-free. From verified listings to hassle-free relocations, we handle the entire process so you can focus on settling in.</p>
           <div style={s.ctaActions}>
             <a href="/browse" style={s.btnCyan}>Browse Rentals</a>
             <a href="/list" style={{ ...s.btnTeal, backgroundColor: 'transparent', color: '#ffffff', border: '2px solid rgba(255,255,255,0.3)' }}>List a Property</a>
