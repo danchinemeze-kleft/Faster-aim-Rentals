@@ -663,9 +663,17 @@ export default function Home() {
           </div>
           <div style={s.stepsGrid} className="steps-grid">
             <div style={s.stepCard} className="feature-card">
+             
+   <Image
+    src="/images/search-or-chat.jpg"
+    alt="Man searching for a home on the Mr. Rent app"
+    width={1024}
+    height={559}
+    style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 16, marginBottom: 20 }}
+  />
               <div style={{ ...s.stepNumber, backgroundColor: '#0ea5e9' }}>1</div>
               <h3 style={s.stepTitle}>Search or Chat</h3>
-              <p style={s.stepText}>Tell Mr. Rent AI what you&apos;re looking for, or browse listings yourself. Either way, you&apos;ll find homes that fit your budget and area.</p>
+              <p style={s.stepText}>Whether you&apos;re looking in the bustling streets of Lagos, the heart of Abuja, or thriving communities in Anambra—find, list, and secure properties across all 36 states and the FCT.</p>
             </div>
             <div style={s.stepCard} className="feature-card">
               <div style={{ ...s.stepNumber, backgroundColor: '#14b8a6' }}>2</div>
