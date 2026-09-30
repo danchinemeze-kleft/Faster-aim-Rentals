@@ -202,11 +202,18 @@ export async function POST(request) {
             }))
           while (history.length && history[0].role === 'model') history.shift()
 
-          // Try 3.8 twice, then fall back to 3.7 if Google is busy (503)
-          const attempts = ['gemini-3.8-flash', 'gemini-3.8-flash', 'gemini-3.7-flash']
+          // Spread attempts across models, with growing waits, for Google 503s
+          const attempts = [
+            'gemini-3.8-flash',
+            'gemini-3.7-flash',
+            'gemini-2.5-flash',
+            'gemini-3.1-flash-lite',
+            'gemini-2.5-flash-lite',
+          ]
           let gotText = false
 
-          for (const model of attempts) {
+          for (let i = 0; i < attempts.length; i++) {
+            const model = attempts[i]
             try {
               const result = await genAI.models.generateContentStream({
                 model,
@@ -228,7 +235,9 @@ export async function POST(request) {
               console.error('Gemini error:', model, err?.status, err?.message)
               if (gotText) break // never retry after text has started streaming
             }
-            await new Promise(r => setTimeout(r, 700))
+            if (i < attempts.length - 1) {
+              await new Promise(r => setTimeout(r, 800 * (i + 1)))
+            }
           }
 
           if (!gotText) send({ t: 'error' })
