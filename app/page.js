@@ -676,6 +676,11 @@ export default function Home() {
               <p style={s.stepText}>Whether you&apos;re looking in the bustling streets of Lagos, the heart of Abuja, or thriving communities in Anambra—find, list, and secure properties across all 36 states and the FCT.</p>
             </div>
             <div style={s.stepCard} className="feature-card">
+              <Image
+  src="/images/verify-connect.jpg"
+  alt="Verified landlord meeting a tenant, with the Mr. Rent verified badge on the phone"
+  style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 16, marginBottom: 20 }}
+/>
               <div style={{ ...s.stepNumber, backgroundColor: '#14b8a6' }}>2</div>
               <h3 style={s.stepTitle}>Verify &amp; Connect</h3>
               <p style={s.stepText}>Every landlord on Mr. Rent is checked before they can list. Unlock verified contact details and speak directly, with no middlemen.</p>
