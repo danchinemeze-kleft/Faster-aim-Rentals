@@ -732,3 +732,36 @@ html.light-mode .faim-alert-card--warning { background: #fffbf0; border-color: #
   .faim-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
   .faim-main { padding: 0.875rem 0.75rem 80px !important; }
 }
+/* Hover: lift the card and add a soft shadow */
+.feature-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+@media (hover: hover) {
+  .feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+  }
+}
+
+/* Scroll: cards fade and slide up as they enter the screen */
+@keyframes card-reveal {
+  from { opacity: 0; translate: 0 40px; }
+  to   { opacity: 1; translate: 0 0; }
+}
+
+@supports (animation-timeline: view()) {
+  .feature-card {
+    animation: card-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+}
+
+/* Respect users who turn off motion */
+@media (prefers-reduced-motion: reduce) {
+  .feature-card {
+    animation: none;
+    transition: none;
+  }
+}
