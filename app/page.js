@@ -338,6 +338,7 @@ export default function Home() {
 </div>
       <Breadcrumb theme="light" items={[{ label: 'Mr. Rent', href: '/' }]} />
       {/* Navbar */}
+      <nav style={s.nav} className="nav-3d"></nav>
       <nav style={s.nav}>
         <div style={s.navBrand}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px', color: '#0ea5e9' }}>
@@ -486,7 +487,7 @@ export default function Home() {
       {/* Hero */}
       <section style={s.heroSection} className="hero-section">
         <div style={s.heroOuter} className="hero-outer">
-          <div style={s.heroInner} className="hero-inner">
+          <div style={s.heroInner} className="hero-inner hero-3d">
             <div style={s.heroLayout} className="hero-layout">
               <div style={s.heroText}>
                 <div style={s.heroBadge}>
