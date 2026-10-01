@@ -41,7 +41,7 @@ html.light-mode {
   --shadow-card: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-@theme inline {
+ inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -901,4 +901,83 @@ html.light-mode .faim-alert-card--warning { background: #fffbf0; border-color: #
 .site-footer .footer-bottom,
 .site-footer div {
   border-color: rgba(255, 255, 255, 0.35) !important;
+}
+/* ==========================================================================
+   Hero Section Motion & Scroll-Driven Animation
+   ========================================================================== */
+
+/* Outer Hero Container */
+.hero-outer {
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* Inner Layout / Content */
+.hero-inner,
+.hero-layout {
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* Hover effects (mouse/trackpad only) */
+@media (hover: hover) {
+  .hero-outer:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  }
+
+  .hero-outer:hover .hero-inner {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  }
+}
+
+/* Keyframes using standard fallbacks */
+@keyframes hero-outer-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+    translate: 0 50px;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    translate: 0 0;
+  }
+}
+
+@keyframes hero-inner-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+    translate: 0 40px;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    translate: 0 0;
+  }
+}
+
+/* Scroll-Driven Animations */
+@supports (animation-timeline: view()) {
+  .hero-outer {
+    animation: hero-outer-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+
+  .hero-inner {
+    animation: hero-inner-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .hero-outer,
+  .hero-inner,
+  .hero-layout {
+    animation: none !important;
+    transition: none !important;
+  }
 }
