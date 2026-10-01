@@ -679,6 +679,8 @@ export default function Home() {
               <Image
   src="/images/verify-connect.jpg"
   alt="Verified landlord meeting a tenant, with the Mr. Rent verified badge on the phone"
+  width={1024}
+  height={559}
   style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 16, marginBottom: 20 }}
 />
               <div style={{ ...s.stepNumber, backgroundColor: '#14b8a6' }}>2</div>
@@ -686,6 +688,13 @@ export default function Home() {
               <p style={s.stepText}>Every landlord on Mr. Rent is checked before they can list. Unlock verified contact details and speak directly, with no middlemen.</p>
             </div>
             <div style={s.stepCard} className="feature-card">
+<Image
+  src="/images/move-in-safely.jpg"
+  alt="Tenant receiving keys from a verified landlord at his new home"
+  width={1024}
+  height={559}
+  style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 16, marginBottom: 20 }}
+/>
               <div style={{ ...s.stepNumber, backgroundColor: '#0f172a' }}>3</div>
               <h3 style={s.stepTitle}>Move In Safely</h3>
               <p style={s.stepText}>Agree terms directly with a verified landlord and move in with confidence, knowing you didn&apos;t pay a scammer along the way.</p>
