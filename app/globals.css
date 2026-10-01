@@ -780,3 +780,40 @@ html.light-mode .faim-alert-card--warning { background: #fffbf0; border-color: #
     transition: none;
   }
 }
+/* ============ WHY PEOPLE TRUST MR. RENT ============ */
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.trust-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-top: 4px solid #14b8a6;
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+}
+
+.trust-card h3 {
+  font-size: 1.15rem;
+  margin: 16px 0 8px;
+  color: #0f172a;
+}
+
+.trust-card p {
+  color: #475569;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.trust-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #14b8a6, #0ea5e9);
+  color: #fff;
+}
