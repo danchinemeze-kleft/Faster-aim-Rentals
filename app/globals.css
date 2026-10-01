@@ -817,3 +817,19 @@ html.light-mode .faim-alert-card--warning { background: #fffbf0; border-color: #
   background: linear-gradient(135deg, #14b8a6, #0ea5e9);
   color: #fff;
 }
+.site-footer {
+  background:
+    linear-gradient(rgba(8, 15, 30, 0.72), rgba(8, 15, 30, 0.85)),
+    url('/images/footer-bg.jpg') center / cover no-repeat;
+  color: #fff;
+}
+
+.site-footer h4,
+.site-footer h3,
+.site-footer a,
+.site-footer p {
+  color: #fff;
+}
+
+.site-footer a { opacity: 0.8; }
+.site-footer a:hover { opacity: 1; }
