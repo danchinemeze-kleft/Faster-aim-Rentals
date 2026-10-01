@@ -703,7 +703,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why Choose Us */}
+         {/* Why Choose Us */}
       <section style={{ ...s.sectionWrap, backgroundColor: '#ffffff' }}>
         <div style={s.sectionInner}>
           <div style={s.sectionHead}>
@@ -718,6 +718,13 @@ export default function Home() {
                   <path d="m9 11 2 2 4-4"/>
                 </svg>
               </div>
+              <Image
+                src="/images/trust-verified.jpg"
+                alt="Landlord having an ID document verified on Mr. Rent"
+                width={600}
+                height={340}
+                className="trust-img"
+              />
               <h3 style={s.featureTitle}>Verified Landlords Only</h3>
               <p style={s.featureText}>No fake listings, no mystery landlords. Every property owner undergoes thorough document and identity verification before posting, giving you total confidence in who you&apos;re dealing with every step of the way</p>
             </div>
@@ -728,6 +735,13 @@ export default function Home() {
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
               </div>
+              <Image
+                src="/images/trust-ai.jpg"
+                alt="Tenant chatting with the Mr. Rent AI on a phone"
+                width={600}
+                height={340}
+                className="trust-img"
+              />
               <h3 style={s.featureTitle}>AI That Actually Helps</h3>
               <p style={s.featureText}>House hunting made as easy as sending a WhatsApp message. Just tell Mr. Rent AI what you&apos;re looking for in your own words, and let our smart matching engine find properties tailored precisely to your budget and needs—no confusing property jargon required.</p>
             </div>
@@ -738,6 +752,13 @@ export default function Home() {
                   <polyline points="9 22 9 12 15 12 15 22"/>
                 </svg>
               </div>
+              <Image
+                src="/images/trust-nationwide.jpg"
+                alt="Residential streets across Nigerian cities"
+                width={600}
+                height={340}
+                className="trust-img"
+              />
               <h3 style={s.featureTitle}>Nationwide Coverage</h3>
               <p style={s.featureText}>Whether you&apos;re looking in the bustling streets of Lagos, the heart of Abuja, or thriving communities in Anambra—find, list, and secure properties across all 36 states and the FCT. Nationwide coverage, zero stress. Seamlessly search and list homes from commercial hubs like Lagos and Abuja to vibrant cities across every state in Nigeria</p>
             </div>
@@ -747,6 +768,13 @@ export default function Home() {
                   <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
                 </svg>
               </div>
+              <Image
+                src="/images/trust-list.jpg"
+                alt="Landlord listing a property on Mr. Rent from a phone"
+                width={600}
+                height={340}
+                className="trust-img"
+              />
               <h3 style={s.featureTitle}>List in Minutes</h3>
               <p style={s.featureText}>List your property in under five minutes and connect directly with pre-screened, serious tenants. Mr. Rent cuts through the noise, delivering verified inquiries straight to your dashboard—so you fill vacancies faster with zero hassle.</p>
             </div>
