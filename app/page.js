@@ -256,6 +256,13 @@ export default function Home() {
         .footer-link:hover {
           color: #0ea5e9;
         }
+        .make-money-btn {
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .make-money-btn:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 14px 26px -8px rgba(20, 184, 166, 0.65);
+        }
         @keyframes bounceDown {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(6px); }
@@ -338,7 +345,7 @@ export default function Home() {
 </div>
       <Breadcrumb theme="Gold" items={[{ label: 'Home', href: '/' }]} />
       {/* Navbar */}
-      <nav style={s.nav}className="nav-3d">
+      <nav style={s.nav} className="nav-3d">
         <div style={s.navBrand}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px', color: '#0ea5e9' }}>
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -352,7 +359,7 @@ export default function Home() {
           <a href="/browse" style={s.navLink}>Browse Rentals</a>
           <a href="/list" style={s.navLink}>List Property</a>
           <a href="/veryland" style={{ ...s.navLink, color: '#0ea5e9', fontWeight: 700 }}>Verified Properties</a>
-          <a href="/account" style={s.navBtn}>Login / Sign up</a>
+          <a href="/account" style={s.navBtn}>Get started</a>
           <div className="nav-menu-hover">
   <button type="button" className="nav-menu-trigger" aria-haspopup="true">
     <span className="nav-menu-icon">☰</span>
@@ -492,10 +499,10 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 5. Login/Sign-up Button */}
+            {/* 5. Get started Button */}
             <div className="mobile-menu-footer">
               <a href="/account" style={{ ...s.navBtn, display: 'block', textAlign: 'center', width: '100%', padding: '0.8rem' }} onClick={() => setMenuOpen(false)}>
-                Login / Sign up
+                Get started
               </a>
             </div>
           </div>
@@ -563,30 +570,37 @@ export default function Home() {
                 </div>
               </div>
 
-              <div style={s.avatarContainer} className="avatar-cont">
-                <div style={s.ringTeal} className="ring-teal"></div>
-                <div style={s.ringCyan} className="ring-cyan"></div>
-                <a href="/search" style={{ display: 'block', borderRadius: '50%' }}>
-                  <div style={s.avatarWrapper} className="avatar-wrap">
-                    <Image
-                      src="/mr-rent-avatar.png"
-                      alt="Mr. Rent"
-                      fill
-                      style={s.avatarImage}
-                      sizes="300px"
-                      priority
-                    />
-                  </div>
+              <div style={s.heroRight}>
+                {/* Make Money button — sits above the circular photo */}
+                <a href="/affiliate" style={s.makeMoneyBtn} className="make-money-btn">
+                  <span aria-hidden="true">₦</span> Make Money
                 </a>
-                <a href="/search" style={{ ...s.verifiedBadge, textDecoration: 'none', cursor: 'pointer' }} className="verified-badge">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ color: '#14B8A6', flexShrink: 0 }} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                  </svg>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.75rem', color: '#0f172a' }}>Chat Free — Ask About Real Estate</div>
-                    <div style={{ fontWeight: 600, fontSize: '0.68rem', color: '#64748b', marginTop: '0.1rem' }}>Find available homes</div>
-                  </div>
-                </a>
+
+                <div style={s.avatarContainer} className="avatar-cont">
+                  <div style={s.ringTeal} className="ring-teal"></div>
+                  <div style={s.ringCyan} className="ring-cyan"></div>
+                  <a href="/search" style={{ display: 'block', borderRadius: '50%' }}>
+                    <div style={s.avatarWrapper} className="avatar-wrap">
+                      <Image
+                        src="/mr-rent-avatar.png"
+                        alt="Mr. Rent"
+                        fill
+                        style={s.avatarImage}
+                        sizes="300px"
+                        priority
+                      />
+                    </div>
+                  </a>
+                  <a href="/search" style={{ ...s.verifiedBadge, textDecoration: 'none', cursor: 'pointer' }} className="verified-badge">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ color: '#14B8A6', flexShrink: 0 }} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    </svg>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '0.75rem', color: '#0f172a' }}>Chat Free — Ask About Real Estate</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.68rem', color: '#64748b', marginTop: '0.1rem' }}>Find available homes</div>
+                    </div>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -1002,6 +1016,25 @@ const s = {
     fontWeight: '700',
     color: '#334155',
     whiteSpace: 'nowrap',
+  },
+  heroRight: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '1.5rem',
+  },
+  makeMoneyBtn: {
+    textDecoration: 'none',
+    background: 'linear-gradient(135deg, #0ea5e9, #14b8a6)',
+    color: '#ffffff',
+    padding: '0.6rem 1.4rem',
+    borderRadius: '9999px',
+    fontWeight: '800',
+    fontSize: '0.95rem',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.4rem',
+    boxShadow: '0 8px 20px -6px rgba(20, 184, 166, 0.55)',
   },
   avatarContainer: {
     position: 'relative',
