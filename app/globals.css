@@ -933,7 +933,11 @@ html.light-mode .faim-alert-card--warning { background: #fffbf0; border-color: #
 .nav-3d {
   position: relative;
   z-index: 20;
-  border-bottom: 2px solid #94a3b8 !important;
+.nav-3d {
+  position: relative;
+  z-index: 20;
+  border-bottom: 3px solid transparent !important;
+  border-image: linear-gradient(90deg, #0ea5e9, #14b8a6) 1 !important;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.9) inset,
     0 6px 14px rgba(15, 23, 42, 0.18),
@@ -941,7 +945,7 @@ html.light-mode .faim-alert-card--warning { background: #fffbf0; border-color: #
 }
 
 .hero-3d {
-  border: 2px solid #94a3b8 !important;
+  border: 2px solid #6496dd !important;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.9) inset,
     0 10px 20px rgba(15, 23, 42, 0.2),
