@@ -933,9 +933,6 @@ html.light-mode .faim-alert-card--warning { background: #fffbf0; border-color: #
 .nav-3d {
   position: relative;
   z-index: 20;
-.nav-3d {
-  position: relative;
-  z-index: 20;
   border-bottom: 3px solid transparent !important;
   border-image: linear-gradient(90deg, #0ea5e9, #14b8a6) 1 !important;
   box-shadow:
