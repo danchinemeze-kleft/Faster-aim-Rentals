@@ -336,7 +336,7 @@ export default function Home() {
   <span style={{ letterSpacing: '1px' }}>★★★★★</span>
   <span>Rated 5 Stars by Verified Renters — See Reviews</span>
 </div>
-      <Breadcrumb theme="light" items={[{ label: 'Mr. Rent', href: '/' }]} />
+      <Breadcrumb theme="Gold" items={[{ label: 'Home', href: '/' }]} />
       {/* Navbar */}
       <nav style={s.nav}className="nav-3d">
         <div style={s.navBrand}>
@@ -353,6 +353,23 @@ export default function Home() {
           <a href="/list" style={s.navLink}>List Property</a>
           <a href="/veryland" style={{ ...s.navLink, color: '#0ea5e9', fontWeight: 700 }}>Verified Properties</a>
           <a href="/account" style={s.navBtn}>Login / Sign up</a>
+          <div className="nav-menu-hover">
+  <button type="button" className="nav-menu-trigger" aria-haspopup="true">
+    <span className="nav-menu-icon">☰</span>
+    <span className="nav-menu-label">Menu</span>
+  </button>
+
+  <div className="nav-menu-dropdown">
+    <a href="/browse">Browse Rentals</a>
+    <a href="/list">List Property</a>
+    <a href="/veryland">Verified Properties</a>
+    <a href="/search">AI Chat Assistant</a>
+    <a href="/affiliate/auth">Earn with Referrals</a>
+    <a href="/about">About Us</a>
+    <a href="/contact">Contact &amp; Support</a>
+    <a href="/faq">FAQ</a>
+  </div>
+</div>
         </div>
 
         <button className="nav-hamburger" onClick={() => setMenuOpen(true)} aria-label="Open menu" style={{ background: 'none', border: '2px solid #e2e8f0', padding: '6px 10px', borderRadius: '8px', cursor: 'pointer', fontSize: '1.2rem', color: '#0f172a' }}>☰</button>
