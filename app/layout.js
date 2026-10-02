@@ -158,13 +158,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-export const metadata = {
-  title: "Mr. Rent – Find Verified Rentals in Nigeria",
-  icons: {
-    icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/icon.png", type: "image/png" },
-    ],
-    apple: "/icon.png",
-  },
-};
