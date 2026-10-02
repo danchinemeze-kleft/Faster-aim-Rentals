@@ -573,7 +573,7 @@ export default function Home() {
               <div style={s.heroRight}>
                 {/* Make Money button — sits above the circular photo */}
                 <a href="/affiliate" style={s.makeMoneyBtn} className="make-money-btn">
-                  <span aria-hidden="true">₦</span> Make Money
+                  <span aria-hidden="true">$</span> Make Money
                 </a>
 
                 <div style={s.avatarContainer} className="avatar-cont">
