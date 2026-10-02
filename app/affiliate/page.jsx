@@ -1,5 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import GoBackButton from '../components/GoBackButton'
 import { useState, useEffect, useMemo } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
@@ -15,6 +17,7 @@ const BASE_URL = 'https://rent.fasteraim.com'
 
 export default function AffiliatePage() {
   const supabase = useSupabase()
+  const router = useRouter()
   const [user, setUser] = useState(null)
   const [affiliate, setAffiliate] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -60,7 +63,7 @@ export default function AffiliatePage() {
 
   const handleSignup = async e => {
     e.preventDefault()
-    if (!user) { window.location.href = '/account?redirect=/affiliate'; return }
+    if (!user) { router.push('/account?redirect=/affiliate'); return }
     setSubmitting(true)
     setMsg('')
     const { data: { session } } = await supabase.auth.getSession()
@@ -100,12 +103,12 @@ export default function AffiliatePage() {
 
       {/* Nav */}
       <nav style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
-        <a href="/" style={{ fontSize: '1.2rem', fontWeight: 800, background: 'linear-gradient(90deg,#0ea5e9,#14B8A6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textDecoration: 'none' }}>🏠 Mr. Rent</a>
+        <Link href="/" style={{ fontSize: '1.2rem', fontWeight: 800, background: 'linear-gradient(90deg,#0ea5e9,#14B8A6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textDecoration: 'none' }}>🏠 Mr. Rent</Link>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          {affiliate && <a href="/affiliate/dashboard" style={{ color: '#0ea5e9', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none' }}>My Dashboard →</a>}
+          {affiliate && <Link href="/affiliate/dashboard" style={{ color: '#0ea5e9', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none' }}>My Dashboard →</Link>}
           {user
             ? <span style={{ fontSize: '0.85rem', color: '#64748b' }}>{user.email}</span>
-            : <a href="/affiliate/auth" style={{ background: 'linear-gradient(135deg,#14B8A6,#0D9488)', color: '#fff', padding: '0.5rem 1.25rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>Login / Sign up</a>
+            : <Link href="/affiliate/auth" style={{ background: 'linear-gradient(135deg,#14B8A6,#0D9488)', color: '#fff', padding: '0.5rem 1.25rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>Login / Sign up</Link>
           }
         </div>
       </nav>
@@ -119,9 +122,52 @@ export default function AffiliatePage() {
           Earn Money by Sharing<br />
           <span style={{ color: '#0ea5e9' }}>Mr. Rent</span>
         </h1>
-        <p style={{ color: '#475569', fontSize: '1.05rem', fontWeight: 600, maxWidth: 520, margin: '0 auto 2.5rem', lineHeight: 1.7 }}>
+        <p style={{ color: '#475569', fontSize: '1.05rem', fontWeight: 600, maxWidth: 520, margin: '0 auto 1.75rem', lineHeight: 1.7 }}>
           Share your unique link. Earn ₦500 every time someone reveals a contact. Earn ₦2,000 every time a landlord subscribes. No cap on earnings.
         </p>
+
+        {/* Motivation message */}
+        <div style={{ maxWidth: 560, margin: '0 auto 2.5rem', background: '#fff', border: '1.5px solid #0ea5e944', borderRadius: '16px', padding: '1.5rem 1.5rem 1.25rem', textAlign: 'center', boxShadow: '0 8px 24px -16px rgba(15, 23, 42, 0.15)' }}>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.6rem' }}>
+            Your followers are worth more than likes.
+          </h3>
+          <p style={{ fontSize: '0.95rem', color: '#475569', fontWeight: 600, lineHeight: 1.65, margin: '0 0 1rem' }}>
+            Imagine you have 10,000 followers on Facebook, X, Instagram, Twitch, Bluesky, or any other platform. Invite them to use Mr. Rent to list a property or reveal a landlord&apos;s contact, and earn right here, in naira. No need to wait on programs that don&apos;t accept Nigerians.
+          </p>
+
+          <div style={{ background: '#f1f8fc', border: '1px solid #cfe8f3', borderRadius: '12px', padding: '0.9rem 1rem', textAlign: 'left', marginBottom: '1rem' }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0c6fa3', textAlign: 'center', marginBottom: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              What could it look like each month?
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', fontSize: '0.88rem', color: '#334155', fontWeight: 600, padding: '0.4rem 0', borderBottom: '1px solid #d9ecf6' }}>
+              <span>1% of 10,000 = 100 people list a property</span>
+              <span style={{ fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap' }}>₦200,000</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', fontSize: '0.88rem', color: '#334155', fontWeight: 600, padding: '0.4rem 0', borderBottom: '1px solid #d9ecf6' }}>
+              <span>5% of 10,000 = 500 people reveal a contact</span>
+              <span style={{ fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap' }}>₦250,000</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', fontSize: '0.95rem', fontWeight: 800, color: '#0f6e56', padding: '0.5rem 0 0.1rem' }}>
+              <span>Together, that&apos;s</span>
+              <span style={{ whiteSpace: 'nowrap' }}>₦450,000 a month</span>
+            </div>
+          </div>
+
+          <p style={{ fontSize: '0.9rem', color: '#475569', fontWeight: 600, lineHeight: 1.6, margin: '0 0 0.9rem' }}>
+            Keep bringing in new people every month and it adds up.
+          </p>
+
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.9rem' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0c6fa3', background: '#e1f1fa', borderRadius: '999px', padding: '0.35rem 0.85rem' }}>₦2,000 per qualifying listing</span>
+            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0f6e56', background: '#e1f5ee', borderRadius: '999px', padding: '0.35rem 0.85rem' }}>₦500 per contact reveal</span>
+          </div>
+
+          <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, lineHeight: 1.5, margin: 0 }}>
+            Illustration only. Actual earnings depend on your audience and results, and are not guaranteed. Terms and conditions apply.{' '}
+            <Link href="/terms-of-service" style={{ color: '#0ea5e9' }}>Read the terms</Link>
+          </p>
+        </div>
+
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
           <div style={{ background: '#fff', border: '1.5px solid #0ea5e944', borderRadius: '14px', padding: '1.25rem 2rem', textAlign: 'center', minWidth: 140 }}>
             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0ea5e9' }}>₦500</div>
@@ -172,7 +218,7 @@ export default function AffiliatePage() {
               </button>
             </div>
             <div style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem' }}>
-              <a href="/affiliate/dashboard" style={{ flex: 1, textAlign: 'center', background: 'linear-gradient(135deg,#0ea5e9,#0284c7)', color: '#fff', padding: '0.75rem', borderRadius: '10px', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none' }}>View Dashboard & Earnings →</a>
+              <Link href="/affiliate/dashboard" style={{ flex: 1, textAlign: 'center', background: 'linear-gradient(135deg,#0ea5e9,#0284c7)', color: '#fff', padding: '0.75rem', borderRadius: '10px', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none' }}>View Dashboard & Earnings →</Link>
             </div>
           </div>
         </section>
@@ -188,9 +234,9 @@ export default function AffiliatePage() {
             </p>
 
             {!user ? (
-              <a href="/affiliate/auth" style={{ display: 'block', textAlign: 'center', background: 'linear-gradient(135deg,#14B8A6,#0D9488)', color: '#fff', padding: '0.875rem', borderRadius: '12px', fontWeight: 800, fontSize: '1rem', textDecoration: 'none' }}>
+              <Link href="/affiliate/auth" style={{ display: 'block', textAlign: 'center', background: 'linear-gradient(135deg,#14B8A6,#0D9488)', color: '#fff', padding: '0.875rem', borderRadius: '12px', fontWeight: 800, fontSize: '1rem', textDecoration: 'none' }}>
                 Create Account / Login →
-              </a>
+              </Link>
             ) : (
               <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {[
@@ -222,7 +268,7 @@ export default function AffiliatePage() {
 
       {/* Footer */}
       <footer style={{ borderTop: '1px solid #e2e8f0', padding: '2rem', textAlign: 'center', color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600 }}>
-        © 2026 Faster Aim Technology Limited · <a href="/privacy-policy" style={{ color: '#94a3b8' }}>Privacy Policy</a> · <a href="/terms-of-service" style={{ color: '#94a3b8' }}>Terms</a>
+        © 2026 Faster Aim Technology Limited · <Link href="/privacy-policy" style={{ color: '#94a3b8' }}>Privacy Policy</Link> · <Link href="/terms-of-service" style={{ color: '#94a3b8' }}>Terms</Link>
       </footer>
     </div>
   )
