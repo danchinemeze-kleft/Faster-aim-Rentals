@@ -382,12 +382,14 @@ export default function Home() {
             {/* 1. Header Row */}
             <div className="mobile-menu-header">
               <div style={s.navBrand}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ marginRight: '6px', color: '#0ea5e9', display: 'inline-block', verticalAlign: 'middle' }}>
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <span style={{ verticalAlign: 'middle' }}>Mr. Rent</span>
-              </div>
+  <svg width="30" height="30" viewBox="0 0 32 32" style={{ marginRight: '8px' }}>
+    <polygon
+      fill="#10705a"
+      points="16,3 28,13 28,29 20,29 20,20 12,20 12,29 4,29 4,13"
+    />
+  </svg>
+  <span style={{ color: '#0b4a3a', fontWeight: 800 }}>Mr. Rent</span>
+</div>
               <button className="mobile-menu-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button>
             </div>
 
