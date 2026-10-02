@@ -338,8 +338,7 @@ export default function Home() {
 </div>
       <Breadcrumb theme="light" items={[{ label: 'Mr. Rent', href: '/' }]} />
       {/* Navbar */}
-      <nav style={s.nav} className="nav-3d"></nav>
-      <nav style={s.nav}>
+      <nav style={s.nav}className="nav-3d">
         <div style={s.navBrand}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px', color: '#0ea5e9' }}>
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
