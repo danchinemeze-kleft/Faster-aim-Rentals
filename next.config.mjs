@@ -38,6 +38,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https:",
+              "media-src 'self' blob:",
               "connect-src 'self' https://*.supabase.co https://api.paystack.co https://generativelanguage.googleapis.com https://accounts.google.com https://www.google-analytics.com https://www.googletagmanager.com",
               "frame-src 'self' https://js.paystack.co https://checkout.paystack.com https://accounts.google.com",
               "object-src 'none'",
