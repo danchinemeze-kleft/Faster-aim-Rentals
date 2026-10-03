@@ -6,6 +6,7 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import Image from 'next/image'
 import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from '../components/Breadcrumb'
+import ListenButton from '../components/ListenButton'
 
 // Use useMemo to prevent recreating supabase client on every render
 const useSupabase = () => {
@@ -88,6 +89,7 @@ export default function SearchPage() {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [streaming, setStreaming] = useState(false)
   const [user, setUser] = useState(null)
   const [revealLoading, setRevealLoading] = useState(null)
   const bottomRef = useRef(null)
@@ -175,6 +177,7 @@ export default function SearchPage() {
               if (!hasReply) {
                 hasReply = true
                 setLoading(false)
+                setStreaming(true)
                 setMessages(prev => [...prev, { role: 'assistant', content: event.v, listings: [] }])
               } else {
                 setMessages(prev => {
@@ -210,6 +213,7 @@ export default function SearchPage() {
       }
     } finally {
       setLoading(false)
+      setStreaming(false)
       inputRef.current?.focus()
     }
   }
@@ -291,6 +295,11 @@ export default function SearchPage() {
                 {formatMessage(msg.content)}
               </div>
             </div>
+            {msg.role === 'assistant' && msg.content && !(streaming && i === messages.length - 1) && (
+              <div style={{ marginLeft: 42 }}>
+                <ListenButton text={msg.content} />
+              </div>
+            )}
             {msg.listings?.length > 0 && (
               <div className="faim-listing-cards">
                 {msg.listings.map(l => (
