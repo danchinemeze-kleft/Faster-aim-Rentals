@@ -1,0 +1,9 @@
+.faim-listen-wrap{display:inline-flex;align-items:center;gap:8px;margin-top:8px}
+.faim-listen-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;min-height:36px;
+  border-radius:999px;border:1px solid var(--faim-brand,#0f6b3a);background:transparent;
+  color:var(--faim-brand,#0f6b3a);font-size:13px;font-weight:600;cursor:pointer}
+.faim-listen-btn:hover:not(:disabled){background:var(--faim-brand,#0f6b3a);color:#fff}
+.faim-listen-btn:disabled{opacity:.6;cursor:wait}
+.faim-listen-stop{background:none;border:0;color:#b42318;font-size:16px;cursor:pointer;padding:6px}
+.faim-listen-note{font-size:12px;color:#667085}
+.faim-listen-btn:focus-visible,.faim-listen-stop:focus-visible{outline:2px solid var(--faim-brand,#0f6b3a);outline-offset:2px}
