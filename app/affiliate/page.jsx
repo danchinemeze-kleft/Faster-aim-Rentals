@@ -190,12 +190,20 @@ export default function AffiliatePage() {
         <h2 style={{ textAlign: 'center', fontSize: '1.6rem', fontWeight: 800, marginBottom: '2.5rem', color: '#0f172a' }}>How It Works</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem' }}>
           {[
-            { step: '01', image: '/images/signup.gif', alt: 'Woman signing up on her phone', title: 'Sign Up Free', desc: 'Create your affiliate account in seconds — free for every Mr. Rent user.' },
-{ step: '02', image: '/images/share.gif', alt: 'Woman sharing her link with friends and followers', title: 'Share Your Link', desc: 'Share your unique link on WhatsApp, social media, or anywhere you like.' },
-{ step: '03', image: '/images/earn.gif', alt: 'Woman earning money from her phone', title: 'Earn Commission', desc: 'Get ₦500 per reveal and ₦2,000 per landlord subscription through your link.' },
+
+            { step: '01', image: '/images/signup.gif', href: '/affiliate/auth', alt: 'Woman signing up on her phone', title: 'Sign Up Free', desc: 'Create your affiliate account in seconds — free for every Mr. Rent user.' },
+{ step: '02', image: '/images/share.gif', href: '/affiliate/share', alt: 'Woman sharing her link with friends and followers', title: 'Share Your Link', desc: 'Share your unique link on WhatsApp, social media, or anywhere you like.' },
+{ step: '03', image: '/images/earn.gif', href: '/affiliate/earn', alt: 'Woman earning money from her phone', title: 'Earn Commission', desc: 'Get ₦500 per reveal and ₦2,000 per landlord subscription through your link.' },
           ].map(s => (
             <div key={s.step} style={{ background: '#fff', borderRadius: '16px', padding: '1.75rem 1.5rem', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', position: 'relative', overflow: 'hidden' }}>
              <div style={{ position: 'absolute', top: 24, right: 24, zIndex: 2, background: '#0f172a', color: '#fff', fontSize: '0.75rem', fontWeight: 800, padding: '0.25rem 0.6rem', borderRadius: 999 }}>{s.step}</div>
+             {s.href && (
+  <Link
+    href={s.href}
+    aria-label={s.title}
+    style={{ position: 'absolute', inset: 0, zIndex: 3, borderRadius: '16px' }}
+  />
+)}
              <Image
   src={s.image}
   alt={s.alt}
@@ -207,6 +215,9 @@ export default function AffiliatePage() {
 />
               <h3 style={{ fontWeight: 800, fontSize: '1rem', color: '#0f172a', marginBottom: '0.5rem' }}>{s.title}</h3>
               <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: 1.6, fontWeight: 600 }}>{s.desc}</p>
+              {s.href && (
+  <p style={{ marginTop: '0.75rem', fontSize: '0.85rem', fontWeight: 800, color: '#0ea5e9' }}>Get started →</p>
+)}
             </div>
           ))}
         </div>
