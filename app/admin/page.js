@@ -347,11 +347,11 @@ export default function AdminDashboard() {
         justifyContent: 'space-between', height: 56
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <a href="/" style={{
+          <link href="/" style={{
             color: '#888', fontSize: 13, textDecoration: 'none',
             border: '0.5px solid #333', borderRadius: 8, padding: '4px 10px',
             display: 'inline-flex', alignItems: 'center', gap: 4
-          }}>← Site</a>
+          }}>← Site</link>
           <span style={{ color: '#444', fontSize: 14 }}>/</span>
           <span style={{ color: '#0ef6cc', fontWeight: 700, fontSize: 16 }}>Mr. Rent</span>
           <span style={{ color: '#444', fontSize: 14 }}>/</span>
