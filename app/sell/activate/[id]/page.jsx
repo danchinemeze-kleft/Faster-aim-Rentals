@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
@@ -66,7 +67,7 @@ export default function ActivateSaleListing() {
 
   const nav = (
     <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: 'var(--card-bg)', position: 'sticky', top: 3, zIndex: 100 }}>
-      <a href="/" style={{ color: '#cccccc', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</a>
+      <Link href="/" style={{ color: '#cccccc', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</Link>
       <span style={{ color: '#555', margin: '0 8px' }}>/</span>
       <span style={{ color: '#ffffff', fontSize: 14, fontWeight: 600 }}>Activate Listing</span>
     </nav>
@@ -87,9 +88,9 @@ export default function ActivateSaleListing() {
         <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
         <h1 style={{ fontSize: '1.75rem', fontWeight: 900, marginBottom: 12 }}>Login Required</h1>
         <p style={{ color: '#cccccc', marginBottom: 28 }}>You need to be logged in to activate your listing.</p>
-        <a href={`/account?redirect=/sell/activate/${id}`} style={{ display: 'inline-block', background: '#0ef6cc', color: '#080a0f', padding: '14px 32px', borderRadius: 10, fontWeight: 800, fontSize: 15, textDecoration: 'none' }}>
+        <Link href={`/account?redirect=/sell/activate/${id}`} style={{ display: 'inline-block', background: '#0ef6cc', color: '#080a0f', padding: '14px 32px', borderRadius: 10, fontWeight: 800, fontSize: 15, textDecoration: 'none' }}>
           Login / Sign Up
-        </a>
+        </Link>
       </div>
     </div>
   );
@@ -123,9 +124,9 @@ export default function ActivateSaleListing() {
             <p style={{ color: '#cccccc', fontSize: 15, lineHeight: 1.8, marginBottom: 24 }}>
               Unfortunately your listing <strong style={{ color: '#fff' }}>&ldquo;{listing.title}&rdquo;</strong> was not approved. This is usually due to incomplete or unverifiable documents.
             </p>
-            <a href="/sell" style={{ display: 'inline-block', background: '#0ef6cc', color: '#080a0f', padding: '13px 28px', borderRadius: 10, fontWeight: 800, fontSize: 15, textDecoration: 'none' }}>
+            <Link href="/sell" style={{ display: 'inline-block', background: '#0ef6cc', color: '#080a0f', padding: '13px 28px', borderRadius: 10, fontWeight: 800, fontSize: 15, textDecoration: 'none' }}>
               Submit a New Listing →
-            </a>
+            </Link>
           </div>
         )}
 
@@ -136,9 +137,9 @@ export default function ActivateSaleListing() {
             <p style={{ color: '#cccccc', fontSize: 15, lineHeight: 1.8, marginBottom: 24 }}>
               Your listing <strong style={{ color: '#fff' }}>&ldquo;{listing.title}&rdquo;</strong> is already active and visible to buyers on the platform.
             </p>
-            <a href="/buy" style={{ display: 'inline-block', background: '#0ef6cc', color: '#080a0f', padding: '13px 28px', borderRadius: 10, fontWeight: 800, fontSize: 15, textDecoration: 'none' }}>
+            <Link href="/buy" style={{ display: 'inline-block', background: '#0ef6cc', color: '#080a0f', padding: '13px 28px', borderRadius: 10, fontWeight: 800, fontSize: 15, textDecoration: 'none' }}>
               View on Buy Page →
-            </a>
+            </Link>
           </div>
         )}
 

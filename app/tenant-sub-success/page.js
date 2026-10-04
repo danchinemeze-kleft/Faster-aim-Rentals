@@ -6,21 +6,15 @@ import { useSearchParams, useRouter } from 'next/navigation'
 function TenantSubSuccessInner() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [status, setStatus] = useState('verifying') // 'verifying' | 'success' | 'error'
+  const reference = searchParams.get('reference') || searchParams.get('trxref')
+  const [status, setStatus] = useState(reference ? 'verifying' : 'error') // 'verifying' | 'success' | 'error'
   const [expiryDate, setExpiryDate] = useState(null)
-  const [errorMsg, setErrorMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState(reference ? '' : 'No payment reference found. If you completed payment, please contact support.')
   const called = useRef(false)
 
   useEffect(() => {
-    if (called.current) return
+    if (!reference || called.current) return
     called.current = true
-
-    const reference = searchParams.get('reference') || searchParams.get('trxref')
-    if (!reference) {
-      setErrorMsg('No payment reference found. If you completed payment, please contact support.')
-      setStatus('error')
-      return
-    }
 
     async function verify() {
       try {
@@ -43,7 +37,7 @@ function TenantSubSuccessInner() {
       }
     }
     verify()
-  }, [searchParams])
+  }, [reference])
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: 'Segoe UI, system-ui, sans-serif', color: 'var(--text-1)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>

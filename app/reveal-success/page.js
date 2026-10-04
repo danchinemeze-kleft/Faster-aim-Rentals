@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import GoBackButton from '../components/GoBackButton'
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
@@ -8,22 +9,16 @@ import Breadcrumb from '../components/Breadcrumb'
 function RevealSuccessInner() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [status, setStatus] = useState('verifying')
+  const reference = searchParams.get('reference') || searchParams.get('trxref')
+  const [status, setStatus] = useState(() => reference ? 'verifying' : 'error')
   const [contact, setContact] = useState(null)
   const [listing, setListing] = useState(null)
-  const [errorMsg, setErrorMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState(() => reference ? '' : 'No payment reference found. Please contact support.')
   const called = useRef(false)
 
   useEffect(() => {
-    if (called.current) return
+    if (!reference || called.current) return
     called.current = true
-
-    const reference = searchParams.get('reference') || searchParams.get('trxref')
-    if (!reference) {
-      setErrorMsg('No payment reference found. Please contact support.')
-      setStatus('error')
-      return
-    }
 
     async function verify() {
       try {
@@ -47,7 +42,7 @@ function RevealSuccessInner() {
       }
     }
     verify()
-  }, [searchParams])
+  }, [reference])
 
   if (status === 'verifying') return (
     <div className="faim-reveal-page">
@@ -73,8 +68,8 @@ function RevealSuccessInner() {
         <h2>Something went wrong</h2>
         <p>{errorMsg}</p>
         <div className="faim-actions">
-          <a href="/browse" className="faim-btn faim-btn--primary">Browse Listings</a>
-          <a href="mailto:info@fasteraim.com" className="faim-btn faim-btn--outline">Contact Support</a>
+          <Link href="/browse" className="faim-btn faim-btn--primary">Browse Listings</Link>
+          <Link href="mailto:info@fasteraim.com" className="faim-btn faim-btn--outline">Contact Support</Link>
         </div>
       </div>
       <Styles />

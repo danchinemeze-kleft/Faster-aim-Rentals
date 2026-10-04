@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
@@ -428,7 +429,13 @@ export default function VerylandVerifyPage() {
               <div style={{ border: '2px dashed #333', borderRadius: 10, padding: '24px', textAlign: 'center', background: '#14161d' }}>
                 {selfiePreview ? (
                   <div>
-                    <img src={selfiePreview} alt="Selfie preview" style={{ width: 140, height: 140, borderRadius: 8, objectFit: 'cover', margin: '0 auto 10px' }} />
+                    <Image
+                      src={selfiePreview}
+                      alt="Selfie preview"
+                      width={140}
+                      height={140}
+                      style={{ width: 140, height: 140, borderRadius: 8, objectFit: 'cover', margin: '0 auto 10px', display: 'block' }}
+                    />
                     <p style={{ color: '#0ef6cc', fontSize: 13, fontWeight: 600 }}>✅ Selfie captured</p>
                   </div>
                 ) : (
@@ -468,7 +475,14 @@ export default function VerylandVerifyPage() {
               {surveyPreview ? (
                 <div>
                   {surveyFile?.type?.startsWith('image/') ? (
-                    <img src={surveyPreview} alt="Survey preview" style={{ maxHeight: 200, maxWidth: '100%', borderRadius: 8, margin: '0 auto 12px' }} />
+                    <Image
+                      src={surveyPreview}
+                      alt="Survey preview"
+                      width={400}
+                      height={200}
+                      unoptimized
+                      style={{ maxHeight: 200, maxWidth: '100%', borderRadius: 8, margin: '0 auto 12px', objectFit: 'contain', display: 'block' }}
+                    />
                   ) : (
                     <div style={{ fontSize: 40, marginBottom: 8 }}>📄</div>
                   )}
@@ -521,7 +535,7 @@ export default function VerylandVerifyPage() {
                 style={{ width: '100%', padding: '12px 14px', background: '#1a1d24', border: '1px solid #333', borderRadius: 8, color: '#fff', fontSize: 14, outline: 'none' }}
               >
                 <option value="c_of_o">Certificate of Occupancy (C of O) — Blue Badge eligible</option>
-                <option value="c_of_o">Governor's Consent — Deep Green Badge eligible</option>
+                <option value="c_of_o">Governor&apos;s Consent — Deep Green Badge eligible</option>
                 <option value="gazette">Government Gazette — Deep Green Badge eligible</option>
               </select>
             </div>
@@ -530,7 +544,14 @@ export default function VerylandVerifyPage() {
               {titlePreview ? (
                 <div>
                   {titleFile?.type?.startsWith('image/') ? (
-                    <img src={titlePreview} alt="Title preview" style={{ maxHeight: 200, maxWidth: '100%', borderRadius: 8, margin: '0 auto 12px' }} />
+                    <Image
+                      src={titlePreview}
+                      alt="Title preview"
+                      width={400}
+                      height={200}
+                      unoptimized
+                      style={{ maxHeight: 200, maxWidth: '100%', borderRadius: 8, margin: '0 auto 12px', objectFit: 'contain', display: 'block' }}
+                    />
                   ) : (
                     <div style={{ fontSize: 40, marginBottom: 8 }}>📜</div>
                   )}
@@ -579,7 +600,14 @@ export default function VerylandVerifyPage() {
               {deedPreview ? (
                 <div>
                   {deedFile?.type?.startsWith('image/') ? (
-                    <img src={deedPreview} alt="Deed preview" style={{ maxHeight: 200, maxWidth: '100%', borderRadius: 8, margin: '0 auto 12px' }} />
+                    <Image
+                      src={deedPreview}
+                      alt="Deed preview"
+                      width={800}
+                      height={500}
+                      unoptimized
+                      style={{ maxHeight: 200, maxWidth: '100%', borderRadius: 8, margin: '0 auto 12px', objectFit: 'contain' }}
+                    />
                   ) : (
                     <div style={{ fontSize: 40, marginBottom: 8 }}>📑</div>
                   )}
@@ -629,7 +657,7 @@ export default function VerylandVerifyPage() {
               <div style={{ fontSize: 13, fontWeight: 700, color: '#0ef6cc', marginBottom: 8, textTransform: 'uppercase' }}>Next Steps:</div>
               <ul style={{ margin: 0, paddingLeft: 20, color: '#ccc', fontSize: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <li>Admin inspects side-by-side KYC photo match and registry stamps</li>
-                <li>Your listing automatically receives the <strong>Blue Badge</strong> (C of O) or <strong>Deep Green Badge</strong> (Gazette/Governor's Consent)</li>
+                <li>Your listing automatically receives the <strong>Blue Badge</strong> (C of O) or <strong>Deep Green Badge</strong> (Gazette/Governor&apos;s Consent)</li>
                 <li>Tenants on Mr. Rent can see your verified status immediately</li>
               </ul>
             </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
@@ -222,12 +223,12 @@ export default function VerylandSubmitPage() {
             </span>
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="/browse" style={{ background: GREEN, color: '#fff', padding: '12px 26px', borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
+            <Link href="/browse" style={{ background: GREEN, color: '#fff', padding: '12px 26px', borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
               Browse Listings
-            </a>
-            <a href="/veryland" style={{ background: 'var(--card-bg)', color: 'var(--text-2)', border: '1.5px solid var(--border-2)', padding: '12px 26px', borderRadius: 8, fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
+            </Link>
+            <Link href="/veryland" style={{ background: 'var(--card-bg)', color: 'var(--text-2)', border: '1.5px solid var(--border-2)', padding: '12px 26px', borderRadius: 8, fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
               Back to Veryland
-            </a>
+            </Link>
           </div>
         </div>
         </div>
@@ -241,9 +242,9 @@ export default function VerylandSubmitPage() {
       {/* Nav */}
       <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)' }} />
       <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: 'var(--card-bg)', position: 'sticky', top: 3, zIndex: 100 }}>
-        <a href="/" style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</a>
+        <Link href="/" style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</Link>
         <span style={{ color: 'var(--border-2)', margin: '0 8px' }}>/</span>
-        <a href="/veryland" style={{ color: GREEN, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Veryland</a>
+        <Link href="/veryland" style={{ color: GREEN, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Veryland</Link>
         <span style={{ color: 'var(--border-2)', margin: '0 8px' }}>/</span>
         <span style={{ color: 'var(--text-1)', fontSize: 14, fontWeight: 600 }}>Submit Documents</span>
       </nav>

@@ -1,5 +1,6 @@
 'use client';
 import GoBackButton from '../components/GoBackButton'
+import Link from 'next/link';
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
@@ -40,7 +41,7 @@ function SaleSuccessInner() {
     <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#ffffff' }}>
       <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)' }} />
       <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 1.5rem', display: 'flex', alignItems: 'center', height: 60, background: 'var(--card-bg)', position: 'sticky', top: 3, zIndex: 100 }}>
-        <a href="/" style={{ color: '#cccccc', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</a>
+        <Link href="/" style={{ color: '#cccccc', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</Link>
         <span style={{ color: '#555', margin: '0 8px' }}>/</span>
         <span style={{ color: '#ffffff', fontSize: 14, fontWeight: 600 }}>Sale Listing</span>
       </nav>
@@ -83,12 +84,12 @@ function SaleSuccessInner() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <a href="/buy" style={{ display: 'block', background: 'linear-gradient(135deg, #0ef6cc, #00c9a7)', color: '#080a0f', padding: '14px', borderRadius: 11, fontWeight: 900, fontSize: 16, textDecoration: 'none' }}>
+              <Link href="/buy" style={{ display: 'block', background: 'linear-gradient(135deg, #0ef6cc, #00c9a7)', color: '#080a0f', padding: '14px', borderRadius: 11, fontWeight: 900, fontSize: 16, textDecoration: 'none' }}>
                 View Buy Property Page →
-              </a>
-              <a href="/" style={{ display: 'block', background: 'rgba(255,255,255,0.06)', border: '1.5px solid var(--border-1)', color: '#cccccc', padding: '13px', borderRadius: 11, fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>
+              </Link>
+              <Link href="/" style={{ display: 'block', background: 'rgba(255,255,255,0.06)', border: '1.5px solid var(--border-1)', color: '#cccccc', padding: '13px', borderRadius: 11, fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>
                 Back to Homepage
-              </a>
+              </Link>
             </div>
           </div>
         )}

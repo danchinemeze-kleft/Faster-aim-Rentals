@@ -10,7 +10,7 @@ export default function PrivacyPolicy() {
         <h1>Privacy Policy</h1>
         <p className="faim-last-updated">Last updated: June 2025</p>
 
-        <p>Faster Aim Technology Limited ("we", "us", or "our") operates the Mr. Rent platform at <strong>rent.fasteraim.com</strong>. This Privacy Policy explains how we collect, use, and protect your personal information when you use our platform.</p>
+        <p>Faster Aim Technology Limited (&ldquo;we&rdquo;, &ldquo;us&rdquo;, or &ldquo;our&rdquo;) operates the Mr. Rent platform at <strong>rent.fasteraim.com</strong>. This Privacy Policy explains how we collect, use, and protect your personal information when you use our platform.</p>
 
         <h2>1. Information We Collect</h2>
         <p>We collect the following types of information:</p>
@@ -39,7 +39,7 @@ export default function PrivacyPolicy() {
         </ul>
 
         <h2>4. Contact Reveals</h2>
-        <p>When a tenant pays ₦5,000 to reveal a landlord's contact, that landlord's phone number is shared with the tenant only. This information is not shared with any third party.</p>
+        <p>When a tenant pays ₦5,000 to reveal a landlord&apos;s contact, that landlord&apos;s phone number is shared with the tenant only. This information is not shared with any third party.</p>
 
         <h2>5. Data Security</h2>
         <p>We use industry-standard encryption and secure servers to protect your data. All payments are processed securely through Paystack.</p>

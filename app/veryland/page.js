@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 const GREEN = '#059669';
 const GREEN_DARK = '#047857';
 const GREEN_LIGHT = '#d1fae5';
@@ -67,7 +69,7 @@ export default function VerylandPage() {
       <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)' }} />
       <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60, position: 'sticky', top: 3, background: 'var(--card-bg)', zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <a href="/" style={{ color: 'var(--text-3)', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Mr. Rent</a>
+          <Link href="/" style={{ color: 'var(--text-3)', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Mr. Rent</Link>
           <span style={{ color: 'var(--border-2)' }}>/</span>
           <span style={{ color: GREEN, fontSize: 14, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 5 }}>
             Veryland
@@ -75,8 +77,8 @@ export default function VerylandPage() {
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <a href="/account" style={{ color: 'var(--text-2)', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Sign in</a>
-          <a href="/veryland/submit" style={{ background: GREEN, color: '#fff', padding: '8px 20px', borderRadius: 8, fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>Get started</a>
+          <Link href="/account" style={{ color: 'var(--text-2)', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Sign in</Link>
+          <Link href="/veryland/submit" style={{ background: GREEN, color: '#fff', padding: '8px 20px', borderRadius: 8, fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>Get started</Link>
         </div>
       </nav>
 

@@ -2,6 +2,7 @@
 
 // NOTE: Run this in Supabase SQL editor to enable the likes feature:
 // ALTER TABLE listings ADD COLUMN IF NOT EXISTS likes integer DEFAULT 0;
+import Image from 'next/image'
 import GoBackButton from '../../components/GoBackButton'
 import { useState, useEffect } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
@@ -380,12 +381,17 @@ export default function ListingPage() {
           >‹</button>
 
           {/* Image */}
-          <img
-            src={images[activeImage]}
-            alt=""
-            onClick={e => e.stopPropagation()}
-            style={{ maxWidth: '88vw', maxHeight: '88vh', objectFit: 'contain', borderRadius: 10, userSelect: 'none' }}
-          />
+          <div style={{ position: 'relative', maxWidth: '88vw', maxHeight: '88vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Image
+              src={images[activeImage]}
+              alt=""
+              width={1600}
+              height={1200}
+              unoptimized
+              onClick={e => e.stopPropagation()}
+              style={{ maxWidth: '88vw', maxHeight: '88vh', width: 'auto', height: 'auto', objectFit: 'contain', borderRadius: 10, userSelect: 'none', display: 'block' }}
+            />
+          </div>
 
           {/* Next */}
           <button
@@ -472,9 +478,12 @@ export default function ListingPage() {
               onClick={() => setLightboxOpen(true)}
               style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', cursor: 'zoom-in', marginBottom: 8 }}
             >
-              <img
+              <Image
                 src={images[activeImage]}
                 alt={listing.title}
+                width={1600}
+                height={1200}
+                unoptimized
                 style={{ width: '100%', height: 'clamp(220px, 45vw, 420px)', objectFit: 'cover', display: 'block' }}
               />
               <div style={{ position: 'absolute', bottom: 12, right: 12, background: 'rgba(0,0,0,0.65)', color: '#fff', fontSize: 12, padding: '4px 12px', borderRadius: 20, backdropFilter: 'blur(4px)' }}>
@@ -498,10 +507,13 @@ export default function ListingPage() {
             {images.length > 1 && (
               <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
                 {images.map((img, i) => (
-                  <img
+                  <Image
                     key={i}
                     src={img}
                     alt=""
+                    width={80}
+                    height={58}
+                    unoptimized
                     onClick={() => setActiveImage(i)}
                     style={{
                       width: 80, height: 58, objectFit: 'cover', borderRadius: 8, cursor: 'pointer', flexShrink: 0,
@@ -603,8 +615,18 @@ export default function ListingPage() {
                 >
                   {/* Thumbnail — use first listing image or dark placeholder */}
                   {images[0]
-                    ? <img src={images[0]} alt="Video thumbnail" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block', filter: 'brightness(0.45)' }} />
-                    : <div style={{ height: 200, background: '#0d0d0d' }} />
+                    ? (
+                      <Image
+                        src={images[0]}
+                        alt="Video thumbnail"
+                        width={1200}
+                        height={800}
+                        unoptimized
+                        style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block', filter: 'brightness(0.45)' }}
+                      />
+                    ) : (
+                      <div style={{ height: 200, background: '#0d0d0d' }} />
+                    )
                   }
                   {/* Play icon */}
                   <div style={{

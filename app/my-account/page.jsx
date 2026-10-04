@@ -225,8 +225,8 @@ export default function MyAccountPage() {
 
             {reveals.length === 0 && (
               <div className="faim-ma-empty-card">
-                <p>🏠 You haven't revealed any landlord contacts yet.</p>
-                <p>Browse listings and pay ₦5,000 to get a landlord's contact details.</p>
+                <p>🏠 You haven&apos;t revealed any landlord contacts yet.</p>
+                <p>Browse listings and pay ₦5,000 to get a landlord&apos;s contact details.</p>
                 <a href="/browse" className="faim-ma-cta-btn">Browse Listings →</a>
               </div>
             )}
@@ -240,7 +240,7 @@ export default function MyAccountPage() {
             {reveals.length === 0 ? (
               <div className="faim-ma-empty-card">
                 <p>🔓 No contacts revealed yet.</p>
-                <p>Find a property you like and pay ₦5,000 to reveal the landlord's contact.</p>
+                <p>Find a property you like and pay ₦5,000 to reveal the landlord&apos;s contact.</p>
                 <a href="/browse" className="faim-ma-cta-btn">Browse Listings →</a>
               </div>
             ) : (

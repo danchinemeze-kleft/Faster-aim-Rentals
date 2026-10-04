@@ -35,13 +35,13 @@ export default function TermsOfService() {
         <h2>4. For Tenants</h2>
         <ul>
           <li>Browsing listings is free.</li>
-          <li>A <strong>₦5,000 contact reveal fee</strong> is charged to access a landlord's phone number.</li>
+          <li>A <strong>₦5,000 contact reveal fee</strong> is charged to access a landlord&apos;s phone number.</li>
           <li>This fee covers platform access and is non-refundable once the contact is revealed.</li>
           <li>You are responsible for verifying properties before making any payments to landlords.</li>
         </ul>
 
         <h2>5. Payments</h2>
-        <p>All payments are processed securely through <strong>Paystack</strong>. By making a payment, you agree to Paystack's terms and conditions. Faster Aim Technology Limited does not store your card details.</p>
+        <p>All payments are processed securely through <strong>Paystack</strong>. By making a payment, you agree to Paystack&apos;s terms and conditions. Faster Aim Technology Limited does not store your card details.</p>
 
         <h2>6. Prohibited Activities</h2>
         <ul>
