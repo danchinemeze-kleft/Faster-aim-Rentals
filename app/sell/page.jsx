@@ -258,7 +258,7 @@ export default function SellPage() {
       <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#ffffff' }}>
         <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)' }} />
         <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: 'var(--card-bg)', position: 'sticky', top: 3, zIndex: 100 }}>
-          <a href="/" style={{ color: '#cccccc', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</a>
+          <link href="/" style={{ color: '#cccccc', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</link>
           <span style={{ color: '#555', margin: '0 8px' }}>/</span>
           <span style={{ color: '#ffffff', fontSize: 14, fontWeight: 600 }}>Sell Property</span>
         </nav>
@@ -280,9 +280,9 @@ export default function SellPage() {
     <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#ffffff' }}>
       <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)' }} />
       <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: 'var(--card-bg)', position: 'sticky', top: 3, zIndex: 100 }}>
-        <a href="/" style={{ color: '#cccccc', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</a>
+        <link href="/" style={{ color: '#cccccc', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</link>
         <span style={{ color: '#555', margin: '0 8px' }}>/</span>
-        <a href="/buy" style={{ color: '#cccccc', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Buy Property</a>
+        <link href="/buy" style={{ color: '#cccccc', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Buy Property</link>
         <span style={{ color: '#555', margin: '0 8px' }}>/</span>
         <span style={{ color: '#ffffff', fontSize: 14, fontWeight: 600 }}>Sell Property</span>
       </nav>
@@ -319,12 +319,12 @@ export default function SellPage() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 400, margin: '0 auto' }}>
-              <a href="/buy" style={{ display: 'block', background: 'linear-gradient(135deg, #0ef6cc, #00c9a7)', color: '#080a0f', padding: '14px', borderRadius: 11, fontWeight: 900, fontSize: 16, textDecoration: 'none' }}>
+              <link href="/buy" style={{ display: 'block', background: 'linear-gradient(135deg, #0ef6cc, #00c9a7)', color: '#080a0f', padding: '14px', borderRadius: 11, fontWeight: 900, fontSize: 16, textDecoration: 'none' }}>
                 Browse Properties for Sale →
-              </a>
-              <a href="/" style={{ display: 'block', background: 'rgba(255,255,255,0.05)', border: '1.5px solid rgba(255,255,255,0.15)', color: '#cccccc', padding: '13px', borderRadius: 11, fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>
+              </link>
+              <link href="/" style={{ display: 'block', background: 'rgba(255,255,255,0.05)', border: '1.5px solid rgba(255,255,255,0.15)', color: '#cccccc', padding: '13px', borderRadius: 11, fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>
                 Back to Homepage
-              </a>
+              </link>
             </div>
           </div>
         )}
