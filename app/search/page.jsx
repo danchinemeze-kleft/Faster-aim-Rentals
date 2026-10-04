@@ -1,7 +1,7 @@
 'use client'
 
 import GoBackButton from '../components/GoBackButton'
-
+import { loadChat, saveChat, clearChat } from '../lib/chatMemory'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import Image from 'next/image'
 import { createBrowserClient } from '@supabase/ssr'
@@ -92,8 +92,38 @@ export default function SearchPage() {
   const [streaming, setStreaming] = useState(false)
   const [user, setUser] = useState(null)
   const [revealLoading, setRevealLoading] = useState(null)
+  const [prefs, setPrefs] = useState({})
+  const [restored, setRestored] = useState(false)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
+
+  // Restore saved chat (3-day window)
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    const saved = loadChat()
+    if (saved.messages.length) {
+      setPrefs(saved.prefs || {})
+      setMessages(saved.messages.map(m => ({ ...m, listings: [] })))
+      const ids = [...new Set(saved.messages.flatMap(m => m.listingIds || []))]
+      if (ids.length) {
+        supabase.from('listings').select('*').in('id', ids).then(({ data }) => {
+          const byId = Object.fromEntries((data || []).map(l => [l.id, l]))
+          setMessages(saved.messages.map(m => ({
+            ...m,
+            listings: (m.listingIds || []).map(id => byId[id]).filter(Boolean),
+          })))
+        })
+      }
+    }
+    setRestored(true)
+  }, [supabase])
+/* eslint-enable react-hooks/set-state-in-effect */
+  // Save after each finished reply
+  useEffect(() => {
+    if (!restored || loading || streaming) return
+    if (!messages.some(m => m.role === 'user')) return
+    saveChat({ messages, prefs })
+  }, [messages, prefs, restored, loading, streaming])
 
   useEffect(() => {
     const getUser = async () => {
@@ -109,6 +139,7 @@ export default function SearchPage() {
 
   // Proactive: show trending listings on first load
   useEffect(() => {
+    if (loadChat().messages.length) return
     let cancelled = false
     fetch('/api/chat', {
       method: 'POST',
@@ -146,7 +177,8 @@ export default function SearchPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: newMessages.map(m => ({ role: m.role, content: m.content })),
+          messages: newMessages.slice(-10).map(m => ({ role: m.role, content: m.content })),
+          prefs,
           userId: user?.id,
         }),
       })
@@ -196,6 +228,8 @@ export default function SearchPage() {
                 updated[updated.length - 1] = last
                 return updated
               })
+            } else if (event.t === 'prefs') {
+              setPrefs(event.v || {})
             } else if (event.t === 'error' && !hasReply) {
               hasReply = true
               setMessages(prev => [...prev, { role: 'assistant', content: "No wahala — I just need a moment. Please send your message again! 🏠" }])
@@ -287,6 +321,15 @@ export default function SearchPage() {
         <div style={{ padding: '4px 0 8px' }}>
           <Breadcrumb theme="dark" items={[{ label: 'Home', href: '/' }, { label: 'Browse', href: '/browse' }, { label: 'Mr. Rent AI', href: '/search' }]} />
         </div>
+        {messages.some(m => m.role === 'user') && (
+          <button
+            className="faim-browse-btn"
+            style={{ marginBottom: 8 }}
+            onClick={() => { clearChat(); window.location.reload() }}
+          >
+            New search
+          </button>
+        )}
         {messages.map((msg, i) => (
           <div key={i}>
             <div className={`faim-message-row faim-message-row--${msg.role}`}>
