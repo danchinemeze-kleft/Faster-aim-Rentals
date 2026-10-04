@@ -2,30 +2,23 @@
 import { useEffect, useState } from 'react';
 
 export default function ThemeToggle() {
-  const [isLight, setIsLight] = useState(false);
+  const [isLight, setIsLight] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('faim-theme') === 'light';
+  });
 
   useEffect(() => {
-    const saved = localStorage.getItem('faim-theme');
-    const isLightMode = saved === 'light';
-    setIsLight(isLightMode);
-    if (isLightMode) {
-      document.documentElement.classList.add('light-mode');
-    } else {
-      document.documentElement.classList.remove('light-mode');
-    }
-  }, []);
+    document.documentElement.classList.toggle('light-mode', isLight);
+    localStorage.setItem('faim-theme', isLight ? 'light' : 'dark');
+  }, [isLight]);
 
   function toggle() {
-    const html = document.documentElement;
-    if (html.classList.contains('light-mode')) {
-      html.classList.remove('light-mode');
-      localStorage.setItem('faim-theme', 'dark');
-      setIsLight(false);
-    } else {
-      html.classList.add('light-mode');
-      localStorage.setItem('faim-theme', 'light');
-      setIsLight(true);
-    }
+    setIsLight((prev) => {
+      const next = !prev;
+      document.documentElement.classList.toggle('light-mode', next);
+      localStorage.setItem('faim-theme', next ? 'light' : 'dark');
+      return next;
+    });
   }
 
   return (

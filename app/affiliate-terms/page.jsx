@@ -36,10 +36,10 @@ export default function AffiliateTermsPage() {
           <section className="bg-slate-950/50 p-5 rounded-xl border border-slate-800/60">
             <h2 className="text-lg font-semibold text-white mb-3">DEFINITIONS</h2>
             <ul className="space-y-2">
-              <li><strong className="text-slate-200">"Company," "we," "our," "us"</strong> — Faster Aim Technology.</li>
-              <li><strong className="text-slate-200">"The App," "the Platform," "it"</strong> — Mr. Rent, and any associated programs including this affiliate program.</li>
-              <li><strong className="text-slate-200">"You," "your," "User"</strong> — the individual who has signed up to participate in this affiliate program.</li>
-              <li><strong className="text-slate-200">"Client"</strong> — any person who signs up on Mr. Rent using your referral link.</li>
+              <li><strong className="text-slate-200">“Company,” “we,” “our,” “us”</strong> — Faster Aim Technology.</li>
+              <li><strong className="text-slate-200">“The App,” “the Platform,” “it”</strong> — Mr. Rent, and any associated programs including this affiliate program.</li>
+              <li><strong className="text-slate-200">“You,” “your,” “User”</strong> — the individual who has signed up to participate in this affiliate program.</li>
+              <li><strong className="text-slate-200">“Client”</strong> — any person who signs up on Mr. Rent using your referral link.</li>
             </ul>
           </section>
 
@@ -64,7 +64,7 @@ export default function AffiliateTermsPage() {
 
             <div>
               <h3 className="font-semibold text-white mb-1">4. How you earn</h3>
-              <p>You earn only when someone you referred actually uses Mr. Rent by making a real payment — either to list a property for rent or to reveal a property owner's contact details.</p>
+              <p>You earn only when someone you referred actually uses Mr. Rent by making a real payment — either to list a property for rent or to reveal a property owner&apos;s contact details.</p>
             </div>
 
             <div>

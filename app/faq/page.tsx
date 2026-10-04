@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { FAQS } from "./faq-data";
@@ -33,7 +34,7 @@ export default function FaqPage() {
     <div className="faq">
       <nav className="faq-nav">
         <Link href="/" className="faq-brand">
-          <img src="/icon.svg" alt="" />
+          <Image src="/icon.svg" alt="" width={24} height={24} />
           Mr. Rent
         </Link>
         <div className="faq-links">
@@ -81,9 +82,9 @@ export default function FaqPage() {
           ))}
         </div>
 
-        {items.map((f) => {
-          const heading = f.category !== last ? <h2>{f.category}</h2> : null;
-          last = f.category;
+        {items.map((f, index) => {
+          const heading =
+            index === 0 || items[index - 1].category !== f.category ? <h2>{f.category}</h2> : null;
           const isOpen = open.has(f.question);
           return (
             <div key={f.question}>
