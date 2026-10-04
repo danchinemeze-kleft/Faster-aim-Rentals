@@ -290,7 +290,8 @@ function ListPageInner() {
       || searchParams.get('free') === '1'
       || searchParams.get('new') === '1'
     if (!hasSignal) return
-    if (isSubscribed || monthlyCount < FREE_MONTHLY_LIMIT) {
+       if (isSubscribed || monthlyCount < FREE_MONTHLY_LIMIT) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowForm(true)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

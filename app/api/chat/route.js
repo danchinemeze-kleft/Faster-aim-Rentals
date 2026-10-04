@@ -56,24 +56,39 @@ const STATE_KEYWORDS = {
   Kano: ['kano'],
 }
 
-// NOTE: the keys here must match the exact property_type values stored in your
-// listings table. flat, self_contain, duplex, bungalow, mansion, room_and_parlour,
-// shop and land already worked. Check that warehouse and event_center match your
-// table; if your table uses different names, change the keys below to match.
+// The keys here must match the property_type values saved in the listings table
+// (and by the list-a-property form). Types with no listings yet simply return no cards.
+// Order matters: specific types come before general ones.
 const TYPE_KEYWORDS = {
+  self_contain: ['self contain', 'selfcontain', 'self-contain', 'mini flat'],
+  room_and_parlour: ['room and parlour', 'room & parlour', 'single room', 'room and palour'],
+  studio: ['studio'],
+  penthouse: ['penthouse'],
+  boys_quarters: ['boys quarters', "boys' quarters", 'bq'],
+  duplex: ['duplex', 'terrace', 'terraced', 'semi detached', 'semi-detached'],
   flat: ['flat', 'apartment'],
-  self_contain: ['self contain', 'selfcontain', 'self-contain'],
-  duplex: ['duplex'],
-  bungalow: ['bungalow'],
-  mansion: ['mansion'],
-  room_and_parlour: ['room and parlour', 'room & parlour', 'single room'],
-  shop: ['shop', 'office'],
+  hotel: ['hotel', 'guest house', 'guesthouse', 'lodge', 'motel'],
+  hostel: ['hostel', 'student hostel'],
+  house: ['house', 'bungalow', 'mansion', 'villa', 'home'],
+  event_center: ['event center', 'event centre', 'event hall', 'banquet hall', 'hall'],
+  warehouse: ['warehouse', 'store house', 'storehouse'],
+  factory: ['factory', 'industrial'],
+  office: ['office', 'office space', 'co-working', 'coworking'],
+  shop: ['shop', 'store', 'stall', 'plaza', 'mall'],
+  school: ['school'],
+  farm: ['farm', 'farmland', 'farm land'],
   land: ['land', 'plot'],
-  warehouse: ['warehouse'],
-  event_center: ['event center', 'event centre', 'event hall'],
 }
 
-const NO_BEDROOM_TYPES = ['land', 'shop', 'warehouse', 'event_center']
+const NO_BEDROOM_TYPES = ['land', 'farm', 'shop', 'office', 'warehouse', 'factory', 'event_center', 'school', 'hotel', 'hostel']
+
+// Rent, sale or shortlet (saved in the listing_type column)
+const MODE_KEYWORDS = {
+  shortlet: ['shortlet', 'short let', 'short-let', 'short stay', 'per night', 'nightly', 'airbnb', 'vacation rental', 'holiday rental'],
+  sale: ['for sale', 'sale', 'buy', 'purchase', 'to buy'],
+  rent: ['rent', 'rental', 'lease', 'to let'],
+}
+const LISTING_TYPES = ['rent', 'sale', 'shortlet']
 
 // Whole-word match (also allows a plural "s"), so "landlord" no longer counts as "land"
 function matchKeyword(lower, kw) {
@@ -104,6 +119,11 @@ function extractIntent(text) {
     if (keywords.some(kw => matchKeyword(lower, kw))) { propertyType = type; break }
   }
 
+  let listingType = null
+  for (const [mode, keywords] of Object.entries(MODE_KEYWORDS)) {
+    if (keywords.some(kw => matchKeyword(lower, kw))) { listingType = mode; break }
+  }
+
   const mBed = lower.match(/(\d+)\s*(?:bed(?:room)?s?|br\b)/)
   const bedrooms = mBed ? parseInt(mBed[1]) : null
 
@@ -113,7 +133,7 @@ function extractIntent(text) {
   if (mM) maxPrice = Math.round(parseFloat(mM[1]) * 1_000_000)
   else if (mK) maxPrice = Math.round(parseFloat(mK[1]) * 1_000)
 
-  return { state, place, propertyType, bedrooms, maxPrice }
+  return { state, place, propertyType, listingType, bedrooms, maxPrice }
 }
 
 // ── Saved conversation preferences ─────────────────────────
@@ -128,6 +148,7 @@ function sanitizePrefs(raw) {
     if (p) out.place = p
   }
   if (typeof raw.propertyType === 'string' && TYPE_KEYWORDS[raw.propertyType]) out.propertyType = raw.propertyType
+  if (typeof raw.listingType === 'string' && LISTING_TYPES.includes(raw.listingType)) out.listingType = raw.listingType
   const b = Number(raw.bedrooms)
   if (Number.isInteger(b) && b >= 1 && b <= 20) out.bedrooms = b
   const p = Number(raw.maxPrice)
@@ -138,7 +159,7 @@ function sanitizePrefs(raw) {
 // New details from the latest message override old ones; everything else is kept
 function mergePrefs(old, intent) {
   const merged = { ...old }
-  for (const k of ['state', 'place', 'propertyType', 'bedrooms', 'maxPrice']) {
+  for (const k of ['state', 'place', 'propertyType', 'listingType', 'bedrooms', 'maxPrice']) {
     if (intent[k] != null) merged[k] = intent[k]
   }
   if (intent.state && !intent.place) delete merged.place
@@ -154,6 +175,7 @@ function describePrefs(p) {
   else if (p.state) parts.push(`location: ${p.state}`)
   else if (p.place) parts.push(`location: ${p.place}`)
   if (p.propertyType) parts.push(`property type: ${p.propertyType.replace(/_/g, ' ')}`)
+  if (p.listingType) parts.push(`looking to: ${p.listingType === 'sale' ? 'buy' : p.listingType === 'shortlet' ? 'book a shortlet' : 'rent'}`)
   if (p.bedrooms) parts.push(`bedrooms: ${p.bedrooms}`)
   if (p.maxPrice) parts.push(`budget: up to ₦${p.maxPrice.toLocaleString('en-NG')}`)
   if (!parts.length) return ''
@@ -194,18 +216,19 @@ async function getUserPreferences(supabase, userId) {
 // ── Fetch and rank listings ────────────────────────────────
 
 async function fetchListings(supabase, intent, userPrefs) {
-  const { state, propertyType, bedrooms, maxPrice } = intent
-  if (!state && !propertyType && !bedrooms && !maxPrice) return []
+  const { state, propertyType, listingType, bedrooms, maxPrice } = intent
+  if (!state && !propertyType && !listingType && !bedrooms && !maxPrice) return []
 
   let query = supabase
     .from('listings')
-    .select('id, title, location, city, state, price, price_period, property_type, bedrooms, images')
+    .select('id, title, location, city, state, price, price_period, property_type, listing_type, bedrooms, images')
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
     .limit(10)
 
   if (state) query = query.eq('state', state)
   if (propertyType) query = query.eq('property_type', propertyType)
+  if (listingType) query = query.eq('listing_type', listingType)
   if (maxPrice) query = query.lte('price', maxPrice)
   if (bedrooms) query = query.eq('bedrooms', String(bedrooms))
 
@@ -226,7 +249,7 @@ async function fetchListings(supabase, intent, userPrefs) {
 async function fetchTrending(supabase) {
   const { data } = await supabase
     .from('listings')
-    .select('id, title, location, city, state, price, price_period, property_type, bedrooms, images')
+    .select('id, title, location, city, state, price, price_period, property_type, listing_type, bedrooms, images')
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
     .limit(3)
@@ -327,7 +350,7 @@ export async function POST(request) {
         // question like "what is caution fee?" doesn't pop up unrelated cards.
         // The search itself uses the merged details, so "Awka" after "2 bedroom flat" works.
         try {
-          const hasNewIntent = ['state', 'propertyType', 'bedrooms', 'maxPrice'].some(k => intentNow[k] != null)
+          const hasNewIntent = ['state', 'propertyType', 'listingType', 'bedrooms', 'maxPrice'].some(k => intentNow[k] != null)
           if (hasNewIntent) {
             const userPrefs = await getUserPreferences(supabase, userId)
             const listings = await fetchListings(supabase, mergedPrefs, userPrefs)

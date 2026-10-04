@@ -8,6 +8,9 @@ import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from '../components/Breadcrumb'
 import ListenButton from '../components/ListenButton'
 
+// Where a for-sale listing's detail page lives (check your app folder)
+const SALE_PATH = '/buy'
+
 // Use useMemo to prevent recreating supabase client on every render
 const useSupabase = () => {
   return useMemo(() => createBrowserClient(
@@ -52,7 +55,7 @@ function ListingCard({ listing: l, revealLoading, onReveal }) {
       <div className="faim-lcard-body">
         <div className="faim-lcard-price">
           ₦{Number(l.price).toLocaleString('en-NG')}
-          <span>/{l.price_period || 'yr'}</span>
+          {l.source !== 'sale' && <span>/{l.price_period || 'yr'}</span>}
         </div>
         <div className="faim-lcard-title">{l.title}</div>
         <div className="faim-lcard-loc">📍 {l.location}, {l.state}</div>
@@ -62,18 +65,20 @@ function ListingCard({ listing: l, revealLoading, onReveal }) {
           </div>
         )}
         <a
-          href={`/listing/${l.id}`}
+          href={l.source === 'sale' ? `${SALE_PATH}/${l.id}` : `/listing/${l.id}`}
           className="faim-lcard-view-btn"
         >
           View Details →
         </a>
-        <button
-          className="faim-lcard-reveal-btn"
-          disabled={revealLoading === l.id}
-          onClick={() => onReveal(l)}
-        >
-          {revealLoading === l.id ? 'Please wait...' : 'Reveal Contact • ₦5k'}
-        </button>
+        {l.source !== 'sale' && (
+          <button
+            className="faim-lcard-reveal-btn"
+            disabled={revealLoading === l.id}
+            onClick={() => onReveal(l)}
+          >
+            {revealLoading === l.id ? 'Please wait...' : 'Reveal Contact • ₦5k'}
+          </button>
+        )}
       </div>
     </div>
   )
@@ -84,7 +89,7 @@ export default function SearchPage() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: "Hello! I'm Mr. Rent, your personal property assistant. 🏠\n\nI can help you find the perfect rental in Nigeria. Tell me — what kind of property are you looking for, and in which city or area?"
+      content: "Hello! I'm Mr. Rent, your personal property assistant. 🏠\n\nI can help you find the right property in Nigeria, to rent or to buy. Tell me — what kind of property are you looking for, and in which city or area?"
     }
   ])
   const [input, setInput] = useState('')
@@ -106,8 +111,13 @@ export default function SearchPage() {
       setMessages(saved.messages.map(m => ({ ...m, listings: [] })))
       const ids = [...new Set(saved.messages.flatMap(m => m.listingIds || []))]
       if (ids.length) {
-        supabase.from('listings').select('*').in('id', ids).then(({ data }) => {
-          const byId = Object.fromEntries((data || []).map(l => [l.id, l]))
+        Promise.all([
+          supabase.from('listings').select('*').in('id', ids),
+          supabase.from('property_sales').select('*').in('id', ids),
+        ]).then(([rent, sale]) => {
+          const byId = {}
+          for (const l of rent.data || []) byId[l.id] = l
+          for (const l of sale.data || []) byId[l.id] = { ...l, source: 'sale' }
           setMessages(saved.messages.map(m => ({
             ...m,
             listings: (m.listingIds || []).map(id => byId[id]).filter(Boolean),
@@ -117,7 +127,8 @@ export default function SearchPage() {
     }
     setRestored(true)
   }, [supabase])
-/* eslint-enable react-hooks/set-state-in-effect */
+  /* eslint-enable react-hooks/set-state-in-effect */
+
   // Save after each finished reply
   useEffect(() => {
     if (!restored || loading || streaming) return
@@ -294,6 +305,7 @@ export default function SearchPage() {
     "2 bedroom flat in Lekki under ₦500k/year",
     "Self-contain in Awka or Onitsha",
     "3 bedroom duplex in Abuja",
+    "Plot of land for sale in Enugu",
     "What is caution fee?",
   ]
 
