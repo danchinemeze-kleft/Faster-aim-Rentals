@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import DownloadPopup from "@/app/components/DownloadPopup";
+import DownloadPopup from "./components/DownloadPopup";
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
@@ -353,7 +353,7 @@ export default function Home() {
           </svg>
           Mr. Rent
         </div>
-        
+
 <DownloadPopup />
 
         {/* Desktop Navigation Links */}
