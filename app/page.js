@@ -1,7 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+
 import DownloadPopup from "./components/DownloadPopup";
+import DownloadButton from "./components/DownloadButton";
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
@@ -343,9 +345,20 @@ export default function Home() {
   <span style={{ letterSpacing: '1px' }}>★★★★★</span>
   <span>Rated 5 Stars by Verified Renters — See Reviews</span>
 </div>
-      <Breadcrumb theme="Gold" items={[{ label: 'Home', href: '/' }]} />
-      {/* Navbar */}
-      <nav style={s.nav} className="nav-3d">
+      <div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 12,
+    padding: "0 16px",
+  }}
+>
+  <Breadcrumb theme="Gold" items={[{ label: 'Home', href: '/' }]} />
+  <DownloadButton />
+</div>
+{/* Navbar */}
+<nav style={s.nav} className="nav-3d">
         <div style={s.navBrand}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px', color: '#0ea5e9' }}>
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
