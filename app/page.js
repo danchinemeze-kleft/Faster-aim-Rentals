@@ -385,6 +385,7 @@ export default function Home() {
     <a href="/browse">Browse Rentals</a>
     <a href="/list">List Property</a>
     <a href="/veryland">Verified Properties</a>
+    <a href="/services">Our Services</a>
     <a href="/search">AI Chat Assistant</a>
     <a href="/affiliate/auth">Earn with Referrals</a>
     <a href="/about">About Us</a>
@@ -441,6 +442,17 @@ export default function Home() {
                   <path d="m9 11 2 2 4-4"/>
                 </svg>
                 <span>Verified Properties</span>
+              </a>
+
+              {/* Our Services */}
+              <a href="/services" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+                  <rect x="3" y="3" width="7" height="7"/>
+                  <rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                <span>Our Services</span>
               </a>
 
               {/* Dashboard (Conditional) */}
@@ -703,6 +715,13 @@ export default function Home() {
         </section>
       )}
 
+      {/* Our Services button */}
+      <section style={s.servicesWrap}>
+        <Link href="/services" style={s.servicesBtn} className="make-money-btn">
+          Our Services
+        </Link>
+      </section>
+
       {/* How It Works */}
       <section style={s.sectionWrap}>
         <div style={s.sectionInner}>
@@ -831,6 +850,8 @@ export default function Home() {
         </div>
       </section>
 
+     
+
       {/* Bottom CTA */}
       <section style={s.ctaSection}>
         <div style={s.ctaInner}>
@@ -861,6 +882,7 @@ export default function Home() {
         <a href="/browse" className="footer-link" style={s.footerLink}>Browse Rentals</a>
         <a href="/list" className="footer-link" style={s.footerLink}>List Property</a>
         <a href="/veryland" className="footer-link" style={s.footerLink}>Verified Properties</a>
+        <a href="/services" className="footer-link" style={s.footerLink}>Our Services</a>
         <a href="/search" className="footer-link" style={s.footerLink}>AI Chat Assistant</a>
       </div>
       <div>
@@ -1277,6 +1299,25 @@ const s = {
     fontSize: '0.78rem',
     color: '#64748b',
     fontWeight: '600',
+  },
+
+  // Our Services button
+  servicesWrap: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '0.5rem 1rem 1rem',
+  },
+  servicesBtn: {
+    textDecoration: 'none',
+    background: 'linear-gradient(135deg, #0ea5e9, #14b8a6)',
+    color: '#ffffff',
+    padding: '0.9rem 2.4rem',
+    borderRadius: '9999px',
+    fontWeight: '800',
+    fontSize: '1rem',
+    display: 'inline-flex',
+    alignItems: 'center',
+    boxShadow: '0 14px 34px -6px rgba(20, 184, 166, 0.6), 0 0 0 8px rgba(14, 165, 233, 0.12)',
   },
 
   // How It Works
