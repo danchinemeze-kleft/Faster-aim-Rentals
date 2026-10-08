@@ -634,6 +634,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      
 
       {/* Featured Properties */}
       {featured.length > 0 && (
