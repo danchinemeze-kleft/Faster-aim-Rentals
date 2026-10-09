@@ -46,7 +46,7 @@ const services: Service[] = [
 
 const prices: { name: string; price: string }[] = [
   { name: 'Search and AI chat', price: 'Free' },
-  { name: 'First 2 listings', price: 'Free' },
+  { name: 'First 2 listings  every month', price: 'Free' },
   { name: 'Contact reveal', price: '\u20A65,000' },
   { name: 'Landlord plan', price: '\u20A610,000 / month' },
   { name: 'Bookings', price: '9% commission' },
