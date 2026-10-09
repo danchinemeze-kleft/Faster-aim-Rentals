@@ -1,6 +1,13 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import styles from './services.module.css';
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '800'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Our Services',
@@ -11,7 +18,7 @@ export const metadata: Metadata = {
 type Property = { label: string; href: string };
 type Service = { title: string; note: string; href?: string; soon?: boolean };
 
-// Property buttons (oval). Change the label or link, or add a new line.
+// Oval property buttons. Change a label or link, or add a new line.
 const properties: Property[] = [
   { label: 'Houses and flats', href: '/browse?type=house' },
   { label: 'Rooms and self-contain', href: '/browse?type=room' },
@@ -47,59 +54,94 @@ const prices: { name: string; price: string }[] = [
 
 export default function ServicesPage() {
   return (
-    <main className={styles.page}>
-      <h1 className={styles.title}>Our Services</h1>
-      <p className={styles.sub}>Everything Mr. Rent does, one tap away.</p>
+    <div className={`${jakarta.className} ${styles.wrap}`}>
+      {/* Navbar (same look as the homepage) */}
+      <nav className={styles.nav}>
+        <Link href="/" className={styles.brand}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginRight: 8, color: '#0ea5e9' }}>
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          Mr. Rent
+        </Link>
+        <div className={styles.navRight}>
+          <Link href="/browse" className={styles.navLink}>Browse Rentals</Link>
+          <Link href="/list" className={styles.navLink}>List Property</Link>
+          <Link href="/account" className={styles.navBtn}>Get started</Link>
+        </div>
+      </nav>
 
-      <h2 className={styles.heading}>Find property</h2>
-      <div className={styles.grid}>
-        {properties.map((p) => (
-          <Link key={p.label} href={p.href} className={`${styles.btn} ${styles.pill}`}>
-            {p.label}
-          </Link>
-        ))}
-      </div>
+      <main className={styles.page}>
+        <h1 className={styles.title}>
+          Our <span>Services</span>
+        </h1>
+        <p className={styles.sub}>Everything Mr. Rent does, one tap away.</p>
 
-      <h2 className={styles.heading}>What you can do</h2>
-      <div className={styles.grid}>
-        {services.map((s) =>
-          s.soon || !s.href ? (
-            <span
-              key={s.title}
-              className={`${styles.btn} ${styles.card} ${styles.soon}`}
-              aria-disabled="true"
-            >
-              <b>{s.title}</b>
-              <small>{s.note}</small>
-              <em>Coming soon</em>
-            </span>
-          ) : (
-            <Link key={s.title} href={s.href} className={`${styles.btn} ${styles.card}`}>
-              <b>{s.title}</b>
-              <small>{s.note}</small>
+        <h2 className={styles.heading}>Find property</h2>
+        <div className={styles.grid}>
+          {properties.map((p) => (
+            <Link key={p.label} href={p.href} className={`${styles.btn} ${styles.pill}`}>
+              {p.label}
             </Link>
-          )
-        )}
-      </div>
+          ))}
+        </div>
 
-      <h2 className={styles.heading}>Prices</h2>
-      <ul className={styles.prices}>
-        {prices.map((p) => (
-          <li key={p.name}>
-            <span>{p.name}</span>
-            <b>{p.price}</b>
-          </li>
-        ))}
-      </ul>
+        <h2 className={styles.heading}>What you can do</h2>
+        <div className={styles.grid}>
+          {services.map((s) =>
+            s.soon || !s.href ? (
+              <span
+                key={s.title}
+                className={`${styles.btn} ${styles.card} ${styles.soon}`}
+                aria-disabled="true"
+              >
+                <b>{s.title}</b>
+                <small>{s.note}</small>
+                <em>Coming soon</em>
+              </span>
+            ) : (
+              <Link key={s.title} href={s.href} className={`${styles.btn} ${styles.card}`}>
+                <b>{s.title}</b>
+                <small>{s.note}</small>
+              </Link>
+            )
+          )}
+        </div>
 
-      <div className={styles.cta}>
-        <Link href="/search" className={`${styles.btn} ${styles.pill} ${styles.main}`}>
-          Start Searching
-        </Link>
-        <Link href="/list" className={`${styles.btn} ${styles.pill} ${styles.alt}`}>
-          Create a Free Listing
-        </Link>
-      </div>
-    </main>
+        <h2 className={styles.heading}>Prices</h2>
+        <ul className={styles.prices}>
+          {prices.map((p) => (
+            <li key={p.name}>
+              <span>{p.name}</span>
+              <b>{p.price}</b>
+            </li>
+          ))}
+        </ul>
+
+        <div className={styles.cta}>
+          <Link href="/search" className={`${styles.btn} ${styles.pill} ${styles.main}`}>
+            Start Searching
+          </Link>
+          <Link href="/list" className={`${styles.btn} ${styles.pill} ${styles.alt}`}>
+            Create a Free Listing
+          </Link>
+        </div>
+      </main>
+
+      {/* Footer (same look as the homepage) */}
+      <footer className={styles.footer}>
+        <div className={styles.footerCard}>
+          <div className={styles.footerLinks}>
+            <Link href="/browse">Browse Rentals</Link>
+            <Link href="/list">List Property</Link>
+            <Link href="/about">About Us</Link>
+            <Link href="/faq">FAQ</Link>
+            <Link href="/privacy-policy">Privacy Policy</Link>
+            <Link href="/terms">Terms of Service</Link>
+          </div>
+          <p className={styles.copy}>&copy; {new Date().getFullYear()} Mr. Rent. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
   );
 }
