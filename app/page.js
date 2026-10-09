@@ -155,7 +155,7 @@ export default function Home() {
 
   const handleBubbleNo = () => {
     dismissBubble()
-    router.push('/terms-of-serviece')
+    router.push('/terms')
   }
 
   function formatNaira(amount) {
@@ -389,7 +389,7 @@ export default function Home() {
     <a href="/search">AI Chat Assistant</a>
     <a href="/affiliate/auth">Earn with Referrals</a>
     <a href="/about">About Us</a>
-    <a href="/contact">Contact &amp; Support</a>
+    <a href="/support">Contact &amp; Support</a>
     <a href="/faq">FAQ</a>
   </div>
 </div>
@@ -522,7 +522,7 @@ export default function Home() {
               <p style={{ fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', paddingLeft: '0.5rem' }}>Legal &amp; Info</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 <a href="/privacy-policy" style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }} onClick={() => setMenuOpen(false)}>Privacy Policy</a>
-                <a href="/terms-of-service" style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }} onClick={() => setMenuOpen(false)}>Terms of Service</a>
+                <a href="/terms" style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }} onClick={() => setMenuOpen(false)}>Terms of Service</a>
               </div>
             </div>
 

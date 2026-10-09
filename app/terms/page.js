@@ -1,12 +1,11 @@
 'use client'
-import GoBackButton from '../components/GoBackButton'
 import Breadcrumb from '../components/Breadcrumb'
 
 export default function TermsOfService() {
   return (
     <div className="faim-legal-page">
       <div className="faim-legal-container">
-        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Browse', href: '/browse' }, { label: 'Terms of Service', href: '/terms-of-service' }]} />
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Browse', href: '/browse' }, { label: 'Terms of Service', href: '/terms' }]} />
         <h1>Terms of Service</h1>
         <p className="faim-last-updated">Last updated: June 2025</p>
 
@@ -87,16 +86,7 @@ export default function TermsOfService() {
           outline: 1.5px solid #0ef6cc;
           outline-offset: -5px;
         }
-        .faim-back-link {
-          color: #14B8A6;
-          text-decoration: none;
-          font-size: 0.85rem;
-          font-weight: 600;
-          display: inline-block;
-          margin-bottom: 24px;
-        }
-        .faim-back-link:hover { text-decoration: underline; }
-        h1 {
+        .faim-legal-container h1 {
           font-size: 2rem;
           color: #080a0f;
           margin-bottom: 4px;
@@ -106,19 +96,19 @@ export default function TermsOfService() {
           font-size: 0.8rem;
           margin-bottom: 24px;
         }
-        h2 {
+        .faim-legal-container h2 {
           font-size: 1.1rem;
           color: #080a0f;
           margin: 28px 0 10px;
           border-left: 3px solid #0ef6cc;
           padding-left: 10px;
         }
-        p { color: #444; line-height: 1.7; margin-bottom: 12px; }
-        ul { color: #444; line-height: 1.8; padding-left: 20px; margin-bottom: 12px; }
-        li { margin-bottom: 4px; }
+        .faim-legal-container p { color: #444; line-height: 1.7; margin-bottom: 12px; }
+        .faim-legal-container ul { color: #444; line-height: 1.8; padding-left: 20px; margin-bottom: 12px; }
+        .faim-legal-container li { margin-bottom: 4px; }
         @media (max-width: 480px) {
           .faim-legal-container { padding: 24px 16px; }
-          h1 { font-size: 1.5rem; }
+          .faim-legal-container h1 { font-size: 1.5rem; }
         }
       `}</style>
     </div>
