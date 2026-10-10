@@ -23,12 +23,14 @@ Nigerian property knowledge:
 
 How to handle searches:
 1. Confirm what you understood (location, property type, bedrooms, budget, rent or buy) in one sentence.
-2. Tell the user matching listings will appear as cards below.
+2. If the SEARCH RESULT note at the end of these instructions says listings were found, tell the user matching listings appear as cards below. If it says none were found, follow the NO LISTINGS FOUND rules below instead.
 3. If the budget seems low for the area, mention realistic ranges.
 4. If a search request is vague, ask ONE focused follow-up, starting with location.
 Vary how you phrase this so you never sound scripted.
 
-Listing cards: Listings from our platform appear automatically below your reply. Never invent property details, prices, addresses or phone numbers. If the cards shown do not match what the user wants, say so honestly.
+Listing cards: Listings from our platform appear below your reply only when the SEARCH RESULT note says some were found. Never invent property details, prices, addresses or phone numbers. If the cards shown do not match what the user wants, say so honestly.
+
+NO LISTINGS FOUND: When the SEARCH RESULT note says no matching listings were found, never say or imply that cards will appear below. Say honestly and briefly that you couldn't find that kind of property in the city or area, and that such listings may not be active there at the moment. For example: "I couldn't find any hotels in Awka right now, as such listings may not be active in that area at the moment." Then offer one next step: you can check the nearest matching areas or a similar property type, or the user can browse all available properties at https://rent.fasteraim.com/listings. Keep it to 2-3 short sentences, do not over-apologize, do not invent alternatives, and ask at most one follow-up question.
 
 Contact reveal: Seekers pay a one-time fee of 5,000 naira to unlock a landlord's or owner's phone number directly on the platform, with no street-agent middlemen.
 
@@ -281,7 +283,31 @@ export async function POST(request) {
     // What the user just said, merged with what they told us earlier
     const intentNow = extractIntent(lastMessage)
     const mergedPrefs = mergePrefs(sanitizePrefs(prefs), intentNow)
-    const systemInstruction = SYSTEM_PROMPT + describePrefs(mergedPrefs)
+
+    // Run the search BEFORE calling Gemini, so the bot knows if cards will show.
+    // Only search when the latest message carries a search detail, so a general
+    // question like "what is caution fee?" doesn't pop up unrelated cards.
+    const hasNewIntent = ['state', 'propertyType', 'listingType', 'bedrooms', 'maxPrice'].some(k => intentNow[k] != null)
+    let listings = null // null = no search was run
+    if (hasNewIntent) {
+      try {
+        const userPrefs = await getUserPreferences(supabase, userId)
+        listings = await fetchListings(supabase, mergedPrefs, userPrefs)
+      } catch (err) {
+        console.error('Listings error:', err?.message)
+      }
+    }
+
+    let searchNote
+    if (listings && listings.length) {
+      searchNote = `\n\nSEARCH RESULT: ${listings.length} matching listing(s) were found and will appear as cards below your reply.`
+    } else if (listings) {
+      searchNote = `\n\nSEARCH RESULT: NO matching listings were found for this request. Do not mention cards appearing below. Follow the NO LISTINGS FOUND rules.`
+    } else {
+      searchNote = `\n\nSEARCH RESULT: No search was run for this message. Do not mention cards.`
+    }
+
+    const systemInstruction = SYSTEM_PROMPT + describePrefs(mergedPrefs) + searchNote
 
     const stream = new ReadableStream({
       async start(controller) {
@@ -346,19 +372,8 @@ export async function POST(request) {
           send({ t: 'error' })
         }
 
-        // Only search when the latest message carries a search detail, so a general
-        // question like "what is caution fee?" doesn't pop up unrelated cards.
-        // The search itself uses the merged details, so "Awka" after "2 bedroom flat" works.
-        try {
-          const hasNewIntent = ['state', 'propertyType', 'listingType', 'bedrooms', 'maxPrice'].some(k => intentNow[k] != null)
-          if (hasNewIntent) {
-            const userPrefs = await getUserPreferences(supabase, userId)
-            const listings = await fetchListings(supabase, mergedPrefs, userPrefs)
-            send({ t: 'listings', v: listings })
-          }
-        } catch (err) {
-          console.error('Listings error:', err?.message)
-        }
+        // Cards were already searched before the AI replied; just send them
+        if (listings) send({ t: 'listings', v: listings })
 
         // Send the updated details back so the page can save them
         send({ t: 'prefs', v: mergedPrefs })
