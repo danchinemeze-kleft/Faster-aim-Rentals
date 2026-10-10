@@ -81,6 +81,16 @@ const PT_GROUPS = ['Residential', 'Commercial', 'Event & Community', 'Land']
 
 const FREE_MONTHLY_LIMIT = 2
 
+// Shortlets are always priced per night (stored as 'daily' in the database).
+const SHORTLET_TYPE = 'shortlet'
+
+// Human-friendly price period for display. Shortlets always show "night".
+const periodLabel = (period, type) => {
+  if (type === SHORTLET_TYPE) return 'night'
+  const labels = { yearly: 'year', monthly: 'month', weekly: 'week', daily: 'day', event: 'event' }
+  return labels[period] || period
+}
+
 const emptyForm = {
   title: '',
   property_number: '',
@@ -318,7 +328,8 @@ function ListPageInner() {
       city: listing.city || '',
       state: listing.state || '',
       price: listing.price || '',
-      price_period: listing.price_period || 'yearly',
+      // Shortlets are always priced per night
+      price_period: listing.property_type === SHORTLET_TYPE ? 'daily' : (listing.price_period || 'yearly'),
       property_type: listing.property_type || 'apartment',
       bedrooms: listing.bedrooms || 1,
       bathrooms: listing.bathrooms || 1,
@@ -351,7 +362,20 @@ function ListPageInner() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
-    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
+    setFormData(prev => {
+      const next = { ...prev, [name]: type === 'checkbox' ? checked : value }
+
+      // Shortlet → price per night automatically.
+      // Switching away from shortlet → back to the yearly default.
+      if (name === 'property_type') {
+        if (value === SHORTLET_TYPE) {
+          next.price_period = 'daily'
+        } else if (prev.property_type === SHORTLET_TYPE) {
+          next.price_period = 'yearly'
+        }
+      }
+      return next
+    })
   }
 
   const toggleAmenity = (amenity) => {
@@ -504,7 +528,8 @@ videoEl.src = URL.createObjectURL(file)
         city: formData.city || null,
         state: formData.state,
         price: parseInt(formData.price),
-        price_period: formData.price_period,
+        // Safety net: a shortlet is always saved as a nightly price
+        price_period: formData.property_type === SHORTLET_TYPE ? 'daily' : formData.price_period,
         property_type: formData.property_type,
         bedrooms: residential ? parseInt(formData.bedrooms) : null,
         bathrooms: residential ? parseInt(formData.bathrooms) : null,
@@ -557,9 +582,11 @@ videoEl.src = URL.createObjectURL(file)
     else fetchListings(user.id)
   }
 
-  const formatPrice = (price, period) => `₦${parseInt(price).toLocaleString()} / ${period}`
+  const formatPrice = (price, period, type) =>
+    `₦${parseInt(price).toLocaleString()} / ${periodLabel(period, type)}`
 
   const isResidential = RESIDENTIAL_TYPES.includes(formData.property_type)
+  const isShortlet = formData.property_type === SHORTLET_TYPE
 
   if (loading) return null
 
@@ -713,17 +740,23 @@ videoEl.src = URL.createObjectURL(file)
                     <input type="number" name="bathrooms" min="1" max="20" value={formData.bathrooms} onChange={handleChange} required />
                   </div>
                   <div className="faim-field">
-                    <label>Price (₦) *</label>
-                    <input type="number" name="price" value={formData.price} onChange={handleChange} placeholder="500000" required />
+                    <label>{isShortlet ? 'Price per night (₦) *' : 'Price (₦) *'}</label>
+                    <input type="number" name="price" value={formData.price} onChange={handleChange} placeholder={isShortlet ? '25000' : '500000'} required />
                   </div>
                   <div className="faim-field">
                     <label>Per</label>
-                    <select name="price_period" value={formData.price_period} onChange={handleChange}>
-                      <option value="yearly">Year</option>
-                      <option value="monthly">Month</option>
-                      <option value="weekly">Week</option>
-                      <option value="daily">Day</option>
-                    </select>
+                    {isShortlet ? (
+                      <select name="price_period" value="daily" onChange={handleChange} disabled>
+                        <option value="daily">Night</option>
+                      </select>
+                    ) : (
+                      <select name="price_period" value={formData.price_period} onChange={handleChange}>
+                        <option value="yearly">Year</option>
+                        <option value="monthly">Month</option>
+                        <option value="weekly">Week</option>
+                        <option value="daily">Day</option>
+                      </select>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -954,7 +987,7 @@ videoEl.src = URL.createObjectURL(file)
                   <div className="faim-preview-badge">{formData.property_type}</div>
                   <h2>{formData.title || 'Your property title'}</h2>
                   <p className="faim-preview-location">📍 {formData.location || 'Address'}{formData.city ? `, ${formData.city}` : ''}, {formData.state || 'State'}</p>
-                  <p className="faim-preview-price">{formData.price ? formatPrice(formData.price, formData.price_period) : '₦0'}</p>
+                  <p className="faim-preview-price">{formData.price ? formatPrice(formData.price, formData.price_period, formData.property_type) : '₦0'}</p>
                   <div className="faim-preview-specs">
                     {isResidential ? (
                       <>
@@ -1017,7 +1050,7 @@ videoEl.src = URL.createObjectURL(file)
                 {listing.video_url && <ListingVideoPlayer src={listing.video_url} />}
                 <h3>{listing.title}</h3>
                 <p className="faim-listing-location">📍 {listing.location}{listing.city ? `, ${listing.city}` : ''}, {listing.state}</p>
-                <p className="faim-listing-price">₦{listing.price?.toLocaleString()} / {listing.price_period}</p>
+                <p className="faim-listing-price">₦{listing.price?.toLocaleString()} / {periodLabel(listing.price_period, listing.property_type)}</p>
                 <p className="faim-listing-specs">
                   {RESIDENTIAL_TYPES.includes(listing.property_type)
                     ? `${listing.bedrooms} bed • ${listing.bathrooms} bath`

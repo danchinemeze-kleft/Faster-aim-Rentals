@@ -66,7 +66,7 @@ export default function TermsOfService() {
         <h2>11. Contact Us</h2>
         <p><strong>Faster Aim Technology Limited</strong><br />
         Awka, Anambra State, Nigeria<br />
-        Email: hello@fasteraim.com</p>
+        Email: info@fasteraim.com</p>
       </div>
 
       <style>{`

@@ -12,6 +12,44 @@ const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
+// Property types that are booked by the night instead of "meeting the landlord".
+// 'hotel' is included so it works as soon as a Hotel type is added to /list.
+const BOOKABLE_TYPES = ['shortlet', 'hotel'];
+const isBookable = (type) => BOOKABLE_TYPES.includes(type);
+
+// Human-friendly price period. Bookable types always show "night".
+const periodLabel = (period, type) => {
+  if (isBookable(type)) return 'night';
+  const labels = { yearly: 'year', monthly: 'month', weekly: 'week', daily: 'day', event: 'event' };
+  return labels[period] || period || 'year';
+};
+
+// Filter value -> property_type values it should match.
+// Old values (flat, self_contain, ...) are kept so existing listings still show up.
+const TYPE_FILTER_OPTIONS = [
+  { value: 'apartment',  label: 'Apartment / Flat',          accepts: ['apartment', 'flat'] },
+  { value: 'house',      label: 'House',                     accepts: ['house', 'mansion'] },
+  { value: 'duplex',     label: 'Duplex',                    accepts: ['duplex'] },
+  { value: 'bungalow',   label: 'Bungalow / Terrace',        accepts: ['bungalow'] },
+  { value: 'studio',     label: 'Self-Contain / Studio',     accepts: ['studio', 'self_contain'] },
+  { value: 'room',       label: 'Single Room',               accepts: ['room', 'room_and_parlour'] },
+  { value: 'shortlet',   label: 'Shortlet (Short-stay)',     accepts: ['shortlet'] },
+  { value: 'hotel',      label: 'Hotel',                     accepts: ['hotel'] },
+  { value: 'office',     label: 'Office Space',              accepts: ['office'] },
+  { value: 'shop',       label: 'Shop / Store',              accepts: ['shop'] },
+  { value: 'warehouse',  label: 'Warehouse / Storage',       accepts: ['warehouse'] },
+  { value: 'event_hall', label: 'Event Hall / Church Hall',  accepts: ['event_hall'] },
+  { value: 'land',       label: 'Land / Plot',               accepts: ['land'] },
+];
+
+// Same state names the /list page saves (FCT is saved as "FCT Abuja").
+const NIGERIAN_STATES = [
+  'Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno',
+  'Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','Gombe','Imo','Jigawa',
+  'Kaduna','Kano','Katsina','Kebbi','Kogi','Kwara','Lagos','Nasarawa','Niger',
+  'Ogun','Ondo','Osun','Oyo','Plateau','Rivers','Sokoto','Taraba','Yobe','Zamfara','FCT Abuja'
+];
+
 const VERYLAND_BADGE = {
   white:       { fill: '#d0d0d0', check: '#888', label: 'Submitted' },
   yellow:      { fill: '#F59E0B', check: '#fff', label: 'Partial Verified' },
@@ -105,8 +143,16 @@ export default function BrowsePage() {
       (l.city || '').toLowerCase().includes(search.toLowerCase()) ||
       (l.state || '').toLowerCase().includes(search.toLowerCase())
     );
-    if (typeFilter) result = result.filter(l => l.property_type === typeFilter);
-    if (stateFilter) result = result.filter(l => l.state === stateFilter);
+    if (typeFilter) {
+      const option = TYPE_FILTER_OPTIONS.find(o => o.value === typeFilter);
+      const accepted = option ? option.accepts : [typeFilter];
+      result = result.filter(l => accepted.includes(l.property_type));
+    }
+    if (stateFilter) {
+      result = result.filter(l =>
+        l.state === stateFilter || (stateFilter === 'FCT Abuja' && l.state === 'Abuja')
+      );
+    }
     if (priceFilter) result = result.filter(l => Number(l.price) <= Number(priceFilter));
     return result;
   }, [search, typeFilter, stateFilter, priceFilter, listings]);
@@ -184,6 +230,12 @@ export default function BrowsePage() {
       alert('Payment could not be started. Please try again.');
     }
     setPaying(null);
+  }
+
+  // Shortlets and hotels are booked, not "revealed": no ₦5,000 contact fee here.
+  // The listing page handles dates, price and the booking itself (?book=1 opens it).
+  function handleBook(listing) {
+    router.push(`/listing/${listing.id}?book=1`);
   }
 
   async function handleReveal(listing) {
@@ -303,29 +355,18 @@ export default function BrowsePage() {
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-1)', marginBottom: '10px', letterSpacing: '1px' }}>Type</label>
             <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #14B8A6', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
               <option value="">All Types</option>
-              <option value="flat">Flat / Apartment</option>
-              <option value="self_contain">Self Contain</option>
-              <option value="duplex">Duplex</option>
-              <option value="bungalow">Bungalow</option>
-              <option value="mansion">Mansion</option>
-              <option value="room_and_parlour">Room &amp; Parlour</option>
-              <option value="shop">Shop / Office</option>
-              <option value="land">Land</option>
+              {TYPE_FILTER_OPTIONS.map(o => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
             </select>
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-1)', marginBottom: '10px', letterSpacing: '1px' }}>State</label>
             <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} style={{ width: '100%', background: 'var(--input-bg)', border: '2px solid #14B8A6', borderRadius: '10px', padding: '14px 18px', color: 'var(--text-1)', fontSize: '0.92rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', height: '52px' }}>
               <option value="">All States</option>
-              <option value="Anambra">Anambra</option>
-              <option value="Lagos">Lagos</option>
-              <option value="Abuja">Abuja (FCT)</option>
-              <option value="Rivers">Rivers</option>
-              <option value="Enugu">Enugu</option>
-              <option value="Delta">Delta</option>
-              <option value="Imo">Imo</option>
-              <option value="Ogun">Ogun</option>
-              <option value="Kano">Kano</option>
+              {NIGERIAN_STATES.map(s => (
+                <option key={s} value={s}>{s === 'FCT Abuja' ? 'Abuja (FCT)' : s}</option>
+              ))}
             </select>
           </div>
           <div>
@@ -389,7 +430,9 @@ export default function BrowsePage() {
           </div>
         ) : (
           <div className="browse-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-            {filtered.map(l => (
+            {filtered.map(l => {
+              const bookable = isBookable(l.property_type);
+              return (
               <div key={l.id} style={{ background: 'var(--card-bg)', borderRadius: '14px', border: '1px solid var(--border-1)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <a href={`/listing/${l.id}`} style={{ display: 'block', position: 'relative', height: '220px', background: '#111318', textDecoration: 'none' }}>
                   {l.images && l.images.length > 0 ? (
@@ -404,7 +447,7 @@ export default function BrowsePage() {
                 {l.video_url && <BrowseVideoPlayer src={l.video_url} />}
                 <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.35rem', fontWeight: 800, color: '#0ef6cc', marginBottom: '4px' }}>
-                    N{Number(l.price).toLocaleString('en-NG')} <span style={{ fontSize: '0.9rem', fontWeight: 400, color: '#cccccc', fontFamily: 'DM Sans, sans-serif' }}>/ {l.price_period || 'year'}</span>
+                    N{Number(l.price).toLocaleString('en-NG')} <span style={{ fontSize: '0.9rem', fontWeight: 400, color: '#cccccc', fontFamily: 'DM Sans, sans-serif' }}>/ {periodLabel(l.price_period, l.property_type)}</span>
                   </div>
                   <a href={`/listing/${l.id}`} style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff', marginBottom: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textDecoration: 'none', display: 'block' }}>{l.title}</a>
                   <div style={{ fontSize: '0.9rem', color: '#cccccc', fontWeight: 600, marginBottom: l.veryland_badge ? 8 : 16 }}>📍 {l.location}{l.city ? `, ${l.city}` : ''}, {l.state}</div>
@@ -415,11 +458,16 @@ export default function BrowsePage() {
                   )}
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
                     <a href={`/listing/${l.id}`} style={{ flex: 1, padding: '11px 8px', borderRadius: '8px', border: '2px solid #333', background: '#1a1d24', color: '#ffffff', fontSize: '0.88rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>View Details</a>
-                    <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '13px 8px', borderRadius: '8px', border: 'none', background: '#14B8A6', color: '#fff', fontSize: '0.88rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif', minHeight: 48 }}>{paying === l.id ? 'Please wait...' : hasTenantSub ? 'Meet Landlord • Free' : 'Meet Landlord • ₦5k'}</button>
+                    {bookable ? (
+                      <button onClick={() => handleBook(l)} style={{ flex: 2, padding: '13px 8px', borderRadius: '8px', border: 'none', background: '#14B8A6', color: '#fff', fontSize: '0.88rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif', minHeight: 48 }}>Book now</button>
+                    ) : (
+                      <button onClick={() => handleReveal(l)} disabled={paying === l.id} style={{ flex: 2, padding: '13px 8px', borderRadius: '8px', border: 'none', background: '#14B8A6', color: '#fff', fontSize: '0.88rem', fontWeight: 800, cursor: paying === l.id ? 'not-allowed' : 'pointer', opacity: paying === l.id ? 0.7 : 1, fontFamily: 'DM Sans, sans-serif', minHeight: 48 }}>{paying === l.id ? 'Please wait...' : hasTenantSub ? 'Meet Landlord • Free' : 'Meet Landlord • ₦5k'}</button>
+                    )}
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
