@@ -391,6 +391,7 @@ export default function Home() {
     <a href="/about">About Us</a>
     <a href="/support">Contact &amp; Support</a>
     <a href="/faq">FAQ</a>
+<a href="/all-pages">All Pages</a>
   </div>
 </div>
         </div>
@@ -514,6 +515,13 @@ export default function Home() {
                   <circle cx="12" cy="12" r="10"/>
                 </svg>
                 <span>FAQ</span>
+              </a>
+                            <a href="/all-pages" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+                  <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                  <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+                </svg>
+                <span>All Pages</span>
               </a>
             </div>
 
@@ -891,6 +899,7 @@ export default function Home() {
         <a href="/support" className="footer-link" style={s.footerLink}>Contact &amp; Support</a>
         <a href="/faq" className="footer-link" style={s.footerLink}>FAQ</a>
         <a href="/affiliate" className="footer-link" style={s.footerLink}>Earn with Referrals</a>
+        <a href="/all-pages" className="footer-link" style={s.footerLink}>All Pages</a>
       </div>
       <div>
         <p style={s.footerHeading} className="footer-heading">Legal</p>

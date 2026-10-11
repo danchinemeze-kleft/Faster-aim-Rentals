@@ -12,8 +12,10 @@ const SECTIONS = [
     blurb: 'Search, browse and chat your way to the right place.',
     pages: [
       { name: 'Home', path: '/', desc: 'Start here: the Mr. Rent homepage.' },
-      { name: 'Browse listings', path: '/browse', desc: 'See all available properties and filter them.' },
+      { name: 'Browse rentals', path: '/browse', desc: 'See all available properties and filter them.' },
       { name: 'Ask Mr. Rent (AI chat)', path: '/search', desc: 'Describe what you want and the AI finds matching listings.' },
+      { name: 'Verified properties', path: '/veryland', desc: 'Properties with verified documents, to help eliminate forgery.', badge: 'Coming soon' },
+      { name: 'Our services', path: '/services', desc: 'Everything else Mr. Rent can do for you.' },
     ],
   },
   {
@@ -44,8 +46,21 @@ const SECTIONS = [
     title: 'Earn with Mr. Rent',
     blurb: 'Refer people and earn commission.',
     pages: [
-      { name: 'Affiliate sign up / log in', path: '/affiliate/auth', desc: 'Join the affiliate programme or sign in.' },
+      { name: 'Earn with referrals', path: '/affiliate', desc: 'How the affiliate programme works.' },
+      { name: 'Affiliate sign up / log in', path: '/affiliate/auth', desc: 'Join the programme or sign in.' },
       { name: 'Affiliate dashboard', path: '/affiliate/dashboard', desc: 'Track your referrals and earnings.' },
+    ],
+  },
+  {
+    id: 'company',
+    icon: '💬',
+    title: 'About and help',
+    blurb: 'Who we are and how to reach us.',
+    pages: [
+      { name: 'About us', path: '/about', desc: 'The story behind Mr. Rent.' },
+      { name: 'Contact and support', path: '/support', desc: 'Talk to the Mr. Rent team.' },
+      { name: 'FAQ', path: '/faq', desc: 'Quick answers to common questions.' },
+      { name: 'Reviews', path: '/reviews', desc: 'What renters say about Mr. Rent.' },
     ],
   },
   {
@@ -54,17 +69,8 @@ const SECTIONS = [
     title: 'Legal',
     blurb: 'The rules for using Mr. Rent.',
     pages: [
-      { name: 'Terms', path: '/terms', desc: 'Our terms of use.' },
-      { name: 'Terms of service', path: '/terms-of-service', desc: 'Our terms of service.' },
-    ],
-  },
-  {
-    id: 'soon',
-    icon: '⏳',
-    title: 'Coming soon',
-    blurb: 'Features we are still building.',
-    pages: [
-      { name: 'Veryland', path: null, desc: 'Property document verification to help eliminate forgery.', badge: 'Coming soon' },
+      { name: 'Privacy policy', path: '/privacy-policy', desc: 'How we handle your information.' },
+      { name: 'Terms of service', path: '/terms', desc: 'Our terms of use.' },
     ],
   },
 ]
