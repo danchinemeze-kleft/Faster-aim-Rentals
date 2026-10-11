@@ -30,7 +30,9 @@ Vary how you phrase this so you never sound scripted.
 
 Listing cards: Listings from our platform appear below your reply only when the SEARCH RESULT note says some were found. Never invent property details, prices, addresses or phone numbers. If the cards shown do not match what the user wants, say so honestly.
 
-NO LISTINGS FOUND: When the SEARCH RESULT note says no matching listings were found, never say or imply that cards will appear below. Say honestly and briefly that you couldn't find that kind of property in the city or area, and that such listings may not be active there at the moment. For example: "I couldn't find any hotels in Awka right now, as such listings may not be active in that area at the moment." Then offer one next step: you can check the nearest matching areas or a similar property type, or the user can browse all available properties at https://rent.fasteraim.com/browse. Keep it to 2-3 short sentences, do not over-apologize, do not invent alternatives, and ask at most one follow-up question.
+NO LISTINGS FOUND: When the SEARCH RESULT note says no matching listings were found, never say or imply that cards will appear below. Say honestly and briefly that you couldn't find that kind of property in the city or area, and that such listings may not be active there at the moment. For example: "I couldn't find any hotels in Awka right now, as such listings may not be active in that area at the moment." Then offer one next step: you can check the nearest matching areas or a similar property type, or the user can browse all available properties at https://rent.fasteraim.com/browse . Keep it to 2-3 short sentences, do not over-apologize, do not invent alternatives, and ask at most one follow-up question.
+
+Market information: When a PRICE DATA note appears at the end of these instructions, it comes from real listings on our platform. Use those figures as the price guidance, say they are based on current listings on Mr. Rent, and never present them as guaranteed. For questions about local news, trends, weather, security or what is happening in an area, you may use Google Search to get current information, keep it brief, and say it is recent public information. If you have no PRICE DATA and no search result, say prices vary by area and never invent figures, news or weather.
 
 Contact reveal: Seekers pay a one-time fee of 5,000 naira to unlock a landlord's or owner's phone number directly on the platform, with no street-agent middlemen.
 
@@ -246,6 +248,60 @@ async function fetchListings(supabase, intent, userPrefs) {
   return ranked.sort((a, b) => b._score - a._score).slice(0, 3)
 }
 
+// ── Market helpers ─────────────────────────────────────────
+
+const MARKET_WORDS = /\b(price|prices|cost|costs|how much|average|cheap|expensive|worth|rate|rates|going for)\b/i
+const LIVE_INFO_WORDS = /\b(news|trend|trends|trending|weather|rain|flood|flooding|security|update|updates|latest|current|currently|happening|market|demand|today|this week|this month)\b/i
+
+function median(nums) {
+  const s = [...nums].sort((a, b) => a - b)
+  const m = Math.floor(s.length / 2)
+  return s.length % 2 ? s[m] : Math.round((s[m - 1] + s[m]) / 2)
+}
+
+const naira = n => '₦' + Number(n).toLocaleString('en-NG')
+
+// Real price figures from approved listings, so the bot never invents prices
+async function getPriceStats(supabase, p) {
+  if (!p.state) return ''
+  try {
+    let query = supabase
+      .from('listings')
+      .select('price, city, location, price_period')
+      .eq('status', 'approved')
+      .eq('state', p.state)
+      .gt('price', 0)
+      .limit(200)
+    if (p.propertyType) query = query.eq('property_type', p.propertyType)
+    if (p.listingType) query = query.eq('listing_type', p.listingType)
+    if (p.bedrooms) query = query.eq('bedrooms', String(p.bedrooms))
+
+    const { data } = await query
+    let rows = data || []
+
+    // Narrow to the specific town/area when we know it and enough listings exist
+    if (p.place) {
+      const key = p.place.toLowerCase()
+      const local = rows.filter(r =>
+        (r.city || '').toLowerCase().includes(key) || (r.location || '').toLowerCase().includes(key))
+      if (local.length >= 3) rows = local
+    }
+
+    // Too few listings makes the figures misleading
+    if (rows.length < 3) return ''
+
+    const prices = rows.map(r => Number(r.price)).filter(n => n > 0)
+    const area = p.place ? `${p.place}, ${p.state}` : p.state
+    const what = [p.bedrooms ? `${p.bedrooms}-bedroom` : '', p.propertyType ? p.propertyType.replace(/_/g, ' ') : 'property']
+      .filter(Boolean).join(' ')
+
+    return `\n\nPRICE DATA from ${prices.length} current listings on Mr. Rent for ${what} in ${area}: lowest ${naira(Math.min(...prices))}, typical (median) ${naira(median(prices))}, highest ${naira(Math.max(...prices))}. Share this as guidance based on our current listings, not as a guarantee.`
+  } catch (err) {
+    console.error('Price stats error:', err?.message)
+    return ''
+  }
+}
+
 // ── Trending listings (proactive mode) ────────────────────
 
 async function fetchTrending(supabase) {
@@ -307,7 +363,14 @@ export async function POST(request) {
       searchNote = `\n\nSEARCH RESULT: No search was run for this message. Do not mention cards.`
     }
 
-    const systemInstruction = SYSTEM_PROMPT + describePrefs(mergedPrefs) + searchNote
+    // Real price figures (only when the user is asking about price or cost)
+const wantsPrice = MARKET_WORDS.test(lastMessage)
+const priceNote = wantsPrice ? await getPriceStats(supabase, mergedPrefs) : ''
+
+// Turn on Google Search only for news, trends, weather or market questions
+const useSearch = LIVE_INFO_WORDS.test(lastMessage) || (wantsPrice && !priceNote)
+
+const systemInstruction = SYSTEM_PROMPT + describePrefs(mergedPrefs) + searchNote + priceNote
 
     const stream = new ReadableStream({
       async start(controller) {
@@ -347,7 +410,7 @@ export async function POST(request) {
                   ...history,
                   { role: 'user', parts: [{ text: lastMessage }] },
                 ],
-                config: { systemInstruction, maxOutputTokens: 2048 },
+                config: { systemInstruction, maxOutputTokens: 2048, ...(useSearch ? { tools: [{ googleSearch: {} }] } : {}) },
               })
               for await (const chunk of result) {
                 if (chunk.text) {
