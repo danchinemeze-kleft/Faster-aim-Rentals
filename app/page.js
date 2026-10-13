@@ -11,6 +11,8 @@ import { Plus_Jakarta_Sans } from 'next/font/google'
 import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from './components/Breadcrumb'
 import HeroSocialBar from './components/HeroSocialBar'
+import HeroMarquee from './components/HeroMarquee'
+
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -547,6 +549,7 @@ export default function Home() {
 
       {/* Hero */}
       <section style={s.heroSection} className="hero-section">
+        <HeroMarquee supabase={supabase} />
         <div style={s.heroOuter} className="hero-outer">
           <div style={s.heroInner} className="hero-inner hero-3d">
             <HeroSocialBar supabase={supabase} />
