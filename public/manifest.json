@@ -1,5 +1,6 @@
 {
-  "name": "Mr. Rent – Find Verified Rentals in Nigeria",
+  "name": "Mr. Rent – Verified Land/properties in Nigeria",
+"id": "/",
   "short_name": "Mr. Rent",
   "description": "AI-powered rental marketplace connecting landlords and tenants across Nigeria. Browse verified listings, chat with Mr. Rent AI, reveal contacts without agent fees.",
   "start_url": "/",
@@ -7,16 +8,10 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0ef6cc",
-  "orientation": "portrait-primary",
+
   "categories": ["lifestyle", "real-estate"],
   "lang": "en-NG",
   "icons": [
-    {
-      "src": "/icon.png",
-      "sizes": "any",
-      "type": "image/png",
-      "purpose": "any"
-    },
     {
       "src": "/icon-192.png",
       "sizes": "192x192",
