@@ -10,10 +10,11 @@ import Image from 'next/image'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import { createBrowserClient } from '@supabase/ssr'
 import Breadcrumb from './components/Breadcrumb'
+import HeroSocialBar from './components/HeroSocialBar'
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '600', '700', '800'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 })
 
@@ -333,7 +334,7 @@ export default function Home() {
   textAlign: 'center',
   padding: '0.5rem 1rem',
   fontSize: '0.85rem',
-  fontWeight: 700,
+  fontWeight: 600,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -373,7 +374,7 @@ export default function Home() {
         <div className="nav-links-desktop">
           <a href="/browse" style={s.navLink}>Browse Rentals</a>
           <a href="/list" style={s.navLink}>List Property</a>
-          <a href="/veryland" style={{ ...s.navLink, color: '#0ea5e9', fontWeight: 700 }}>Verified Properties</a>
+          <a href="/veryland" style={{ ...s.navLink, color: '#0ea5e9', fontWeight: 600 }}>Verified Properties</a>
           <a href="/account" style={s.navBtn}>Get started</a>
           <div className="nav-menu-hover">
   <button type="button" className="nav-menu-trigger" aria-haspopup="true">
@@ -412,7 +413,7 @@ export default function Home() {
       points="16,3 28,13 28,29 20,29 20,20 12,20 12,29 4,29 4,13"
     />
   </svg>
-  <span style={{ color: '#0b4a3a', fontWeight: 800 }}>Mr. Rent</span>
+  <span style={{ color: '#0b4a3a', fontWeight: 700 }}>Mr. Rent</span>
 </div>
               <button className="mobile-menu-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button>
             </div>
@@ -527,7 +528,7 @@ export default function Home() {
 
             {/* Secondary Legal Section */}
             <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1rem', marginTop: 'auto', marginBottom: '1rem' }}>
-              <p style={{ fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', paddingLeft: '0.5rem' }}>Legal &amp; Info</p>
+              <p style={{ fontSize: '0.7rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', paddingLeft: '0.5rem' }}>Legal &amp; Info</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 <a href="/privacy-policy" style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }} onClick={() => setMenuOpen(false)}>Privacy Policy</a>
                 <a href="/terms" style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }} onClick={() => setMenuOpen(false)}>Terms of Service</a>
@@ -548,6 +549,7 @@ export default function Home() {
       <section style={s.heroSection} className="hero-section">
         <div style={s.heroOuter} className="hero-outer">
           <div style={s.heroInner} className="hero-inner hero-3d">
+            <HeroSocialBar supabase={supabase} />
             <div style={s.heroLayout} className="hero-layout">
               <div style={s.heroText}>
                 <div style={s.heroBadge}>
@@ -631,7 +633,7 @@ export default function Home() {
                       <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
                     </svg>
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.75rem', color: '#0f172a' }}>Chat Free — Ask About Real Estate</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.75rem', color: '#0f172a' }}>Chat Free — Ask About Real Estate</div>
                       <div style={{ fontWeight: 600, fontSize: '0.68rem', color: '#64748b', marginTop: '0.1rem' }}>Find available homes</div>
                     </div>
                   </a>
@@ -933,7 +935,7 @@ const s = {
   navBrand: {
     display: 'flex',
     alignItems: 'center',
-    fontWeight: '800',
+    fontWeight: '700',
     fontSize: '1.25rem',
     color: '#0f172a',
   },
@@ -992,7 +994,7 @@ const s = {
   },
   heroTitle: {
     fontSize: '3rem',
-    fontWeight: '800',
+    fontWeight: '700',
     lineHeight: '1.08',
     letterSpacing: '-0.01em',
     color: '#0f172a',
@@ -1018,7 +1020,7 @@ const s = {
     color: '#ffffff',
     padding: '0.75rem 1.5rem',
     borderRadius: '12px',
-    fontWeight: '700',
+    fontWeight: '600',
     textAlign: 'center',
     boxShadow: '0 8px 20px -6px rgba(14, 165, 233, 0.5)',
   },
@@ -1028,7 +1030,7 @@ const s = {
     color: '#ffffff',
     padding: '0.75rem 1.5rem',
     borderRadius: '12px',
-    fontWeight: '700',
+    fontWeight: '600',
     textAlign: 'center',
     boxShadow: '0 8px 20px -6px rgba(20, 184, 166, 0.5)',
   },
@@ -1060,7 +1062,7 @@ const s = {
   },
   trustText: {
     fontSize: '0.8rem',
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#334155',
     whiteSpace: 'nowrap',
   },
@@ -1076,7 +1078,7 @@ const s = {
     color: '#ffffff',
     padding: '0.6rem 1.4rem',
     borderRadius: '9999px',
-    fontWeight: '800',
+    fontWeight: '600',
     fontSize: '0.95rem',
     display: 'inline-flex',
     alignItems: 'center',
@@ -1149,7 +1151,7 @@ const s = {
   },
   sectionTitle: {
     fontSize: '2rem',
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#0f172a',
     marginBottom: '0.5rem',
     letterSpacing: '-0.01em',
@@ -1198,7 +1200,7 @@ const s = {
     gap: '0.3rem',
     textDecoration: 'none',
     color: '#0ea5e9',
-    fontWeight: '700',
+    fontWeight: '600',
     fontSize: '0.95rem',
     whiteSpace: 'nowrap',
     marginTop: '0.25rem',
@@ -1210,7 +1212,7 @@ const s = {
     gap: '0.3rem',
     textDecoration: 'none',
     color: '#0ea5e9',
-    fontWeight: '700',
+    fontWeight: '600',
     fontSize: '0.95rem',
     marginTop: '1.25rem',
     padding: '0.6rem 1rem',
@@ -1257,7 +1259,7 @@ const s = {
     backgroundColor: '#0f172a',
     color: '#ffffff',
     fontSize: '0.7rem',
-    fontWeight: '700',
+    fontWeight: '600',
     padding: '0.25rem 0.6rem',
     borderRadius: '9999px',
   },
@@ -1268,7 +1270,7 @@ const s = {
     backgroundColor: '#14b8a6',
     color: '#ffffff',
     fontSize: '0.7rem',
-    fontWeight: '700',
+    fontWeight: '600',
     padding: '0.25rem 0.6rem',
     borderRadius: '9999px',
   },
@@ -1277,7 +1279,7 @@ const s = {
   },
   featuredTitle: {
     fontSize: '1.05rem',
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#0f172a',
     marginBottom: '0.25rem',
     overflow: 'hidden',
@@ -1295,7 +1297,7 @@ const s = {
     justifyContent: 'space-between',
   },
   featuredPrice: {
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#0ea5e9',
     fontSize: '1rem',
   },
@@ -1322,7 +1324,7 @@ const s = {
     color: '#ffffff',
     padding: '0.9rem 2.4rem',
     borderRadius: '9999px',
-    fontWeight: '800',
+    fontWeight: '600',
     fontSize: '1rem',
     display: 'inline-flex',
     alignItems: 'center',
@@ -1350,12 +1352,12 @@ const s = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontWeight: '800',
+    fontWeight: '700',
     marginBottom: '1rem',
   },
   stepTitle: {
     fontSize: '1.15rem',
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#0f172a',
     marginBottom: '0.5rem',
   },
@@ -1388,7 +1390,7 @@ const s = {
   },
   featureTitle: {
     fontSize: '1.05rem',
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#0f172a',
     marginBottom: '0.4rem',
   },
@@ -1410,7 +1412,7 @@ const s = {
   },
   ctaTitle: {
     fontSize: '2rem',
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#ffffff',
     marginBottom: '0.75rem',
     letterSpacing: '-0.01em',
@@ -1463,7 +1465,7 @@ const s = {
   },
   footerHeading: {
     fontSize: '0.8rem',
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#0f172a',
     marginBottom: '0.9rem',
     textTransform: 'uppercase',
