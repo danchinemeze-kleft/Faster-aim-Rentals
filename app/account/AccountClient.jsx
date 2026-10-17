@@ -1,19 +1,13 @@
 'use client'
-import GoBackButton from '../components/GoBackButton'
-import { useState, useEffect, useMemo, useRef, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
+import { supabase } from '../lib/supabase'
 import Breadcrumb from '../components/Breadcrumb'
 
 function AccountPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectHandled = useRef(false)
-
-  const supabase = useMemo(() => createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ), [])
 
   const [mode, setMode] = useState('login') // 'login' | 'signup' | 'onboarding'
   const [email, setEmail] = useState('')
@@ -28,43 +22,68 @@ function AccountPageInner() {
   const [successMsg, setSuccessMsg] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [onboardingUser, setOnboardingUser] = useState(null)
+  const [onboardingName, setOnboardingName] = useState('')
   const [onboardingRole, setOnboardingRole] = useState('')
   const [onboardingPhone, setOnboardingPhone] = useState('')
   const [sessionChecking, setSessionChecking] = useState(true)
 
-  const redirectTo = searchParams.get('redirect') || null
+  // Only allow internal paths so ?redirect= cannot send people off-site
+  const rawRedirect = searchParams.get('redirect')
+  const redirectTo =
+    rawRedirect && rawRedirect.startsWith('/') && !rawRedirect.startsWith('//')
+      ? rawRedirect
+      : null
 
   const handleRedirectAfterAuth = async (user) => {
     if (redirectHandled.current) return
     redirectHandled.current = true
 
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('Profiles')
       .select('role, full_name')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
 
-    // New OAuth user — no role set yet, show onboarding
+    // A real query failure is not the same as a new user
+    if (profileError) {
+      redirectHandled.current = false
+      setError('Could not load your profile. Please try again.')
+      setSessionChecking(false)
+      setLoading(false)
+      return
+    }
+
+    // New OAuth user: no role set yet, show onboarding
     if (!profile?.role) {
-      setOnboardingUser({ ...user, full_name: profile?.full_name })
+      const name =
+        profile?.full_name ||
+        user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        ''
+      setOnboardingUser({ ...user, full_name: name })
+      setOnboardingName(name)
       setMode('onboarding')
       setSessionChecking(false)
+      setLoading(false)
       redirectHandled.current = false
       return
     }
 
-    if (redirectTo) { router.push(redirectTo); return }
-    router.push(profile.role === 'landlord' ? '/dashboard' : '/my-account')
+    router.push(redirectTo || (profile.role === 'landlord' ? '/dashboard' : '/my-account'))
   }
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        await handleRedirectAfterAuth(session.user)
-      } else {
-        setSessionChecking(false)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session) {
+          await handleRedirectAfterAuth(session.user)
+          return
+        }
+      } catch (err) {
+        console.error('Session check failed', err)
       }
+      setSessionChecking(false)
     }
     checkSession()
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -190,20 +209,35 @@ function AccountPageInner() {
 
   const handleOnboardingSubmit = async (e) => {
     e.preventDefault()
+    const name = onboardingName.trim()
+    const phoneClean = onboardingPhone.replace(/\s+/g, '')
+
+    if (!name) { setError('Please enter your full name.'); return }
     if (!onboardingRole) { setError('Please select your role.'); return }
-    if (!onboardingPhone.trim() || !onboardingPhone.match(/^\+?[0-9]{10,14}$/)) {
+    if (!/^\+?[0-9]{10,14}$/.test(phoneClean)) {
       setError('Please enter a valid phone number (10–14 digits).')
       return
     }
+
     setLoading(true)
     setError('')
-    const { error } = await supabase
-      .from('Profiles')
-      .update({ role: onboardingRole, phone: onboardingPhone })
-      .eq('id', onboardingUser.id)
-    if (error) { setError(error.message); setLoading(false); return }
-    if (redirectTo) { router.push(redirectTo); return }
-    router.push(onboardingRole === 'landlord' ? '/dashboard' : '/my-account')
+    try {
+      const { error } = await supabase.from('Profiles').upsert(
+        {
+          id: onboardingUser.id,
+          email: onboardingUser.email,
+          full_name: name,
+          phone: phoneClean,
+          role: onboardingRole,
+        },
+        { onConflict: 'id' }
+      )
+      if (error) throw error
+      router.push(redirectTo || (onboardingRole === 'landlord' ? '/dashboard' : '/my-account'))
+    } catch (err) {
+      setError(err?.message || 'Could not save your details. Please try again.')
+      setLoading(false)
+    }
   }
 
   if (sessionChecking) {
@@ -428,7 +462,21 @@ function AccountPageInner() {
               <h2 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1a1a2e', margin: '0 0 0.25rem' }}>
                 Welcome{onboardingUser?.full_name ? `, ${onboardingUser.full_name.split(' ')[0]}` : ''}!
               </h2>
-              <p style={{ fontSize: '0.85rem', color: '#666', margin: 0 }}>Just two quick things to get you started.</p>
+              <p style={{ fontSize: '0.85rem', color: '#666', margin: 0 }}>Just a few quick things to get you started.</p>
+            </div>
+            <div className="faim-field">
+              <label htmlFor="onboarding-name">
+                Full name <span style={{ color: '#e74c3c' }}>*</span>
+              </label>
+              <input
+                id="onboarding-name"
+                type="text"
+                placeholder="Your full name"
+                value={onboardingName}
+                onChange={e => setOnboardingName(e.target.value)}
+                required
+                autoComplete="name"
+              />
             </div>
             <div className="faim-field">
               <label>I am a</label>
