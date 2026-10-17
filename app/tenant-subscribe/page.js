@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '../lib/supabase'
 
 const LOGIN_URL = '/account?redirect=/tenant-subscribe'
 const LOAD_TIMEOUT_MS = 10000
