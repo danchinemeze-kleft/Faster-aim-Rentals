@@ -51,22 +51,37 @@ export async function middleware(request) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user }, error } = await supabase.auth.getUser();
 
   if (!user) {
     const url = request.nextUrl.clone();
     url.pathname = '/account';
+    url.search = '';
     url.searchParams.set('redirect', pathname);
 
     const redirectResponse = NextResponse.redirect(url);
 
-    // Critical: re-apply any refreshed session cookies onto the redirect
-    // response too. Without this, a token refresh that happened during
-    // getUser() gets silently dropped, leaving the browser with a stale
-    // cookie and causing an account <-> subscribe redirect loop.
+    // Re-apply any refreshed session cookies onto the redirect response,
+    // otherwise a token refresh done during getUser() is silently dropped.
     pendingCookies.forEach(({ name, value, options }) =>
       redirectResponse.cookies.set(name, value, options)
     );
+
+    // If Supabase rejected the token (4xx), the cookie is stale or revoked.
+    // Delete it here, otherwise /account sees the old cookie, sends the user
+    // back to a protected page, and the loop repeats.
+    // A network or 5xx error is NOT treated as stale, so users are not
+    // logged out by a temporary Supabase problem.
+    const tokenRejected =
+      error && error.status && error.status >= 400 && error.status < 500;
+
+    if (tokenRejected) {
+      request.cookies.getAll().forEach(({ name }) => {
+        if (name.startsWith('sb-')) {
+          redirectResponse.cookies.set(name, '', { maxAge: 0, path: '/' });
+        }
+      });
+    }
 
     return redirectResponse;
   }

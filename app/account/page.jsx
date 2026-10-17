@@ -1,10 +1,11 @@
 import AccountClient from './AccountClient';
 
 export const metadata = {
-  title: 'About Us',
-  description: 'Learn about Mr. Rent, Nigeria\'s premier AI-powered property rental platform.',
+  title: 'Log in or Sign up',
+  description: 'Log in or create your Mr. Rent account to find verified rentals and properties in Nigeria.',
+  robots: { index: false, follow: true },
 };
 
-export default function AboutPage() {
+export default function AccountPage() {
   return <AccountClient />;
 }

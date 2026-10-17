@@ -73,19 +73,30 @@ function AccountPageInner() {
   }
 
   useEffect(() => {
+    // Failsafe: never leave the user on the spinner
+    const failsafe = setTimeout(() => setSessionChecking(false), 6000)
+
     const checkSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session) {
-          await handleRedirectAfterAuth(session.user)
+        // getUser() asks Supabase to confirm the session, like the middleware does
+        const { data: { user }, error } = await supabase.auth.getUser()
+        if (user && !error) {
+          await handleRedirectAfterAuth(user)
           return
         }
+        // Stale or invalid cookie: clear it so the login form can show
+        await supabase.auth.signOut({ scope: 'local' })
       } catch (err) {
         console.error('Session check failed', err)
+        try { await supabase.auth.signOut({ scope: 'local' }) } catch {}
+      } finally {
+        clearTimeout(failsafe)
       }
       setSessionChecking(false)
     }
     checkSession()
+
+    return () => clearTimeout(failsafe)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
