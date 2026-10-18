@@ -19,7 +19,7 @@ export default function About() {
         {/* Mission */}
         <div className="faim-about-section">
           <h2>Our Mission</h2>
-          <p>The Nigerian rental market is broken. Tenants waste weeks chasing agents, viewing fake listings, and paying fees for properties that don't exist. Landlords struggle to find serious tenants without expensive middlemen.</p>
+          <p>The Nigerian rental market is broken. Tenants waste weeks chasing agents, viewing fake listings, and paying fees for properties that don&apos;t exist. Landlords struggle to find serious tenants without expensive middlemen.</p>
           <p>Mr. Rent fixes this. We connect landlords directly with tenants — transparently, affordably, and intelligently — using AI to guide every search.</p>
         </div>
 
@@ -45,7 +45,7 @@ export default function About() {
               <div className="faim-step-num">03</div>
               <div>
                 <strong>Pay ₦5,000 to reveal contact</strong>
-                <p>When a tenant finds the right property, they pay a small fee to get the landlord's direct contact — no middlemen, no inflated agent fees.</p>
+                <p>When a tenant finds the right property, they pay a small fee to get the landlord&apos;s direct contact — no middlemen, no inflated agent fees.</p>
               </div>
             </div>
           </div>

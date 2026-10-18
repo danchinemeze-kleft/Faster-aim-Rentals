@@ -87,8 +87,8 @@ export default function TenantSubscribePage() {
           return
         }
         if (!cancelled) setLoadError('Something went wrong loading this page. Refresh to try again.')
-      } finally {
-        clearTimeout(timer)
+            } finally {
+        if (!redirecting) clearTimeout(timer)
         // keep the spinner while we are being redirected; otherwise always stop it
         if (!cancelled && !redirecting) setLoading(false)
       }

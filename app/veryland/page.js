@@ -90,7 +90,7 @@ export default function VerylandPage() {
           borderRadius: 100, padding: '6px 18px', fontSize: 12, color: GREEN_DARK,
           fontWeight: 700, marginBottom: 28, letterSpacing: 1, textTransform: 'uppercase'
         }}>
-          A Faster Aim Technology Product
+          A Faster Aim Technology land verification product, Veryland is the trusted Supa-intelligence for reliable real estate transactions
         </div>
 
         <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.2rem)', fontWeight: 900, color: 'var(--text-1)', margin: '0 0 20px', lineHeight: 1.15, letterSpacing: '-1px' }}>
