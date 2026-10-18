@@ -28,7 +28,7 @@ export const metadata = {
   metadataBase: new URL("https://rent.fasteraim.com"),
   title: {
     default: "Mr. Rent – Find Verified Rentals in Nigeria",
-    template: "%s | Mr. Rent",
+    template: "%s - Mr. Rent",
   },
   description:
     "AI-powered property rental platform for Nigeria. Browse verified listings in Awka, Onitsha, Anambra and beyond. No agent fees — pay only to reveal landlord contacts.",
@@ -41,16 +41,23 @@ export const metadata = {
     "rent apartment Nigeria",
     "Mr Rent",
     "Faster Aim Rentals",
-    "verified property listings", "ai property rental platform", 
-    "mrrent", "house for rent nigeria", "apartment for rent",
-    "no agent fees", "Landlord contacts", "friendly rental app", "rentals in nigeria", "buy land",
+    "verified property listings",
+    "ai property rental platform",
+    "mrrent",
+    "house for rent nigeria",
+    "apartment for rent",
+    "no agent fees",
+    "Landlord contacts",
+    "friendly rental app",
+    "rentals in nigeria",
+    "buy land",
   ],
   authors: [{ name: "Faster Aim Technology Limited" }],
   creator: "Faster Aim Technology Limited",
   publisher: "Faster Aim Technology Limited",
-  alternates: {
-    canonical: "/",
-  },
+  // NOTE: no root-level `alternates.canonical` here. Each page sets its own
+  // canonical (via pageMeta in lib/seo.js), so pages are no longer all
+  // pointed at the homepage.
   openGraph: {
     type: "website",
     url: "https://rent.fasteraim.com",
@@ -90,7 +97,7 @@ const jsonLd = {
   description:
     "AI-powered property rental platform serving Nigeria. Browse verified landlord listings, chat with Mr. Rent AI, and reveal contacts without agent fees.",
   url: "https://rent.fasteraim.com",
-  logo: "https://rent.fasteraim.com/favicon.png",
+  logo: "https://rent.fasteraim.com/icon.png",
   sameAs: ["https://fasteraim.com"],
   address: {
     "@type": "PostalAddress",
@@ -145,16 +152,18 @@ export default function RootLayout({ children }) {
         <div style={{ position: 'fixed', top: 0, bottom: 0, right: 0, width: 4, background: 'linear-gradient(180deg, #14B8A6 0%, #0ef6cc 100%)', zIndex: 99999, pointerEvents: 'none' }} />
         <Suspense fallback={null}><RefCapture /></Suspense>
         <LoadingProvider>{children}</LoadingProvider>
+
+        {/* Analytics and tracking scripts now live inside <body> */}
+        <Analytics />
+        <SpeedInsights />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-0NWQ6GQ2YB" strategy="afterInteractive" />
+        <Script id="gtag-init" strategy="afterInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-0NWQ6GQ2YB');
+        `}</Script>
       </body>
-      <Analytics />
-      <SpeedInsights />
-      <Script src="https://www.googletagmanager.com/gtag/js?id=G-0NWQ6GQ2YB" strategy="afterInteractive" />
-      <Script id="gtag-init" strategy="afterInteractive">{`
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-0NWQ6GQ2YB');
-      `}</Script>
     </html>
   );
 }
