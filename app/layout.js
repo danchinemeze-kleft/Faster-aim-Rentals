@@ -7,6 +7,8 @@ import Script from "next/script";
 import { LoadingProvider } from "./context/LoadingContext";
 import RefCapture from "./components/RefCapture";
 
+const SUPABASE_ORIGIN = "https://ojkhpishuqyeiwaopaty.supabase.co";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -15,6 +17,7 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  preload: false, // mono font is not fetched up front; still loads when used
 });
 
 export const viewport = {
@@ -124,6 +127,9 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
+        {/* Early connection to Supabase: one for CORS (API calls), one for plain loads (images) */}
+        <link rel="preconnect" href={SUPABASE_ORIGIN} crossOrigin="anonymous" />
+        <link rel="preconnect" href={SUPABASE_ORIGIN} />
         <meta name="theme-color" content="#0ef6cc" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -156,8 +162,8 @@ export default function RootLayout({ children }) {
         {/* Analytics and tracking scripts now live inside <body> */}
         <Analytics />
         <SpeedInsights />
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-0NWQ6GQ2YB" strategy="afterInteractive" />
-        <Script id="gtag-init" strategy="afterInteractive">{`
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-0NWQ6GQ2YB" strategy="lazyOnload" />
+        <Script id="gtag-init" strategy="lazyOnload">{`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
