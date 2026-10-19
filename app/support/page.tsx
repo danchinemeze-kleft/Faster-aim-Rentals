@@ -137,7 +137,7 @@ export default function SupportPage() {
 
         {/* Safety */}
         <section className="faim-sp-section faim-sp-safety">
-          <h2>🛡️ Stay safe when renting</h2>
+          <h2>🛡️ Stay safe when searching for rentals</h2>
           <ul>
             {SAFETY.map((tip) => (
               <li key={tip}>{tip}</li>

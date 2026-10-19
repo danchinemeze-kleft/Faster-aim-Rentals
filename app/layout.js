@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import Script from "next/script";
 import { LoadingProvider } from "./context/LoadingContext";
 import RefCapture from "./components/RefCapture";
-
+import ThemeToggle from "./components/ThemeToggle";
 const SUPABASE_ORIGIN = "https://ojkhpishuqyeiwaopaty.supabase.co";
 
 const geistSans = Geist({
@@ -123,7 +123,7 @@ const jsonLd = {
 export default function RootLayout({ children }) {
   return (
     <html
-      lang="en"
+      lang="en" suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
@@ -135,6 +135,9 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Mr. Rent" />
+       <script dangerouslySetInnerHTML={{ __html: `
+  try { if (localStorage.getItem('mr-rent-theme') === 'light') document.documentElement.classList.add('light-mode'); } catch (e) {}
+` }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -158,6 +161,7 @@ export default function RootLayout({ children }) {
         <div style={{ position: 'fixed', top: 0, bottom: 0, right: 0, width: 4, background: 'linear-gradient(180deg, #14B8A6 0%, #0ef6cc 100%)', zIndex: 99999, pointerEvents: 'none' }} />
         <Suspense fallback={null}><RefCapture /></Suspense>
         <LoadingProvider>{children}</LoadingProvider>
+        <ThemeToggle />
 
         {/* Analytics and tracking scripts now live inside <body> */}
         <Analytics />
