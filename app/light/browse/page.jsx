@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -85,7 +86,7 @@ export default function BrowseLightPage() {
 
     const data = await res.json()
     if (data.authorization_url) {
-      window.location.href = data.authorization_url
+      window.location.assign(data.authorization_url)
     } else {
       alert('Payment could not be started. Please try again.')
     }
@@ -213,7 +214,7 @@ export default function BrowseLightPage() {
               <div key={l.id} className="listing-card">
                 <a href={`/listing/${l.id}`} className="listing-image">
                   {l.images?.length > 0 ? (
-                    <img src={l.images[0]} alt={l.title} />
+                    <Image src={l.images[0]} alt={l.title || 'Rental property'} width={800} height={600} />
                   ) : (
                     <div className="listing-placeholder">🏠</div>
                   )}
