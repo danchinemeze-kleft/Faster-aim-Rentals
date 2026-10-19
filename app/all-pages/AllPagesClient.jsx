@@ -35,8 +35,8 @@ const SECTIONS = [
     title: 'Your account',
     blurb: 'Your profile, payments and unlocked contacts.',
     pages: [
-      { name: 'Account', path: '/account', desc: 'Sign in or create your account.' },
-      { name: 'My account', path: '/my-account', desc: 'Your profile and saved details.' },
+      { name: 'Landlord Account', path: '/account', desc: 'Sign in or create your account.' },
+      { name: 'Tenant account', path: '/my-account', desc: 'Your profile and saved details.' },
       { name: 'Contact unlocked', path: '/reveal-success', desc: 'Shown after you pay to reveal an owner’s number.', badge: 'After payment' },
     ],
   },

@@ -167,7 +167,7 @@ const firstName = displayName.split(' ')[0]
   )}
 </nav>
             <h1 className="faim-ma-page-title">
-              {activeTab === 'overview' && 'Tennant Account'}
+              {activeTab === 'overview' && 'Tenant Account'}
               {activeTab === 'reveals' && 'Saved Contacts'}
               {activeTab === 'profile' && 'My Profile'}
             </h1>
