@@ -1,10 +1,61 @@
+import { cookies } from 'next/headers';
+import { createServerClient } from '@supabase/ssr';
+
+const PHONE_OK = /^\+?[0-9]{10,14}$/;
+
 export async function POST(request) {
   const body = await request.json();
-  const { email, type, listing_id, user_id, ref_code } = body;
+  const { type, listing_id, ref_code } = body;
 
-  if (!email || !type) {
-    return Response.json({ error: 'Missing email or type' }, { status: 400 });
+  if (!type) {
+    return Response.json({ error: 'Missing type' }, { status: 400 });
   }
+
+  // 1. Who is really calling? Read the logged-in user from the session cookie,
+  //    never from the request body.
+  const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll() {},
+      },
+    }
+  );
+
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
+    return Response.json(
+      { error: 'Please log in to continue.', code: 'not_logged_in' },
+      { status: 401 }
+    );
+  }
+
+  // 2. Is the profile complete (name + valid phone)?
+  const { data: profile } = await supabase
+    .from('Profiles')
+    .select('full_name, phone')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  const phone = (profile?.phone || '').replace(/\s+/g, '');
+  if (!profile?.full_name?.trim() || !PHONE_OK.test(phone)) {
+    return Response.json(
+      {
+        error: 'Please complete your profile (name and phone number) before making a payment.',
+        code: 'profile_incomplete',
+      },
+      { status: 403 }
+    );
+  }
+
+  // 3. Trusted values from here on
+  const email = user.email;
+  const user_id = user.id;
 
   let amount, payment_type, callback_url;
 
@@ -38,12 +89,12 @@ export async function POST(request) {
       email,
       amount,
       callback_url,
-     metadata: {
-  payment_type,
-  listing_id,
-  tenant_id: user_id,
-  ref_code: ref_code || null,
-},
+      metadata: {
+        payment_type,
+        listing_id,
+        tenant_id: user_id,
+        ref_code: ref_code || null,
+      },
     }),
   });
 

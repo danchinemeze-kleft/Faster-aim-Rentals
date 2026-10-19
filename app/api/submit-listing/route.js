@@ -1,7 +1,8 @@
-'use server'
-
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+
+const PHONE_OK = /^\+?[0-9]{10,14}$/
+const FREE_MONTHLY_LIMIT = 2
 
 export async function POST(request) {
   try {
@@ -19,8 +20,9 @@ export async function POST(request) {
       }
     }
 
-    // Validate price is a number
-    if (isNaN(parseInt(listing.price))) {
+    // Validate price is a positive number
+    const price = parseInt(listing.price)
+    if (isNaN(price) || price <= 0) {
       return Response.json({ error: 'Price must be a valid number' }, { status: 400 })
     }
 
@@ -31,6 +33,11 @@ export async function POST(request) {
 
     if (listing.images.length > 10) {
       return Response.json({ error: 'Maximum 10 images allowed' }, { status: 400 })
+    }
+
+    // A property video is required (the form already enforces this)
+    if (!listing.video_url) {
+      return Response.json({ error: 'A property video is required' }, { status: 400 })
     }
 
     // Create Supabase server client
@@ -54,33 +61,78 @@ export async function POST(request) {
       }
     )
 
-    // Get authenticated user
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    // 1. Who is calling? getUser() verifies the session with Supabase.
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return Response.json(
+        { error: 'Please log in to continue.', code: 'not_logged_in' },
+        { status: 401 }
+      )
     }
 
-    // Verify landlord role
+    // 2. Role + profile completeness
     const { data: profile } = await supabase
       .from('Profiles')
-      .select('role')
-      .eq('id', session.user.id)
-      .single()
+      .select('role, full_name, phone')
+      .eq('id', user.id)
+      .maybeSingle()
 
     if (profile?.role !== 'landlord') {
       return Response.json({ error: 'Only landlords can list properties' }, { status: 403 })
     }
 
+    const phone = (profile?.phone || '').replace(/\s+/g, '')
+    if (!profile?.full_name?.trim() || !PHONE_OK.test(phone)) {
+      return Response.json(
+        {
+          error: 'Please complete your profile (name and phone number) before listing a property.',
+          code: 'profile_incomplete',
+        },
+        { status: 403 }
+      )
+    }
+
+    // 3. Free-tier limit, enforced on the server for NEW listings only
+    if (!listing.id) {
+      const now = new Date()
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+
+      const [{ data: sub }, { count }] = await Promise.all([
+        supabase
+          .from('Subscription')
+          .select('expiry_date')
+          .eq('landlord_id', user.id)
+          .gte('expiry_date', now.toISOString())
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from('listings')
+          .select('id', { count: 'exact', head: true })
+          .eq('landlord_id', user.id)
+          .gte('created_at', startOfMonth.toISOString()),
+      ])
+
+      if (!sub && (count || 0) >= FREE_MONTHLY_LIMIT) {
+        return Response.json(
+          {
+            error: 'You have reached your free listing limit for this month. Subscribe to list more properties.',
+            code: 'free_limit_reached',
+          },
+          { status: 403 }
+        )
+      }
+    }
+
     // Insert listing (will be created with status: pending)
     const payload = {
-      landlord_id: session.user.id,
+      landlord_id: user.id,
       title: listing.title,
       property_number: listing.property_number || null,
       description: listing.description,
       location: listing.location,
       city: listing.city || null,
       state: listing.state,
-      price: parseInt(listing.price),
+      price,
       price_period: listing.price_period,
       property_type: listing.property_type,
       bedrooms: listing.bedrooms || null,
@@ -89,7 +141,7 @@ export async function POST(request) {
       amenities: listing.amenities || [],
       available: listing.available !== false,
       is_available: listing.available !== false,
-      video_url: listing.video_url || null,
+      video_url: listing.video_url,
       images: listing.images,
       status: 'pending',
     }
@@ -101,7 +153,7 @@ export async function POST(request) {
         .from('listings')
         .update(payload)
         .eq('id', listing.id)
-        .eq('landlord_id', session.user.id)
+        .eq('landlord_id', user.id)
         .select()
     } else {
       result = await supabase
@@ -115,6 +167,10 @@ export async function POST(request) {
     if (error) {
       console.error('Supabase error:', error)
       return Response.json({ error: error.message }, { status: 500 })
+    }
+
+    if (listing.id && (!data || data.length === 0)) {
+      return Response.json({ error: 'Listing not found' }, { status: 404 })
     }
 
     return Response.json({

@@ -211,12 +211,12 @@ function ListPageInner() {
       const userId = session.user.id
       setUser(session.user)
 
-      supabase.from('Profiles').select('role').eq('id', userId).single()
-        .then(({ data }) => {
-          const role = data?.role || 'tenant'
-          setUserRole(role)
-          if (role === 'tenant') setShowRoleModal(true)
-        })
+     supabase.from('Profiles').select('role').eq('id', userId).single()
+  .then(({ data }) => {
+    const role = data?.role || 'tenant'
+    setUserRole(role)
+    if (role === 'tenant') setShowRoleModal(true)
+  })
 
       try {
         const startOfMonth = new Date()
@@ -477,6 +477,10 @@ videoEl.src = URL.createObjectURL(file)
       alert('Please add a video of your property before publishing.')
       return
     }
+    if (photoFiles.length + existingPhotos.length === 0) {
+  alert('Please add at least one photo of your property before publishing.')
+  return
+}
     setSubmitting(true)
     setUploadProgress(0)
     setPhotoUploadProgress(0)
@@ -790,7 +794,7 @@ videoEl.src = URL.createObjectURL(file)
 
               {/* ── PHOTO UPLOAD ── */}
               <div className="faim-field">
-                <label>Property Photos <span style={{fontWeight:400,color:'#cccccc'}}>(up to 10, optional)</span></label>
+                <label>Property Photos <span style={{fontWeight:400,color:'#c0392b'}}>* Required (at least 1, up to 10)</span></label>
                 <div style={{background:'#1a1d24',border:'1px solid #333',borderRadius:'8px',padding:'0.6rem 0.9rem',marginBottom:'0.5rem',fontSize:'0.95rem',color:'#cccccc',lineHeight:'1.6'}}>
                   📸 Upload clear photos of the interior and exterior. Max 10MB per photo.
                 </div>

@@ -40,7 +40,7 @@ function AccountPageInner() {
 
     const { data: profile, error: profileError } = await supabase
       .from('Profiles')
-      .select('role, full_name')
+      .select('role, full_name, phone')
       .eq('id', user.id)
       .maybeSingle()
 
@@ -53,16 +53,19 @@ function AccountPageInner() {
       return
     }
 
-    // New OAuth user: no role set yet, show onboarding
-    if (!profile?.role) {
-      const name =
-        profile?.full_name ||
-        user.user_metadata?.full_name ||
-        user.user_metadata?.name ||
-        ''
-      setOnboardingUser({ ...user, full_name: name })
-      setOnboardingName(name)
-      setMode('onboarding')
+    // Incomplete profile (new OAuth user, or an existing user missing a phone)
+const phoneOk = /^\+?[0-9]{10,14}$/.test((profile?.phone || '').replace(/\s+/g, ''))
+if (!profile?.role || !profile?.full_name?.trim() || !phoneOk) {
+  const name =
+    profile?.full_name ||
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    ''
+  setOnboardingUser({ ...user, full_name: name })
+  setOnboardingName(name)
+  setOnboardingRole(profile?.role || '')
+  setOnboardingPhone(profile?.phone || '')
+  setMode('onboarding')
       setSessionChecking(false)
       setLoading(false)
       redirectHandled.current = false
