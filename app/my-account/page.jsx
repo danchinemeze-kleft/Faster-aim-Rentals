@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import GoBackButton from '../components/GoBackButton'
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
@@ -17,7 +18,9 @@ export default function MyAccountPage() {
   const [reveals, setReveals] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
-
+useEffect(() => {
+  document.title = 'Tenant Account - Mr. Rent'
+}, [])
   const fetchProfile = async (userId) => {
     try {
       const { data, error } = await supabase.from('Profiles').select('*').eq('id', userId).single()
@@ -92,7 +95,19 @@ export default function MyAccountPage() {
     await supabase.auth.signOut()
     router.push('/')
   }
+const rawName = (
+  profile?.full_name ||
+  user?.user_metadata?.full_name ||
+  user?.user_metadata?.name ||
+  user?.email?.split('@')[0] ||
+  ''
+).trim()
 
+const displayName = rawName
+  ? rawName.charAt(0).toUpperCase() + rawName.slice(1)
+  : ''
+
+const firstName = displayName.split(' ')[0]
   if (loading) return (
     <div className="faim-dash-loading">
       <div className="faim-spinner"></div>
@@ -136,14 +151,29 @@ export default function MyAccountPage() {
         {/* Topbar */}
         <div className="faim-ma-topbar">
           <div>
+            <nav className="faim-ma-breadcrumb" aria-label="Breadcrumb">
+  <Link href="/">Home</Link>
+  <span>›</span>
+  {activeTab === 'overview' ? (
+    <span aria-current="page">Tenant Account</span>
+  ) : (
+    <>
+      <button onClick={() => setActiveTab('overview')}>Tenant Account</button>
+      <span>›</span>
+      <span aria-current="page">
+        {activeTab === 'reveals' ? 'Saved Contacts' : 'My Profile'}
+      </span>
+    </>
+  )}
+</nav>
             <h1 className="faim-ma-page-title">
-              {activeTab === 'overview' && 'My Account'}
+              {activeTab === 'overview' && 'Tennant Account'}
               {activeTab === 'reveals' && 'Saved Contacts'}
               {activeTab === 'profile' && 'My Profile'}
             </h1>
-            <p className="faim-ma-welcome">Welcome back, {profile?.full_name?.split(' ')[0] || 'Tenant'} 👋</p>
+           <p className="faim-ma-welcome">Welcome back{firstName ? `, ${firstName}` : ''} 👋</p>
           </div>
-          <span className="faim-ma-tenant-badge">🔍 Tenant</span>
+          <span className="faim-ma-tenant-badge">🔍 tenant</span>
         </div>
 
         {/* OVERVIEW TAB */}
@@ -404,6 +434,26 @@ export default function MyAccountPage() {
           font-size: 0.8rem;
           font-weight: 600;
         }
+          .faim-ma-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #cccccc;
+  margin-bottom: 6px;
+}
+.faim-ma-breadcrumb a,
+.faim-ma-breadcrumb button {
+  color: #e67e22;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+.faim-ma-breadcrumb a:hover,
+.faim-ma-breadcrumb button:hover { text-decoration: underline; }
 
         .faim-ma-stats-grid {
           display: grid;
