@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import SwitchRoleModal from '../../components/SwitchRoleModal'
+import SwitchRoleModal from '../components/SwitchRoleModal'
 
 const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
