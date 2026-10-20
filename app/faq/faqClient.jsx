@@ -22,7 +22,7 @@ export default function FaqPage() {
     );
   }, [category, query]);
 
-  const toggle = (q: string) =>
+  const toggle = (q) =>
     setOpen((prev) => {
       const next = new Set(prev);
       next.has(q) ? next.delete(q) : next.add(q);
