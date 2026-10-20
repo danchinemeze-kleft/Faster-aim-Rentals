@@ -683,6 +683,12 @@ export default function Home() {
   />
               <div style={{ ...s.stepNumber, backgroundColor: '#0ea5e9' }}>1</div>
               <h3 style={s.stepTitle}>Search or Chat</h3>
+              <h5 className="text-lg font-semibold text-gray-800 mb-2">
+          Unlock Direct Access
+        </h5>
+        <p className="text-gray-600">
+          Just press <strong>&quot;Meet Landlord&quot;</strong> or <strong>&quot;Reveal Contact&quot;</strong> and pay. We will show you the owner&apos;s phone number instantly.
+        </p>
               <p style={s.stepText}>Whether you&apos;re looking in the bustling streets of Lagos, the heart of Abuja, or thriving communities in Anambra—find, list, and secure properties across all 36 states and the FCT.</p>
             </div>
             <div style={s.stepCard} className="feature-card">
