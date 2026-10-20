@@ -174,83 +174,14 @@ export default function Home() {
   return (
     <main className={jakarta.className} style={s.main}>
       <style>{`
-        .mobile-menu-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: rgba(15, 23, 42, 0.6);
-          z-index: 9999;
-          display: flex;
-          justify-content: flex-end;
-        }
-        .mobile-menu-panel {
-          background-color: #ffffff;
-          width: 85%;
-          max-width: 360px;
-          height: 100%;
-          box-shadow: -4px 0 25px rgba(0, 0, 0, 0.15);
-          display: flex;
-          flex-direction: column;
-          padding: 1.5rem;
-          overflow-y: auto;
-          box-sizing: border-box;
-        }
-        .mobile-menu-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          border-bottom: 1px solid #e2e8f0;
-          padding-bottom: 1rem;
-          margin-bottom: 1rem;
-        }
-        .mobile-menu-close {
-          background: none;
-          border: none;
-          font-size: 2rem;
-          color: #64748b;
-          cursor: pointer;
-          line-height: 1;
-        }
-        .mobile-menu-group {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-        .mobile-menu-item {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          padding: 0.75rem 1rem;
-          border-radius: 8px;
-          text-decoration: none;
-          color: #475569;
-          font-weight: 600;
-          font-size: 0.95rem;
-          transition: background-color 0.2s;
-        }
-        .mobile-menu-item:hover {
-          background-color: #f1f5f9;
-          color: #0f172a;
-        }
-        .mobile-menu-item-highlight {
-          color: #0ea5e9;
-          background-color: rgba(14, 165, 233, 0.05);
-        }
-        .mobile-menu-item-highlight:hover {
-          background-color: rgba(14, 165, 233, 0.1);
-        }
-        .mobile-menu-icon {
-          flex-shrink: 0;
-          color: #64748b;
-        }
-        .mobile-menu-item-highlight .mobile-menu-icon {
-          color: #0ea5e9;
-        }
-        .mobile-menu-footer {
-          margin-top: 1.5rem;
-        }
+       
+.mobile-menu-overlay { position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.6); z-index: 9999; display: flex; justify-content: flex-end; }
+.mobile-menu-panel { background-color: var(--card-bg); color: var(--text-1); width: 85%; max-width: 360px; height: 100%; box-shadow: -4px 0 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; padding: 1.5rem; overflow-y: auto; box-sizing: border-box; }
+.mobile-menu-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-1); padding-bottom: 1rem; margin-bottom: 1rem; }
+.mobile-menu-close { background: none; border: none; font-size: 2rem; color: var(--text-2); cursor: pointer; line-height: 1; }
+.mobile-menu-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 8px; text-decoration: none; color: var(--text-2); font-weight: 600; font-size: 0.95rem; }
+.mobile-menu-item:hover { background-color: var(--card-bg2); color: var(--text-1); }
+.mobile-menu-icon { flex-shrink: 0; color: var(--text-3); }
         .feature-card {
           transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
@@ -363,7 +294,7 @@ export default function Home() {
 {/* Navbar */}
 <nav style={s.nav} className="nav-3d">
         <div style={s.navBrand}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px', color: '#0ea5e9' }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px', color: 'var(--primary-500)' }}>
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -399,7 +330,7 @@ export default function Home() {
 </div>
         </div>
 
-        <button className="nav-hamburger" onClick={() => setMenuOpen(true)} aria-label="Open menu" style={{ background: 'none', border: '2px solid #e2e8f0', padding: '6px 10px', borderRadius: '8px', cursor: 'pointer', fontSize: '1.2rem', color: '#0f172a' }}>☰</button>
+        <button className="nav-hamburger" onClick={() => setMenuOpen(true)} aria-label="Open menu" style={{ background: 'none', border: '2px solid var(--border-1)', padding: '6px 10px', borderRadius: '8px', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-1)' }}>☰</button>
       </nav>
 
       {/* Redesigned Mobile Navigation Menu Overlay */}
@@ -411,11 +342,11 @@ export default function Home() {
               <div style={s.navBrand}>
   <svg width="30" height="30" viewBox="0 0 32 32" style={{ marginRight: '8px' }}>
     <polygon
-      fill="#10705a"
+      fill="var(--primary-500)"
       points="16,3 28,13 28,29 20,29 20,20 12,20 12,29 4,29 4,13"
     />
   </svg>
-  <span style={{ color: '#0b4a3a', fontWeight: 700 }}>Mr. Rent</span>
+  <span style={{ color: 'var(--text-1)', fontWeight: 700 }}>Mr. Rent</span>
 </div>
               <button className="mobile-menu-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button>
             </div>
@@ -529,13 +460,11 @@ export default function Home() {
             </div>
 
             {/* Secondary Legal Section */}
-            <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1rem', marginTop: 'auto', marginBottom: '1rem' }}>
-              <p style={{ fontSize: '0.7rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', paddingLeft: '0.5rem' }}>Legal &amp; Info</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                <a href="/privacy-policy" style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }} onClick={() => setMenuOpen(false)}>Privacy Policy</a>
-                <a href="/terms" style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }} onClick={() => setMenuOpen(false)}>Terms of Service</a>
-              </div>
-            </div>
+            <div style={{ borderTop: '1px solid var(--border-1)', paddingTop: '1rem', marginTop: 'auto', marginBottom: '1rem' }}>
+  <p style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', paddingLeft: '0.5rem' }}>Legal &amp; Info</p>
+  <a href="/privacy-policy" style={{ fontSize: '0.85rem', color: 'var(--text-2)', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }}>Privacy Policy</a>
+  <a href="/terms" style={{ fontSize: '0.85rem', color: 'var(--text-2)', fontWeight: '600', textDecoration: 'none', padding: '0.25rem 0.5rem' }}>Terms of Service</a>
+</div>
 
             {/* 5. Get started Button */}
             <div className="mobile-menu-footer">
@@ -785,7 +714,7 @@ export default function Home() {
       </section>
 
          {/* Why Choose Us */}
-      <section style={{ ...s.sectionWrap, backgroundColor: '#ffffff' }}>
+      <section style={{ ...s.sectionWrap, backgroundColor: 'var(--page-bg2)' }}>
         <div style={s.sectionInner}>
           <div style={s.sectionHead}>
             <h2 style={s.sectionTitle}>Why People Trust Mr. Rent</h2>
@@ -794,7 +723,7 @@ export default function Home() {
           <div style={s.featuresGrid} className="features-grid">
             <div style={s.featureCard} className="feature-card">
               <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(14, 165, 233, 0.1)' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                   <path d="m9 11 2 2 4-4"/>
                 </svg>
@@ -811,7 +740,7 @@ export default function Home() {
             </div>
             <div style={s.featureCard} className="feature-card">
               <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(20, 184, 166, 0.1)' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--secondary-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8"/>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
@@ -828,7 +757,7 @@ export default function Home() {
             </div>
             <div style={s.featureCard} className="feature-card">
               <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(15, 23, 42, 0.06)' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f172a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-1)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                   <polyline points="9 22 9 12 15 12 15 22"/>
                 </svg>
@@ -845,7 +774,7 @@ export default function Home() {
             </div>
             <div style={s.featureCard} className="feature-card">
               <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(14, 165, 233, 0.1)' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
                 </svg>
               </div>
@@ -922,569 +851,88 @@ export default function Home() {
 }
 
 const s = {
-  main: {
-    minHeight: '100vh',
-    backgroundColor: '#f8fafc',
-    color: '#0f172a',
-  },
-  nav: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '1rem 2rem',
-    borderBottom: '1px solid #e2e8f0',
-    backgroundColor: '#ffffff',
-  },
-  navBrand: {
-    display: 'flex',
-    alignItems: 'center',
-    fontWeight: '700',
-    fontSize: '1.25rem',
-    color: '#0f172a',
-  },
-  navLink: {
-    textDecoration: 'none',
-    color: '#475569',
-    fontWeight: '600',
-    fontSize: '0.95rem',
-    marginRight: '1.5rem',
-  },
-  navBtn: {
-    textDecoration: 'none',
-    backgroundColor: '#0f172a',
-    color: '#ffffff',
-    padding: '0.5rem 1rem',
-    borderRadius: '8px',
-    fontWeight: '600',
-    fontSize: '0.95rem',
-  },
-  heroSection: {
-    padding: '2rem 1rem',
-  },
-  heroOuter: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-  },
+  main: { minHeight: '100vh', backgroundColor: 'var(--page-bg)', color: 'var(--text-1)' },
+  nav: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 2rem', borderBottom: '1px solid var(--border-1)', backgroundColor: 'var(--nav-bg)' },
+  navBrand: { display: 'flex', alignItems: 'center', fontWeight: '700', fontSize: '1.25rem', color: 'var(--text-1)' },
+  navLink: { textDecoration: 'none', color: 'var(--text-2)', fontWeight: '600', fontSize: '0.95rem', marginRight: '1.5rem' },
+  navBtn: { textDecoration: 'none', backgroundColor: '#0f172a', color: '#ffffff', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: '600', fontSize: '0.95rem' },
+  heroSection: { padding: '2rem 1rem' },
+  heroOuter: { maxWidth: '1200px', margin: '0 auto' },
   heroInner: {
-    background: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><path d='M15 25 L25 15 L35 25 L35 40 L15 40 Z M21 40 L21 32 L29 32 L29 40' fill='none' stroke='%230ea5e9' stroke-width='1.2' opacity='0.18'/><path d='M75 20 A 4 4 0 1 0 75 28 A 4 4 0 1 0 75 20 M79 24 L92 24 L92 28 L88 28 L88 24' fill='none' stroke='%2314B8A6' stroke-width='1.2' opacity='0.07'/><path d='M20 70 A 5 5 0 0 1 30 70 C 30 77 25 83 25 83 C 25 83 20 77 20 70 Z' fill='none' stroke='%2314B8A6' stroke-width='1.2' opacity='0.07'/><path d='M65 60 L65 90 L85 90 L85 60 Z M70 66 L74 66 L74 70 L70 70 Z M76 66 L80 66 L80 70 L76 70 Z M70 76 L74 76 L74 80 L70 80 Z M76 76 L80 76 L80 80 L76 80 Z' fill='none' stroke='%230ea5e9' stroke-width='1.2' opacity='0.07'/></svg>") repeat, radial-gradient(circle at top right, rgba(14, 165, 233, 0.05), transparent 40%), radial-gradient(circle at bottom left, rgba(20, 184, 166, 0.05), transparent 40%), #ffffff`,
-    borderRadius: '24px',
-    padding: '3rem 2rem',
-    border: '1px solid #e2e8f0',
-    boxShadow: '0 20px 45px -20px rgba(15, 23, 42, 0.12)',
-  },
-  heroLayout: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '2rem',
-    alignItems: 'center',
-  },
-  heroText: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem',
-  },
-  heroBadge: {
-    alignSelf: 'flex-start',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.4rem',
-    backgroundColor: '#f1f5f9',
-    color: '#475569',
-    padding: '0.25rem 0.75rem',
-    borderRadius: '9999px',
-    fontSize: '0.85rem',
-    fontWeight: '600',
-  },
-  heroTitle: {
-    fontSize: '3rem',
-    fontWeight: '700',
-    lineHeight: '1.08',
-    letterSpacing: '-0.01em',
-    color: '#0f172a',
-  },
-  heroCyan: {
-    color: '#0ea5e9',
-  },
-  heroTeal: {
-    color: '#14b8a6',
-  },
-  heroSubtitle: {
-    fontSize: '1.1rem',
-    color: '#475569',
-    lineHeight: '1.6',
-  },
-  heroActionsPrimary: {
-    display: 'flex',
-    gap: '1rem',
-  },
-  btnCyan: {
-    textDecoration: 'none',
-    backgroundColor: '#0ea5e9',
-    color: '#ffffff',
-    padding: '0.75rem 1.5rem',
-    borderRadius: '12px',
-    fontWeight: '600',
-    textAlign: 'center',
-    boxShadow: '0 8px 20px -6px rgba(14, 165, 233, 0.5)',
-  },
-  btnTeal: {
-    textDecoration: 'none',
-    backgroundColor: '#14b8a6',
-    color: '#ffffff',
-    padding: '0.75rem 1.5rem',
-    borderRadius: '12px',
-    fontWeight: '600',
-    textAlign: 'center',
-    boxShadow: '0 8px 20px -6px rgba(20, 184, 166, 0.5)',
-  },
-  heroActionsSecondary: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '1rem',
-  },
-  secondaryLink: {
-    textDecoration: 'none',
-    color: '#64748b',
-    fontSize: '0.9rem',
-    fontWeight: '600',
-  },
-  trustRow: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '0.6rem',
-    marginTop: '0.5rem',
-  },
-  trustPill: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.4rem',
-    backgroundColor: '#f1f5f9',
-    border: '1px solid #e2e8f0',
-    borderRadius: '9999px',
-    padding: '0.4rem 0.8rem',
-  },
-  trustText: {
-    fontSize: '0.8rem',
-    fontWeight: '600',
-    color: '#334155',
-    whiteSpace: 'nowrap',
-  },
-  heroRight: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '1.5rem',
-  },
-  makeMoneyBtn: {
-    textDecoration: 'none',
-    background: 'linear-gradient(135deg, #0ea5e9, #14b8a6)',
-    color: '#ffffff',
-    padding: '0.6rem 1.4rem',
-    borderRadius: '9999px',
-    fontWeight: '600',
-    fontSize: '0.95rem',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.4rem',
-    boxShadow: '0 8px 20px -6px rgba(20, 184, 166, 0.55)',
-  },
-  avatarContainer: {
-    position: 'relative',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  ringTeal: {
-    position: 'absolute',
-    width: '320px',
-    height: '320px',
-    borderRadius: '50%',
-    border: '2px dashed rgba(20, 184, 166, 0.2)',
-  },
-  ringCyan: {
-    position: 'absolute',
-    width: '360px',
-    height: '360px',
-    borderRadius: '50%',
-    border: '2px dashed rgba(14, 165, 233, 0.2)',
-  },
-  avatarWrapper: {
-    position: 'relative',
-    width: '300px',
-    height: '300px',
-    borderRadius: '50%',
-    overflow: 'hidden',
-    backgroundColor: '#f1f5f9',
-    border: '4px solid #ffffff',
-    boxShadow: '0 20px 40px -12px rgba(15, 23, 42, 0.25)',
-  },
-  avatarImage: {
-    objectFit: 'cover',
-    objectPosition: 'center 15%',
-  },
-  verifiedBadge: {
-    position: 'absolute',
-    bottom: '0px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    backgroundColor: '#ffffff',
-    padding: '0.6rem 1.2rem',
-    borderRadius: '18px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    boxShadow: '0 8px 18px rgba(0, 0, 0, 0.1)',
-    border: '1px solid #e2e8f0',
-    maxWidth: '92%',
-    whiteSpace: 'nowrap',
-  },
-
-  // Shared section styles
-  sectionWrap: {
-    padding: '4rem 1rem',
-  },
-  sectionInner: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-  },
-  sectionHead: {
-    textAlign: 'center',
-    maxWidth: '560px',
-    margin: '0 auto 2.5rem',
-  },
-  sectionTitle: {
-    fontSize: '2rem',
-    fontWeight: '700',
-    color: '#0f172a',
-    marginBottom: '0.5rem',
-    letterSpacing: '-0.01em',
-  },
-  sectionSubtitle: {
-    fontSize: '1rem',
-    color: '#64748b',
-  },
-
-  // Hero scroll-down indicator
-  scrollDownWrap: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '1.5rem',
-  },
-  scrollDownBtn: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    backgroundColor: '#ffffff',
-    border: '1px solid #e2e8f0',
-    color: '#64748b',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    boxShadow: '0 8px 18px -10px rgba(15, 23, 42, 0.25)',
-    padding: 0,
-  },
-
-  // Featured Properties
-  featuredHeadRow: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: '1rem',
-    marginBottom: '2rem',
-  },
-  featuredSectionHead: {
-    textAlign: 'left',
-    maxWidth: '560px',
-  },
-  moreBtnDesktop: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.3rem',
-    textDecoration: 'none',
-    color: '#0ea5e9',
-    fontWeight: '600',
-    fontSize: '0.95rem',
-    whiteSpace: 'nowrap',
-    marginTop: '0.25rem',
-  },
-  moreBtnMobile: {
-    display: 'none',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.3rem',
-    textDecoration: 'none',
-    color: '#0ea5e9',
-    fontWeight: '600',
-    fontSize: '0.95rem',
-    marginTop: '1.25rem',
-    padding: '0.6rem 1rem',
-    borderRadius: '9999px',
-    border: '1px solid #e2e8f0',
-    backgroundColor: '#f1f5f9',
-    width: 'fit-content',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  },
-  featuredGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '1.5rem',
-  },
-  featuredCard: {
-    display: 'block',
-    textDecoration: 'none',
-    backgroundColor: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderRadius: '16px',
-    overflow: 'hidden',
-    boxShadow: '0 8px 24px -16px rgba(15, 23, 42, 0.15)',
-  },
-  featuredImageWrap: {
-    position: 'relative',
-    width: '100%',
-    aspectRatio: '4 / 3',
-    backgroundColor: '#f1f5f9',
-  },
-  featuredNoImage: {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#94a3b8',
-    fontSize: '0.85rem',
-  },
-  featuredKindBadge: {
-    position: 'absolute',
-    top: '0.75rem',
-    left: '0.75rem',
-    backgroundColor: '#0f172a',
-    color: '#ffffff',
-    fontSize: '0.7rem',
-    fontWeight: '600',
-    padding: '0.25rem 0.6rem',
-    borderRadius: '9999px',
-  },
-  featuredVerifiedBadge: {
-    position: 'absolute',
-    top: '0.75rem',
-    right: '0.75rem',
-    backgroundColor: '#14b8a6',
-    color: '#ffffff',
-    fontSize: '0.7rem',
-    fontWeight: '600',
-    padding: '0.25rem 0.6rem',
-    borderRadius: '9999px',
-  },
-  featuredBody: {
-    padding: '1.25rem',
-  },
-  featuredTitle: {
-    fontSize: '1.05rem',
-    fontWeight: '600',
-    color: '#0f172a',
-    marginBottom: '0.25rem',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
-  featuredLocation: {
-    fontSize: '0.9rem',
-    color: '#64748b',
-    marginBottom: '0.75rem',
-  },
-  featuredPriceRow: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  featuredPrice: {
-    fontWeight: '700',
-    color: '#0ea5e9',
-    fontSize: '1rem',
-  },
-  featuredPricePeriod: {
-    fontWeight: '600',
-    color: '#94a3b8',
-    fontSize: '0.75rem',
-  },
-  featuredBeds: {
-    fontSize: '0.78rem',
-    color: '#64748b',
-    fontWeight: '600',
-  },
-
-  // Our Services button
-  servicesWrap: {
-    display: 'flex',
-    justifyContent: 'center',
-    padding: '0.5rem 1rem 1rem',
-  },
-  servicesBtn: {
-    textDecoration: 'none',
-    background: 'linear-gradient(135deg, #0ea5e9, #14b8a6)',
-    color: '#ffffff',
-    padding: '0.9rem 2.4rem',
-    borderRadius: '9999px',
-    fontWeight: '600',
-    fontSize: '1rem',
-    display: 'inline-flex',
-    alignItems: 'center',
-    boxShadow: '0 14px 34px -6px rgba(20, 184, 166, 0.6), 0 0 0 8px rgba(14, 165, 233, 0.12)',
-  },
-
-  // How It Works
-  stepsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '1.5rem',
-  },
-  stepCard: {
-    backgroundColor: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderRadius: '16px',
-    padding: '2rem',
-    boxShadow: '0 8px 24px -16px rgba(15, 23, 42, 0.15)',
-  },
-  stepNumber: {
-    width: '36px',
-    height: '36px',
-    borderRadius: '50%',
-    color: '#ffffff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: '700',
-    marginBottom: '1rem',
-  },
-  stepTitle: {
-    fontSize: '1.15rem',
-    fontWeight: '600',
-    color: '#0f172a',
-    marginBottom: '0.5rem',
-  },
-  stepText: {
-    fontSize: '0.95rem',
-    color: '#64748b',
-    lineHeight: '1.6',
-  },
-
-  // Why Choose Us
-  featuresGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: '1.5rem',
-  },
-  featureCard: {
-    backgroundColor: '#f8fafc',
-    border: '1px solid #e2e8f0',
-    borderRadius: '16px',
-    padding: '1.75rem',
-  },
-  featureIconWrap: {
-    width: '48px',
-    height: '48px',
-    borderRadius: '12px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: '1rem',
-  },
-  featureTitle: {
-    fontSize: '1.05rem',
-    fontWeight: '600',
-    color: '#0f172a',
-    marginBottom: '0.4rem',
-  },
-  featureText: {
-    fontSize: '0.9rem',
-    color: '#64748b',
-    lineHeight: '1.6',
-  },
-
-  // Bottom CTA
-  ctaSection: {
-    background: 'linear-gradient(135deg, #0ea5e9, #14b8a6)',
-    padding: '4rem 1rem',
-  },
-  ctaInner: {
-    maxWidth: '640px',
-    margin: '0 auto',
-    textAlign: 'center',
-  },
-  ctaTitle: {
-    fontSize: '2rem',
-    fontWeight: '700',
-    color: '#ffffff',
-    marginBottom: '0.75rem',
-    letterSpacing: '-0.01em',
-  },
-  ctaSubtitle: {
-    fontSize: '1rem',
-    color: 'rgba(255,255,255,0.9)',
-    marginBottom: '2rem',
-  },
-  ctaActions: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '1rem',
-    flexWrap: 'wrap',
-  },
-
-  // Footer
-  footer: {
-    backgroundColor: '#f8fafc',
-    padding: '3rem 1rem 4rem',
-  },
-  footerCard: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    backgroundColor: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderRadius: '24px',
-    padding: '3rem 2rem',
-    boxShadow: '0 20px 45px -25px rgba(15, 23, 42, 0.12)',
-  },
-  footerTop: {
-    borderBottom: '1px solid #e2e8f0',
-    paddingBottom: '2rem',
-    marginBottom: '2rem',
-  },
-  footerTagline: {
-    fontSize: '0.95rem',
-    color: '#64748b',
-    maxWidth: '420px',
-    lineHeight: '1.6',
-    margin: 0,
-  },
-  footerGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '2rem',
-    paddingBottom: '2rem',
-    borderBottom: '1px solid #e2e8f0',
-    marginBottom: '1.5rem',
-  },
-  footerHeading: {
-    fontSize: '0.8rem',
-    fontWeight: '600',
-    color: '#0f172a',
-    marginBottom: '0.9rem',
-    textTransform: 'uppercase',
-    letterSpacing: '0.04em',
-  },
-  footerLink: {
-    display: 'block',
-    fontSize: '0.9rem',
-    color: '#64748b',
-    textDecoration: 'none',
-    marginBottom: '0.6rem',
-    transition: 'color 0.2s',
-  },
-  footerBottom: {
-    fontSize: '0.85rem',
-    color: '#94a3b8',
-    textAlign: 'center',
-  },
+    background: 'var(--card-bg)',
+    borderRadius: '24px', padding: '3rem 2rem', border: '1px solid var(--border-1)',
+    boxShadow: 'var(--shadow-card)',
+  },
+  heroLayout: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'center' },
+  heroText: { display: 'flex', flexDirection: 'column', gap: '1.5rem' },
+  heroBadge: { alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '0.4rem', backgroundColor: 'var(--card-bg2)', color: 'var(--text-2)', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: '600' },
+  heroTitle: { fontSize: '3rem', fontWeight: '700', lineHeight: '1.08', letterSpacing: '-0.01em', color: 'var(--text-1)' },
+  heroCyan: { color: '#0ea5e9' },
+  heroTeal: { color: '#14b8a6' },
+  heroSubtitle: { fontSize: '1.1rem', color: 'var(--text-2)', lineHeight: '1.6' },
+  heroActionsPrimary: { display: 'flex', gap: '1rem' },
+  btnCyan: { textDecoration: 'none', backgroundColor: '#0ea5e9', color: '#ffffff', padding: '0.75rem 1.5rem', borderRadius: '12px', fontWeight: '600', textAlign: 'center' },
+  btnTeal: { textDecoration: 'none', backgroundColor: '#14b8a6', color: '#ffffff', padding: '0.75rem 1.5rem', borderRadius: '12px', fontWeight: '600', textAlign: 'center' },
+  heroActionsSecondary: { display: 'flex', flexWrap: 'wrap', gap: '1rem' },
+  secondaryLink: { textDecoration: 'none', color: 'var(--text-2)', fontSize: '0.9rem', fontWeight: '600' },
+  trustRow: { display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginTop: '0.5rem' },
+  trustPill: { display: 'flex', alignItems: 'center', gap: '0.4rem', backgroundColor: 'var(--card-bg2)', border: '1px solid var(--border-1)', borderRadius: '9999px', padding: '0.4rem 0.8rem' },
+  trustText: { fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-2)', whiteSpace: 'nowrap' },
+  heroRight: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' },
+  makeMoneyBtn: { textDecoration: 'none', background: 'linear-gradient(135deg, #0ea5e9, #14b8a6)', color: '#ffffff', padding: '0.6rem 1.4rem', borderRadius: '9999px', fontWeight: '600', fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' },
+  avatarContainer: { position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' },
+  ringTeal: { position: 'absolute', width: '320px', height: '320px', borderRadius: '50%', border: '2px dashed rgba(20, 184, 166, 0.35)' },
+  ringCyan: { position: 'absolute', width: '360px', height: '360px', borderRadius: '50%', border: '2px dashed rgba(14, 165, 233, 0.35)' },
+  avatarWrapper: { position: 'relative', width: '300px', height: '300px', borderRadius: '50%', overflow: 'hidden', backgroundColor: 'var(--card-bg2)', border: '4px solid var(--card-bg)' },
+  avatarImage: { objectFit: 'cover', objectPosition: 'center 15%' },
+  verifiedBadge: { position: 'absolute', bottom: '0px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'var(--card-bg)', color: 'var(--text-1)', padding: '0.6rem 1.2rem', borderRadius: '18px', display: 'flex', alignItems: 'center', gap: '0.5rem', border: '1px solid var(--border-1)', maxWidth: '92%' },
+  sectionWrap: { padding: '4rem 1rem' },
+  sectionInner: { maxWidth: '1200px', margin: '0 auto' },
+  sectionHead: { textAlign: 'center', maxWidth: '560px', margin: '0 auto 2.5rem' },
+  sectionTitle: { fontSize: '2rem', fontWeight: '700', color: 'var(--text-1)', marginBottom: '0.5rem' },
+  sectionSubtitle: { fontSize: '1rem', color: 'var(--text-2)' },
+  scrollDownWrap: { display: 'flex', justifyContent: 'center', marginTop: '1.5rem' },
+  scrollDownBtn: { width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-1)', color: 'var(--text-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 },
+  featuredHeadRow: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '2rem' },
+  featuredSectionHead: { textAlign: 'left', maxWidth: '560px' },
+  moreBtnDesktop: { display: 'flex', alignItems: 'center', gap: '0.3rem', textDecoration: 'none', color: '#0ea5e9', fontWeight: '600', fontSize: '0.95rem', whiteSpace: 'nowrap', marginTop: '0.25rem' },
+  moreBtnMobile: { display: 'none', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', textDecoration: 'none', color: '#0ea5e9', fontWeight: '600', fontSize: '0.95rem', marginTop: '1.25rem', padding: '0.6rem 1rem', borderRadius: '9999px', border: '1px solid var(--border-1)', backgroundColor: 'var(--card-bg2)' },
+  featuredGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' },
+  featuredCard: { display: 'block', textDecoration: 'none', backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-1)', borderRadius: '16px', overflow: 'hidden', boxShadow: 'var(--shadow-card)' },
+  featuredImageWrap: { position: 'relative', width: '100%', aspectRatio: '4 / 3', backgroundColor: 'var(--card-bg2)' },
+  featuredNoImage: { width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)', fontSize: '0.85rem' },
+  featuredKindBadge: { position: 'absolute', top: '0.75rem', left: '0.75rem', backgroundColor: '#0f172a', color: '#ffffff', fontSize: '0.7rem', fontWeight: '600', padding: '0.25rem 0.6rem', borderRadius: '9999px' },
+  featuredVerifiedBadge: { position: 'absolute', top: '0.75rem', right: '0.75rem', backgroundColor: '#14b8a6', color: '#ffffff', fontSize: '0.7rem', fontWeight: '600', padding: '0.25rem 0.6rem', borderRadius: '9999px' },
+  featuredBody: { padding: '1.25rem' },
+  featuredTitle: { fontSize: '1.05rem', fontWeight: '600', color: 'var(--text-1)', marginBottom: '0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+  featuredLocation: { fontSize: '0.9rem', color: 'var(--text-2)', marginBottom: '0.75rem' },
+  featuredPriceRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
+  featuredPrice: { fontWeight: '700', color: '#0ea5e9', fontSize: '1rem' },
+  featuredPricePeriod: { fontWeight: '600', color: 'var(--text-3)', fontSize: '0.75rem' },
+  featuredBeds: { fontSize: '0.78rem', color: 'var(--text-2)', fontWeight: '600' },
+  servicesWrap: { display: 'flex', justifyContent: 'center', padding: '0.5rem 1rem 1rem' },
+  servicesBtn: { textDecoration: 'none', background: 'linear-gradient(135deg, #0ea5e9, #14b8a6)', color: '#ffffff', padding: '0.9rem 2.4rem', borderRadius: '9999px', fontWeight: '600', fontSize: '1rem', display: 'inline-flex', alignItems: 'center' },
+  stepsGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' },
+  stepCard: { backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-1)', borderRadius: '16px', padding: '2rem', boxShadow: 'var(--shadow-card)' },
+  stepNumber: { width: '36px', height: '36px', borderRadius: '50%', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', marginBottom: '1rem' },
+  stepTitle: { fontSize: '1.15rem', fontWeight: '600', color: 'var(--text-1)', marginBottom: '0.5rem' },
+  stepText: { fontSize: '0.95rem', color: 'var(--text-2)', lineHeight: '1.6' },
+  featuresGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' },
+  featureCard: { backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-1)', borderRadius: '16px', padding: '1.75rem' },
+  featureIconWrap: { width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' },
+  featureTitle: { fontSize: '1.05rem', fontWeight: '600', color: 'var(--text-1)', marginBottom: '0.4rem' },
+  featureText: { fontSize: '0.9rem', color: 'var(--text-2)', lineHeight: '1.6' },
+  ctaSection: { background: 'linear-gradient(135deg, #0ea5e9, #14b8a6)', padding: '4rem 1rem' },
+  ctaInner: { maxWidth: '640px', margin: '0 auto', textAlign: 'center' },
+  ctaTitle: { fontSize: '2rem', fontWeight: '700', color: '#ffffff', marginBottom: '0.75rem' },
+  ctaSubtitle: { fontSize: '1rem', color: 'rgba(255,255,255,0.9)', marginBottom: '2rem' },
+  ctaActions: { display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' },
+  footer: { backgroundColor: 'var(--page-bg)', padding: '3rem 1rem 4rem' },
+  footerCard: { maxWidth: '1200px', margin: '0 auto', backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-1)', borderRadius: '24px', padding: '3rem 2rem', boxShadow: 'var(--shadow-card)' },
+  footerTop: { borderBottom: '1px solid var(--border-1)', paddingBottom: '2rem', marginBottom: '2rem' },
+  footerTagline: { fontSize: '0.95rem', color: 'var(--text-2)', maxWidth: '420px', lineHeight: '1.6', margin: 0 },
+  footerGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', paddingBottom: '2rem', borderBottom: '1px solid var(--border-1)', marginBottom: '1.5rem' },
+  footerHeading: { fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-1)', marginBottom: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.04em' },
+  footerLink: { display: 'block', fontSize: '0.9rem', color: 'var(--text-2)', textDecoration: 'none', marginBottom: '0.6rem' },
+  footerBottom: { fontSize: '0.85rem', color: 'var(--text-3)', textAlign: 'center' },
 }
