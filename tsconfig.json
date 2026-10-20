@@ -31,7 +31,7 @@
     "**/*.mts",
     "**/*.ts",
     "**/*.tsx"
-, "app/page.js", "middleware.js", "app/components/GoBackButton.jsx", "app/faq/faqClient.jsx", "app/faq/page.jsx"  ],
+, "app/page.js", "middleware.js", "app/components/GoBackButton.jsx", "app/faq/FaqClient.jsx", "app/faq/page.jsx"  ],
   "exclude": [
     "node_modules"
   ]

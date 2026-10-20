@@ -1,4 +1,4 @@
-import SupportClient from './supportClient';
+import SupportClient from './SupportClient';
 
 export const metadata = {
   title: 'Contact & Support',

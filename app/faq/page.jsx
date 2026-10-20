@@ -1,4 +1,4 @@
-import FAQClient from './faqClient';
+import FAQClient from './FaqClient';
 
 export const metadata = {
   title: 'Frequently Asked Questions',
