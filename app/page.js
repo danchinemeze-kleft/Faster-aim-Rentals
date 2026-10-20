@@ -758,6 +758,20 @@ export default function Home() {
                 className="trust-img"
               />
               <h3 style={s.featureTitle}>Verified Landlords Only</h3>
+<div className="trust-section-info">
+  <h5 className="text-lg font-semibold text-gray-800 mb-2">
+    Verified Landlords Only
+  </h5>
+  <p className="text-gray-600">
+    <b>Only property owners are permitted to list properties on Mr. Rent.</b>
+
+     <b>Because agent fees are strictly prohibited, charging any agency fee violates our policy and may result in legal action or account termination. </b>
+     
+     <b>Please review our <Link href="/terms" className="text-blue-600 underline hover:text-blue-800">Terms of Service</Link> for complete details.
+  </b></p>
+</div>
+
+
               <p style={s.featureText}>No fake listings, no mystery landlords. Every property owner undergoes thorough document and identity verification before posting, giving you total confidence in who you&apos;re dealing with every step of the way</p>
             </div>
             <div style={s.featureCard} className="feature-card">
