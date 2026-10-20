@@ -2,16 +2,17 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+import { supabase } from '@/lib/supabase';
 
 const GREEN = '#059669';
 const GREEN_DARK = '#047857';
-const GREEN_LIGHT = '#d1fae5';
+
+/* Theme-aware colours: all derive from --text-1, so they flip with your toggle */
+const TEXT = 'var(--text-1)';
+const TEXT_SOFT = 'color-mix(in srgb, var(--text-1) 88%, transparent)';
+const LINE = 'color-mix(in srgb, var(--text-1) 42%, transparent)';
+const LINE_SOFT = 'color-mix(in srgb, var(--text-1) 25%, transparent)';
+const GREEN_TEXT = 'color-mix(in srgb, #059669 55%, var(--text-1))';
 
 const DOC_TYPES = [
   { value: 'certificate_of_occupancy', label: 'Certificate of Occupancy (C of O)' },
@@ -45,18 +46,39 @@ const PROPERTY_TYPES = [
   { value: 'land', label: 'Land / Plot' },
 ];
 
+const FONT = "'Segoe UI', system-ui, sans-serif";
+
 const inputStyle = {
   width: '100%', padding: '13px 15px',
-  background: 'var(--input-bg)', border: '2px solid rgba(255,255,255,0.55)',
-  borderRadius: 9, color: '#ffffff', fontSize: 16,
+  background: 'var(--input-bg)', border: `2px solid ${LINE}`,
+  borderRadius: 9, color: TEXT, fontSize: 16,
   boxSizing: 'border-box', outline: 'none',
-  fontFamily: "'Segoe UI', system-ui, sans-serif",
+  fontFamily: FONT,
 };
 
 const labelStyle = {
-  fontSize: 15, color: '#ffffff', display: 'block',
+  fontSize: 15, color: TEXT, display: 'block',
   marginBottom: 8, fontWeight: 800,
   textTransform: 'uppercase', letterSpacing: '0.04em',
+};
+
+const cardStyle = {
+  background: 'var(--card-bg)', border: `2px solid ${LINE}`,
+  borderRadius: 16, padding: '1.75rem', marginBottom: 20,
+  boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
+};
+
+const sectionTitleStyle = {
+  fontWeight: 800, fontSize: 17, color: TEXT,
+  display: 'flex', alignItems: 'center', gap: 10,
+  textTransform: 'uppercase', letterSpacing: '0.05em',
+};
+
+const stepCircle = {
+  background: GREEN, color: '#fff', borderRadius: '50%',
+  width: 26, height: 26, display: 'inline-flex',
+  alignItems: 'center', justifyContent: 'center',
+  fontSize: 13, fontWeight: 800, flexShrink: 0,
 };
 
 export default function VerylandSubmitPage() {
@@ -184,13 +206,13 @@ export default function VerylandSubmitPage() {
 
   if (screen === 'uploading') {
     return (
-      <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', flexDirection: 'column', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+      <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', flexDirection: 'column', fontFamily: FONT }}>
         <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)', flexShrink: 0 }} />
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ width: 52, height: 52, borderRadius: '50%', border: `4px solid ${GREEN_LIGHT}`, borderTopColor: GREEN, animation: 'spin 0.9s linear infinite', margin: '0 auto 20px' }} />
-            <div style={{ color: '#cccccc', fontSize: 16, fontWeight: 600 }}>Uploading documents and submitting…</div>
-            <div style={{ color: '#cccccc', fontSize: 15, marginTop: 6 }}>Please keep this page open</div>
+            <div style={{ width: 52, height: 52, borderRadius: '50%', border: `4px solid ${LINE_SOFT}`, borderTopColor: GREEN, animation: 'spin 0.9s linear infinite', margin: '0 auto 20px' }} />
+            <div style={{ color: TEXT, fontSize: 16, fontWeight: 600 }}>Uploading documents and submitting…</div>
+            <div style={{ color: TEXT_SOFT, fontSize: 15, marginTop: 6 }}>Please keep this page open</div>
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </div>
         </div>
@@ -200,69 +222,73 @@ export default function VerylandSubmitPage() {
 
   if (screen === 'success') {
     return (
-      <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', flexDirection: 'column', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+      <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', flexDirection: 'column', fontFamily: FONT }}>
         <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)', flexShrink: 0 }} />
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <div style={{ maxWidth: 520, width: '100%', textAlign: 'center', background: '#fff', border: '1.5px solid #d1fae5', borderRadius: 20, padding: '3rem 2.5rem', boxShadow: '0 8px 32px rgba(5,150,105,0.1)' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
-            <svg width="80" height="80" viewBox="0 0 80 80">
-              <circle cx="40" cy="40" r="40" fill={GREEN_LIGHT} />
-              <polyline points="22,40 36,54 58,26" stroke={GREEN} strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+          <div style={{ maxWidth: 520, width: '100%', textAlign: 'center', background: 'var(--card-bg)', border: `2px solid ${LINE}`, borderRadius: 20, padding: '3rem 2.5rem', boxShadow: '0 8px 32px rgba(5,150,105,0.12)' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
+              <svg width="80" height="80" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="40" fill={GREEN} />
+                <polyline points="22,40 36,54 58,26" stroke="#fff" strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: TEXT, margin: '0 0 14px' }}>
+              Submission Received!
+            </h1>
+            <p style={{ color: TEXT_SOFT, fontSize: 16, fontWeight: 500, lineHeight: 1.75, marginBottom: 10 }}>
+              Your documents are in our queue. Our verification team will review them and assign your Veryland badge within 3–5 business days.
+            </p>
+            <p style={{ color: TEXT_SOFT, fontSize: 15, marginBottom: 36 }}>
+              Reference ID:{' '}
+              <span style={{ color: GREEN_TEXT, fontFamily: 'monospace', fontWeight: 800 }}>
+                {submissionId?.slice(0, 8).toUpperCase()}
+              </span>
+            </p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Link href="/browse" style={{ background: GREEN, color: '#fff', padding: '12px 26px', borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
+                Browse Listings
+              </Link>
+              <Link href="/veryland" style={{ background: 'var(--card-bg)', color: TEXT, border: `1.5px solid ${LINE}`, padding: '12px 26px', borderRadius: 8, fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
+                Back to Veryland
+              </Link>
+            </div>
           </div>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-1)', margin: '0 0 14px' }}>
-            Submission Received!
-          </h1>
-          <p style={{ color: '#cccccc', fontSize: 16, fontWeight: 500, lineHeight: 1.75, marginBottom: 10 }}>
-            Your documents are in our queue. Our verification team will review them and assign your Veryland badge within 3–5 business days.
-          </p>
-          <p style={{ color: '#cccccc', fontSize: 15, marginBottom: 36 }}>
-            Reference ID:{' '}
-            <span style={{ color: GREEN_DARK, fontFamily: 'monospace', fontWeight: 800 }}>
-              {submissionId?.slice(0, 8).toUpperCase()}
-            </span>
-          </p>
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/browse" style={{ background: GREEN, color: '#fff', padding: '12px 26px', borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
-              Browse Listings
-            </Link>
-            <Link href="/veryland" style={{ background: 'var(--card-bg)', color: 'var(--text-2)', border: '1.5px solid var(--border-2)', padding: '12px 26px', borderRadius: 8, fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
-              Back to Veryland
-            </Link>
-          </div>
-        </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: "'Segoe UI', system-ui, sans-serif", color: 'var(--text-1)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', fontFamily: FONT, color: TEXT }}>
+      <style>{`
+        input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--text-1) 60%, transparent); }
+        input:focus, select:focus, textarea:focus { border-color: ${GREEN} !important; }
+      `}</style>
 
       {/* Nav */}
       <div style={{ height: 3, background: 'linear-gradient(90deg, #0ef6cc, #14B8A6)' }} />
-      <nav style={{ borderBottom: '2px solid #0ef6cc', padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: 'var(--card-bg)', position: 'sticky', top: 3, zIndex: 100 }}>
-        <Link href="/" style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</Link>
-        <span style={{ color: 'var(--border-2)', margin: '0 8px' }}>/</span>
-        <Link href="/veryland" style={{ color: GREEN, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Veryland</Link>
-        <span style={{ color: 'var(--border-2)', margin: '0 8px' }}>/</span>
-        <span style={{ color: 'var(--text-1)', fontSize: 14, fontWeight: 600 }}>Submit Documents</span>
+      <nav style={{ borderBottom: `2px solid ${GREEN}`, padding: '0 2rem', display: 'flex', alignItems: 'center', height: 60, background: 'var(--card-bg)', position: 'sticky', top: 3, zIndex: 100 }}>
+        <Link href="/" style={{ color: TEXT_SOFT, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Mr. Rent</Link>
+        <span style={{ color: LINE, margin: '0 8px' }}>/</span>
+        <Link href="/veryland" style={{ color: GREEN_TEXT, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>Veryland</Link>
+        <span style={{ color: LINE, margin: '0 8px' }}>/</span>
+        <span style={{ color: TEXT, fontSize: 14, fontWeight: 600 }}>Submit Documents</span>
       </nav>
 
       <div style={{ maxWidth: 720, margin: '0 auto', padding: '3rem 2rem 5rem' }}>
 
         {/* Page header */}
         <div style={{ marginBottom: '2.5rem' }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-1)', margin: '0 0 10px', letterSpacing: '-0.5px' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: 900, color: TEXT, margin: '0 0 10px', letterSpacing: '-0.5px' }}>
             Verify Your Property
           </h1>
-          <p style={{ color: '#cccccc', fontSize: 16, fontWeight: 500, lineHeight: 1.7 }}>
+          <p style={{ color: TEXT_SOFT, fontSize: 16, fontWeight: 500, lineHeight: 1.7 }}>
             Submit your property ownership documents. Our team manually reviews each submission and awards the appropriate Veryland badge — no bots, no shortcuts.
           </p>
         </div>
 
         {error && (
-          <div style={{ background: '#fff1f2', border: '1.5px solid #fca5a5', borderRadius: 10, padding: '12px 16px', marginBottom: 24, color: '#dc2626', fontSize: 14, fontWeight: 600 }}>
+          <div style={{ background: '#fff1f2', border: '1.5px solid #dc2626', borderRadius: 10, padding: '12px 16px', marginBottom: 24, color: '#b91c1c', fontSize: 14, fontWeight: 600 }}>
             {error}
           </div>
         )}
@@ -270,9 +296,9 @@ export default function VerylandSubmitPage() {
         <form onSubmit={handleSubmit}>
 
           {/* Section 1: Your Details */}
-          <div style={{ background: 'var(--card-bg)', border: '2px solid rgba(255,255,255,0.18)', borderRadius: 16, padding: '1.75rem', marginBottom: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}>
-            <div style={{ fontWeight: 800, fontSize: 17, color: '#ffffff', marginBottom: 22, display: 'flex', alignItems: 'center', gap: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              <span style={{ background: GREEN, color: '#fff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0 }}>1</span>
+          <div style={cardStyle}>
+            <div style={{ ...sectionTitleStyle, marginBottom: 22 }}>
+              <span style={stepCircle}>1</span>
               Your Details
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
@@ -292,9 +318,9 @@ export default function VerylandSubmitPage() {
           </div>
 
           {/* Section 2: Property Details */}
-          <div style={{ background: 'var(--card-bg)', border: '2px solid rgba(255,255,255,0.18)', borderRadius: 16, padding: '1.75rem', marginBottom: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}>
-            <div style={{ fontWeight: 800, fontSize: 17, color: '#ffffff', marginBottom: 22, display: 'flex', alignItems: 'center', gap: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              <span style={{ background: GREEN, color: '#fff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0 }}>2</span>
+          <div style={cardStyle}>
+            <div style={{ ...sectionTitleStyle, marginBottom: 22 }}>
+              <span style={stepCircle}>2</span>
               Property Details
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
@@ -324,21 +350,21 @@ export default function VerylandSubmitPage() {
           </div>
 
           {/* Section 3: Documents */}
-          <div style={{ background: 'var(--card-bg)', border: '2px solid rgba(255,255,255,0.18)', borderRadius: 16, padding: '1.75rem', marginBottom: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}>
-            <div style={{ fontWeight: 800, fontSize: 17, color: '#ffffff', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              <span style={{ background: GREEN, color: '#fff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0 }}>3</span>
+          <div style={cardStyle}>
+            <div style={{ ...sectionTitleStyle, marginBottom: 6 }}>
+              <span style={stepCircle}>3</span>
               Property Documents *
             </div>
-            <p style={{ fontSize: 15, color: '#cccccc', fontWeight: 500, marginBottom: 20, marginLeft: 36 }}>
+            <p style={{ fontSize: 15, color: TEXT_SOFT, fontWeight: 500, marginBottom: 20, marginLeft: 36 }}>
               Upload scanned copies or clear photos. Accepted: PDF, JPG, PNG. Max 10MB per file.
             </p>
 
             {documents.map((doc, idx) => (
-              <div key={idx} style={{ background: 'var(--page-bg)', border: '2px solid rgba(255,255,255,0.2)', borderRadius: 12, padding: '1.25rem', marginBottom: 14 }}>
+              <div key={idx} style={{ background: 'var(--page-bg)', border: `2px solid ${LINE}`, borderRadius: 12, padding: '1.25rem', marginBottom: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                  <span style={{ fontSize: 15, color: '#ffffff', fontWeight: 700 }}>Document {idx + 1}</span>
+                  <span style={{ fontSize: 15, color: TEXT, fontWeight: 700 }}>Document {idx + 1}</span>
                   {documents.length > 1 && (
-                    <button type="button" onClick={() => removeDocument(idx)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 15, fontWeight: 600, padding: 0 }}>
+                    <button type="button" onClick={() => removeDocument(idx)} style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', fontSize: 15, fontWeight: 700, padding: 0 }}>
                       Remove
                     </button>
                   )}
@@ -357,12 +383,12 @@ export default function VerylandSubmitPage() {
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png,.webp"
                       onChange={e => updateFile(idx, e.target.files?.[0] || null)}
-                      style={{ ...inputStyle, padding: '9px 12px', cursor: 'pointer', color: '#ffffff' }}
+                      style={{ ...inputStyle, padding: '9px 12px', cursor: 'pointer' }}
                     />
                   </div>
                 </div>
                 {doc.error && <p style={{ color: '#dc2626', fontSize: 15, fontWeight: 600, marginTop: 10 }}>{doc.error}</p>}
-                {doc.url && <p style={{ color: GREEN_DARK, fontSize: 15, fontWeight: 700, marginTop: 10 }}>✓ Uploaded successfully</p>}
+                {doc.url && <p style={{ color: GREEN_TEXT, fontSize: 15, fontWeight: 700, marginTop: 10 }}>✓ Uploaded successfully</p>}
               </div>
             ))}
 
@@ -370,7 +396,7 @@ export default function VerylandSubmitPage() {
               type="button"
               onClick={addDocument}
               style={{
-                background: 'var(--card-bg)', border: `2px dashed rgba(255,255,255,0.4)`, color: '#ffffff',
+                background: 'var(--card-bg)', border: `2px dashed ${LINE}`, color: TEXT,
                 borderRadius: 10, padding: '12px', fontSize: 15, fontWeight: 700,
                 cursor: 'pointer', width: '100%', marginTop: 4,
               }}
@@ -380,10 +406,10 @@ export default function VerylandSubmitPage() {
           </div>
 
           {/* Section 4: Notes */}
-          <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-1)', borderRadius: 16, padding: '1.75rem', marginBottom: 28, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
-            <div style={{ fontWeight: 800, fontSize: 17, color: '#ffffff', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              <span style={{ background: 'var(--card-bg2)', color: '#ffffff', borderRadius: '50%', width: 26, height: 26, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, flexShrink: 0, border: '1.5px solid #444' }}>4</span>
-              Additional Notes <span style={{ color: '#cccccc', fontWeight: 400, fontSize: 15 }}>(optional)</span>
+          <div style={{ ...cardStyle, marginBottom: 28 }}>
+            <div style={{ ...sectionTitleStyle, marginBottom: 16 }}>
+              <span style={{ ...stepCircle, background: 'var(--card-bg2)', color: TEXT, border: `1.5px solid ${LINE}` }}>4</span>
+              Additional Notes <span style={{ color: TEXT_SOFT, fontWeight: 400, fontSize: 15, textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
             </div>
             <textarea
               value={additionalInfo}
@@ -399,13 +425,13 @@ export default function VerylandSubmitPage() {
             background: `linear-gradient(135deg, ${GREEN_DARK}, ${GREEN})`,
             color: '#fff', border: 'none', borderRadius: 12,
             fontWeight: 800, fontSize: 16, cursor: 'pointer',
-            fontFamily: "'Segoe UI', system-ui, sans-serif",
+            fontFamily: FONT,
             boxShadow: `0 4px 16px ${GREEN}44`,
           }}>
             Submit for Verification →
           </button>
 
-          <p style={{ textAlign: 'center', color: '#cccccc', fontSize: 15, fontWeight: 500, marginTop: 16, lineHeight: 1.6 }}>
+          <p style={{ textAlign: 'center', color: TEXT_SOFT, fontSize: 15, fontWeight: 500, marginTop: 16, lineHeight: 1.6 }}>
             Review takes 3–5 business days. You&apos;ll be notified by email once your badge is awarded.
           </p>
         </form>

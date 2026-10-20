@@ -65,134 +65,83 @@ export default function About() {
         </div>
       </div>
 
-      <style>{`
-        .faim-about-page {
-          background: #f0ede8;
-          min-height: 100vh;
-          font-family: 'Segoe UI', system-ui, sans-serif;
-          padding: 40px 16px;
-        }
-        .faim-about-container {
-          max-width: 720px;
-          margin: 0 auto;
-        }
-        .faim-back-link {
-          color: #14B8A6;
-          text-decoration: none;
-          font-size: 0.85rem;
-          font-weight: 600;
-          display: inline-block;
-          margin-bottom: 24px;
-        }
-        .faim-back-link:hover { text-decoration: underline; }
+      <style jsx>{`.faim-about-page {
+  --ab-text: var(--text-1, #fff);
+  --ab-text-soft: color-mix(in srgb, var(--text-1, #fff) 88%, transparent);
+  --ab-line: color-mix(in srgb, var(--text-1, #fff) 42%, transparent);
+  --ab-accent-text: color-mix(in srgb, #0ef6cc 30%, var(--text-1, #fff));
+  background: var(--page-bg);
+  color: var(--ab-text);
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  padding: 40px 16px;
+}
+.faim-about-container { max-width: 720px; margin: 0 auto; }
 
-        .faim-about-hero {
-          background: #080a0f;
-          border-radius: 16px;
-          padding: 48px 40px;
-          margin-bottom: 24px;
-          border-bottom: 3px solid #14B8A6;
-          outline: 1.5px solid #0ef6cc;
-          outline-offset: -5px;
-        }
-        .faim-hero-badge {
-          display: inline-block;
-          background: #14B8A6;
-          color: white;
-          font-size: 0.8rem;
-          font-weight: 700;
-          padding: 4px 14px;
-          border-radius: 20px;
-          margin-bottom: 20px;
-          letter-spacing: 0.05em;
-        }
-        .faim-about-hero h1 {
-          font-size: 2rem;
-          color: #ffffff;
-          line-height: 1.25;
-          margin-bottom: 16px;
-        }
-        .faim-about-hero p {
-          color: #a0aec0;
-          line-height: 1.7;
-          font-size: 1rem;
-        }
+/* Hero stays a dark brand card in both themes, so its colours are fixed on purpose */
+.faim-about-hero {
+  background: #080a0f;
+  border-radius: 16px;
+  padding: 48px 40px;
+  margin-bottom: 24px;
+  border-bottom: 3px solid #14B8A6;
+  outline: 1.5px solid #0ef6cc;
+  outline-offset: -5px;
+  box-shadow: var(--shadow-card);
+}
+.faim-hero-badge {
+  display: inline-block;
+  background: #14B8A6;
+  color: #080a0f;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  letter-spacing: 0.05em;
+}
+.faim-about-hero h1 { font-size: 2rem; color: #ffffff; line-height: 1.25; margin: 0 0 16px; }
+.faim-about-hero p { color: #d5dbe3; line-height: 1.7; font-size: 1rem; margin: 0; }
 
-        .faim-about-section {
-          background: white;
-          border-radius: 12px;
-          padding: 32px;
-          margin-bottom: 16px;
-          border-left: 3px solid #0ef6cc;
-        }
-        h2 {
-          font-size: 1.2rem;
-          color: #080a0f;
-          margin-bottom: 14px;
-        }
-        p { color: #444; line-height: 1.7; margin-bottom: 12px; }
-        a { color: #14B8A6; }
+.faim-about-section {
+  background: var(--card-bg);
+  border: 1.5px solid var(--ab-line);
+  border-left: 4px solid var(--ab-accent-text);
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.faim-about-section h2 { font-size: 1.2rem; color: var(--ab-text); margin: 0 0 14px; }
+.faim-about-section p { color: var(--ab-text-soft); line-height: 1.7; margin: 0 0 12px; }
+.faim-about-section a { color: var(--ab-accent-text); font-weight: 600; text-decoration: underline; }
+.faim-about-section a:hover { text-decoration: none; }
 
-        .faim-steps {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-        }
-        .faim-step {
-          display: flex;
-          gap: 16px;
-          align-items: flex-start;
-        }
-        .faim-step-num {
-          font-size: 1.4rem;
-          font-weight: 800;
-          color: #0ef6cc;
-          min-width: 36px;
-          line-height: 1;
-        }
-        .faim-step strong {
-          display: block;
-          color: #080a0f;
-          margin-bottom: 4px;
-          font-size: 0.95rem;
-        }
-        .faim-step p {
-          margin: 0;
-          font-size: 0.88rem;
-        }
+.faim-steps { display: flex; flex-direction: column; gap: 20px; }
+.faim-step { display: flex; gap: 16px; align-items: flex-start; }
+.faim-step-num { font-size: 1.4rem; font-weight: 800; color: var(--ab-accent-text); min-width: 36px; line-height: 1; }
+.faim-step strong { display: block; color: var(--ab-text); margin-bottom: 4px; font-size: 0.95rem; }
+.faim-step p { margin: 0; font-size: 0.88rem; }
 
-        .faim-about-cta {
-          display: flex;
-          gap: 12px;
-          margin-top: 8px;
-          flex-wrap: wrap;
-        }
-        .faim-cta-btn {
-          padding: 12px 28px;
-          border-radius: 24px;
-          font-size: 0.9rem;
-          font-weight: 700;
-          text-decoration: none;
-          transition: all 0.15s;
-        }
-        .faim-cta-primary {
-          background: #14B8A6;
-          color: white;
-        }
-        .faim-cta-primary:hover { background: #0D7B75; }
-        .faim-cta-secondary {
-          background: white;
-          color: #080a0f;
-          border: 1.5px solid #0ef6cc;
-        }
-        .faim-cta-secondary:hover { background: #f0fffe; }
+.faim-about-cta { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+.faim-cta-btn {
+  padding: 12px 28px;
+  border-radius: 24px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.faim-cta-primary { background: #0ef6cc; color: #080a0f; border: 1.5px solid #080a0f; }
+.faim-cta-primary:hover { opacity: 0.9; }
+.faim-cta-secondary { background: var(--card-bg); color: var(--ab-text); border: 1.5px solid var(--ab-line); }
+.faim-cta-secondary:hover { border-color: var(--ab-accent-text); color: var(--ab-accent-text); }
 
-        @media (max-width: 480px) {
-          .faim-about-hero { padding: 32px 20px; }
-          .faim-about-hero h1 { font-size: 1.5rem; }
-          .faim-about-section { padding: 24px 16px; }
-        }
-      `}</style>
+@media (max-width: 480px) {
+  .faim-about-hero { padding: 32px 20px; }
+  .faim-about-hero h1 { font-size: 1.5rem; }
+  .faim-about-section { padding: 24px 16px; }
+`}</style>
     </div>
   )
 }
