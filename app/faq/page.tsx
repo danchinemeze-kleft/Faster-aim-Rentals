@@ -1,126 +1,55 @@
-"use client";
+import FAQClient from './faqClient';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useMemo, useState } from "react";
-import { FAQS } from "./faq-data";
-import "./faq.css";
+export const metadata = {
+  title: 'Frequently Asked Questions',
+  description:
+    'Answers to common questions about finding rentals, listing properties, payments, verification, contact reveal and how Mr. Rent works in Nigeria.',
+  keywords: [
+    'Mr Rent FAQ',
+    'how Mr Rent works',
+    'contact reveal fee',
+    'how to list property',
+    'is Mr Rent safe',
+    'property verification Nigeria',
+    'Mr Rent questions',
+    'rental FAQ Nigeria',
+  ],
+  authors: [{ name: 'Faster Aim Technology Limited' }],
+  creator: 'Faster Aim Technology Limited',
+  publisher: 'Faster Aim Technology Limited',
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: 'Frequently Asked Questions | Mr. Rent',
+    description:
+      'Get clear answers about listings, payments, verification and how to use Mr. Rent.',
+    url: 'https://rent.fasteraim.com/faq',
+    siteName: 'Mr. Rent',
+    images: [
+      {
+        url: 'https://rent.fasteraim.com/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Mr. Rent FAQ',
+      },
+    ],
+    locale: 'en_NG',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'FAQ | Mr. Rent',
+    description: 'Common questions about using Mr. Rent answered clearly.',
+    images: ['https://rent.fasteraim.com/og-image.jpg'],
+    creator: '@B_B_Rembow',
+  },
+  alternates: {
+    canonical: 'https://rent.fasteraim.com/faq',
+  },
+};
 
-const CATEGORIES = ["All", ...Array.from(new Set(FAQS.map((f) => f.category)))];
-
-export default function FaqPage() {
-  const [category, setCategory] = useState("All");
-  const [query, setQuery] = useState("");
-  const [open, setOpen] = useState<Set<string>>(new Set());
-
-  const items = useMemo(() => {
-    const t = query.trim().toLowerCase();
-    return FAQS.filter(
-      (f) =>
-        (category === "All" || f.category === category) &&
-        (!t || (f.question + f.brief + f.detail).toLowerCase().includes(t))
-    );
-  }, [category, query]);
-
-  const toggle = (q: string) =>
-    setOpen((prev) => {
-      const next = new Set(prev);
-      next.has(q) ? next.delete(q) : next.add(q);
-      return next;
-    });
-
-  let last = "";
-  return (
-    <div className="faq">
-      <nav className="faq-nav">
-        <Link href="/" className="faq-brand">
-          <Image src="/icon.svg" alt="" width={24} height={24} />
-          Mr. Rent
-        </Link>
-        <div className="faq-links">
-          <Link href="/browse">Browse</Link>
-          <Link href="/search">Ask Mr. Rent AI</Link>
-          <div className="faq-menu">
-            <span>Menu ▾</span>
-            <div className="faq-drop">
-              <Link href="/list">List a Property</Link>
-              <Link href="/dashboard">Dashboard</Link>
-              <Link href="/account">My Account</Link>
-              <Link href="/affiliate/auth">Affiliate Programme</Link>
-              <Link href="/terms">Terms</Link>
-            </div>
-          </div>
-          <Link href="/account" className="cta">Sign in</Link>
-        </div>
-      </nav>
-
-      <header className="faq-hero">
-        <div className="faq-herocard">
-          <span className="faq-pill">Help Centre</span>
-          <h1>Frequently Asked Questions</h1>
-          <p>
-            Everything about finding, listing and transacting on property safely – plus how
-            you earn rewards while you do it.
-          </p>
-          <input
-            className="faq-search"
-            type="search"
-            placeholder="Search questions…"
-            aria-label="Search FAQs"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
-      </header>
-
-      <main className="faq-main">
-        <div className="faq-tabs">
-          {CATEGORIES.map((c) => (
-            <button key={c} className={c === category ? "on" : ""} onClick={() => setCategory(c)}>
-              {c}
-            </button>
-          ))}
-        </div>
-
-        {items.map((f, index) => {
-          const heading =
-            index === 0 || items[index - 1].category !== f.category ? <h2>{f.category}</h2> : null;
-          const isOpen = open.has(f.question);
-          return (
-            <div key={f.question}>
-              {heading}
-              <div className={`faq-item${isOpen ? " open" : ""}`}>
-                <button className="faq-q" aria-expanded={isOpen} onClick={() => toggle(f.question)}>
-                  <b>{f.question}</b>
-                  <span className="br">{f.brief}</span>
-                </button>
-                {isOpen && <div className="faq-dt" dangerouslySetInnerHTML={{ __html: f.detail }} />}
-              </div>
-            </div>
-          );
-        })}
-        <div className="faq-help">
-          <h3>Still have a question?</h3>
-          <p>Ask the Mr. Rent AI anything about properties, areas and prices.</p>
-          <Link href="/search" className="lively">Chat with Mr. Rent AI</Link>
-          <Link href="/browse" className="lively">Browse properties</Link>
-        </div>
-        {items.length === 0 && <div className="faq-none">No matching question. Try a different word.</div>}
-      </main>
-
-      <footer className="faq-foot">
-        <nav>
-          <Link href="/browse">Browse</Link>
-          <Link href="/list">List a Property</Link>
-          <Link href="/terms">Terms</Link>
-          <Link href="/affiliate/auth">Affiliate</Link>
-        </nav>
-        <small>
-          Prices, rewards and features may change as Mr. Rent grows. Mr. Rent&apos;s AI gives
-          property guidance and evaluations, not legal or investment advice. Always consult
-          qualified professionals before big decisions.
-        </small>
-      </footer>
-    </div>
-  );
+export default function FAQPage() {
+  return <FAQClient />;
 }

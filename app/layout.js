@@ -26,12 +26,11 @@ export const viewport = {
   maximumScale: 5,
   viewportFit: "cover",
 };
-
 export const metadata = {
   metadataBase: new URL("https://rent.fasteraim.com"),
   title: {
     default: "Mr. Rent – Find Verified Rentals in Nigeria",
-    template: "%s - Mr. Rent",
+    template: "%s | Mr. Rent",          // ← changed from "%s - Mr. Rent"
   },
   description:
     "AI-powered property rental platform for Nigeria. Browse verified listings in Awka, Onitsha, Anambra and beyond. No agent fees — pay only to reveal landlord contacts.",
@@ -65,14 +64,14 @@ export const metadata = {
     type: "website",
     url: "https://rent.fasteraim.com",
     siteName: "Mr. Rent",
-    title: "Mr. Rent – Find Verified Rentals in Nigeria",
+    title: "Mr. Rent",
     description:
       "Browse verified property listings across Nigeria. Use Mr. Rent AI to find your perfect home — no agent fees.",
     locale: "en_NG",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mr. Rent – Find Verified Rentals in Nigeria",
+    title: "Mr. Rent",
     description:
       "AI-powered rentals platform. Browse listings in Awka, Onitsha and beyond. No agent fees.",
   },
