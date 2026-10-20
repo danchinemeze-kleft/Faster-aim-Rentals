@@ -788,8 +788,8 @@ export default function Home() {
                 height={340}
                 className="trust-img"
               />
-              <h3 style={s.featureTitle}>AI That Actually Helps</h3>
-              <p style={s.featureText}>House hunting made as easy as sending a WhatsApp message. Just tell Mr. Rent AI what you&apos;re looking for in your own words, and let our smart matching engine find properties tailored precisely to your budget and needs—no confusing property jargon required.</p>
+              <h3 style={s.featureTitle}> Very helpful and Respectful AI That Actually Helps</h3>
+              <p style={s.featureText}>The Ai is Friendly, house search is made as easy as sending a WhatsApp message. Just tell Mr. Rent AI what you&apos;re looking for in your own words, and let our smart matching engine find properties tailored precisely to your budget and needs—no confusing property jargon required. Mr Rent ai knows your needs, your city and helps you find the perfect home.</p>
             </div>
             <div style={s.featureCard} className="feature-card">
               <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(15, 23, 42, 0.06)' }}>
@@ -805,7 +805,7 @@ export default function Home() {
                 height={340}
                 className="trust-img"
               />
-              <h3 style={s.featureTitle}>Nationwide Coverage</h3>
+              <h3 style={s.featureTitle}>Nationwide Coverage and knows your city</h3>
               <p style={s.featureText}>Whether you&apos;re looking in the bustling streets of Lagos, the heart of Abuja, or thriving communities in Anambra—find, list, and secure properties across all 36 states and the FCT. Nationwide coverage, zero stress. Seamlessly search and list homes from commercial hubs like Lagos and Abuja to vibrant cities across every state in Nigeria</p>
             </div>
             <div style={s.featureCard} className="feature-card">
@@ -822,6 +822,7 @@ export default function Home() {
                 className="trust-img"
               />
               <h3 style={s.featureTitle}>List in Minutes</h3>
+              <h5 style={{ fontSize: '1rem', fontWeight: 600, color: '#0080FF', marginBottom: '0.5rem' }}>Easy, Quick & Instant Property Listing</h5>
               <p style={s.featureText}>List your property in under five minutes and connect directly with pre-screened, serious tenants. Mr. Rent cuts through the noise, delivering verified inquiries straight to your dashboard—so you fill vacancies faster with zero hassle.</p>
             </div>
           </div>
