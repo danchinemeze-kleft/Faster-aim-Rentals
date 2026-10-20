@@ -161,42 +161,46 @@ export default function AllPagesClient() {
 }
 
 const CSS = `
-.faim-ap{--bg:#0a1014;--panel:#111b21;--line:#1f3a40;--text:#eaf6f6;--muted:#93aab0;--cyan:#19e6c1;--pink:#ff4d8d;
-  min-height:100vh;background:radial-gradient(900px 400px at 50% -100px,#0f3a3a 0%,var(--bg) 70%);color:var(--text);
-  font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;padding-bottom:64px}
-.faim-ap *{box-sizing:border-box}
+/* Inherits font, background and text colour from the global CSS.
+   Only the accents below use variables; set them in globals.css to match your brand. */
+.faim-ap{
+  --ap-accent:var(--faim-cyan,var(--cyan,#19e6c1));
+  --ap-accent2:var(--faim-pink,var(--pink,#ff4d8d));
+  --ap-line:color-mix(in srgb,currentColor 18%,transparent);
+  --ap-panel:color-mix(in srgb,currentColor 6%,transparent);
+  --ap-muted:color-mix(in srgb,currentColor 65%,transparent);
+  font-family:inherit;color:inherit;background:transparent;padding-bottom:64px}
 .faim-ap-hero{max-width:880px;margin:0 auto;padding:28px 20px 12px}
-.faim-ap-back{display:inline-block;color:var(--cyan);text-decoration:none;font-size:14px;margin-bottom:18px}
-.faim-ap-back:hover{text-decoration:underline}
-.faim-ap-hero h1{margin:0 0 6px;font-size:clamp(30px,6vw,44px);letter-spacing:-.02em}
-.faim-ap-hero p{margin:0 0 18px;color:var(--muted);font-size:16px;line-height:1.5}
-.faim-ap-search{width:100%;padding:14px 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);
-  color:var(--text);font-size:16px;outline:none}
-.faim-ap-search:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(25,230,193,.18)}
-.faim-ap-chips{position:sticky;top:0;z-index:5;display:flex;gap:8px;overflow-x:auto;padding:12px 20px;
-  background:rgba(10,16,20,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);scrollbar-width:none}
+.faim-ap-back{display:inline-block;color:var(--ap-accent);font-size:14px;margin-bottom:18px}
+.faim-ap-hero h1{margin:0 0 6px;font-size:clamp(30px,6vw,44px);letter-spacing:-.02em;font-family:inherit}
+.faim-ap-hero p{margin:0 0 18px;color:var(--ap-muted);font-size:16px;line-height:1.5}
+.faim-ap-search{width:100%;padding:14px 18px;border-radius:999px;border:1px solid var(--ap-line);
+  background:var(--ap-panel);color:inherit;font:inherit;font-size:16px;outline:none}
+.faim-ap-search:focus{border-color:var(--ap-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--ap-accent) 25%,transparent)}
+.faim-ap-chips{position:sticky;top:var(--faim-nav-height,0px);z-index:5;display:flex;gap:8px;overflow-x:auto;
+  padding:12px 20px;background:color-mix(in srgb,var(--background,Canvas) 92%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--ap-line);scrollbar-width:none}
 .faim-ap-chips::-webkit-scrollbar{display:none}
-.faim-ap-chip{flex:0 0 auto;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);
-  color:var(--text);text-decoration:none;font-size:14px;white-space:nowrap;transition:transform .15s,border-color .15s}
-.faim-ap-chip:hover{transform:translateY(-2px);border-color:var(--cyan)}
+.faim-ap-chip{flex:0 0 auto;padding:8px 14px;border-radius:999px;border:1px solid var(--ap-line);
+  background:var(--ap-panel);color:inherit;text-decoration:none;font-size:14px;white-space:nowrap}
 .faim-ap-wrap{max-width:880px;margin:0 auto;padding:8px 20px}
-.faim-ap-section{padding-top:28px;scroll-margin-top:70px}
+.faim-ap-section{padding-top:28px;scroll-margin-top:calc(var(--faim-nav-height,0px) + 70px)}
 .faim-ap-sec-head{display:flex;gap:14px;align-items:center;margin-bottom:14px}
 .faim-ap-sec-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;font-size:22px;
-  background:linear-gradient(135deg,rgba(25,230,193,.18),rgba(255,77,141,.18));border:1px solid var(--line)}
-.faim-ap-sec-head h2{margin:0;font-size:20px}
-.faim-ap-sec-head p{margin:2px 0 0;color:var(--muted);font-size:14px}
+  background:linear-gradient(135deg,color-mix(in srgb,var(--ap-accent) 18%,transparent),color-mix(in srgb,var(--ap-accent2) 18%,transparent));
+  border:1px solid var(--ap-line)}
+.faim-ap-sec-head h2{margin:0;font-size:20px;font-family:inherit}
+.faim-ap-sec-head p{margin:2px 0 0;color:var(--ap-muted);font-size:14px}
 .faim-ap-grid{list-style:none;margin:0;padding:0;display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
 .faim-ap-card{display:flex;flex-direction:column;gap:6px;height:100%;padding:16px;border-radius:16px;
-  background:var(--panel);border:1px solid var(--line);border-bottom:3px solid var(--cyan);color:var(--text);text-decoration:none;
-  box-shadow:0 6px 18px rgba(0,0,0,.35);transition:transform .15s,box-shadow .15s,border-color .15s}
-a.faim-ap-card:hover{transform:translateY(-4px);box-shadow:0 12px 26px rgba(0,0,0,.5);border-color:var(--pink)}
+  background:var(--ap-panel);border:1px solid var(--ap-line);border-bottom:3px solid var(--ap-accent);
+  color:inherit;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.25)}
 .faim-ap-name{font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.faim-ap-desc{color:var(--muted);font-size:14px;line-height:1.45}
-.faim-ap-path{margin-top:auto;padding-top:6px;color:var(--cyan);font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.faim-ap-desc{color:var(--ap-muted);font-size:14px;line-height:1.45}
+.faim-ap-path{margin-top:auto;padding-top:6px;color:var(--ap-accent);font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace}
 .faim-ap-badge{font-style:normal;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;
-  background:rgba(255,77,141,.16);color:var(--pink);border:1px solid rgba(255,77,141,.4)}
-.faim-ap-card-off{opacity:.65;border-bottom-color:var(--line);box-shadow:none;cursor:not-allowed}
-.faim-ap-empty{margin:40px 0;text-align:center;color:var(--muted)}
-@media (prefers-reduced-motion:reduce){.faim-ap *{transition:none!important}}
+  background:color-mix(in srgb,var(--ap-accent2) 16%,transparent);color:var(--ap-accent2);
+  border:1px solid color-mix(in srgb,var(--ap-accent2) 40%,transparent)}
+.faim-ap-card-off{opacity:.65;border-bottom-color:var(--ap-line);box-shadow:none;cursor:not-allowed}
+.faim-ap-empty{margin:40px 0;text-align:center;color:var(--ap-muted)}
 `

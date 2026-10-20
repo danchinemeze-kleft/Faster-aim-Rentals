@@ -170,58 +170,69 @@ export default function SupportPage() {
         </p>
       </div>
 
-      <style>{`
-        .faim-sp-page { min-height:100vh; background:var(--page-bg); color:var(--text-1, #fff); font-family:'Segoe UI',system-ui,sans-serif; padding:1.5rem 1rem 4rem; }
-        .faim-sp-wrap { max-width:960px; margin:0 auto; }
-        .faim-sp-hero { text-align:center; padding:2rem 0 1.5rem; }
-        .faim-sp-hero h1 { font-size:2rem; font-weight:700; color:#0ef6cc; margin:0 0 0.75rem; }
-        .faim-sp-hero p { color:#cccccc; font-size:1.05rem; line-height:1.7; max-width:620px; margin:0 auto; }
-        .faim-sp-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1rem; margin-bottom:2rem; }
-        .faim-sp-card { background:var(--card-bg); border:0.5px solid var(--border-1); border-radius:14px; padding:1.5rem 1.25rem; text-decoration:none; text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; box-shadow:var(--shadow-card); transition:transform .15s, border-color .15s; }
-        .faim-sp-card:hover { transform:translateY(-2px); border-color:#0ef6cc; }
-        .faim-sp-icon { font-size:1.8rem; }
-        .faim-sp-card-title { font-size:1rem; font-weight:700; color:#ffffff; }
-        .faim-sp-card-text { font-size:0.95rem; color:#cccccc; line-height:1.5; word-break:break-word; }
-        .faim-sp-section { background:var(--card-bg); border:0.5px solid var(--border-1); border-radius:16px; padding:1.75rem 1.5rem; margin-bottom:1.5rem; box-shadow:var(--shadow-card); }
-        .faim-sp-section h2 { font-size:1.3rem; font-weight:700; color:#ffffff; margin:0 0 0.5rem; }
-        .faim-sp-muted { color:#cccccc; font-size:0.95rem; line-height:1.6; margin:0 0 1rem; }
-        .faim-sp-link { color:#0ef6cc; text-decoration:none; font-weight:600; }
-        .faim-sp-link:hover { text-decoration:underline; }
+      <style>{`.faim-sp-page {
+  /* All colours derive from --text-1, so they flip with your theme toggle.
+     Dark text in light mode, light text in dark mode. */
+  --sp-text: var(--text-1, #fff);
+  --sp-text-soft: color-mix(in srgb, var(--text-1, #fff) 88%, transparent);
+  --sp-text-faint: color-mix(in srgb, var(--text-1, #fff) 68%, transparent);
+  --sp-line: color-mix(in srgb, var(--text-1, #fff) 42%, transparent);
+  --sp-line-soft: color-mix(in srgb, var(--text-1, #fff) 28%, transparent);
+  /* Cyan turns dark teal on white and stays bright on black */
+  --sp-accent-text: color-mix(in srgb, #0ef6cc 30%, var(--text-1, #fff));
+  --sp-ok: color-mix(in srgb, #27ae60 55%, var(--text-1, #fff));
+  --sp-err: color-mix(in srgb, #e74c3c 55%, var(--text-1, #fff));
+  min-height:100vh; background:var(--page-bg); color:var(--sp-text); font-family:'Segoe UI',system-ui,sans-serif; padding:1.5rem 1rem 4rem;
+}
+.faim-sp-wrap { max-width:960px; margin:0 auto; }
+.faim-sp-hero { text-align:center; padding:2rem 0 1.5rem; }
+.faim-sp-hero h1 { font-size:2rem; font-weight:700; color:var(--sp-accent-text); margin:0 0 0.75rem; }
+.faim-sp-hero p { color:var(--sp-text-soft); font-size:1.05rem; line-height:1.7; max-width:620px; margin:0 auto; }
+.faim-sp-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1rem; margin-bottom:2rem; }
+.faim-sp-card { background:var(--card-bg); border:1.5px solid var(--sp-line); border-radius:14px; padding:1.5rem 1.25rem; text-decoration:none; text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; box-shadow:var(--shadow-card); transition:transform .15s, border-color .15s; }
+.faim-sp-card:hover { transform:translateY(-2px); border-color:var(--sp-accent-text); }
+.faim-sp-icon { font-size:1.8rem; }
+.faim-sp-card-title { font-size:1rem; font-weight:700; color:var(--sp-text); }
+.faim-sp-card-text { font-size:0.95rem; color:var(--sp-text-soft); line-height:1.5; word-break:break-word; }
+.faim-sp-section { background:var(--card-bg); border:1.5px solid var(--sp-line); border-radius:16px; padding:1.75rem 1.5rem; margin-bottom:1.5rem; box-shadow:var(--shadow-card); }
+.faim-sp-section h2 { font-size:1.3rem; font-weight:700; color:var(--sp-text); margin:0 0 0.5rem; }
+.faim-sp-muted { color:var(--sp-text-soft); font-size:0.95rem; line-height:1.6; margin:0 0 1rem; }
+.faim-sp-link { color:var(--sp-accent-text); text-decoration:underline; font-weight:600; }
+.faim-sp-link:hover { text-decoration:none; }
 
-        .faim-sp-form { display:flex; flex-direction:column; gap:1rem; }
-        .faim-sp-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
-        .faim-sp-field { display:flex; flex-direction:column; gap:6px; }
-        .faim-sp-field label { font-size:0.95rem; font-weight:700; color:#ffffff; }
-        .faim-sp-field input, .faim-sp-field select, .faim-sp-field textarea { padding:0.7rem 0.95rem; border:1.5px solid rgba(255,255,255,0.3); border-radius:9px; font-size:1rem; color:#ffffff; background:var(--input-bg); outline:none; font-family:inherit; width:100%; box-sizing:border-box; }
-        .faim-sp-field input:focus, .faim-sp-field select:focus, .faim-sp-field textarea:focus { border-color:#0ef6cc; box-shadow:0 0 0 3px rgba(14,246,204,0.15); }
-        .faim-sp-field input::placeholder, .faim-sp-field textarea::placeholder { color:#888888; }
-        .faim-sp-hp { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
-        .faim-sp-submit { background:#0ef6cc; color:#080a0f; border:none; padding:0.85rem 1.5rem; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; transition:opacity .15s; }
-        .faim-sp-submit:hover { opacity:0.9; }
-        .faim-sp-submit:disabled { opacity:0.6; cursor:not-allowed; }
-        .faim-sp-alert { padding:0.75rem 1rem; border-radius:8px; font-size:0.95rem; line-height:1.5; }
-        .faim-sp-alert--error { background:rgba(192,57,43,0.12); color:#e74c3c; border:1px solid rgba(192,57,43,0.3); }
-        .faim-sp-alert--ok { background:rgba(39,174,96,0.12); color:#27ae60; border:1px solid rgba(39,174,96,0.3); }
+.faim-sp-form { display:flex; flex-direction:column; gap:1rem; }
+.faim-sp-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
+.faim-sp-field { display:flex; flex-direction:column; gap:6px; }
+.faim-sp-field label { font-size:0.95rem; font-weight:700; color:var(--sp-text); }
+.faim-sp-field input, .faim-sp-field select, .faim-sp-field textarea { padding:0.7rem 0.95rem; border:1.5px solid var(--sp-line); border-radius:9px; font-size:1rem; color:var(--sp-text); background:var(--input-bg); outline:none; font-family:inherit; width:100%; box-sizing:border-box; }
+.faim-sp-field input:focus, .faim-sp-field select:focus, .faim-sp-field textarea:focus { border-color:var(--sp-accent-text); box-shadow:0 0 0 3px color-mix(in srgb, var(--sp-accent-text) 25%, transparent); }
+.faim-sp-field input::placeholder, .faim-sp-field textarea::placeholder { color:var(--sp-text-faint); }
+.faim-sp-hp { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+.faim-sp-submit { background:#0ef6cc; color:#080a0f; border:1.5px solid #080a0f; padding:0.85rem 1.5rem; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; transition:opacity .15s; }
+.faim-sp-submit:hover { opacity:0.9; }
+.faim-sp-submit:disabled { opacity:0.6; cursor:not-allowed; }
+.faim-sp-alert { padding:0.75rem 1rem; border-radius:8px; font-size:0.95rem; line-height:1.5; }
+.faim-sp-alert--error { background:color-mix(in srgb, #e74c3c 12%, transparent); color:var(--sp-err); border:1.5px solid var(--sp-err); }
+.faim-sp-alert--ok { background:color-mix(in srgb, #27ae60 12%, transparent); color:var(--sp-ok); border:1.5px solid var(--sp-ok); }
 
-        .faim-sp-faq { display:flex; flex-direction:column; gap:0.75rem; margin-top:0.75rem; }
-        .faim-sp-faq-item { background:var(--card-bg2); border-radius:10px; padding:0.9rem 1.1rem; }
-        .faim-sp-faq-item summary { cursor:pointer; font-weight:600; color:#ffffff; font-size:1rem; }
-        .faim-sp-faq-item p { color:#cccccc; font-size:0.95rem; line-height:1.7; margin:0.6rem 0 0; }
+.faim-sp-faq { display:flex; flex-direction:column; gap:0.75rem; margin-top:0.75rem; }
+.faim-sp-faq-item { background:var(--card-bg2); border:1.5px solid var(--sp-line-soft); border-radius:10px; padding:0.9rem 1.1rem; }
+.faim-sp-faq-item summary { cursor:pointer; font-weight:600; color:var(--sp-text); font-size:1rem; }
+.faim-sp-faq-item p { color:var(--sp-text-soft); font-size:0.95rem; line-height:1.7; margin:0.6rem 0 0; }
 
-        .faim-sp-safety { border-color:rgba(230,126,34,0.5); }
-        .faim-sp-safety ul { margin:0.5rem 0 0; padding-left:1.2rem; color:#cccccc; font-size:0.95rem; line-height:1.9; }
+.faim-sp-safety { border-color:#d35400; }
+.faim-sp-safety ul { margin:0.5rem 0 0; padding-left:1.2rem; color:var(--sp-text-soft); font-size:0.95rem; line-height:1.9; }
 
-        .faim-sp-socials { display:flex; flex-wrap:wrap; gap:0.75rem; margin-top:0.5rem; }
-        .faim-sp-social { display:inline-flex; align-items:center; gap:8px; padding:0.7rem 1.2rem; border:1.5px solid rgba(255,255,255,0.3); border-radius:10px; color:#ffffff; text-decoration:none; font-weight:600; font-size:0.95rem; transition:all .15s; }
-        .faim-sp-social:hover { border-color:#0ef6cc; color:#0ef6cc; }
-        .faim-sp-social--primary { background:#0ef6cc; border-color:#0ef6cc; color:#080a0f; }
-        .faim-sp-social--primary:hover { color:#080a0f; opacity:0.9; }
+.faim-sp-socials { display:flex; flex-wrap:wrap; gap:0.75rem; margin-top:0.5rem; }
+.faim-sp-social { display:inline-flex; align-items:center; gap:8px; padding:0.7rem 1.2rem; border:1.5px solid var(--sp-line); border-radius:10px; color:var(--sp-text); text-decoration:none; font-weight:600; font-size:0.95rem; transition:all .15s; }
+.faim-sp-social:hover { border-color:var(--sp-accent-text); color:var(--sp-accent-text); }
+.faim-sp-social--primary { background:#0ef6cc; border-color:#080a0f; color:#080a0f; }
+.faim-sp-social--primary:hover { color:#080a0f; opacity:0.9; }
 
-        .faim-sp-legal { text-align:center; font-size:0.85rem; color:#888888; margin-top:1rem; }
-        .faim-sp-legal a { color:#cccccc; text-decoration:none; }
-        .faim-sp-legal a:hover { color:#0ef6cc; }
-        @media (max-width:480px) { .faim-sp-hero h1 { font-size:1.6rem; } .faim-sp-section { padding:1.25rem 1rem; } }
-      `}</style>
+.faim-sp-legal { text-align:center; font-size:0.85rem; color:var(--sp-text-faint); margin-top:1rem; }
+.faim-sp-legal a { color:var(--sp-text-soft); text-decoration:underline; }
+.faim-sp-legal a:hover { color:var(--sp-accent-text); }
+@media (max-width:480px) { .faim-sp-hero h1 { font-size:1.6rem; } .faim-sp-section { padding:1.25rem 1rem; } }`}</style>
     </div>
   )
 }
