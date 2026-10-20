@@ -701,6 +701,14 @@ export default function Home() {
 />
               <div style={{ ...s.stepNumber, backgroundColor: '#14b8a6' }}>2</div>
               <h3 style={s.stepTitle}>Verify &amp; Connect</h3>
+              <div className="verification-section-info">
+  <h5 className="text-lg font-semibold text-gray-800 mb-2">
+    Get Verified for Maximum Reach
+  </h5>
+  <p className="text-gray-600">
+    A verification badge on your profile boosts your speed and trust on the platform. All professionals are required to get verified to appear on the professional marketplace—there are no exceptions.
+  </p>
+</div>
               <p style={s.stepText}>Every landlord on Mr. Rent is checked before they can list. Unlock verified contact details and speak directly, with no middlemen.</p>
             </div>
             <div style={s.stepCard} className="feature-card">
@@ -713,6 +721,14 @@ export default function Home() {
 />
               <div style={{ ...s.stepNumber, backgroundColor: '#0f172a' }}>3</div>
               <h3 style={s.stepTitle}>Move In Safely</h3>
+      <div className="inspection-section-info">
+  <h5 className="text-lg font-semibold text-gray-800 mb-2">
+    Inspect & Verify Before You Pay
+  </h5>
+  <p className="text-gray-600">
+    Every tenant must inspect the property in person and verify it matches the online listing before paying. Confirm that the person you contacted is the actual landlord before transferring funds—we do not collect payments on behalf of landlords and will notify you if that changes. Pay only for properties you have fully verified.
+  </p>
+</div>        
               <p style={s.stepText}>Agree terms directly with a verified landlord and move in with confidence, knowing you didn&apos;t pay a scammer along the way.</p>
             </div>
           </div>
