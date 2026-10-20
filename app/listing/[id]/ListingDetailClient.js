@@ -3,6 +3,7 @@
 // NOTE: Run this in Supabase SQL editor to enable the likes feature:
 // ALTER TABLE listings ADD COLUMN IF NOT EXISTS likes integer DEFAULT 0;
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import SwitchRoleModal from '../components/SwitchRoleModal'
@@ -290,9 +291,12 @@ export default function ListingClient() {
           >‹</button>
 
           {/* Image */}
-          <img
+          <Image
             src={images[activeImage]}
             alt=""
+            width={1600}
+            height={1200}
+            unoptimized
             onClick={e => e.stopPropagation()}
             style={{ maxWidth: '88vw', maxHeight: '88vh', objectFit: 'contain', borderRadius: 10, userSelect: 'none' }}
           />
@@ -382,9 +386,11 @@ export default function ListingClient() {
               onClick={() => setLightboxOpen(true)}
               style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', cursor: 'zoom-in', marginBottom: 8 }}
             >
-              <img
+              <Image
                 src={images[activeImage]}
                 alt={listing.title}
+                width={1100}
+                height={420}
                 style={{ width: '100%', height: 'clamp(220px, 45vw, 420px)', objectFit: 'cover', display: 'block' }}
               />
               <div style={{ position: 'absolute', bottom: 12, right: 12, background: 'rgba(0,0,0,0.65)', color: '#fff', fontSize: 12, padding: '4px 12px', borderRadius: 20, backdropFilter: 'blur(4px)' }}>
@@ -408,18 +414,28 @@ export default function ListingClient() {
             {images.length > 1 && (
               <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
                 {images.map((img, i) => (
-                  <img
+                  <button
                     key={i}
-                    src={img}
-                    alt=""
+                    type="button"
                     onClick={() => setActiveImage(i)}
                     style={{
-                      width: 80, height: 58, objectFit: 'cover', borderRadius: 8, cursor: 'pointer', flexShrink: 0,
+                      width: 80, height: 58, borderRadius: 8, cursor: 'pointer', flexShrink: 0,
                       border: i === activeImage ? '2px solid #0ef6cc' : '2px solid transparent',
                       opacity: i === activeImage ? 1 : 0.55,
                       transition: 'all 0.15s',
+                      padding: 0, background: 'transparent', overflow: 'hidden'
                     }}
-                  />
+                    aria-label={`View photo ${i + 1}`}
+                  >
+                    <Image
+                      src={img}
+                      alt=""
+                      width={80}
+                      height={58}
+                      unoptimized
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', borderRadius: 8 }}
+                    />
+                  </button>
                 ))}
               </div>
             )}
@@ -512,8 +528,8 @@ export default function ListingClient() {
                   }}
                 >
                   {/* Thumbnail — use first listing image or dark placeholder */}
-                  {images[0]
-                    ? <img src={images[0]} alt="Video thumbnail" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block', filter: 'brightness(0.45)' }} />
+                  {Images[0]
+                    ? <Image src={images[0]} alt="Video thumbnail" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block', filter: 'brightness(0.45)' }} />
                     : <div style={{ height: 200, background: '#0d0d0d' }} />
                   }
                   {/* Play icon */}

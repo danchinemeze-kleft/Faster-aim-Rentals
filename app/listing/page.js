@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import ListingClient from '../ListingClient'
+import ListingClient from './ListingClient'
 
 export const metadata = {
   title: 'Property for Rent | Mr. Rent',
