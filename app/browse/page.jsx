@@ -81,9 +81,9 @@ function BrowseVideoPlayer({ src }) {
   return (
     <div style={{ background: '#0a0a0a', borderTop: '2px solid #0ef6cc', position: 'relative' }}>
       <div style={{ padding: '5px 12px 3px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#0ef6cc', textTransform: 'uppercase', letterSpacing: '1px' }}>▶ Property Video</span>
+        <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#0ef6cc', textTransform: 'uppercase', letterSpacing: '1px' }}> ▶ Property Video</span>
         {state === 'error' && (
-          <a href={src} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.65rem', color: '#0ef6cc', fontWeight: 700 }}>Open →</a>
+          <a href={src} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.65rem', color: '#0ef6cc', fontWeight: 700 }}>Open Video</a>
         )}
       </div>
 
@@ -96,7 +96,7 @@ function BrowseVideoPlayer({ src }) {
 
       {state === 'error' && (
         <div style={{ height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-          <span style={{ fontSize: 24 }}>🎬</span>
+          <span style={{ fontSize: 64 }}>🎬</span>
           <a href={src} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: '#0ef6cc', fontWeight: 700, textDecoration: 'none' }}>Tap to watch video →</a>
         </div>
       )}
