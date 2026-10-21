@@ -23,7 +23,8 @@
 
   --text-1: #ffffff;
   --text-2: #cccccc;
-  --text-3: #999999;
+  --text-3: #b4bcc8;
+  --placeholder: #9aa3b0;
 
   --nav-bg: rgba(8, 10, 15, 0.98);
   --nav-border: rgba(14, 246, 204, 0.15);
@@ -33,7 +34,19 @@
   --brand: #14b8a6;
   --brand-hover: #0d9488;
   --brand-light: #0ef6cc;
+  --brand-cyan: #0ea5e9;
+  --brand-price: #0ef6cc;
   --accent: #e67e22;
+  --accent-hover: #cf6d17;
+  --success: #27ae60;
+  --danger: #e74c3c;
+
+  /* Text-safe versions of the colours above (backgrounds and borders keep the originals) */
+  --brand-text: #14b8a6;
+  --brand-cyan-text: #0ea5e9;
+  --accent-text: #e67e22;
+  --success-text: #2ecc71;
+  --danger-text: #ff6b5b;
 }
 
 /* ---------- Light Mode ---------- */
@@ -55,17 +68,26 @@ html.light-mode {
 
   --text-1: #111827;
   --text-2: #374151;
-  --text-3: #9ca3af;
+  --text-3: #4b5563;
+  --placeholder: #6b7280;
 
   --nav-bg: rgba(255, 255, 255, 0.98);
   --nav-border: #e5e7eb;
 
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  --brand-price: #047857;
+
+  --brand-text: #0f766e;
+  --brand-cyan-text: #0369a1;
+  --accent-text: #b45309;
+  --success-text: #15803d;
+  --danger-text: #b91c1c;
 }
 
 /* ---------- Tailwind theme bridge ---------- */
 /* stylelint-disable at-rule-no-unknown -- Tailwind CSS v4 theme directive */
-theme inline {
+@theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -93,7 +115,7 @@ input, textarea, select {
 
 input::placeholder,
 textarea::placeholder {
-  color: #888888;
+  color: var(--placeholder);
   font-size: 0.95rem;
 }
 
@@ -121,7 +143,7 @@ textarea::placeholder {
 
 .theme-toggle:hover {
   border-color: var(--brand);
-  color: var(--brand);
+  color: var(--brand-text);
   transform: scale(1.08);
 }
 
@@ -189,7 +211,7 @@ html.light-mode .theme-toggle .moon-icon {
 .faim-header-name {
   font-weight: 600;
   font-size: 0.95rem;
-  color: var(--brand-light);
+  color: var(--brand-price);
   margin: 0;
 }
 
@@ -249,7 +271,7 @@ html.light-mode .theme-toggle .moon-icon {
 
 .faim-bubble--user {
   background: var(--page-bg);
-  color: var(--brand-light);
+  color: var(--brand-price);
   border-bottom-right-radius: 4px;
   border: 1.5px solid var(--brand);
 }
@@ -297,7 +319,7 @@ html.light-mode .theme-toggle .moon-icon {
 }
 .faim-quick-btn:hover {
   border-color: var(--brand);
-  color: var(--brand);
+  color: var(--brand-text);
 }
 
 .faim-input-bar {
@@ -327,7 +349,7 @@ html.light-mode .theme-toggle .moon-icon {
   background: var(--input-bg);
   color: var(--text-1);
 }
-.faim-input::placeholder { color: #6b7280; }
+.faim-input::placeholder { color: var(--placeholder); }
 .faim-input:focus {
   border-color: var(--brand);
   box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.15);
@@ -392,10 +414,9 @@ html.light-mode .theme-toggle .moon-icon {
 .faim-lcard-price {
   font-size: 0.82rem;
   font-weight: 800;
-  color: var(--brand-light);
+  color: var(--brand-price);
   margin-bottom: 2px;
 }
-html.light-mode .faim-lcard-price { color: #059669; }
 
 .faim-lcard-price span {
   font-size: 0.8rem;
@@ -431,7 +452,7 @@ html.light-mode .faim-lcard-price { color: #059669; }
   width: 100%;
   padding: 6px;
   background: transparent;
-  color: var(--brand-light);
+  color: var(--brand-price);
   border: 1px solid rgba(14, 246, 204, 0.33);
   border-radius: 8px;
   font-size: 0.72rem;
@@ -448,8 +469,7 @@ html.light-mode .faim-lcard-price { color: #059669; }
   border-color: var(--brand-light);
 }
 html.light-mode .faim-lcard-view-btn {
-  color: #059669;
-  border-color: #059669;
+  border-color: var(--brand-price);
 }
 html.light-mode .faim-lcard-view-btn:hover {
   background: #d1fae5;
@@ -565,7 +585,7 @@ html.light-mode .faim-nav-item:hover {
 }
 .faim-nav-item--active {
   background: rgba(230, 126, 34, 0.2);
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 600;
 }
 
@@ -588,7 +608,7 @@ html.light-mode .faim-nav-item:hover {
   transition: background 0.15s;
   display: block;
 }
-.faim-add-listing-btn:hover { background: #cf6d17; }
+.faim-add-listing-btn:hover { background: var(--accent-hover); }
 
 .faim-logout-btn {
   background: transparent;
@@ -642,7 +662,7 @@ html.light-mode .faim-nav-item:hover {
 }
 .faim-sub-badge--active {
   background: #f0fff4;
-  color: #27ae60;
+  color: #166534;
 }
 html.light-mode .faim-sub-badge--active {
   background: #dcfce7;
@@ -732,7 +752,7 @@ html.light-mode .faim-alert-card--warning {
   transition: background 0.15s;
   font-family: inherit;
 }
-.faim-subscribe-btn:hover { background: #cf6d17; }
+.faim-subscribe-btn:hover { background: var(--accent-hover); }
 
 .faim-section {
   background: var(--card-bg);
@@ -758,7 +778,7 @@ html.light-mode .faim-alert-card--warning {
 .faim-view-all {
   background: none;
   border: none;
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 600;
   cursor: pointer;
   font-size: 0.85rem;
@@ -794,8 +814,8 @@ html.light-mode .faim-alert-card--warning {
   font-size: 0.75rem;
   font-weight: 600;
 }
-.faim-avail-label--yes { color: #27ae60; }
-.faim-avail-label--no { color: #e74c3c; }
+.faim-avail-label--yes { color: var(--success-text); }
+.faim-avail-label--no { color: var(--danger-text); }
 
 .faim-toggle {
   width: 44px;
@@ -806,7 +826,7 @@ html.light-mode .faim-alert-card--warning {
   position: relative;
   transition: background 0.2s;
 }
-.faim-toggle--on { background: #27ae60; }
+.faim-toggle--on { background: var(--success); }
 .faim-toggle--off { background: var(--border-2); }
 .faim-toggle-thumb {
   position: absolute;
@@ -871,7 +891,7 @@ html.light-mode .faim-alert-card--warning {
 .faim-listing-price-tag {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .faim-listing-controls {
@@ -890,7 +910,7 @@ html.light-mode .faim-alert-card--warning {
   padding: 6px 12px;
   border: 1.5px solid var(--accent);
   border-radius: 6px;
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 0.8rem;
   font-weight: 600;
   text-decoration: none;
@@ -905,7 +925,7 @@ html.light-mode .faim-alert-card--warning {
   border: none;
   border-radius: 6px;
   background: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
+  color: var(--danger-text);
   cursor: pointer;
   font-size: 0.85rem;
   transition: background 0.15s;
@@ -980,7 +1000,7 @@ html.light-mode .faim-alert-card--warning {
 .faim-plan-price {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 .faim-plan-price span {
   font-size: 1rem;
@@ -1047,7 +1067,7 @@ html.light-mode .faim-alert-card--warning {
 .faim-role-tag {
   display: inline-block;
   background: rgba(230, 126, 34, 0.1);
-  color: var(--accent);
+  color: var(--accent-text);
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.78rem;
@@ -1083,7 +1103,7 @@ html.light-mode .faim-alert-card--warning {
   font-size: 0.95rem;
   padding: 1rem 0;
 }
-.faim-empty-text a { color: var(--accent); }
+.faim-empty-text a { color: var(--accent-text); }
 
 .faim-empty-state {
   background: var(--card-bg);
@@ -1094,7 +1114,7 @@ html.light-mode .faim-alert-card--warning {
   border: 0.5px solid var(--border-1);
 }
 .faim-empty-state a {
-  color: var(--accent);
+  color: var(--accent-text);
   display: block;
   margin-top: 0.5rem;
 }
@@ -1278,12 +1298,12 @@ html.light-mode .faim-alert-card--warning {
   border-radius: 14px;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #14b8a6, #0ea5e9);
+  background: linear-gradient(135deg, var(--brand), var(--brand-cyan));
   color: #fff;
 }
 
 /* ======================================================
-   FOOTER
+   FOOTER  (restored to the original rules, unchanged, for you to check first)
    ====================================================== */
 .site-footer {
   position: relative !important;
@@ -1364,7 +1384,7 @@ html.light-mode .faim-alert-card--warning {
 }
 
 /* ======================================================
-   LIVELY INTERACTIONS
+   LIVELY INTERACTIONS  (restored: every link and button)
    ====================================================== */
 @keyframes lively-shake {
   0%   { translate: 0 0;     rotate: 0deg; }
@@ -1391,7 +1411,48 @@ html.light-mode .faim-alert-card--warning {
 .footer-link {
   transform-origin: left center;
 }
+/* ======================================================
+   TOUCH SCREEN EFFECTS (phones and tablets, no hover)
+   ====================================================== */
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  a,
+  button:not(:disabled),
+  [role="button"],
+  .faim-listing-card,
+  .listing-card,
+  .home-step,
+  .trust-card,
+  .feature-card {
+    /* spring-back with a slight overshoot when the finger lifts */
+    transition: scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                filter 0.2s ease,
+                opacity 0.2s ease;
+  }
 
+  /* press-in while the finger is down */
+  a:active,
+  button:active:not(:disabled),
+  [role="button"]:active,
+  .faim-listing-card:active,
+  .listing-card:active,
+  .home-step:active,
+  .trust-card:active,
+  .feature-card:active {
+    scale: 0.95;
+    transition-duration: 0.08s;
+  }
+
+  /* buttons also get a soft glow while pressed */
+  button:active:not(:disabled),
+  a[class*="btn"]:active {
+    filter: brightness(1.12) drop-shadow(0 4px 10px rgba(20, 184, 166, 0.45));
+  }
+
+  /* inline text links can't scale, so they dim briefly instead */
+  a:active {
+    opacity: 0.7;
+  }
+}
 /* ======================================================
    3D NAV & HERO
    ====================================================== */
@@ -1399,7 +1460,7 @@ html.light-mode .faim-alert-card--warning {
   position: relative;
   z-index: 20;
   border-bottom: 3px solid transparent !important;
-  border-image: linear-gradient(90deg, #10705a, #14b8a6) 1 !important;
+  border-image: linear-gradient(90deg, #10705a, var(--brand)) 1 !important;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.9) inset,
     0 6px 14px rgba(15, 23, 42, 0.18),
@@ -1479,6 +1540,7 @@ html.light-mode .faim-alert-card--warning {
 .nav-menu-dropdown a:hover {
   background: rgba(20, 184, 166, 0.08);
 }
+
 /* ======================================================
    BROWSE PAGE (Theme-aware)
    ====================================================== */
@@ -1505,7 +1567,7 @@ html.light-mode .faim-alert-card--warning {
 .browse-logo {
   font-size: 1.3rem;
   font-weight: 800;
-  background: linear-gradient(90deg, #0ea5e9, #14B8A6);
+  background: linear-gradient(90deg, var(--brand-cyan-text), var(--brand-text));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1525,11 +1587,11 @@ html.light-mode .faim-alert-card--warning {
   text-decoration: none;
 }
 .browse-nav-link.active {
-  color: #0ea5e9;
+  color: var(--brand-cyan-text);
 }
 
 .browse-account-btn {
-  background: linear-gradient(135deg, #14B8A6, #0D9488);
+  background: linear-gradient(135deg, var(--brand), var(--brand-hover));
   color: white;
   padding: 0.5rem 1.25rem;
   border-radius: 8px;
@@ -1553,7 +1615,7 @@ html.light-mode .faim-alert-card--warning {
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: #0ea5e9;
+  color: var(--brand-cyan-text);
   margin-bottom: 6px;
 }
 
@@ -1612,7 +1674,7 @@ html.light-mode .faim-alert-card--warning {
   padding: 12px 20px;
   border-radius: 10px;
   border: none;
-  background: #0ea5e9;
+  background: var(--brand-cyan);
   color: white;
   font-size: 0.88rem;
   font-weight: 700;
@@ -1633,7 +1695,7 @@ html.light-mode .faim-alert-card--warning {
   font-weight: 600;
 }
 .results-count span {
-  color: #0ea5e9;
+  color: var(--brand-cyan-text);
   font-weight: 800;
 }
 
@@ -1642,8 +1704,8 @@ html.light-mode .faim-alert-card--warning {
   align-items: center;
   gap: 6px;
   background: rgba(14, 165, 233, 0.08);
-  border: 1.5px solid #0ea5e9;
-  color: #0ea5e9;
+  border: 1.5px solid var(--brand-cyan-text);
+  color: var(--brand-cyan-text);
   padding: 8px 16px;
   border-radius: 100px;
   font-size: 0.82rem;
@@ -1702,7 +1764,7 @@ html.light-mode .faim-alert-card--warning {
 
 .badge.verified {
   left: 12px;
-  background: #0ea5e9;
+  background: var(--brand-cyan);
   color: white;
 }
 
@@ -1777,7 +1839,7 @@ html.light-mode .faim-alert-card--warning {
   padding: 10px 8px;
   border-radius: 8px;
   border: none;
-  background: #14B8A6;
+  background: var(--brand);
   color: white;
   font-size: 0.82rem;
   font-weight: 800;
@@ -1799,7 +1861,7 @@ html.light-mode .faim-alert-card--warning {
   width: 40px;
   height: 40px;
   border: 3px solid var(--border-1);
-  border-top-color: #0ea5e9;
+  border-top-color: var(--brand-cyan);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto 1rem;
@@ -1831,11 +1893,12 @@ html.light-mode .faim-alert-card--warning {
   .browse-filters {
     grid-template-columns: 1fr;
   }
-  
+
   .browse-nav {
     padding: 1rem;
   }
 }
+
 /* ======================================================
    LISTING PAGE (Theme-aware)
    ====================================================== */
@@ -1885,7 +1948,7 @@ html.light-mode .faim-alert-card--warning {
 }
 
 .listing-topbar .brand {
-  color: #0ea5e9;
+  color: var(--brand-cyan-text);
   font-weight: 700;
   font-size: 15px;
   text-decoration: none;
@@ -1982,7 +2045,7 @@ html.light-mode .faim-alert-card--warning {
   transition: all 0.15s;
 }
 .thumbnails img.active {
-  border-color: #0ea5e9;
+  border-color: var(--brand-cyan);
   opacity: 1;
 }
 
@@ -2030,13 +2093,13 @@ html.light-mode .faim-alert-card--warning {
 
 .tag.type {
   background: rgba(14, 165, 233, 0.1);
-  color: #0ea5e9;
+  color: var(--brand-cyan-text);
   border: 1px solid rgba(14, 165, 233, 0.3);
 }
 
 .tag.available {
   background: rgba(22, 163, 74, 0.1);
-  color: #16a34a;
+  color: var(--success-text);
   border: 1px solid rgba(22, 163, 74, 0.3);
 }
 
@@ -2132,7 +2195,7 @@ html.light-mode .faim-alert-card--warning {
   height: 60px;
   border-radius: 50%;
   background: rgba(14, 165, 233, 0.2);
-  border: 2px solid #0ea5e9;
+  border: 2px solid var(--brand-cyan);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2207,7 +2270,7 @@ html.light-mode .faim-alert-card--warning {
 .reveal-btn {
   width: 100%;
   padding: 14px;
-  background: #0ea5e9;
+  background: var(--brand-cyan);
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -2240,7 +2303,7 @@ html.light-mode .faim-alert-card--warning {
 
 .revealed-label {
   font-size: 11px;
-  color: #16a34a;
+  color: var(--success-text);
   font-weight: 700;
   margin-bottom: 12px;
   text-transform: uppercase;
@@ -2268,7 +2331,7 @@ html.light-mode .faim-alert-card--warning {
   margin-bottom: 8px;
   font-size: 13px;
   font-weight: 600;
-  color: #16a34a;
+  color: var(--success-text);
 }
 
 .email {
@@ -2297,7 +2360,7 @@ html.light-mode .faim-alert-card--warning {
 .like-btn.liked {
   background: rgba(20, 184, 166, 0.08);
   border-color: rgba(20, 184, 166, 0.4);
-  color: #14B8A6;
+  color: var(--brand-text);
 }
 
 .like-count {
@@ -2359,7 +2422,7 @@ html.light-mode .faim-alert-card--warning {
   bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 12px;
 }
 
@@ -2406,7 +2469,7 @@ html.light-mode .faim-alert-card--warning {
 }
 
 .video-hint {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 12px;
   margin-top: 16px;
 }
@@ -2421,6 +2484,10 @@ html.light-mode .faim-alert-card--warning {
     position: static;
   }
 }
+
+/* ======================================================
+   HOME PAGE
+   ====================================================== */
 .home { background: var(--page-bg); color: var(--text-1); min-height: 100vh; }
 .home h1, .home h2, .home h3 { color: var(--text-1); }
 .home-nav, .home-footer {
@@ -2431,10 +2498,10 @@ html.light-mode .faim-alert-card--warning {
 .home-brand { font-weight: 800; font-size: 1.3rem; }
 .home-nav-links { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
 .home-nav-links a { color: var(--text-2); font-weight: 700; font-size: 0.88rem; text-decoration: none; }
-.home-nav-btn, .btn-teal { background: #14b8a6; color: #fff; }
+.home-nav-btn, .btn-teal { background: var(--brand); color: #fff; }
 .home-nav-btn { padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; }
 .accent-cyan { color: #00b4b4; }
-.accent-teal { color: #14b8a6; }
+.accent-teal { color: var(--brand-text); }
 .home-hero, .home-section { padding: 3rem 1.5rem; max-width: 1100px; margin: 0 auto; }
 .home-hero-frame { border: 1.5px solid var(--border-2); border-radius: 20px; padding: 2rem; background: var(--card-bg); }
 .home-hero-layout, .home-landlord-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2rem; align-items: center; }
@@ -2468,7 +2535,7 @@ html.light-mode .faim-alert-card--warning {
 .home-step p, .home-features { color: var(--text-2); font-size: 0.88rem; }
 .step-num { color: var(--text-3); font-weight: 800; }
 .home-features { list-style: none; padding: 0; display: grid; gap: 0.4rem; }
-.home-price { font-size: 2.4rem; font-weight: 900; color: #14b8a6; }
+.home-price { font-size: 2.4rem; font-weight: 900; color: var(--brand-text); }
 .home-cta { text-align: center; }
 @media (max-width: 800px) {
   .home-hero-layout, .home-landlord-grid, .home-actions { grid-template-columns: 1fr; }
