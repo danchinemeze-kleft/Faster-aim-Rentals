@@ -94,22 +94,24 @@ function BrowseVideoPlayer({ src }) {
         </div>
       )}
 
-      {state === 'error' && (
+     {state === 'error' && (
   <div
     style={{
-      height: 100,
+      height: 140,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 8,
+      gap: 10,
+      padding: 12,
+      boxSizing: 'border-box',
+      background: 'linear-gradient(135deg, #1b0f3b 0%, #3a1c71 50%, #0b6b63 100%)',
       border: '2px solid #0ef6cc',
       borderRadius: 12,
-      padding: 8,
-      boxSizing: 'border-box',
+      overflow: 'hidden',
     }}
   >
-    <span style={{ fontSize: 60 }}>🎬</span>
+    <span style={{ fontSize: 50, lineHeight: 1 }}>🎬</span>
     <a
       href={src}
       target="_blank"
@@ -124,13 +126,13 @@ function BrowseVideoPlayer({ src }) {
         borderRadius: 999,
         border: '2px solid #ffffff',
         boxShadow: '0 0 10px rgba(14, 246, 204, 0.6)',
+        whiteSpace: 'nowrap',
       }}
     >
       Tap to watch video →
     </a>
   </div>
 )}
-
       <video
         controls
         playsInline
