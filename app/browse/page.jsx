@@ -1,6 +1,6 @@
 'use client';
 
-import GoBackButton from '../components/GoBackButton'
+import ShareWhatsApp from '../components/ShareWhatsApp'
 import { useEffect, useState, useMemo } from 'react';
 import { useLoadingRouter } from '../hooks/useLoadingRouter';
 import { createBrowserClient } from '@supabase/ssr';
@@ -146,6 +146,7 @@ function BrowseVideoPlayer({ src }) {
         <source src={src} type="video/webm" />
         <source src={src} type="video/quicktime" />
       </video>
+     
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
@@ -488,6 +489,9 @@ export default function BrowsePage() {
                       <VerylandBadge level={l.veryland_badge} />
                     </div>
                   )}
+                  <div style={{ marginBottom: 12 }}>
+  <ShareWhatsApp id={l.id} title={l.title} price={l.price} location={l.location} />
+</div>
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
                     <a href={`/listing/${l.id}`} style={{ flex: 1, padding: '11px 8px', borderRadius: '8px', border: '2px solid #333', background: '#1a1d24', color: '#ffffff', fontSize: '0.88rem', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>View Details</a>
                     {bookable ? (

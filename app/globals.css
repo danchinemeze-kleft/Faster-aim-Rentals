@@ -86,8 +86,8 @@ html.light-mode {
 }
 
 /* ---------- Tailwind theme bridge ---------- */
-/* stylelint-disable at-rule-no-unknown -- Tailwind CSS v4 theme directive */
-@theme inline {
+/* stylelint-disable-next-line at-rule-no-unknown -- Tailwind CSS v4 theme directive */
+theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -2540,4 +2540,20 @@ html.light-mode .faim-alert-card--warning {
 @media (max-width: 800px) {
   .home-hero-layout, .home-landlord-grid, .home-actions { grid-template-columns: 1fr; }
   .span-2 { grid-column: auto; }
+}
+.faim-share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 16px;
+  background: #128c7e;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
 }
