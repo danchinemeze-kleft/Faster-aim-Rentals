@@ -1,55 +1,41 @@
-import FAQClient from './FaqClient';
+import FaqClient from './FaqClient'
+import { FAQS } from './faq-data'
 
 export const metadata = {
-  title: 'Frequently Asked Questions',
+  title: 'FAQ | Mr. Rent',
   description:
-    'Answers to common questions about finding rentals, listing properties, payments, verification, contact reveal and how Mr. Rent works in Nigeria.',
-  keywords: [
-    'Mr Rent FAQ',
-    'how Mr Rent works',
-    'contact reveal fee',
-    'how to list property',
-    'is Mr Rent safe',
-    'property verification Nigeria',
-    'Mr Rent questions',
-    'rental FAQ Nigeria',
-  ],
-  authors: [{ name: 'Faster Aim Technology Limited' }],
-  creator: 'Faster Aim Technology Limited',
-  publisher: 'Faster Aim Technology Limited',
-  robots: {
-    index: true,
-    follow: true,
-  },
+    'Answers to common questions about finding, listing and renting property on Mr. Rent, plus how affiliate rewards work.',
+  alternates: { canonical: 'https://rent.fasteraim.com/faq' },
   openGraph: {
-    title: 'Frequently Asked Questions | Mr. Rent',
-    description:
-      'Get clear answers about listings, payments, verification and how to use Mr. Rent.',
+    title: 'FAQ | Mr. Rent',
+    description: 'Answers to common questions about renting and listing on Mr. Rent.',
     url: 'https://rent.fasteraim.com/faq',
     siteName: 'Mr. Rent',
-    images: [
-      {
-        url: 'https://rent.fasteraim.com/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Mr. Rent FAQ',
-      },
-    ],
-    locale: 'en_NG',
     type: 'website',
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'FAQ | Mr. Rent',
-    description: 'Common questions about using Mr. Rent answered clearly.',
-    images: ['https://rent.fasteraim.com/og-image.jpg'],
-    creator: '@B_B_Rembow',
-  },
-  alternates: {
-    canonical: 'https://rent.fasteraim.com/faq',
-  },
-};
+}
 
-export default function FAQPage() {
-  return <FAQClient />;
+export default function FaqPage() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `${f.brief} ${String(f.detail).replace(/<[^>]+>/g, '')}`.trim(),
+      },
+    })),
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <FaqClient />
+    </>
+  )
 }

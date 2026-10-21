@@ -8,10 +8,10 @@ import "./faq.css";
 
 const CATEGORIES = ["All", ...Array.from(new Set(FAQS.map((f) => f.category)))];
 
-export default function FaqPage() {
+export default function FaqClient() {
   const [category, setCategory] = useState("All");
   const [query, setQuery] = useState("");
-  const [open, setOpen] = useState<Set<string>>(new Set());
+  const [open, setOpen] = useState(new Set());
 
   const items = useMemo(() => {
     const t = query.trim().toLowerCase();
@@ -29,7 +29,6 @@ export default function FaqPage() {
       return next;
     });
 
-  let last = "";
   return (
     <div className="faq">
       <nav className="faq-nav">
