@@ -95,11 +95,41 @@ function BrowseVideoPlayer({ src }) {
       )}
 
       {state === 'error' && (
-        <div style={{ height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-          <span style={{ fontSize: 64 }}>🎬</span>
-          <a href={src} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: '#0ef6cc', fontWeight: 700, textDecoration: 'none' }}>Tap to watch video →</a>
-        </div>
-      )}
+  <div
+    style={{
+      height: 100,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      border: '2px solid #0ef6cc',
+      borderRadius: 12,
+      padding: 8,
+      boxSizing: 'border-box',
+    }}
+  >
+    <span style={{ fontSize: 60 }}>🎬</span>
+    <a
+      href={src}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        fontSize: 13,
+        color: '#000000',
+        background: '#0ef6cc',
+        fontWeight: 800,
+        textDecoration: 'none',
+        padding: '6px 14px',
+        borderRadius: 999,
+        border: '2px solid #ffffff',
+        boxShadow: '0 0 10px rgba(14, 246, 204, 0.6)',
+      }}
+    >
+      Tap to watch video →
+    </a>
+  </div>
+)}
 
       <video
         controls
