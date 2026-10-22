@@ -19,7 +19,32 @@ const docSlots = (profession) => [
   { type: 'practising_licence', label: profession === 'lawyer' ? 'Current NBA practising licence or stamp' : 'Current practising licence or stamp', hint: 'Optional, but speeds up approval', required: false },
 ]
 
-const EMPTY = { profession: 'lawyer', full_name: '', headline: '', bio: '', years_experience: '', state: '', cities: '', contact_phone: '', registration_number: '', specialties: [] }
+const EMPTY = {
+  profession: 'lawyer',
+  full_name: '',
+  date_of_birth: '',
+  headline: '',
+  bio: '',
+  years_experience: '',
+  state: '',
+  residential_city: '',
+  home_address: '',
+  cities: '',
+  contact_phone: '',
+  registration_number: '',
+  specialties: [],
+}
+
+function ageFromDob(dob) {
+  if (!dob) return null
+  const d = new Date(dob)
+  if (Number.isNaN(d.getTime())) return null
+  const today = new Date()
+  let age = today.getFullYear() - d.getFullYear()
+  const m = today.getMonth() - d.getMonth()
+  if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age -= 1
+  return age
+}
 
 const buildDocStoragePath = (userId, docType, fileName) => {
   const ext = (fileName.split('.').pop() || 'file').toLowerCase().replace(/[^a-z0-9]/g, '')
@@ -95,16 +120,33 @@ export default function ProSignup() {
 
   function startEdit() {
     setForm({
-      profession: pro.profession, full_name: pro.full_name || '', headline: pro.headline || '', bio: pro.bio || '',
-      years_experience: pro.years_experience ?? '', state: pro.state || '', cities: (pro.cities || []).join(', '),
-      contact_phone: pro.contact_phone || '', registration_number: pro.registration_number || '', specialties: pro.specialties || [],
+      profession: pro.profession,
+      full_name: pro.full_name || '',
+      date_of_birth: pro.date_of_birth || '',
+      headline: pro.headline || '',
+      bio: pro.bio || '',
+      years_experience: pro.years_experience ?? '',
+      state: pro.state || '',
+      residential_city: pro.residential_city || '',
+      home_address: pro.home_address || '',
+      cities: (pro.cities || []).join(', '),
+      contact_phone: pro.contact_phone || '',
+      registration_number: pro.registration_number || '',
+      specialties: pro.specialties || [],
     })
     setMsg(null); setEditing(true)
   }
 
   function checkProfile() {
     if (form.full_name.trim().length < 3) return 'Enter your full name as it appears on your certificate.'
+    if (!form.date_of_birth) return 'Enter your date of birth.'
+    const age = ageFromDob(form.date_of_birth)
+    if (age === null) return 'Enter a valid date of birth.'
+    if (age < 21) return 'You must be at least 21 years old to register as a professional.'
+    if (age > 90) return 'Please check your date of birth.'
     if (!form.state) return 'Choose your state.'
+    if (form.residential_city.trim().length < 2) return 'Enter the city where you live.'
+    if (form.home_address.trim().length < 8) return 'Enter your full home address.'
     if (form.registration_number.trim().length < 3) return 'Enter your registration number.'
     if (!/^[0-9+\s-]{10,16}$/.test(form.contact_phone.trim())) return 'Enter a valid phone number.'
     if (form.specialties.length === 0) return 'Pick at least one specialty.'
@@ -119,6 +161,9 @@ export default function ProSignup() {
     const payload = {
       profession: form.profession,
       full_name: form.full_name.trim(),
+      date_of_birth: form.date_of_birth,
+      residential_city: form.residential_city.trim(),
+      home_address: form.home_address.trim(),
       headline: form.headline.trim() || null,
       bio: form.bio.trim() || null,
       years_experience: form.years_experience === '' ? null : Number(form.years_experience),
@@ -130,7 +175,11 @@ export default function ProSignup() {
     }
     const { error } = pro
       ? await supabase.from('professionals').update(payload).eq('id', pro.id)
-      : await supabase.from('professionals').insert({ ...payload, user_id: user.id })
+      : await supabase.from('professionals').insert({
+          ...payload,
+          user_id: user.id,
+          verification_status: 'draft',
+        })
     if (error) fail('Could not save your details. Please try again.')
     else { setEditing(false); await load(user) }
     setBusy(false)
@@ -155,7 +204,13 @@ export default function ProSignup() {
     if (!have.has('government_id') || !have.has('certificate')) return fail('Upload your government ID and your professional certificate first.')
     if (!agree) return fail('Please tick the declaration to continue.')
     setBusy(true); setMsg(null)
-    const { error } = await supabase.from('professionals').update({ verification_status: 'pending' }).eq('id', pro.id)
+    const { error } = await supabase
+      .from('professionals')
+      .update({
+        verification_status: 'pending',
+        verification_applied_at: new Date().toISOString(),
+      })
+      .eq('id', pro.id)
     if (error) fail('Could not submit. Please try again.')
     else await load(user)
     setBusy(false)
@@ -167,6 +222,7 @@ export default function ProSignup() {
   const status = pro?.verification_status
   const step = !user ? 1 : (!pro || editing) ? 2 : 3
   const slots = docSlots(pro?.profession || form.profession)
+  const formAge = ageFromDob(form.date_of_birth)
 
   return (
     <main className="faim-pro">
@@ -220,6 +276,18 @@ export default function ProSignup() {
             <label>Full name (as on your certificate)
               <input required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
             </label>
+            <label>Date of birth
+              <input
+                type="date"
+                required
+                max={new Date().toISOString().slice(0, 10)}
+                value={form.date_of_birth}
+                onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })}
+              />
+              {formAge !== null && (
+                <span className="faim-pro-hint">Age: {formAge} years</span>
+              )}
+            </label>
             <label>{REG_LABEL[form.profession]}
               <input required value={form.registration_number} onChange={(e) => setForm({ ...form, registration_number: e.target.value })} />
             </label>
@@ -231,6 +299,24 @@ export default function ProSignup() {
                 <option value="">Choose a state</option>
                 {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
+            </label>
+            <label>City of residence (where you live)
+              <input
+                required
+                placeholder="e.g. Ikeja"
+                value={form.residential_city}
+                onChange={(e) => setForm({ ...form, residential_city: e.target.value })}
+              />
+            </label>
+            <label>Home address
+              <textarea
+                required
+                rows={2}
+                maxLength={300}
+                placeholder="Street, area, landmark"
+                value={form.home_address}
+                onChange={(e) => setForm({ ...form, home_address: e.target.value })}
+              />
             </label>
             <label>Cities you serve (separate with commas)
               <input placeholder="Awka, Onitsha, Nnewi" value={form.cities} onChange={(e) => setForm({ ...form, cities: e.target.value })} />
@@ -317,6 +403,7 @@ const css = `
 .faim-pro h1{margin:0 0 .35rem;font-size:1.5rem;font-weight:700;letter-spacing:-.01em}
 .faim-pro h2{margin:0 0 .4rem;font-size:1.15rem;font-weight:700}
 .faim-pro-sub,.faim-pro-note,.faim-pro-state p{color:#64748b;font-size:.9rem;line-height:1.55}
+.faim-pro-hint{display:block;margin-top:.25rem;color:#64748b;font-size:.8rem;font-weight:500}
 .faim-pro-steps{display:flex;gap:.4rem;flex-wrap:wrap;margin:1rem 0}
 .faim-pro-steps span{padding:.25rem .65rem;border-radius:9999px;background:#f1f5f9;color:#94a3b8;font-size:.75rem;font-weight:600}
 .faim-pro-steps .is-on{background:#ccfbf1;color:#0f766e}
