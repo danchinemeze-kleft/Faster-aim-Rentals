@@ -11,16 +11,46 @@ const supabase = createClient(
 )
 
 function isYouTube(url) {
-  return url && (url.includes('youtube.com') || url.includes('youtu.be'))
+  return typeof url === 'string' && (url.includes('youtube.com') || url.includes('youtu.be'))
 }
 
 function youtubeEmbedUrl(url) {
+  if (typeof url !== 'string') return null
   const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/)
   return m ? `https://www.youtube.com/embed/${m[1]}` : null
 }
 
+function readLiked() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem('mr_rent_liked') || '[]')
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+function writeLiked(list) {
+  try {
+    localStorage.setItem('mr_rent_liked', JSON.stringify(list))
+  } catch {}
+}
+
+// Turns amenities/images into a clean array no matter how they are stored
+function toArray(value) {
+  if (Array.isArray(value)) return value
+  if (typeof value === 'string' && value.trim()) {
+    try {
+      const parsed = JSON.parse(value)
+      if (Array.isArray(parsed)) return parsed
+    } catch {}
+    return value.split(',').map((s) => s.trim()).filter(Boolean)
+  }
+  return []
+}
+
 export default function ListingLightPage() {
-  const { id } = useParams()
+  const params = useParams()
+  const id = Array.isArray(params?.id) ? params.id[0] : params?.id
   const router = useRouter()
   const [listing, setListing] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -35,59 +65,93 @@ export default function ListingLightPage() {
   const [revealedContact, setRevealedContact] = useState(null)
 
   useEffect(() => {
+    if (!id) return
+    let cancelled = false
+
     async function load() {
-      const [{ data: listingData }, { data: { session } }] = await Promise.all([
-        supabase.from('listings').select('*').eq('id', id).single(),
-        supabase.auth.getSession(),
-      ])
-
-      if (!listingData) {
-        setNotFound(true)
-        setLoading(false)
-        return
-      }
-
-      setListing(listingData)
-      setLikes(listingData.likes || 0)
-
-      if (session) {
-        setUser(session.user)
-        const { data: reveal } = await supabase
-          .from('Contact_reveals')
-          .select('landlord_phone, landlord_email')
-          .eq('tenant_id', session.user.id)
-          .eq('listing_id', id)
+      try {
+        const listingRes = await supabase
+          .from('listings')
+          .select('*')
+          .eq('id', id)
           .maybeSingle()
 
-        if (reveal) {
-          if (!reveal.landlord_phone && listingData.landlord_id) {
-            const { data: profile } = await supabase
-              .from('Profiles')
-              .select('phone, email')
-              .eq('id', listingData.landlord_id)
-              .single()
-            setRevealedContact({
-              landlord_phone: profile?.phone || null,
-              landlord_email: reveal.landlord_email || profile?.email || null,
-            })
-          } else {
-            setRevealedContact(reveal)
+        const listingData = listingRes.data
+
+        if (listingRes.error) console.error('Listing fetch error:', listingRes.error)
+
+        if (!listingData) {
+          if (!cancelled) {
+            setNotFound(true)
+            setLoading(false)
           }
+          return
+        }
+
+        if (cancelled) return
+        setListing(listingData)
+        setLikes(Number(listingData.likes) || 0)
+        setLiked(readLiked().includes(id))
+        setLoading(false)
+
+        // Session and contact reveal load after the page is already showing
+        try {
+          const sessionRes = await supabase.auth.getSession()
+          const session = sessionRes?.data?.session
+
+          if (session && !cancelled) {
+            setUser(session.user)
+            const { data: reveal } = await supabase
+              .from('Contact_reveals')
+              .select('landlord_phone, landlord_email')
+              .eq('tenant_id', session.user.id)
+              .eq('listing_id', id)
+              .maybeSingle()
+
+            if (reveal && !cancelled) {
+              if (!reveal.landlord_phone && listingData.landlord_id) {
+                const { data: profile } = await supabase
+                  .from('Profiles')
+                  .select('phone, email')
+                  .eq('id', listingData.landlord_id)
+                  .maybeSingle()
+                setRevealedContact({
+                  landlord_phone: profile?.phone || null,
+                  landlord_email: reveal.landlord_email || profile?.email || null,
+                })
+              } else {
+                setRevealedContact(reveal)
+              }
+            }
+          }
+        } catch (err) {
+          console.error('Session/reveal error:', err)
+        }
+      } catch (err) {
+        console.error('Load error:', err)
+        if (!cancelled) {
+          setNotFound(true)
+          setLoading(false)
         }
       }
-
-      setLiked(JSON.parse(localStorage.getItem('mr_rent_liked') || '[]').includes(id))
-      setLoading(false)
     }
+
     load()
+    return () => {
+      cancelled = true
+    }
   }, [id])
 
+  const images = toArray(listing?.images).filter(
+    (u) => typeof u === 'string' && u.startsWith('http')
+  )
+  const amenities = toArray(listing?.amenities)
+
   useEffect(() => {
-    if (!lightboxOpen || !listing) return
-    const imgs = Array.isArray(listing.images) ? listing.images : []
+    if (!lightboxOpen || images.length === 0) return
     const handler = (e) => {
-      if (e.key === 'ArrowRight') setActiveImage((i) => (i + 1) % imgs.length)
-      if (e.key === 'ArrowLeft') setActiveImage((i) => (i - 1 + imgs.length) % imgs.length)
+      if (e.key === 'ArrowRight') setActiveImage((i) => (i + 1) % images.length)
+      if (e.key === 'ArrowLeft') setActiveImage((i) => (i - 1 + images.length) % images.length)
       if (e.key === 'Escape') {
         setLightboxOpen(false)
         setVideoOpen(false)
@@ -95,17 +159,17 @@ export default function ListingLightPage() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [lightboxOpen, listing])
+  }, [lightboxOpen, images.length])
 
   async function handleLike() {
-    const saved = JSON.parse(localStorage.getItem('mr_rent_liked') || '[]')
+    const saved = readLiked()
     if (liked) {
-      localStorage.setItem('mr_rent_liked', JSON.stringify(saved.filter((lid) => lid !== id)))
+      writeLiked(saved.filter((lid) => lid !== id))
       setLiked(false)
       setLikes((l) => Math.max(0, l - 1))
       await supabase.from('listings').update({ likes: Math.max(0, likes - 1) }).eq('id', id)
     } else {
-      localStorage.setItem('mr_rent_liked', JSON.stringify([...saved, id]))
+      writeLiked([...saved, id])
       setLiked(true)
       setLikes((l) => l + 1)
       await supabase.from('listings').update({ likes: likes + 1 }).eq('id', id)
@@ -119,35 +183,41 @@ export default function ListingLightPage() {
     }
     setRevealing(true)
 
-    const { data: existing } = await supabase
-      .from('Contact_reveals')
-      .select('landlord_phone, landlord_email')
-      .eq('tenant_id', user.id)
-      .eq('listing_id', id)
-      .maybeSingle()
+    try {
+      const { data: existing } = await supabase
+        .from('Contact_reveals')
+        .select('landlord_phone, landlord_email')
+        .eq('tenant_id', user.id)
+        .eq('listing_id', id)
+        .maybeSingle()
 
-    if (existing) {
-      setRevealedContact(existing)
-      setRevealing(false)
-      return
-    }
+      if (existing) {
+        setRevealedContact(existing)
+        setRevealing(false)
+        return
+      }
 
-    const res = await fetch('/api/init-payment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: user.email,
-        type: 'reveal',
-        listing_id: id,
-        user_id: user.id,
-      }),
-    })
+      const res = await fetch('/api/init-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: user.email,
+          type: 'reveal',
+          listing_id: id,
+          user_id: user.id,
+        }),
+      })
 
-    const data = await res.json()
-    if (data.authorization_url) {
-      window.location.href = data.authorization_url
-    } else {
-      alert(data.error || 'Could not start payment.')
+      const data = await res.json()
+      if (data.authorization_url) {
+        window.location.href = data.authorization_url
+      } else {
+        alert(data.error || 'Could not start payment.')
+        setRevealing(false)
+      }
+    } catch (err) {
+      console.error('Reveal error:', err)
+      alert('Could not start payment. Please try again.')
       setRevealing(false)
     }
   }
@@ -160,7 +230,7 @@ export default function ListingLightPage() {
     )
   }
 
-  if (notFound) {
+  if (notFound || !listing) {
     return (
       <div className="listing-page not-found">
         <div className="not-found-icon">🏠</div>
@@ -172,7 +242,9 @@ export default function ListingLightPage() {
     )
   }
 
-  const images = Array.isArray(listing.images) ? listing.images : []
+  const safeActive = images.length > 0 ? Math.min(activeImage, images.length - 1) : 0
+  const youtubeEmbed = isYouTube(listing.video_url) ? youtubeEmbedUrl(listing.video_url) : null
+  const priceNumber = Number(listing.price)
 
   return (
     <div className="listing-page">
@@ -189,7 +261,7 @@ export default function ListingLightPage() {
             ‹
           </button>
           <Image
-            src={images[activeImage]}
+            src={images[safeActive]}
             alt=""
             width={1200}
             height={800}
@@ -209,7 +281,7 @@ export default function ListingLightPage() {
             ✕
           </button>
           <div className="lightbox-counter">
-            {activeImage + 1} / {images.length} · ← → to navigate · Esc to close
+            {safeActive + 1} / {images.length} · ← → to navigate · Esc to close
           </div>
         </div>
       )}
@@ -221,10 +293,10 @@ export default function ListingLightPage() {
             ← Back
           </button>
           <div className="video-container" onClick={(e) => e.stopPropagation()}>
-            {isYouTube(listing.video_url) ? (
+            {youtubeEmbed ? (
               <div className="youtube-wrapper">
                 <iframe
-                  src={youtubeEmbedUrl(listing.video_url) + '?autoplay=1'}
+                  src={youtubeEmbed + '?autoplay=1'}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
@@ -263,14 +335,14 @@ export default function ListingLightPage() {
           <div className="gallery">
             <div className="main-image" onClick={() => setLightboxOpen(true)}>
               <Image
-                src={images[activeImage]}
-                alt={listing.title}
+                src={images[safeActive]}
+                alt={listing.title || 'Property'}
                 width={1200}
                 height={800}
                 unoptimized
               />
               <div className="image-counter">
-                🔍 {activeImage + 1} / {images.length}
+                🔍 {safeActive + 1} / {images.length}
               </div>
               {images.length > 1 && (
                 <>
@@ -305,8 +377,9 @@ export default function ListingLightPage() {
                     alt=""
                     width={80}
                     height={60}
+                    unoptimized
                     onClick={() => setActiveImage(i)}
-                    className={i === activeImage ? 'active' : ''}
+                    className={i === safeActive ? 'active' : ''}
                   />
                 ))}
               </div>
@@ -356,13 +429,13 @@ export default function ListingLightPage() {
               </div>
             )}
 
-            {listing.amenities?.length > 0 && (
+            {amenities.length > 0 && (
               <div className="section">
                 <h2>Amenities</h2>
                 <div className="amenities">
-                  {listing.amenities.map((a) => (
-                    <span key={a} className="amenity">
-                      ✓ {a}
+                  {amenities.map((a, i) => (
+                    <span key={`${String(a)}-${i}`} className="amenity">
+                      ✓ {typeof a === 'string' ? a : String(a?.name ?? a)}
                     </span>
                   ))}
                 </div>
@@ -397,10 +470,8 @@ export default function ListingLightPage() {
           <div className="listing-sidebar">
             <div className="price-card">
               <div className="price">
-                ₦{Number(listing.price).toLocaleString('en-NG')}
-                {listing.price_period && (
-                  <span>per {listing.price_period}</span>
-                )}
+                ₦{Number.isFinite(priceNumber) ? priceNumber.toLocaleString('en-NG') : '—'}
+                {listing.price_period && <span>per {listing.price_period}</span>}
               </div>
 
               <div className="details">
@@ -436,18 +507,15 @@ export default function ListingLightPage() {
                   <div className="revealed-label">✅ Contact Revealed</div>
                   {revealedContact.landlord_phone && (
                     <>
-                      <a
-                        href={`tel:${revealedContact.landlord_phone}`}
-                        className="phone"
-                      >
+                      <a href={`tel:${revealedContact.landlord_phone}`} className="phone">
                         📞 {revealedContact.landlord_phone}
                       </a>
                       <a
-                        href={`https://wa.me/${revealedContact.landlord_phone.replace(
+                        href={`https://wa.me/${String(revealedContact.landlord_phone).replace(
                           /[^0-9]/g,
                           ''
                         )}?text=${encodeURIComponent(
-                          `Hi, I'm interested in your property "${listing?.title}" listed on Mr. Rent. Is it still available?`
+                          `Hi, I'm interested in your property "${listing.title}" listed on Mr. Rent. Is it still available?`
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -458,10 +526,7 @@ export default function ListingLightPage() {
                     </>
                   )}
                   {revealedContact.landlord_email && (
-                    <a
-                      href={`mailto:${revealedContact.landlord_email}`}
-                      className="email"
-                    >
+                    <a href={`mailto:${revealedContact.landlord_email}`} className="email">
                       ✉️ {revealedContact.landlord_email}
                     </a>
                   )}
