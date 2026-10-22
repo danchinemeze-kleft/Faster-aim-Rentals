@@ -22,6 +22,38 @@ function youtubeEmbedUrl(url) {
   return match ? `https://www.youtube.com/embed/${match[1]}` : url
 }
 
+// Turns images/amenities into a clean array however they are stored
+function toArray(value) {
+  if (Array.isArray(value)) return value
+  if (typeof value === 'string' && value.trim()) {
+    try {
+      const parsed = JSON.parse(value)
+      if (Array.isArray(parsed)) return parsed
+    } catch {}
+    return value.split(',').map((s) => s.trim()).filter(Boolean)
+  }
+  return []
+}
+
+function getImages(listing) {
+  return toArray(listing?.images).filter((u) => typeof u === 'string' && u.startsWith('http'))
+}
+
+function readLiked() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem('mr_rent_liked') || '[]')
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+function writeLiked(list) {
+  try {
+    localStorage.setItem('mr_rent_liked', JSON.stringify(list))
+  } catch {}
+}
+
 // Simple badge. If you had your own VerylandBadge design, paste it here instead.
 function VerylandBadge({ level }) {
   return (
@@ -32,7 +64,8 @@ function VerylandBadge({ level }) {
 }
 
 export default function ListingClient() {
-  const { id } = useParams()
+  const params = useParams()
+  const id = Array.isArray(params?.id) ? params.id[0] : params?.id
   const router = useRouter()
   const searchParams = useSearchParams()
   // Preview links from the admin dashboard append ?ref=admin, since they
@@ -75,76 +108,107 @@ export default function ListingClient() {
   }, [searchParams])
 
   useEffect(() => {
+    if (!id) return
+    let cancelled = false
+
     async function load() {
-      const [{ data: listingData }, { data: { session } }] = await Promise.all([
-        supabase.from('listings').select('*').eq('id', id).single(),
-        supabase.auth.getSession(),
-      ])
-
-      if (!listingData) { setNotFound(true); setLoading(false); return }
-
-      setListing(listingData)
-      setLikes(listingData.likes || 0)
-
-      if (session) {
-        setUser(session.user)
-        const [{ data: reveal }, { data: sub }, { data: profile }] = await Promise.all([
-          supabase
-            .from('Contact_reveals')
-            .select('landlord_phone, landlord_email')
-            .eq('tenant_id', session.user.id)
-            .eq('listing_id', id)
-            .maybeSingle(),
-          supabase
-            .from('Tenant_subscription')
-            .select('id')
-            .eq('user_id', session.user.id)
-            .eq('status', 'active')
-            .gte('expiry_date', new Date().toISOString())
-            .order('expiry_date', { ascending: false })
-            .limit(1)
-            .maybeSingle(),
-          supabase
-            .from('Profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single(),
+      try {
+        // The public view hides phone numbers, and hides the price from logged-out visitors
+        const [viewRes, sessionRes] = await Promise.all([
+          supabase.from('listings_public').select('*').eq('id', id).maybeSingle(),
+          supabase.auth.getSession(),
         ])
+        const session = sessionRes?.data?.session
+        let listingData = viewRes.data
 
-        setHasSub(!!sub)
-        setUserRole(profile?.role || 'tenant')
+        // Landlords (their own) and admins can also open listings that are not approved yet
+        if (!listingData && session) {
+          const { data: ownRow } = await supabase.from('listings').select('*').eq('id', id).maybeSingle()
+          listingData = ownRow
+        }
 
-        if (reveal) {
-          if (!reveal.landlord_phone && listingData.landlord_id) {
-            const { data: landlordProfile } = await supabase
-              .from('Profiles')
-              .select('phone, email')
-              .eq('id', listingData.landlord_id)
-              .single()
-            setRevealedContact({
-              landlord_phone: landlordProfile?.phone || null,
-              landlord_email: reveal.landlord_email || landlordProfile?.email || null,
-            })
-          } else {
-            setRevealedContact(reveal)
+        if (cancelled) return
+        if (!listingData) {
+          setNotFound(true)
+          setLoading(false)
+          return
+        }
+
+        setListing(listingData)
+        setLikes(Number(listingData.likes) || 0)
+        setLiked(readLiked().includes(id))
+
+        if (session) {
+          try {
+            setUser(session.user)
+            const [{ data: reveal }, { data: sub }, { data: profile }] = await Promise.all([
+              supabase
+                .from('Contact_reveals')
+                .select('landlord_phone, landlord_email')
+                .eq('tenant_id', session.user.id)
+                .eq('listing_id', id)
+                .maybeSingle(),
+              supabase
+                .from('Tenant_subscription')
+                .select('id')
+                .eq('user_id', session.user.id)
+                .eq('status', 'active')
+                .gte('expiry_date', new Date().toISOString())
+                .order('expiry_date', { ascending: false })
+                .limit(1)
+                .maybeSingle(),
+              supabase
+                .from('Profiles')
+                .select('role')
+                .eq('id', session.user.id)
+                .maybeSingle(),
+            ])
+
+            if (cancelled) return
+            setHasSub(!!sub)
+            setUserRole(profile?.role || 'tenant')
+
+            if (reveal) {
+              if (!reveal.landlord_phone && listingData.landlord_id) {
+                const { data: landlordProfile } = await supabase
+                  .from('Profiles')
+                  .select('phone, email')
+                  .eq('id', listingData.landlord_id)
+                  .maybeSingle()
+                setRevealedContact({
+                  landlord_phone: landlordProfile?.phone || null,
+                  landlord_email: reveal.landlord_email || landlordProfile?.email || null,
+                })
+              } else {
+                setRevealedContact(reveal)
+              }
+            }
+          } catch (err) {
+            console.error('Session/reveal error:', err)
           }
         }
+
+        if (!cancelled) setLoading(false)
+      } catch (err) {
+        console.error('Load error:', err)
+        if (!cancelled) {
+          setNotFound(true)
+          setLoading(false)
+        }
       }
-
-      try {
-        const saved = JSON.parse(localStorage.getItem('mr_rent_liked') || '[]')
-        setLiked(saved.includes(id))
-      } catch {}
-
-      setLoading(false)
     }
+
     load()
+    return () => {
+      cancelled = true
+    }
   }, [id])
 
   // Keyboard navigation inside lightbox
   useEffect(() => {
     if (!lightboxOpen || !listing) return
-    const imgs = Array.isArray(listing.images) ? listing.images : []
+    const imgs = getImages(listing)
+    if (imgs.length === 0) return
     const handler = (e) => {
       if (e.key === 'ArrowRight') setActiveImage(i => (i + 1) % imgs.length)
       if (e.key === 'ArrowLeft') setActiveImage(i => (i - 1 + imgs.length) % imgs.length)
@@ -155,17 +219,22 @@ export default function ListingClient() {
   }, [lightboxOpen, listing])
 
   async function handleLike() {
-    const saved = JSON.parse(localStorage.getItem('mr_rent_liked') || '[]')
-    if (liked) {
-      localStorage.setItem('mr_rent_liked', JSON.stringify(saved.filter(lid => lid !== id)))
-      setLiked(false)
-      setLikes(l => Math.max(0, l - 1))
-      await supabase.from('listings').update({ likes: Math.max(0, likes - 1) }).eq('id', id)
-    } else {
-      localStorage.setItem('mr_rent_liked', JSON.stringify([...saved, id]))
+    const saved = readLiked()
+    const nextLiked = !liked
+    if (nextLiked) {
+      writeLiked([...saved, id])
       setLiked(true)
       setLikes(l => l + 1)
-      await supabase.from('listings').update({ likes: likes + 1 }).eq('id', id)
+    } else {
+      writeLiked(saved.filter(lid => lid !== id))
+      setLiked(false)
+      setLikes(l => Math.max(0, l - 1))
+    }
+    try {
+      // Safe database function: only changes the likes count, nothing else
+      await supabase.rpc('change_likes', { p_listing_id: id, p_change: nextLiked ? 1 : -1 })
+    } catch (err) {
+      console.error('Like error:', err)
     }
   }
 
@@ -260,7 +329,7 @@ export default function ListingClient() {
     </div>
   )
 
-  if (notFound) return (
+  if (notFound || !listing) return (
     <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, fontFamily: 'Segoe UI, system-ui, sans-serif' }}>
       <div style={{ fontSize: 48 }}>🏠</div>
       <div style={{ color: 'var(--text-1)', fontSize: 18, fontWeight: 600 }}>Property not found</div>
@@ -270,9 +339,13 @@ export default function ListingClient() {
     </div>
   )
 
-  const images = Array.isArray(listing.images) ? listing.images : []
+  const images = getImages(listing)
+  const amenities = toArray(listing.amenities)
   const hasImages = images.length > 0
+  const safeActive = hasImages ? Math.min(activeImage, images.length - 1) : 0
   const hasVideo = !!listing.video_url
+  const youtubeEmbed = isYouTube(listing.video_url) ? youtubeEmbedUrl(listing.video_url) : null
+  const hasPrice = listing.price !== null && listing.price !== undefined && listing.price !== ''
   const locationText = `${listing.location || ''}${listing.city ? `, ${listing.city}` : ''}${listing.state ? `, ${listing.state}` : ''}`
 
   return (
@@ -292,13 +365,13 @@ export default function ListingClient() {
 
           {/* Image */}
           <Image
-            src={images[activeImage]}
+            src={images[safeActive]}
             alt=""
             width={1600}
             height={1200}
             unoptimized
             onClick={e => e.stopPropagation()}
-            style={{ maxWidth: '88vw', maxHeight: '88vh', objectFit: 'contain', borderRadius: 10, userSelect: 'none' }}
+            style={{ maxWidth: '88vw', maxHeight: '88vh', width: 'auto', height: 'auto', objectFit: 'contain', borderRadius: 10, userSelect: 'none' }}
           />
 
           {/* Next */}
@@ -315,7 +388,7 @@ export default function ListingClient() {
 
           {/* Counter + hint */}
           <div style={{ position: 'fixed', bottom: 22, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.5)', fontSize: 12, textAlign: 'center', whiteSpace: 'nowrap' }}>
-            {activeImage + 1} / {images.length} &nbsp;·&nbsp; ← → to navigate &nbsp;·&nbsp; Esc to close
+            {safeActive + 1} / {images.length} &nbsp;·&nbsp; ← → to navigate &nbsp;·&nbsp; Esc to close
           </div>
         </div>
       )}
@@ -336,10 +409,10 @@ export default function ListingClient() {
 
           {/* Video */}
           <div onClick={e => e.stopPropagation()} style={{ width: '90vw', maxWidth: 860 }}>
-            {isYouTube(listing.video_url) ? (
+            {youtubeEmbed ? (
               <div style={{ borderRadius: 14, overflow: 'hidden', background: '#000', aspectRatio: '16/9' }}>
                 <iframe
-                  src={youtubeEmbedUrl(listing.video_url) + '?autoplay=1'}
+                  src={youtubeEmbed + '?autoplay=1'}
                   style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
@@ -387,14 +460,15 @@ export default function ListingClient() {
               style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', cursor: 'zoom-in', marginBottom: 8 }}
             >
               <Image
-                src={images[activeImage]}
-                alt={listing.title}
+                src={images[safeActive]}
+                alt={listing.title || 'Property'}
                 width={1100}
                 height={420}
+                unoptimized
                 style={{ width: '100%', height: 'clamp(220px, 45vw, 420px)', objectFit: 'cover', display: 'block' }}
               />
               <div style={{ position: 'absolute', bottom: 12, right: 12, background: 'rgba(0,0,0,0.65)', color: '#fff', fontSize: 12, padding: '4px 12px', borderRadius: 20, backdropFilter: 'blur(4px)' }}>
-                🔍 {activeImage + 1} / {images.length}
+                🔍 {safeActive + 1} / {images.length}
               </div>
               {images.length > 1 && (
                 <>
@@ -420,8 +494,8 @@ export default function ListingClient() {
                     onClick={() => setActiveImage(i)}
                     style={{
                       width: 80, height: 58, borderRadius: 8, cursor: 'pointer', flexShrink: 0,
-                      border: i === activeImage ? '2px solid #0ef6cc' : '2px solid transparent',
-                      opacity: i === activeImage ? 1 : 0.55,
+                      border: i === safeActive ? '2px solid #0ef6cc' : '2px solid transparent',
+                      opacity: i === safeActive ? 1 : 0.55,
                       transition: 'all 0.15s',
                       padding: 0, background: 'transparent', overflow: 'hidden'
                     }}
@@ -498,15 +572,15 @@ export default function ListingClient() {
             )}
 
             {/* Amenities */}
-            {listing.amenities?.length > 0 && (
+            {amenities.length > 0 && (
               <div style={{ marginBottom: '2rem' }}>
                 <h2 style={{ fontSize: 14, fontWeight: 600, color: '#ffffff', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Amenities
                 </h2>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {listing.amenities.map(a => (
-                    <span key={a} style={{ background: '#111318', border: '0.5px solid #2a2a2a', color: '#ffffff', fontSize: 15, padding: '6px 14px', borderRadius: 20 }}>
-                      ✓ {a}
+                  {amenities.map((a, i) => (
+                    <span key={`${String(a)}-${i}`} style={{ background: '#111318', border: '0.5px solid #2a2a2a', color: '#ffffff', fontSize: 15, padding: '6px 14px', borderRadius: 20 }}>
+                      ✓ {typeof a === 'string' ? a : String(a?.name ?? a)}
                     </span>
                   ))}
                 </div>
@@ -528,8 +602,8 @@ export default function ListingClient() {
                   }}
                 >
                   {/* Thumbnail — use first listing image or dark placeholder */}
-                  {Images[0]
-                    ? <Image src={images[0]} alt="Video thumbnail" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block', filter: 'brightness(0.45)' }} />
+                  {images[0]
+                    ? <Image src={images[0]} alt="Video thumbnail" width={860} height={200} unoptimized style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block', filter: 'brightness(0.45)' }} />
                     : <div style={{ height: 200, background: '#0d0d0d' }} />
                   }
                   {/* Play icon */}
@@ -558,11 +632,25 @@ export default function ListingClient() {
               {/* Price card */}
               <div style={{ background: '#111318', border: '0.5px solid #222', borderRadius: 16, padding: '1.5rem', marginBottom: 12 }}>
                 <div style={{ paddingBottom: '1.25rem', marginBottom: '1.25rem', borderBottom: '0.5px solid #222' }}>
-                  <div style={{ fontSize: 30, fontWeight: 700, color: '#0ef6cc', lineHeight: 1 }}>
-                    ₦{Number(listing.price).toLocaleString('en-NG')}
-                  </div>
-                  {listing.price_period && (
-                    <div style={{ fontSize: 14, color: '#cccccc', marginTop: 4 }}>per {listing.price_period}</div>
+                  {hasPrice ? (
+                    <>
+                      <div style={{ fontSize: 30, fontWeight: 700, color: '#0ef6cc', lineHeight: 1 }}>
+                        ₦{Number(listing.price).toLocaleString('en-NG')}
+                      </div>
+                      {listing.price_period && (
+                        <div style={{ fontSize: 14, color: '#cccccc', marginTop: 4 }}>per {listing.price_period}</div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <a
+                        href={`/account?redirect=/listing/${id}`}
+                        style={{ display: 'block', fontSize: 20, fontWeight: 700, color: '#0ef6cc', textDecoration: 'none', lineHeight: 1.3 }}
+                      >
+                        🔒 Log in to see price
+                      </a>
+                      <div style={{ fontSize: 13, color: '#aaaaaa', marginTop: 6 }}>Free to sign up. Takes a minute.</div>
+                    </>
                   )}
                 </div>
 
@@ -609,7 +697,7 @@ export default function ListingClient() {
                     )}
                     {revealedContact.landlord_phone && (
                       <a
-                        href={`https://wa.me/${revealedContact.landlord_phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I'm interested in your property "${listing?.title}" listed on Mr. Rent (rent.fasteraim.com). Is it still available?`)}`}
+                        href={`https://wa.me/${String(revealedContact.landlord_phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I'm interested in your property "${listing?.title}" listed on Mr. Rent (rent.fasteraim.com). Is it still available?`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#0d1f0d', border: '0.5px solid #25D36633', borderRadius: 8, padding: '9px 12px', textDecoration: 'none', marginBottom: 10 }}

@@ -33,27 +33,31 @@ export default function HeroMarquee({ supabase }) {
   })
 
   // Newest real listings
-  useEffect(() => {
-    let cancelled = false
-    supabase
-      .from('listings')
-      .select('id, title, location, price, price_period')
-      .eq('status', 'active')
-      .eq('is_available', true)
-      .order('created_at', { ascending: false })
-      .limit(3)
-      .then(({ data }) => { if (!cancelled && data) setListings(data) }, () => {})
-    return () => { cancelled = true }
-  }, [supabase])
+useEffect(() => {
+  let cancelled = false
+  supabase
+    .from('listings_public')
+    .select('id, title, location, price, price_period')
+    .eq('is_available', true)
+    .order('created_at', { ascending: false })
+    .limit(3)
+    .then(({ data }) => { if (!cancelled && data) setListings(data) }, () => {})
+  return () => { cancelled = true }
+}, [supabase])
 
   // Mix: safety / new listing / tip / new listing ... so the strip is never empty
   const messages = useMemo(() => {
-    const fresh = listings.map((l) => ({
-      kind: 'new',
-      label: 'New',
-      text: `${l.location ? `${l.location}: ` : ''}${l.title || 'New listing'}, ${naira(l.price)}${l.price_period ? `/${l.price_period}` : ''}`,
-      href: `/listing/${l.id}`,
-    }))
+   const fresh = listings.map((l) => {
+  const priceText = l.price
+    ? `, ${naira(l.price)}${l.price_period ? `/${l.price_period}` : ''}`
+    : ''
+  return {
+    kind: 'new',
+    label: 'New',
+    text: `${l.location ? `${l.location}: ` : ''}${l.title || 'New listing'}${priceText}`,
+    href: `/listing/${l.id}`,
+  }
+}) 
     const out = []
     const max = Math.max(STATIC_MESSAGES.length, fresh.length)
     for (let i = 0; i < max; i++) {

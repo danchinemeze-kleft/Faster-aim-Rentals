@@ -11,8 +11,8 @@ export async function generateMetadata({ params }) {
   )
 
   const { data: l } = await supabase
-    .from('listings')
-    .select('*')
+    .from('listings_public')
+    .select('title, location, city, state, images, property_type')
     .eq('id', id)
     .maybeSingle()
 
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }) {
 
   const title = `${l.title} | Mr. Rent`
   const where = [l.location, l.city, l.state].filter(Boolean).join(', ')
-  const description = `N${Number(l.price).toLocaleString('en-NG')} · ${where}. See photos and details on Mr. Rent.`
+  const description = `${where}. See photos and details on Mr. Rent.`
   const image = (Array.isArray(l.images) && l.images[0]) || `${BASE_URL}/icon.png`
   const url = `${BASE_URL}/listing/${id}`
 

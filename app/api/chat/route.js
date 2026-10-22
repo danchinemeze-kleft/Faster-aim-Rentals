@@ -46,6 +46,46 @@ Style: Vary your openings and closings. Use at most one light Nigerian expressio
 
 Rules: For searches and simple questions keep replies to 3-5 sentences. For questions that need explanation, such as fees, documents or the buying process, you may use up to about 8 sentences. Always finish your thought completely and never cut off mid-sentence. No markdown headers or bullet lists in chat replies; write in natural flowing sentences. Never make up listings.`
 
+// ── Supabase (server only) ─────────────────────────────────
+// Uses the service key so the chat keeps working after public access to the
+// listings table is closed. It only ever selects the safe columns below
+// (never owner_phone, owner_email or owner_name).
+
+function makeSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!serviceKey) {
+    console.error('SUPABASE_SERVICE_ROLE_KEY is missing. Add it on Vercel (Production) and redeploy.')
+  }
+  return createClient(url, serviceKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  })
+}
+
+// Works out who is really logged in from the token the page sends.
+// The old userId in the request body can be faked, so it is no longer trusted.
+async function getVerifiedUser(supabase, request) {
+  const header = request.headers.get('authorization') || ''
+  const token = header.startsWith('Bearer ') ? header.slice(7).trim() : ''
+  if (!token) return null
+  try {
+    const { data, error } = await supabase.auth.getUser(token)
+    if (error) return null
+    return data?.user ?? null
+  } catch {
+    return null
+  }
+}
+
+const CARD_COLUMNS = 'id, title, location, city, state, price, price_period, property_type, listing_type, bedrooms, images'
+
+// Logged-out visitors get cards with no price
+function toCard(listing, loggedIn) {
+  const { _score, ...rest } = listing
+  if (loggedIn) return rest
+  return { ...rest, price: null, price_period: null }
+}
+
 // ── Intent extraction ──────────────────────────────────────
 
 const STATE_KEYWORDS = {
@@ -225,7 +265,7 @@ async function fetchListings(supabase, intent, userPrefs) {
 
   let query = supabase
     .from('listings')
-    .select('id, title, location, city, state, price, price_period, property_type, listing_type, bedrooms, images')
+    .select(CARD_COLUMNS)
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
     .limit(10)
@@ -307,12 +347,15 @@ async function getPriceStats(supabase, p) {
 async function fetchTrending(supabase) {
   const { data } = await supabase
     .from('listings')
-    .select('id, title, location, city, state, price, price_period, property_type, listing_type, bedrooms, images')
+    .select(CARD_COLUMNS)
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
     .limit(3)
   return data || []
 }
+
+// Told to the AI when the visitor is not logged in
+const PRICE_PRIVACY_NOTE = `\n\nPRICE PRIVACY: This user is NOT logged in. Never state any property price, rent amount, sale price, price range, average or budget guidance in naira, even if the user asks directly and even if you know the figure. You may still use a budget the user mentions to understand what they want. If they ask about prices, say warmly that prices are shown to logged-in users and that logging in is free, and point them to https://rent.fasteraim.com/account . You may still mention the 5,000 naira contact reveal fee.`
 
 
 // ── Route handler ──────────────────────────────────────────
@@ -321,16 +364,18 @@ export const maxDuration = 30 // seconds — overrides Vercel's default 10s limi
 
 export async function POST(request) {
   try {
-    const { messages, userId, proactive, prefs } = await request.json()
+    const { messages, proactive, prefs } = await request.json()
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    )
+    const supabase = makeSupabase()
+
+    // Who is really logged in (from the token), not from the request body
+    const user = await getVerifiedUser(supabase, request)
+    const loggedIn = !!user
+    const userId = user?.id || null
 
     if (proactive) {
       const listings = await fetchTrending(supabase)
-      return Response.json({ listings })
+      return Response.json({ listings: listings.map(l => toCard(l, loggedIn)) })
     }
 
     const lastMessage = messages[messages.length - 1].content
@@ -363,14 +408,19 @@ export async function POST(request) {
       searchNote = `\n\nSEARCH RESULT: No search was run for this message. Do not mention cards.`
     }
 
-    // Real price figures (only when the user is asking about price or cost)
-const wantsPrice = MARKET_WORDS.test(lastMessage)
-const priceNote = wantsPrice ? await getPriceStats(supabase, mergedPrefs) : ''
+    // Real price figures (only for logged-in users asking about price or cost)
+    const wantsPrice = MARKET_WORDS.test(lastMessage)
+    const priceNote = loggedIn && wantsPrice ? await getPriceStats(supabase, mergedPrefs) : ''
 
-// Turn on Google Search only for news, trends, weather or market questions
-const useSearch = LIVE_INFO_WORDS.test(lastMessage) || (wantsPrice && !priceNote)
+    // Turn on Google Search only for news, trends, weather or market questions
+    const useSearch = LIVE_INFO_WORDS.test(lastMessage) || (loggedIn && wantsPrice && !priceNote)
 
-const systemInstruction = SYSTEM_PROMPT + describePrefs(mergedPrefs) + searchNote + priceNote
+    const systemInstruction =
+      SYSTEM_PROMPT +
+      describePrefs(mergedPrefs) +
+      searchNote +
+      priceNote +
+      (loggedIn ? '' : PRICE_PRIVACY_NOTE)
 
     const stream = new ReadableStream({
       async start(controller) {
@@ -436,7 +486,8 @@ const systemInstruction = SYSTEM_PROMPT + describePrefs(mergedPrefs) + searchNot
         }
 
         // Cards were already searched before the AI replied; just send them
-        if (listings) send({ t: 'listings', v: listings })
+        // (without prices if the visitor is not logged in)
+        if (listings) send({ t: 'listings', v: listings.map(l => toCard(l, loggedIn)) })
 
         // Send the updated details back so the page can save them
         send({ t: 'prefs', v: mergedPrefs })

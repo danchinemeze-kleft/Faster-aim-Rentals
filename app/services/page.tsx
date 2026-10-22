@@ -36,7 +36,7 @@ const services: Service[] = [
   { title: 'AI Assistant', note: 'Ask any property question', href: '/search' },
   { title: 'List a Property', note: 'First 2 listings free', href: '/list' },
   { title: 'Contact Reveal', note: "See the owner's number", href: '/browse' },
-  { title: 'Document Check', note: 'Veryland verification', soon: true },
+ { title: 'Document Check', note: 'Veryland verification', href: '/veryland' },
   { title: 'Short-let Booking', note: 'Book and pay online', href: '/browse?type=shortlet' },
   { title: 'Pro Tier', note: 'Price and market insight', soon: true },
   { title: 'Services Marketplace', note: 'Legal, inspection, moving', href: '/marketplace' },

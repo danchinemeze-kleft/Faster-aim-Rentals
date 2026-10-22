@@ -48,10 +48,10 @@ export default function Home() {
   }, [supabase])
 
   useEffect(() => {
+    // listings_public only contains approved listings
     supabase
-      .from('listings')
+      .from('listings_public')
       .select('id', { count: 'exact', head: true })
-      .eq('status', 'active')
       .then(({ count }) => { if (count !== null) setListingCount(count) })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -61,9 +61,8 @@ export default function Home() {
     async function loadFeatured() {
       const [{ data: rentRows }, { data: saleRows }] = await Promise.all([
         supabase
-          .from('listings')
+          .from('listings_public')
           .select('id, title, location, price, price_period, images, bedrooms, bathrooms, property_type, veryland_badge, created_at')
-          .eq('status', 'active')
           .eq('is_available', true)
           .order('created_at', { ascending: false })
           .limit(6),
@@ -81,7 +80,7 @@ export default function Home() {
         kind: 'rent',
         title: r.title || 'Untitled listing',
         location: r.location,
-        price: r.price || 0,
+        price: r.price,
         pricePeriod: r.price_period,
         image: r.images && r.images[0] ? r.images[0] : null,
         bedrooms: r.bedrooms,
@@ -635,8 +634,8 @@ export default function Home() {
                     <p style={s.featuredLocation}>{property.location}</p>
                     <div style={s.featuredPriceRow}>
                       <span style={s.featuredPrice}>
-                        {formatNaira(property.price)}
-                        {property.pricePeriod && (
+                        {property.price ? formatNaira(property.price) : '🔒 Log in to see price'}
+                        {property.price && property.pricePeriod && (
                           <span style={s.featuredPricePeriod}>/{property.pricePeriod}</span>
                         )}
                       </span>

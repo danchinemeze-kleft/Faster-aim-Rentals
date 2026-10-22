@@ -6,11 +6,9 @@ export default function ShareWhatsApp({ id, title, price, location, refCode, cla
   const url = `${BASE_URL}/listing/${id}${refCode ? `?ref=${refCode}` : ''}`
 
   const text =
-    `🏠 ${title || 'Property for rent'}` +
-    (price ? `\n💰 ₦${Number(price).toLocaleString()}` : '') +
-    (location ? `\n📍 ${location}` : '') +
-    `\n\nSee photos and details on Mr. Rent:\n${url}`
-
+  `🏠 ${title || 'Property for rent'}` +
+  (location ? `\n📍 ${location}` : '') +
+  `\n\nSee photos and details on Mr. Rent:\n${url}`
   const share = async (e) => {
     e.preventDefault()
     e.stopPropagation() // so it works inside clickable cards

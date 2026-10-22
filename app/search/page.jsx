@@ -55,8 +55,14 @@ function ListingCard({ listing: l, revealLoading, onReveal }) {
       </div>
       <div className="faim-lcard-body">
         <div className="faim-lcard-price">
-          ₦{Number(l.price).toLocaleString('en-NG')}
-          {l.source !== 'sale' && <span>/{l.price_period || 'yr'}</span>}
+          {l.price ? (
+            <>
+              ₦{Number(l.price).toLocaleString('en-NG')}
+              {l.source !== 'sale' && <span>/{l.price_period || 'yr'}</span>}
+            </>
+          ) : (
+            <a href="/account#login" style={{ color: 'inherit', textDecoration: 'none' }}>🔒 Log in to see price</a>
+          )}
         </div>
         <div className="faim-lcard-title">{l.title}</div>
         <div className="faim-lcard-loc">📍 {l.location}, {l.state}</div>
@@ -113,7 +119,7 @@ export default function SearchPage() {
       const ids = [...new Set(saved.messages.flatMap(m => m.listingIds || []))]
       if (ids.length) {
         Promise.all([
-          supabase.from('listings').select('*').in('id', ids),
+          supabase.from('listings_public').select('*').in('id', ids),
           supabase.from('property_sales').select('*').in('id', ids),
         ]).then(([rent, sale]) => {
           const byId = {}
@@ -153,13 +159,19 @@ export default function SearchPage() {
   useEffect(() => {
     if (loadChat().messages.length) return
     let cancelled = false
-    fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ proactive: true }),
-    })
-      .then(r => r.json())
-      .then(data => {
+
+    async function loadTrending() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        const headers = { 'Content-Type': 'application/json' }
+        if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`
+
+        const r = await fetch('/api/chat', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ proactive: true }),
+        })
+        const data = await r.json()
         if (!cancelled && data.listings?.length) {
           setMessages(prev => [...prev, {
             role: 'assistant',
@@ -167,10 +179,12 @@ export default function SearchPage() {
             listings: data.listings,
           }])
         }
-      })
-      .catch(() => {})
+      } catch {}
+    }
+
+    loadTrending()
     return () => { cancelled = true }
-  }, [])
+  }, [supabase])
 
   const sendMessage = async () => {
     const text = input.trim()
@@ -185,13 +199,17 @@ export default function SearchPage() {
     let hasReply = false
 
     try {
+      // Send the login token so the server knows whether to show prices
+      const { data: { session } } = await supabase.auth.getSession()
+      const headers = { 'Content-Type': 'application/json' }
+      if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`
+
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           messages: newMessages.slice(-10).map(m => ({ role: m.role, content: m.content })),
           prefs,
-          userId: user?.id,
         }),
       })
 
