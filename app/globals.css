@@ -2557,3 +2557,35 @@ html.light-mode .faim-alert-card--warning {
   font-family: inherit;
   cursor: pointer;
 }
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+
+  /* the SVG now works as a stencil, and background-color paints it */
+  -webkit-mask-image: url("/bg-pattern.svg");
+  mask-image: url("/bg-pattern.svg");
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-size: 320px 320px;
+  mask-size: 320px 320px;
+
+  background-color: #64748b;   /* light theme: slate grey */
+  opacity: 0.22;
+}
+
+/* Dark theme: bright cyan icons so they show on the black */
+[data-theme="dark"] body::after,
+.dark body::after {
+  background-color: #38bdf8;
+  opacity: 0.52;
+}
+
+@media (max-width: 768px) {
+  body::after {
+    -webkit-mask-size: 260px 260px;
+    mask-size: 260px 260px;
+  }
+}
