@@ -841,6 +841,46 @@ export default function Home() {
           </div>
         </div>
       </section>
+            {/* Veryland */}
+      <section style={{ ...s.sectionWrap, backgroundColor: 'var(--page-bg2)' }}>
+        <div style={s.sectionInner}>
+          <div style={s.sectionHead}>
+            <span style={s.verylandBadge}>Veryland</span>
+            <h2 style={s.sectionTitle}>Check the document before you pay</h2>
+            <p style={s.sectionSubtitle}>
+              Property fraud often starts with a forged paper. Veryland checks a property document first, so you can move with more confidence.
+            </p>
+          </div>
+
+          <div style={s.stepsGrid} className="steps-grid">
+            <div style={s.stepCard} className="feature-card">
+              <div style={{ ...s.stepNumber, backgroundColor: '#0ea5e9' }}>1</div>
+              <h3 style={s.stepTitle}>Upload</h3>
+              <p style={s.stepText}>Send a clear photo or scan of the property document.</p>
+            </div>
+            <div style={s.stepCard} className="feature-card">
+              <div style={{ ...s.stepNumber, backgroundColor: '#14b8a6' }}>2</div>
+              <h3 style={s.stepTitle}>AI check</h3>
+              <p style={s.stepText}>Veryland reads the document and flags signs of tampering or mismatched details.</p>
+            </div>
+            <div style={s.stepCard} className="feature-card">
+              <div style={{ ...s.stepNumber, backgroundColor: '#0f172a' }}>3</div>
+              <h3 style={s.stepTitle}>Admin review</h3>
+              <p style={s.stepText}>Our team reviews the result before a document is approved.</p>
+            </div>
+          </div>
+
+          <div style={s.verylandCta}>
+            <Link href="/veryland" style={s.btnCyan} className="make-money-btn">
+              Check a Document
+            </Link>
+            <p style={s.verylandNote}>
+              Veryland supports your own due diligence and is not a legal opinion. For major transactions, always involve a qualified lawyer or surveyor.
+            </p>
+          </div>
+        </div>
+      </section>
+
 {/* Footer */}
 <footer style={s.footer}>
   <div style={s.footerCard} className="site-footer">
@@ -963,6 +1003,9 @@ const s = {
   ctaTitle: { fontSize: '2rem', fontWeight: '700', color: '#ffffff', marginBottom: '0.75rem' },
   ctaSubtitle: { fontSize: '1rem', color: 'rgba(255,255,255,0.9)', marginBottom: '2rem' },
   ctaActions: { display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' },
+  verylandBadge: { display: 'inline-block', backgroundColor: '#14b8a6', color: '#ffffff', fontSize: '0.8rem', fontWeight: '600', padding: '0.25rem 0.9rem', borderRadius: '9999px', marginBottom: '0.75rem', letterSpacing: '0.04em' },
+  verylandCta: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '2rem', textAlign: 'center' },
+  verylandNote: { fontSize: '0.85rem', color: 'var(--text-3)', maxWidth: '520px', lineHeight: '1.6', margin: 0 },
   footer: { backgroundColor: 'var(--page-bg)', padding: '3rem 1rem 4rem' },
   footerCard: { maxWidth: '1200px', margin: '0 auto', backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-1)', borderRadius: '24px', padding: '3rem 2rem', boxShadow: 'var(--shadow-card)' },
   footerTop: { borderBottom: '1px solid var(--border-1)', paddingBottom: '2rem', marginBottom: '2rem' },
