@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.fasteraim.mrrent"
+    namespace = "com.fasteraim.rent"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.fasteraim.mrrent"

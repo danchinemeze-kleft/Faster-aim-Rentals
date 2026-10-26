@@ -1,4 +1,4 @@
-package com.fasteraim.mrrent;
+package com.fasteraim.rent;
 
 import com.getcapacitor.BridgeActivity;
 
