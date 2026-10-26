@@ -963,8 +963,6 @@ const s = {
   verylandCta: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '2rem', textAlign: 'center' },
   verylandNote: { fontSize: '0.85rem', color: 'var(--text-3)', maxWidth: '520px', lineHeight: '1.6', margin: 0 },
   footer: { backgroundColor: 'var(--page-bg)', padding: '3rem 1rem 4rem' },
-  footerCard: { maxWidth: '1200px', margin: '0 auto', backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-1)', borderRadius: '24px', padding: '3rem 2rem', boxShadow: 'var(--shadow-card)' },
-  footerTop: { borderBottom: '1px solid var(--border-1)', paddingBottom: '2rem', marginBottom: '2rem' },
   footerTagline: { fontSize: '0.95rem', color: 'var(--text-2)', maxWidth: '420px', lineHeight: '1.6', margin: 0 },
   footerGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', paddingBottom: '2rem', borderBottom: '1px solid var(--border-1)', marginBottom: '1.5rem' },
   footerHeading: { fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-1)', marginBottom: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.04em' },
