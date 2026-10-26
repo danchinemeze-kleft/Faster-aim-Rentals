@@ -7,6 +7,8 @@ import Script from "next/script";
 import { LoadingProvider } from "./context/LoadingContext";
 import RefCapture from "./components/RefCapture";
 import ThemeToggle from "./components/ThemeToggle";
+import Footer from "./components/Footer"; // ← added
+
 const SUPABASE_ORIGIN = "https://ojkhpishuqyeiwaopaty.supabase.co";
 
 const geistSans = Geist({
@@ -17,7 +19,7 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-  preload: false, // mono font is not fetched up front; still loads when used
+  preload: false,
 });
 
 export const viewport = {
@@ -26,11 +28,12 @@ export const viewport = {
   maximumScale: 5,
   viewportFit: "cover",
 };
+
 export const metadata = {
   metadataBase: new URL("https://rent.fasteraim.com"),
   title: {
     default: "Mr. Rent – Find Verified Rentals in Nigeria",
-    template: "%s | Mr. Rent",          // ← changed from "%s - Mr. Rent"
+    template: "%s | Mr. Rent",
   },
   description:
     "AI-powered property rental platform for Nigeria. Browse verified listings in Awka, Onitsha, Anambra and beyond. No agent fees — pay only to reveal landlord contacts.",
@@ -57,9 +60,6 @@ export const metadata = {
   authors: [{ name: "Faster Aim Technology Limited" }],
   creator: "Faster Aim Technology Limited",
   publisher: "Faster Aim Technology Limited",
-  // NOTE: no root-level `alternates.canonical` here. Each page sets its own
-  // canonical (via pageMeta in lib/seo.js), so pages are no longer all
-  // pointed at the homepage.
   openGraph: {
     type: "website",
     url: "https://rent.fasteraim.com",
@@ -122,11 +122,11 @@ const jsonLd = {
 export default function RootLayout({ children }) {
   return (
     <html
-      lang="en" suppressHydrationWarning
+      lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        {/* Early connection to Supabase: one for CORS (API calls), one for plain loads (images) */}
         <link rel="preconnect" href={SUPABASE_ORIGIN} crossOrigin="anonymous" />
         <link rel="preconnect" href={SUPABASE_ORIGIN} />
         <meta name="theme-color" content="#0ef6cc" />
@@ -134,52 +134,68 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Mr. Rent" />
-       <script dangerouslySetInnerHTML={{ __html: `
-  try { if (localStorage.getItem('mr-rent-theme') === 'light') document.documentElement.classList.add('light-mode'); } catch (e) {}
-` }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (localStorage.getItem('mr-rent-theme') === 'light') {
+                  document.documentElement.classList.add('light-mode');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <script dangerouslySetInnerHTML={{ __html: `
-          if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-              navigator.serviceWorker.register('/sw.js');
-            });
-          }
-        ` }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `,
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
-        {/* Cyan/Teal brand frame — top */}
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg, #0ef6cc 0%, #14B8A6 100%)', zIndex: 99999, pointerEvents: 'none' }} />
-        {/* bottom */}
-        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg, #14B8A6 0%, #0ef6cc 100%)', zIndex: 99999, pointerEvents: 'none' }} />
-        {/* left */}
-        <div style={{ position: 'fixed', top: 0, bottom: 0, left: 0, width: 4, background: 'linear-gradient(180deg, #0ef6cc 0%, #14B8A6 100%)', zIndex: 99999, pointerEvents: 'none' }} />
-        {/* right */}
-        <div style={{ position: 'fixed', top: 0, bottom: 0, right: 0, width: 4, background: 'linear-gradient(180deg, #14B8A6 0%, #0ef6cc 100%)', zIndex: 99999, pointerEvents: 'none' }} />
-        <Suspense fallback={null}><RefCapture /></Suspense>
-        <LoadingProvider>{children}</LoadingProvider>
+        {/* Brand frame */}
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, #0ef6cc 0%, #14B8A6 100%)", zIndex: 99999, pointerEvents: "none" }} />
+        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, #14B8A6 0%, #0ef6cc 100%)", zIndex: 99999, pointerEvents: "none" }} />
+        <div style={{ position: "fixed", top: 0, bottom: 0, left: 0, width: 4, background: "linear-gradient(180deg, #0ef6cc 0%, #14B8A6 100%)", zIndex: 99999, pointerEvents: "none" }} />
+        <div style={{ position: "fixed", top: 0, bottom: 0, right: 0, width: 4, background: "linear-gradient(180deg, #14B8A6 0%, #0ef6cc 100%)", zIndex: 99999, pointerEvents: "none" }} />
+
+        <Suspense fallback={null}>
+          <RefCapture />
+        </Suspense>
+
+        <LoadingProvider>
+          <div className="flex-1 flex flex-col">
+            {children}
+          </div>
+          <Footer /> {/* ← Footer is now rendered here */}
+        </LoadingProvider>
+
         <ThemeToggle />
 
-        {/* Analytics and tracking scripts now live inside <body> */}
         <Analytics />
         <SpeedInsights />
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-0NWQ6GQ2YB" strategy="lazyOnload" />
-        <Script id="gtag-init" strategy="lazyOnload">{`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-0NWQ6GQ2YB');
-        `}</Script>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-0NWQ6GQ2YB"
+          strategy="lazyOnload"
+        />
+        <Script id="gtag-init" strategy="lazyOnload">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-0NWQ6GQ2YB');
+          `}
+        </Script>
       </body>
     </html>
-  );
-}
-export function Footer() {
-  return (
-    <footer className="faim-footer">
-      <p>© {new Date().getFullYear()} Faster Aim Technology Limited. All rights reserved.</p>
-    </footer>
   );
 }
