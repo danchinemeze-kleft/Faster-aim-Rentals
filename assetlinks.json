@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.fasteraim.rent",
+        "sha256_cert_fingerprints": ["AB:C9:C7:7F:DB:66:9D:BA:5E:BE:CD:63:88:31:24:2E:D7:A6:19:CF:D8:32:6F:26:EB:DC:63:0B:3E:58:FE:80"]
+      }
+    }]
