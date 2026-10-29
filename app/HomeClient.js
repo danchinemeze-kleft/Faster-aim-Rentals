@@ -169,7 +169,13 @@ export default function Home() {
   }
 
   const displayCount = listingCount === null ? '...' : listingCount > 0 ? `${listingCount}+ real spaces available for rent` : 'New real spaces added weekly'
-
+ const trustCard = { ...s.featureCard, display: 'flex', flexDirection: 'column' };
+const trustIcon = { ...s.featureIconWrap, backgroundColor: 'rgba(0, 128, 255, 0.1)' };
+const trustImg = { width: '100%', height: 'auto', aspectRatio: '16 / 9', objectFit: 'cover', borderRadius: '12px' };
+const trustTitle = { fontSize: '1.15rem', fontWeight: 700, color: '#0080FF', margin: '0.9rem 0 0.4rem' };
+const trustSub = { fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-1, #0f172a)', margin: '0 0 0.6rem', lineHeight: 1.4 };
+const trustLinks = { marginTop: 'auto', paddingTop: '0.8rem', display: 'flex', flexWrap: 'wrap', gap: '0.4rem 1rem', fontSize: '0.9rem', fontWeight: 600 };
+const trustLink = { color: '#0080FF', textDecoration: 'underline' };
   return (
     <main className={jakarta.className} style={s.main}>
       <style>{`
@@ -734,99 +740,90 @@ export default function Home() {
         </div>
       </section>
 
-         {/* Why Choose Us */}
-      <section style={{ ...s.sectionWrap, backgroundColor: 'var(--page-bg2)' }}>
-        <div style={s.sectionInner}>
-          <div style={s.sectionHead}>
-            <h2 style={s.sectionTitle}>Why People Trust Mr. Rent</h2>
-            <p style={s.sectionSubtitle}>We built Mr. Rent to eliminate the stress, hidden fees, and fraudulent listings of traditional real estate—giving you a safe, smooth path to your next home</p>
-          </div>
-          <div style={s.featuresGrid} className="features-grid">
-            <div style={s.featureCard} className="feature-card">
-              <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(14, 165, 233, 0.1)' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  <path d="m9 11 2 2 4-4"/>
-                </svg>
-              </div>
-              <Image
-                src="/images/trust-verified.jpg"
-                alt="Landlord having an ID document verified on Mr. Rent"
-                width={600}
-                height={340}
-                className="trust-img"
-              />
-              <h3 style={s.featureTitle}>Verified Landlords Only</h3>
-<div className="trust-section-info">
-  <h5 style={{ fontSize: '1rem', fontWeight: 600, color: '#0080FF', marginBottom: '0.5rem' }}> Get verified in order  to reach great people for your property.</h5>
-  <p className="text-gray-600">
-    <b>Only property owners are permitted to list properties on Mr. Rent.</b>
+{/* Why Choose Us */}
+<section style={{ ...s.sectionWrap, backgroundColor: 'var(--page-bg2)' }}>
+  <div style={s.sectionInner}>
+    <div style={s.sectionHead}>
+      <h2 style={s.sectionTitle}>Why People Trust Mr. Rent</h2>
+      <p style={s.sectionSubtitle}>We built Mr. Rent to eliminate the stress, hidden fees, and fraudulent listings of traditional real estate—giving you a safe, smooth path to your next home</p>
+    </div>
+    <div style={s.featuresGrid} className="features-grid">
 
-     <b>Because agent fees are strictly prohibited, charging any agency fee violates our policy and may result in legal action or account termination. </b>
-     
-     <b>Please review our <Link href="/terms" className="text-blue-600 underline hover:text-blue-800">Terms of Service</Link> for complete details.
-  </b></p>
-</div>
-
-
-              <p style={s.featureText}>No fake listings, no mystery landlords. Every property owner undergoes thorough document and identity verification before posting, giving you total confidence in who you&apos;re dealing with every step of the way</p>
-            </div>
-            <div style={s.featureCard} className="feature-card">
-              <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(20, 184, 166, 0.1)' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--secondary-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-              </div>
-              <Image
-                src="/images/trust-ai.jpg"
-                alt="Tenant chatting with the Mr. Rent AI on a phone"
-                width={600}
-                height={340}
-                className="trust-img"
-              />
-
-              <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#0080FF', marginBottom: '0.5rem' }}>Very Smart and Respectful AI That Actually Helps You Get What You Want</h3><p style={s.featureText}>The Ai is Friendly, house search is made as easy as sending a WhatsApp message. Just tell Mr. Rent AI what you&apos;re looking for in your own words, and let our smart matching engine find properties tailored precisely to your budget and needs—no confusing property jargon required. Mr Rent ai knows your needs, your city and helps you find the perfect home.</p>
-            </div>
-            <div style={s.featureCard} className="feature-card">
-              <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(15, 23, 42, 0.06)' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-1)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                  <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-              </div>
-              <Image
-                src="/images/trust-nationwide.jpg"
-                alt="Residential streets across Nigerian cities"
-                width={600}
-                height={340}
-                className="trust-img"
-              />
-              <h3 style={s.featureTitle}>Nationwide Coverage and knows your city</h3>
-              <h5 style={{ fontSize: '1rem', fontWeight: 600, color: '#0080FF', marginBottom: '0.5rem' }}>Look for a home or shop near you, in the city you know well</h5><p style={s.featureText}>Whether you&apos;re looking in the bustling streets of Lagos, the heart of Abuja, or thriving communities in Anambra—find, list, and secure properties across all 36 states and the FCT. Nationwide coverage, zero stress. Seamlessly search and list homes from commercial hubs like Lagos and Abuja to vibrant cities across every state in Nigeria</p>
-            </div>
-            <div style={s.featureCard} className="feature-card">
-              <div style={{ ...s.featureIconWrap, backgroundColor: 'rgba(14, 165, 233, 0.1)' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
-                </svg>
-              </div>
-              <Image
-                src="/images/trust-list.jpg"
-                alt="Landlord listing a property on Mr. Rent from a phone"
-                width={600}
-                height={340}
-                className="trust-img"
-              />
-              <h3 style={s.featureTitle}>List in Minutes</h3>
-              <h5 style={{ fontSize: '1rem', fontWeight: 600, color: '#0080FF', marginBottom: '0.5rem' }}>Easy, Quick & Instant Property Listing</h5>
-              <p style={s.featureText}>List your property in under five minutes and connect directly with pre-screened, serious tenants. Mr. Rent cuts through the noise, delivering verified inquiries straight to your dashboard—so you fill vacancies faster with zero hassle.</p>
-            </div>
-          </div>
+      {/* 1 */}
+      <div style={trustCard} className="feature-card">
+        <div style={trustIcon}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0080FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 11 2 2 4-4"/>
+          </svg>
         </div>
-      </section>
+        <Image src="/images/trust-verified.jpg" alt="Landlord having an ID document verified on Mr. Rent" width={600} height={340} className="trust-img" style={trustImg} />
+        <h3 style={trustTitle}>Verified Landlords Only</h3>
+        <p style={trustSub}>Get verified in order to reach great people for your property.</p>
+        <p style={s.featureText}>Only property owners are permitted to list properties on Mr. Rent. Agent fees are strictly prohibited. Charging any agency fee violates our policy and may result in legal action or account termination.</p>
+        <p style={s.featureText}>No fake listings, no mystery landlords. Every property owner undergoes thorough document and identity verification before posting, giving you total confidence in who you&apos;re dealing with every step of the way.</p>
+        <div style={trustLinks}>
+          <Link href="/terms" style={trustLink}>Terms of Service</Link>
+          <Link href="/support" style={trustLink}>Contact Support</Link>
+        </div>
+      </div>
 
-     
+      {/* 2 */}
+      <div style={trustCard} className="feature-card">
+        <div style={trustIcon}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0080FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <Image src="/images/trust-ai.jpg" alt="Tenant chatting with the Mr. Rent AI on a phone" width={600} height={340} className="trust-img" style={trustImg} />
+        <h3 style={trustTitle}>Smart, Respectful AI</h3>
+        <p style={trustSub}>An assistant that actually helps you get what you want.</p>
+        <p style={s.featureText}>The AI is friendly, and house search is as easy as sending a WhatsApp message. Just tell Mr. Rent AI what you&apos;re looking for in your own words, and our smart matching engine finds properties tailored to your budget and needs, with no confusing property jargon.</p>
+        <p style={s.featureText}>Ask about homes, shops, land or event centers, compare areas, and get honest answers. If nothing matches, Mr. Rent tells you straight and points you to the nearest options, with no pressure and no fake promises.</p>
+        <div style={trustLinks}>
+          <Link href="/search" style={trustLink}>Chat with Mr. Rent AI</Link>
+          <Link href="/support" style={trustLink}>Contact Support</Link>
+        </div>
+      </div>
+
+      {/* 3 */}
+      <div style={trustCard} className="feature-card">
+        <div style={trustIcon}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0080FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <Image src="/images/trust-nationwide.jpg" alt="Residential streets across Nigerian cities" width={600} height={340} className="trust-img" style={trustImg} />
+        <h3 style={trustTitle}>Nationwide Coverage</h3>
+        <p style={trustSub}>Look for a home or shop near you, in the city you know well.</p>
+        <p style={s.featureText}>Whether you&apos;re looking in the bustling streets of Lagos, the heart of Abuja, or thriving communities in Anambra, you can find, list, and secure properties across all 36 states and the FCT.</p>
+        <p style={s.featureText}>Search by city, area and budget, and see what is really available where you are. From commercial hubs to vibrant towns across every state in Nigeria, every listing is tied to a verified owner.</p>
+        <div style={trustLinks}>
+          <Link href="/browse" style={trustLink}>Browse Listings</Link>
+          <Link href="/list" style={trustLink}>List a Property</Link>
+        </div>
+      </div>
+
+      {/* 4 */}
+      <div style={trustCard} className="feature-card">
+        <div style={trustIcon}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0080FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+          </svg>
+        </div>
+        <Image src="/images/trust-list.jpg" alt="Landlord listing a property on Mr. Rent from a phone" width={600} height={340} className="trust-img" style={trustImg} />
+        <h3 style={trustTitle}>List in Minutes</h3>
+        <p style={trustSub}>Easy, quick and instant property listing.</p>
+        <p style={s.featureText}>List your property in under five minutes and connect directly with pre-screened, serious tenants. Mr. Rent cuts through the noise, delivering verified inquiries straight to your dashboard so you fill vacancies faster with zero hassle.</p>
+        <p style={s.featureText}>Add photos, set your price and describe your property from your phone. With no agents involved, you stay in control of who contacts you and how you close the deal.</p>
+        <div style={trustLinks}>
+          <Link href="/list" style={trustLink}>List a Property</Link>
+          <Link href="/terms" style={trustLink}>Terms of Service</Link>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>        
 
       {/* Bottom CTA */}
       <section style={s.ctaSection}>
