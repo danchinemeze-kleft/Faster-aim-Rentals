@@ -1,6 +1,6 @@
 {
   "name": "Mr. Rent – Verified Land/properties in Nigeria",
-"id": "/",
+  "id": "/",
   "short_name": "Mr. Rent",
   "description": "AI-powered rental marketplace connecting landlords and tenants across Nigeria. Browse verified listings, chat with Mr. Rent AI, reveal contacts without agent fees.",
   "start_url": "/",
@@ -8,27 +8,41 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0ef6cc",
-
   "categories": ["lifestyle", "real-estate"],
   "lang": "en-NG",
   "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
     {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
+      "src": "/screenshots/screenshot-1.png",
+      "sizes": "1080x1920",
       "type": "image/png",
-      "purpose": "any"
+      "form_factor": "narrow",
+      "label": "Find or list a property quickly and securely"
     },
     {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
+      "src": "/screenshots/screenshot-2.png",
+      "sizes": "1080x1920",
       "type": "image/png",
-      "purpose": "any"
+      "form_factor": "narrow",
+      "label": "Simple 3-step search and verification"
     },
     {
-      "src": "/icon-maskable-512.png",
-      "sizes": "512x512",
+      "src": "/screenshots/screenshot-3.png",
+      "sizes": "1080x1920",
       "type": "image/png",
-      "purpose": "maskable"
+      "form_factor": "narrow",
+      "label": "Veryland document verification"
+    },
+    {
+      "src": "/screenshots/screenshot-4.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Navigation menu and key platform links"
     }
   ],
   "shortcuts": [
