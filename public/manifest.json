@@ -16,34 +16,11 @@
     { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "screenshots": [
-    {
-      "src": "/screenshots/screenshot-1.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Find or list a property quickly and securely"
-    },
-    {
-      "src": "/screenshots/screenshot-2.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Simple 3-step search and verification"
-    },
-    {
-      "src": "/screenshots/screenshot-3.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Veryland document verification"
-    },
-    {
-      "src": "/screenshots/screenshot-4.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Navigation menu and key platform links"
-    }
+    { "src": "/screenshots/screenshot-1.png", "sizes": "482x1025", "type": "image/png", "form_factor": "narrow", "label": "Find or list a property quickly and securely" },
+    { "src": "/screenshots/screenshot-2.png", "sizes": "482x927", "type": "image/png", "form_factor": "narrow", "label": "Simple 3-step search and verification" },
+    { "src": "/screenshots/screenshot-3.png", "sizes": "482x916", "type": "image/png", "form_factor": "narrow", "label": "Veryland document verification" },
+    { "src": "/screenshots/screenshot-4.png", "sizes": "482x930", "type": "image/png", "form_factor": "narrow", "label": "Navigation menu and key platform links" },
+    { "src": "/screenshots/screenshot-5.png", "sizes": "482x910", "type": "image/png", "form_factor": "narrow", "label": "Verified landlords only: safe real estate transactions" }
   ],
   "shortcuts": [
     {
