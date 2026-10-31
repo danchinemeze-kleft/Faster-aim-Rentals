@@ -1,6 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase'; // change to "import supabase from ..." if yours is a default export
+import * as supabaseModule from '../lib/supabase';
+
+// Works whether your file uses "export const supabase" or "export default"
+const supabase = supabaseModule.supabase || supabaseModule.default;
 
 const box = { maxWidth: 560, margin: '0 auto', padding: '1.5rem' };
 const card = { background: 'var(--card-bg, #fff)', color: 'var(--text-1, #0f172a)', border: '1px solid rgba(128,128,128,.25)', borderRadius: 16, padding: '1.25rem', marginBottom: '1rem' };
