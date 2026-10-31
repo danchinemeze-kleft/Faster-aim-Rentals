@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import * as supabaseModule from '../lib/supabase';
+import * as supabaseModule from './lib/supabase';
 
 // Works whether your file uses "export const supabase" or "export default"
 const supabase = supabaseModule.supabase || supabaseModule.default;
