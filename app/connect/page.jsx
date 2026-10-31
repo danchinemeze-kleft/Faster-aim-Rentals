@@ -1,4 +1,4 @@
-import ConnectClient from '../api/connect/ConnectClient';
+import ConnectClient from './ConnectClient';
 
 export const metadata = {
   title: 'Contact Us | Faster Aim Rentals',
