@@ -160,6 +160,7 @@ export default function Footer() {
             <Link href="/terms" className="footer-link" style={s.footerLink}>
               Terms of Service
             </Link>
+           <Link href="/delete-account">Delete Account</Link> 
           </div>
         </div>
 
