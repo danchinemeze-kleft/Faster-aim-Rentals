@@ -107,7 +107,7 @@ export const FAQS: Faq[] = [
     "category": "Rewards",
     "question": "What is Fastoken?",
     "brief": "A reward token you earn for genuine activity and invitations on Mr. Rent.",
-    "detail": "Fastoken (called Fastcoin in some places) is Mr. Rent's engagement reward. Its purpose is to thank you for using and growing the platform. You earn it from meaningful actions and referrals, and it builds up towards Alpha, the payout unit.<div class='note'>Fastoken is a platform reward, not an investment, and it cannot be cashed out directly.</div>"
+    "detail": "Fastoken (called reward points in some places) is Mr. Rent's engagement reward. Its purpose is to thank you for using and growing the platform. You earn it from meaningful actions and referrals, and it builds up towards Reward payout, the payout unit.<div class='note'>Fastoken is a platform reward, not an investment, and it cannot be cashed out directly.</div>"
   },
   {
     "category": "Rewards",
@@ -117,21 +117,21 @@ export const FAQS: Faq[] = [
   },
   {
     "category": "Rewards",
-    "question": "What is Alpha and how does Fastoken convert?",
-    "brief": "Alpha is the payout unit. 40,000 Fastoken = 1 Alpha = ₦4,000.",
-    "detail": "<div class='tw'><table><tr><th>Unit</th><th>Value</th></tr><tr><td>40,000 Fastoken</td><td>1 Alpha</td></tr><tr><td>1 Alpha</td><td>₦4,000</td></tr><tr><td>1,000 Fastoken</td><td>₦100</td></tr></table></div>Fastoken converts to Alpha once you reach 40,000. Only Alpha can be turned into money."
+    "question": "What is Reward payout and how does Fastoken convert?",
+    "brief": "Reward payout is the payout unit. 40,000 Fastoken = 1 Reward payout = ₦4,000.",
+    "detail": "<div class='tw'><table><tr><th>Unit</th><th>Value</th></tr><tr><td>40,000 Fastoken</td><td>1 Reward payout</td></tr><tr><td>1 Reward payout</td><td>₦4,000</td></tr><tr><td>1,000 Fastoken</td><td>₦100</td></tr></table></div>Fastoken converts to Reward payout once you reach 40,000. Only Reward payout can be turned into money."
   },
   {
     "category": "Rewards",
-    "question": "How does the Alpha payout work?",
-    "brief": "Once you hold Alpha, you can request a payout or keep saving it.",
-    "detail": "Reach 40,000 Fastoken to get 1 Alpha, then choose to cash out its Naira value or hold your Alpha. Buying Alpha directly is not allowed; it must be earned. Payout requests are reviewed to confirm genuine activity, and the exact payout method and timeline are shown in the rewards section of your account.<div class='note'>Mr. Rent plans to make Alpha tradable in future, after the required registration. Any future value is not guaranteed.</div>"
+    "question": "How does the Reward payout payout work?",
+    "brief": "Once you hold Reward payout, you can request a payout or keep saving it.",
+    "detail": "Reach 40,000 Fastoken to get 1 Reward payout, then choose to cash out its Naira value or hold your Reward payout. Buying Reward payout directly is not allowed; it must be earned. Payout requests are reviewed to confirm genuine activity, and the exact payout method and timeline are shown in the rewards section of your account.<div class='note'>Mr. Rent plans to make Reward payout tradable in future, after the required registration. Any future value is not guaranteed.</div>"
   },
   {
     "category": "Rewards",
-    "question": "Can I save my Alpha instead of cashing out?",
+    "question": "Can I save my Reward payout instead of cashing out?",
     "brief": "Yes. Holding is optional and entirely your choice.",
-    "detail": "Affiliates and members can keep their Alpha in their account. Some members prefer to hold as Mr. Rent expands and rewards become more valuable in the future, but no price increase is promised."
+    "detail": "Affiliates and members can keep their Reward payout in their account. Some members prefer to hold as Mr. Rent expands and rewards become more valuable in the future, but no price increase is promised."
   },
   {
     "category": "Rewards",

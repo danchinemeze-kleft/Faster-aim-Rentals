@@ -82,7 +82,7 @@ export async function POST(request) {
     await step('ai_facts', 'user_id', uid);
     await step('ai_memory', 'user_id', uid);
 
-    // Rewards (Fastcoin)
+    // Rewards (reward points)
     await step('fc_referrals', 'referrer_id', uid);
     await step('fc_referrals', 'invitee_id', uid);
     await step('fc_redemptions', 'user_id', uid);
