@@ -82,13 +82,6 @@ export async function POST(request) {
     await step('ai_facts', 'user_id', uid);
     await step('ai_memory', 'user_id', uid);
 
-    // Rewards (reward points)
-    await step('fc_referrals', 'referrer_id', uid);
-    await step('fc_referrals', 'invitee_id', uid);
-    await step('fc_redemptions', 'user_id', uid);
-    await step('fc_ledger', 'user_id', uid);
-    await step('fc_balances', 'user_id', uid);
-
     // Payment records (remove these two lines if you prefer to keep them)
     await step('Subscription', 'landlord_id', uid);
     await step('Tenant_subscription', 'user_id', uid);
@@ -109,9 +102,14 @@ export async function POST(request) {
     await step('Profiles', 'id', uid);
   } catch (e) {
     console.error('delete-account failed', e);
-    const where = e?.table ? ` at "${e.table}"` : '';
+    const where = e?.table || 'unknown';
+    // Save a request so nobody is left stuck: you can finish it by hand
+    await admin.from('deletion_requests').insert({
+      email: user.email || 'unknown',
+      reason: `Auto: delete stopped at ${where}`,
+    });
     return NextResponse.json(
-      { error: `Deletion stopped${where}. Please contact support.` },
+      { error: 'We could not finish deleting everything. Your request has been recorded and we will complete it within 30 days.' },
       { status: 500 }
     );
   }
@@ -121,7 +119,14 @@ export async function POST(request) {
   const { error: delErr } = await admin.auth.admin.deleteUser(uid);
   if (delErr) {
     console.error('deleteUser failed', delErr);
-    return NextResponse.json({ error: 'Could not remove your login. Please contact support.' }, { status: 500 });
+    await admin.from('deletion_requests').insert({
+      email: user.email || 'unknown',
+      reason: 'Auto: could not remove login',
+    });
+    return NextResponse.json(
+      { error: 'We could not remove your login. Your request has been recorded and we will complete it within 30 days.' },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ ok: true });
