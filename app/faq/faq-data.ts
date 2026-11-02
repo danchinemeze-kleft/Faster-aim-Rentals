@@ -49,11 +49,11 @@ export const FAQS: Faq[] = [
     "brief": "Verification, secure payments and strong database security.",
     "detail": "Listings can go through document verification, payments are processed securely by Paystack, and user data is protected with strict database access rules. Still, never send money to anyone before seeing the property, and report suspicious listings to the Mr. Rent team."
   },
-  {
+    {
     "category": "Safety",
     "question": "What is Veryland?",
-    "brief": "Our document verification system. It is coming soon.",
-    "detail": "Veryland uses AI to check property documents and an admin approval panel confirms them. Verified properties will carry a trust mark. It is being rolled out in stages, so the launch will be announced on the platform."
+    "brief": "Our document verification system for property documents.",
+    "detail": "Veryland uses AI to check property documents and an admin approval panel confirms them. Verified properties carry a trust mark."
   },
   {
     "category": "Safety",

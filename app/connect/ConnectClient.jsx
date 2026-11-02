@@ -66,7 +66,7 @@ export default function ConnectClient() {
         </a>
       ) : (
         <button style={{ ...bigBtn, background: '#9ca3af', cursor: 'not-allowed' }} disabled>
-          ❤️ Donate (coming soon)
+          ❤️ Donate 
         </button>
       )}
 

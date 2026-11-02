@@ -41,7 +41,7 @@ const services: Service[] = [
   { title: 'Pro Tier', note: 'Price and market insight', soon: true },
   { title: 'Services Marketplace', note: 'Legal, inspection, moving', href: '/marketplace' },
   { title: 'Earn as Affiliate', note: 'Share and get paid', href: '/affiliate/auth' },
-  { title: 'Android App', note: 'Search from your phone', soon: true },
+   { title: 'Android App', note: 'Search from your phone', href: 'PASTE_LINK_HERE' },
 ];
 
 const prices: { name: string; price: string }[] = [
@@ -97,7 +97,7 @@ export default function ServicesPage() {
               >
                 <b>{s.title}</b>
                 <small>{s.note}</small>
-                <em>Coming soon</em>
+                <em>coming soon</em>
               </span>
             ) : (
               <Link key={s.title} href={s.href} className={`${styles.btn} ${styles.card}`}>
