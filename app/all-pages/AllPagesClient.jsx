@@ -14,7 +14,7 @@ const SECTIONS = [
       { name: 'Home', path: '/', desc: 'Start here: the Mr. Rent homepage.' },
       { name: 'Browse rentals', path: '/browse', desc: 'See all available properties and filter them.' },
       { name: 'Ask Mr. Rent (AI chat)', path: '/search', desc: 'Describe what you want and the AI finds matching listings.' },
-      { name: 'Verified properties', path: '/veryland', desc: 'Properties with verified documents, to help eliminate forgery.', badge: 'Coming soon' },
+      { name: 'Document check (Veryland)', path: '/veryland', desc: 'Verify property documents to help eliminate forgery.' },
       { name: 'Our services', path: '/services', desc: 'Everything else Mr. Rent can do for you.' },
     ],
   },
@@ -37,6 +37,7 @@ const SECTIONS = [
     pages: [
       { name: 'Landlord Account', path: '/account', desc: 'Sign in or create your account.' },
       { name: 'Tenant account', path: '/my-account', desc: 'Your profile and saved details.' },
+      { name: 'Tenant pass', path: '/tenant-subscribe', desc: 'Reveal unlimited landlord contacts for 30 days.' },
       { name: 'Contact unlocked', path: '/reveal-success', desc: 'Shown after you pay to reveal an owner’s number.', badge: 'After payment' },
     ],
   },
@@ -49,6 +50,7 @@ const SECTIONS = [
       { name: 'Earn with referrals', path: '/affiliate', desc: 'How the affiliate programme works.' },
       { name: 'Affiliate sign up / log in', path: '/affiliate/auth', desc: 'Join the programme or sign in.' },
       { name: 'Affiliate dashboard', path: '/affiliate/dashboard', desc: 'Track your referrals and earnings.' },
+      { name: 'My balance', path: '/wallet', desc: 'See what you have earned and request a payout.' },
     ],
   },
   {
@@ -59,6 +61,7 @@ const SECTIONS = [
     pages: [
       { name: 'About us', path: '/about', desc: 'The story behind Mr. Rent.' },
       { name: 'Contact and support', path: '/support', desc: 'Talk to the Mr. Rent team.' },
+      { name: 'Contact us', path: '/contact', desc: 'Send us a message.' },
       { name: 'FAQ', path: '/faq', desc: 'Quick answers to common questions.' },
       { name: 'Reviews', path: '/reviews', desc: 'What renters say about Mr. Rent.' },
     ],
@@ -71,6 +74,7 @@ const SECTIONS = [
     pages: [
       { name: 'Privacy policy', path: '/privacy-policy', desc: 'How we handle your information.' },
       { name: 'Terms of service', path: '/terms', desc: 'Our terms of use.' },
+      { name: 'Refund policy', path: '/refund-policy', desc: 'When and how refunds work.' },
     ],
   },
 ]
