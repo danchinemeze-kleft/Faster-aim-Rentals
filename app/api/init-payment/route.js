@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 
 const PHONE_OK = /^\+?[0-9]{10,14}$/;
+const REF_OK = /^[A-Z0-9]{6,12}$/;
 
 export async function POST(request) {
   const body = await request.json();
@@ -57,6 +58,10 @@ export async function POST(request) {
   const email = user.email;
   const user_id = user.id;
 
+  // Referral code: use the one sent by the page, else the saved cookie.
+  const cookieRef = cookieStore.get('mrrent_ref')?.value;
+  const finalRef = [ref_code, cookieRef].find((r) => r && REF_OK.test(r)) || null;
+
   let amount, payment_type, callback_url;
 
   if (type === 'reveal') {
@@ -93,7 +98,7 @@ export async function POST(request) {
         payment_type,
         listing_id,
         tenant_id: user_id,
-        ref_code: ref_code || null,
+        ref_code: finalRef,
       },
     }),
   });
