@@ -16,6 +16,7 @@ const SECTIONS = [
       { name: 'Ask Mr. Rent (AI chat)', path: '/search', desc: 'Describe what you want and the AI finds matching listings.' },
       { name: 'Document check (Veryland)', path: '/veryland', desc: 'Verify property documents to help eliminate forgery.' },
       { name: 'Our services', path: '/services', desc: 'Everything else Mr. Rent can do for you.' },
+      { name: 'Download the app', path: '/download', desc: 'Install Mr. Rent on your phone in one tap.' },
     ],
   },
   {
