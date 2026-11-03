@@ -41,7 +41,7 @@ const services: Service[] = [
   { title: 'Pro Tier', note: 'Price and market insight', soon: true },
   { title: 'Services Marketplace', note: 'Legal, inspection, moving', href: '/marketplace' },
   { title: 'Earn as Affiliate', note: 'Share and get paid', href: '/affiliate/auth' },
-   { title: 'Android App', note: 'Search from your phone', href: 'PASTE_LINK_HERE' },
+   { title: 'Android App', note: 'Search from your phone', href: '/download' },
 ];
 
 const prices: { name: string; price: string }[] = [
