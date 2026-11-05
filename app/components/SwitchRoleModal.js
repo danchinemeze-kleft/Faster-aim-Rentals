@@ -32,7 +32,7 @@ export default function SwitchRoleModal({ fromRole, onConfirm, onCancel, loading
         </h2>
 
         <p style={{ fontSize: 13, color: '#888', textAlign: 'center', lineHeight: 1.7, marginBottom: '1.75rem' }}>
-          You're currently signed in as a <strong style={{ color: '#e8e8e8' }}>{isLandlord ? 'Landlord' : 'Tenant'}</strong>.{' '}
+          You&apos;re currently signed in as a <strong style={{ color: '#e8e8e8' }}>{isLandlord ? 'Landlord' : 'Tenant'}</strong>.{' '}
           {reason}
           <br /><br />
           Switching will change your active role. You can switch back at any time.

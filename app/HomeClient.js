@@ -4,6 +4,7 @@ import Link from 'next/link'
 
 import DownloadPopup from "./components/DownloadPopup";
 import DownloadButton from "./components/DownloadButton";
+import SplashScreen from "./components/SplashScreen";
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
@@ -305,7 +306,7 @@ const trustLink = { color: '#0080FF', textDecoration: 'underline' };
           </svg>
           Mr. Rent
         </div>
-
+<SplashScreen />
 <DownloadPopup />
 
         {/* Desktop Navigation Links */}
