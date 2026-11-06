@@ -103,7 +103,7 @@ export default function Contact() {
     <div className="faim-contact-page">
       <div className="faim-wrap">
         <div className="faim-nav-row">
-          <GoBackButton />
+        
           <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Contact', href: '/contact' }]} />
         </div>
 
