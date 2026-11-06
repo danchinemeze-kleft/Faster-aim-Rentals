@@ -74,9 +74,9 @@ export default function CookiePolicyPage() {
       <h2 style={t.h2}>Your choices</h2>
       <ul style={t.list}>
         <li>You can block or delete cookies in your browser settings. Essential cookies are needed for login and payments, so blocking them will break parts of the site.</li>
-        <li>You can clear local storage, which removes your saved chat history, from your browser's site data settings.</li>
+        <li>You can clear local storage, which removes your saved chat history, from your browser&apos;s site data settings.</li>
         <li>You can sign out at any time, which ends your session.</li>
-        <li>You can opt out of Google Analytics using Google's browser add-on.</li>
+        <li>You can opt out of Google Analytics using Google&apos;s browser add-on.</li>
       </ul>
 
       <h2 style={t.h2}>Changes to this policy</h2>
