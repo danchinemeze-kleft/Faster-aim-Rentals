@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Plus_Jakarta_Sans } from 'next/font/google'
+import BackArrow from './components/BackArrow'
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -19,6 +20,8 @@ export default function NotFound() {
       <style>{CSS}</style>
 
       <div className="faim-nf-card">
+        <BackArrow />
+
         <div className="faim-nf-avatar">
           <Image src="/mr-rent-avatar.png" alt="Mr. Rent" fill sizes="120px" style={{ objectFit: 'cover', objectPosition: 'center 15%' }} priority />
         </div>
@@ -52,7 +55,7 @@ const CSS = `
   background:radial-gradient(700px 360px at 85% 0%,rgba(14,165,233,.14),transparent 60%),
              radial-gradient(700px 360px at 10% 100%,rgba(20,184,166,.14),transparent 60%),#f8fafc}
 .faim-nf *{box-sizing:border-box}
-.faim-nf-card{width:100%;max-width:560px;text-align:center;background:#fff;border:1px solid #e2e8f0;border-bottom:4px solid #14b8a6;
+.faim-nf-card{position:relative;width:100%;max-width:560px;text-align:center;background:#fff;border:1px solid #e2e8f0;border-bottom:4px solid #14b8a6;
   border-radius:24px;padding:40px 28px 32px;box-shadow:0 24px 50px -24px rgba(15,23,42,.22)}
 .faim-nf-avatar{position:relative;width:104px;height:104px;margin:0 auto 14px;border-radius:50%;overflow:hidden;
   border:4px solid #fff;background:#f1f5f9;box-shadow:0 0 0 3px rgba(20,184,166,.35),0 12px 24px -10px rgba(15,23,42,.3)}

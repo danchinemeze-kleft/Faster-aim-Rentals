@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 // ---- EDIT THESE LINKS ----
 const DOWNLOAD_LINKS = {
@@ -132,8 +132,10 @@ function FLink({ href, children }) {
   );
 }
 
+const subscribe = () => () => {};
+
 export default function Footer() {
-  const [platform] = useState(() => detectPlatform());
+  const platform = useSyncExternalStore(subscribe, detectPlatform, () => "fallback");
 
   const downloadHref = DOWNLOAD_LINKS[platform] || DOWNLOAD_LINKS.fallback;
   const isFile = platform === "windows" || platform === "mac" || platform === "linux";
@@ -201,7 +203,7 @@ export default function Footer() {
                 ⬇ {labels[platform]}
               </a>
             )}
-            <Link href="/support-us" style={s.supportBtn} className="footer-support">
+            <Link href="/connect" style={s.supportBtn} className="footer-support">
               ❤ Join the Campaign
             </Link>
           </div>
@@ -226,7 +228,7 @@ export default function Footer() {
             </p>
             <FLink href="/about">About Us</FLink>
             <FLink href="/support">Contact & Support</FLink>
-            <FLink href="/support-us">Support Us / Join Campaign</FLink>
+            <FLink href="/connect?src=footer">Support Us / Join Campaign</FLink>
             <FLink href="/faq">FAQ</FLink>
             <FLink href="/affiliate">Earn with Referrals</FLink>
             <FLink href="/blog">Blog</FLink>

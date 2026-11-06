@@ -1,5 +1,5 @@
 'use client'
-import GoBackButton from '../components/GoBackButton'
+import BackArrow from '../components/BackArrow'
 import Breadcrumb from '../components/Breadcrumb'
 
 
@@ -7,6 +7,7 @@ export default function About() {
   return (
     <div className="faim-about-page">
       <div className="faim-about-container">
+        <BackArrow />
         <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'About', href: '/about' }]} />
 
         {/* Hero */}
@@ -141,6 +142,7 @@ export default function About() {
   .faim-about-hero { padding: 32px 20px; }
   .faim-about-hero h1 { font-size: 1.5rem; }
   .faim-about-section { padding: 24px 16px; }
+}
 `}</style>
     </div>
   )
