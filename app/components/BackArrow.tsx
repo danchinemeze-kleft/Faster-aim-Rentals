@@ -14,7 +14,7 @@ export default function BackArrow() {
       style={{
         position: 'fixed',
         left: 16,
-        bottom: 80,
+        top: 20,
         zIndex: 9999,
         width: 46,
         height: 46,

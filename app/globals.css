@@ -125,7 +125,7 @@ textarea::placeholder {
 .theme-toggle {
   position: fixed;
   right: 16px;
-  bottom: 80px;
+  top: 20px;
   z-index: 9999;
   width: 46px;
   height: 46px;
