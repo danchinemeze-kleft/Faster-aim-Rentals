@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import GoBackButton from '../components/GoBackButton'
+
 import Breadcrumb from '../components/Breadcrumb'
 
 const PHONE_DISPLAY = '+234 803 285 1976'

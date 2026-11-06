@@ -1,6 +1,6 @@
 'use client'
 
-import GoBackButton from '../components/GoBackButton'
+
 import { loadChat, saveChat, clearChat } from '../lib/chatMemory'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import Image from 'next/image'

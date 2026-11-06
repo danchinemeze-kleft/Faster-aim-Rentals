@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import GoBackButton from '../components/GoBackButton'
+
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
