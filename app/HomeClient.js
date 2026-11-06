@@ -309,7 +309,7 @@ const trustLink = { color: '#0080FF', textDecoration: 'underline' };
 <SplashScreen />
 <DownloadPopup />
 
-        {/* Desktop Navigation Links */}
+       {/* Desktop Navigation Links */}
         <div className="nav-links-desktop">
           <a href="/browse" style={s.navLink}>Browse Rentals</a>
           <a href="/list" style={s.navLink}>List Property</a>
@@ -328,10 +328,11 @@ const trustLink = { color: '#0080FF', textDecoration: 'underline' };
     <a href="/services">Our Services</a>
     <a href="/search">AI Chat Assistant</a>
     <a href="/affiliate/auth">Earn with Referrals</a>
+    <a href="https://paystack.shop/pay/support-mr-rent?src=nav" title="Support Mr. Rent's mission, platform development, and growth" target="_blank" rel="noopener noreferrer">Support Us</a>
     <a href="/about">About Us</a>
     <a href="/support">Contact &amp; Support</a>
     <a href="/faq">FAQ</a>
-<a href="/all-pages">All Pages</a>
+    <a href="/all-pages">All Pages</a>
   </div>
 </div>
         </div>
@@ -366,6 +367,14 @@ const trustLink = { color: '#0080FF', textDecoration: 'underline' };
                   <polyline points="9 22 9 12 15 12 15 22"/>
                 </svg>
                 <span>Browse Rentals</span>
+              </a>
+
+              {/* Support Us */}
+              <a href="https://paystack.shop/pay/support-mr-rent?src=nav" title="Support Mr. Rent's mission, platform development, and growth" target="_blank" rel="noopener noreferrer" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                <span>Support Us</span>
               </a>
 
               {/* List Property */}
@@ -837,6 +846,21 @@ const trustLink = { color: '#0080FF', textDecoration: 'underline' };
           </div>
         </div>
       </section>
+      {/* Small Support Section near the bottom of the Homepage */}
+<div style={{ padding: '30px 20px', textAlign: 'center', background: 'var(--bg-2, #f9fafb)', borderTop: '1px solid var(--border-1, #e5e7eb)', marginTops: '40px' }}>
+  <p style={{ margin: '0 0 12px 0', fontSize: '0.95rem', color: 'var(--text-2, #4b5563)' }}>
+    Enjoying Mr. Rent? Help us maintain verified listings and expand our platform.
+  </p>
+  <a 
+    href="https://paystack.shop/pay/support-mr-rent?src=home" 
+    title="Support Mr. Rent's mission, platform development, and growth" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    style={{ display: 'inline-block', padding: '8px 18px', fontSize: '0.875rem', fontWeight: 600, color: 'var(--primary-500, #0ef6cc)', background: 'transparent', border: '1px solid currentColor', borderRadius: '6px', textDecoration: 'none', transition: 'all 0.2s ease' }}
+  >
+    Support Us
+  </a>
+</div>
             {/* Veryland */}
       <section style={{ ...s.sectionWrap, backgroundColor: 'var(--page-bg2)' }}>
         <div style={s.sectionInner}>

@@ -24,6 +24,22 @@ export default function About() {
           <p>Mr. Rent fixes this. We connect landlords directly with tenants — transparently, affordably, and intelligently — using AI to guide every search.</p>
         </div>
 
+        {/* Support Section after Mission */}
+        <div className="faim-about-section" style={{ textAlign: 'center' }}>
+          <h2>Support Our Mission</h2>
+          <p>Help us maintain verified property listings, improve AI search tools, and eliminate scam agents across Nigeria.</p>
+          <a
+            href="https://paystack.shop/pay/support-mr-rent?src=about"
+            title="Support Mr. Rent's mission, platform development, and growth"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="faim-cta-btn faim-cta-primary"
+            style={{ display: 'inline-block', marginTop: '8px' }}
+          >
+            Support Us
+          </a>
+        </div>
+
         {/* How it works */}
         <div className="faim-about-section">
           <h2>How It Works</h2>

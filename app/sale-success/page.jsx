@@ -91,6 +91,22 @@ function SaleSuccessInner() {
                 Back to Homepage
               </Link>
             </div>
+
+            {/* Gentle Support Us prompt on successful completion */}
+            <div style={{ marginTop: 36, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
+              <p style={{ color: '#aaaaaa', fontSize: 14, marginBottom: 8 }}>
+                Enjoying Mr. Rent?
+              </p>
+              <a
+                href="https://paystack.shop/pay/support-mr-rent?src=sale-success"
+                title="Support Mr. Rent's mission, platform development, and growth"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: '#0ef6cc', fontWeight: 600, fontSize: 14, textDecoration: 'underline' }}
+              >
+                Support us
+              </a>
+            </div>
           </div>
         )}
 

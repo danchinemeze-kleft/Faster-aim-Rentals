@@ -161,6 +161,22 @@ function RevealSuccessInner() {
         <p className="faim-receipt-note">
           A receipt has been sent to your email. Reference: <strong>{reference}</strong>
         </p>
+
+        {/* Gentle Support Us prompt */}
+        <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid #eaeaea', textAlign: 'center' }}>
+          <p style={{ color: '#555', fontSize: '0.85rem', marginBottom: '6px' }}>
+            Enjoying Mr. Rent?
+          </p>
+          <a
+            href="https://paystack.shop/pay/support-mr-rent?src=reveal-success"
+            title="Support Mr. Rent's mission, platform development, and growth"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#0a8f77', fontWeight: 600, fontSize: '0.85rem', textDecoration: 'underline' }}
+          >
+            Support us
+          </a>
+        </div>
       </div>
       <Styles />
     </div>

@@ -101,6 +101,19 @@ export default function BlogPage() {
           {p.body.map((para) => (
             <p key={para.slice(0, 30)} style={t.p}>{para}</p>
           ))}
+
+          {/* Support Us link at the end of each article */}
+          <div style={{ marginTop: "1rem", paddingTop: "0.75rem", borderTop: "1px solid rgba(14,246,204,0.15)" }}>
+            <a
+              href="https://paystack.shop/pay/support-mr-rent?src=blog"
+              title="Support Mr. Rent's mission, platform development, and growth"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#0ef6cc", fontSize: "0.85rem", fontWeight: 600, textDecoration: "underline" }}
+            >
+              Enjoying this guide? Support Us
+            </a>
+          </div>
         </article>
       ))}
 
