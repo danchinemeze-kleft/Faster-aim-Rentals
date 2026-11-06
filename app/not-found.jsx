@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Plus_Jakarta_Sans } from 'next/font/google'
-import BackArrow from './components/BackArrow'
+
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -20,7 +20,7 @@ export default function NotFound() {
       <style>{CSS}</style>
 
       <div className="faim-nf-card">
-        <BackArrow />
+       
 
         <div className="faim-nf-avatar">
           <Image src="/mr-rent-avatar.png" alt="Mr. Rent" fill sizes="120px" style={{ objectFit: 'cover', objectPosition: 'center 15%' }} priority />

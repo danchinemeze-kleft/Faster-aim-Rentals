@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '../lib/supabase'
 import Breadcrumb from '../components/Breadcrumb'
-import BackArrow from '../components/BackArrow'
+
 
 function AccountPageInner() {
   const router = useRouter()
@@ -270,7 +270,7 @@ if (!profile?.role || !profile?.full_name?.trim() || !phoneOk) {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--page-bg)', color: 'var(--text-1)', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       <div style={{ width: '100%', padding: '12px 24px', boxSizing: 'border-box', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-        <BackArrow />
+       
         <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Login / Sign Up', href: '/account' }]} />
       </div>
       <main className="faim-account-page">

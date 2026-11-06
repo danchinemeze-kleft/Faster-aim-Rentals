@@ -1,5 +1,5 @@
 'use client'
-import BackArrow from '../components/BackArrow'
+
 import Breadcrumb from '../components/Breadcrumb'
 
 
@@ -7,7 +7,7 @@ export default function About() {
   return (
     <div className="faim-about-page">
       <div className="faim-about-container">
-        <BackArrow />
+      
         <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'About', href: '/about' }]} />
 
         {/* Hero */}

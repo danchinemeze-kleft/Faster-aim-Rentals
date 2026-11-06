@@ -7,7 +7,8 @@ import Script from "next/script";
 import { LoadingProvider } from "./context/LoadingContext";
 import RefCapture from "./components/RefCapture";
 import ThemeToggle from "./components/ThemeToggle";
-import Footer from "./components/Footer"; // ← added
+import Footer from "./components/Footer";
+import ConditionalBackArrow from "./components/ConditionalBackArrow"; // ← added
 
 const SUPABASE_ORIGIN = "https://ojkhpishuqyeiwaopaty.supabase.co";
 
@@ -172,11 +173,14 @@ export default function RootLayout({ children }) {
           <RefCapture />
         </Suspense>
 
+        {/* Back arrow on every page except homepage */}
+        <ConditionalBackArrow />
+
         <LoadingProvider>
           <div className="flex-1 flex flex-col">
             {children}
           </div>
-          <Footer /> {/* ← Footer is now rendered here */}
+          <Footer />
         </LoadingProvider>
 
         <ThemeToggle />
