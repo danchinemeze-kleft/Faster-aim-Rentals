@@ -5,8 +5,8 @@ const DONATE_URL = 'https://paystack.shop/pay/support-mr-rent';
 const donateReady = DONATE_URL.startsWith('https://');
 
 const wrap = { maxWidth: 520, margin: '0 auto', padding: '1.5rem 1rem 3rem' };
-const card = { background: 'var(--card-bg, #fff)', color: 'var(--text-1, #0f172a)', border: '1px solid rgba(128,128,128,.25)', borderRadius: 16, padding: '1.25rem', marginBottom: '1rem' };
-const input = { width: '100%', padding: '0.75rem', borderRadius: 10, border: '1px solid rgba(128,128,128,.4)', fontSize: '1rem', marginBottom: '0.75rem', boxSizing: 'border-box', fontFamily: 'inherit' };
+const card = { background: 'var(--card-bg, #fff)', color: 'var(--text-1, #0f172a)', border: '1px solid var(--border-1, rgba(128,128,128,.25))', borderRadius: 16, padding: '1.25rem', marginBottom: '1rem' };
+const input = { width: '100%', padding: '0.75rem', borderRadius: 10, border: '1px solid var(--border-1, rgba(128,128,128,.4))', background: 'var(--bg-1, transparent)', color: 'var(--text-1, inherit)', fontSize: '1rem', marginBottom: '0.75rem', boxSizing: 'border-box', fontFamily: 'inherit' };
 const bigBtn = { display: 'block', width: '100%', padding: '1rem', borderRadius: 14, border: 'none', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', color: '#fff', textAlign: 'center', textDecoration: 'none', marginBottom: '0.75rem', boxSizing: 'border-box' };
 
 export default function ConnectClient() {
@@ -47,8 +47,8 @@ export default function ConnectClient() {
 
   return (
     <main style={wrap}>
-      <h1 style={{ fontSize: '1.7rem', textAlign: 'center', marginBottom: '0.4rem' }}>Welcome to Mr. Rent</h1>
-      <p style={{ textAlign: 'center', opacity: 0.8, marginBottom: '1.5rem' }}>
+      <h1 style={{ fontSize: '1.7rem', color: 'var(--text-1)', textAlign: 'center', marginBottom: '0.4rem' }}>Welcome to Mr. Rent</h1>
+      <p style={{ textAlign: 'center', color: 'var(--text-2, var(--text-1))', opacity: 0.8, marginBottom: '1.5rem' }}>
         Find or list property across Nigeria, quickly and securely. How can we help you today?
       </p>
 
@@ -70,9 +70,31 @@ export default function ConnectClient() {
         </button>
       )}
 
+      {/* Separate smaller button below */}
+      <div style={{ marginTop: '1.25rem', textAlign: 'center' }}>
+        <a
+          href="/affiliate/auth"
+          title="Join the Mr. Rent affiliate program and earn commissions on referrals"
+          style={{
+            display: 'inline-block',
+            padding: '0.6rem 1.4rem',
+            borderRadius: '20px',
+            border: '1.5px solid var(--primary-500, #0ef6cc)',
+            color: 'var(--primary-500, #0ef6cc)',
+            background: 'transparent',
+            fontSize: '0.88rem',
+            fontWeight: 600,
+            textDecoration: 'none',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          ✨ Join Affiliate Program
+        </a>
+      </div>
+
       {tab && (
-        <div style={card}>
-          <h2 style={{ fontSize: '1.15rem', marginBottom: '0.75rem' }}>
+        <div style={{ ...card, marginTop: '1.5rem' }}>
+          <h2 style={{ fontSize: '1.15rem', color: 'var(--text-1)', marginBottom: '0.75rem' }}>
             {tab === 'support' ? 'Ask your question' : 'Tell us about your business'}
           </h2>
 
@@ -105,7 +127,7 @@ export default function ConnectClient() {
         </div>
       )}
 
-      <p style={{ textAlign: 'center', fontSize: '0.9rem', opacity: 0.7, marginTop: '1.5rem' }}>
+      <p style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-2, var(--text-1))', opacity: 0.7, marginTop: '1.5rem' }}>
         Or email info@fasteraim.com
       </p>
     </main>
