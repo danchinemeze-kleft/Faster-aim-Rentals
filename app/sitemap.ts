@@ -20,6 +20,7 @@ const STATIC_PAGES: {
   { path: '/download', changeFrequency: 'monthly', priority: 0.9 },
   { path: '/search', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/services', changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/connected', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/veryland', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/list', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/affiliate', changeFrequency: 'monthly', priority: 0.6 },

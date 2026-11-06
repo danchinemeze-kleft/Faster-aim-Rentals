@@ -218,6 +218,7 @@ export default function Footer() {
             <FLink href="/list">List Property</FLink>
             <FLink href="/veryland">Verified Properties</FLink>
             <FLink href="/services">Our Services</FLink>
+            <FLink href="/connected">Trading & Investment Partners</FLink>
             <FLink href="/search">AI Chat Assistant</FLink>
             <FLink href="/download">Download App</FLink>
           </div>

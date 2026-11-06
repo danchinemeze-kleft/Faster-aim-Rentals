@@ -40,6 +40,7 @@ const services: Service[] = [
   { title: 'Short-let Booking', note: 'Book and pay online', href: '/browse?type=shortlet' },
   { title: 'Pro Tier', note: 'Price and market insight', soon: true },
   { title: 'Services Marketplace', note: 'Legal, inspection, moving', href: '/marketplace' },
+  { title: 'Trading & Investment Partners', note: 'Discover partner apps', href: '/connected' },
   { title: 'Earn as Affiliate', note: 'Share and get paid', href: '/affiliate/auth' },
    { title: 'Android App', note: 'Search from your phone', href: '/download' },
 ];
