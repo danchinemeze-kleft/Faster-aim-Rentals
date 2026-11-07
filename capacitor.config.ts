@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.fasteraim.mrrent',
+  appId: 'com.fasteraim.rent',
   appName: 'Mr. Rent',
   webDir: 'cap-www',
   server: {
