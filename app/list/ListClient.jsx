@@ -10,7 +10,7 @@ import Breadcrumb from '../components/Breadcrumb'
 import SwitchRoleModal from '../components/SwitchRoleModal'
 
 function ListingVideoPlayer({ src }) {
-  const [state, setState] = useState('loading')
+  const [state, setState] = useState('ready')
   if (!src) return null
   return (
     <div style={{ background: '#000', borderRadius: 10, overflow: 'hidden', marginBottom: '0.75rem', position: 'relative' }}>
@@ -29,7 +29,7 @@ function ListingVideoPlayer({ src }) {
       <video
         controls
         playsInline
-        preload="metadata"
+        preload="none"
         onLoadedMetadata={() => setState('ready')}
         onCanPlay={() => setState('ready')}
         onError={() => setState('error')}
@@ -91,6 +91,9 @@ const periodLabel = (period, type) => {
   return labels[period] || period
 }
 
+const createUploadFileName = (userId, file, suffix = '') =>
+  `${userId}/${Date.now()}${suffix}.${file.name.split('.').pop()}`
+
 const emptyForm = {
   title: '',
   property_number: '',
@@ -128,10 +131,15 @@ function ListPageInner() {
   const [submitting, setSubmitting] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [successMsg, setSuccessMsg] = useState('')
+  const [formError, setFormError] = useState('')
   const [videoFile, setVideoFile] = useState(null)
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState('')
+  const videoPreviewUrlRef = useRef('')
   const [videoStatus, setVideoStatus] = useState('idle') // 'idle', 'checking', 'ready', 'error'
   const [uploadProgress, setUploadProgress] = useState(0)
   const [photoFiles, setPhotoFiles] = useState([]) // array of File objects
+  const [photoPreviewUrlMap, setPhotoPreviewUrlMap] = useState(new Map())
+  const photoPreviewUrls = useRef(new Map())
   const [photoUploadProgress, setPhotoUploadProgress] = useState(0)
   const [editingListing, setEditingListing] = useState(null)
   const [existingPhotos, setExistingPhotos] = useState([])
@@ -139,6 +147,24 @@ function ListPageInner() {
   const [checking, setChecking] = useState(false)
   const [showRoleModal, setShowRoleModal] = useState(false)
   const [switchingRole, setSwitchingRole] = useState(false)
+
+  useEffect(() => () => {
+    photoPreviewUrls.current.forEach(url => URL.revokeObjectURL(url))
+    photoPreviewUrls.current.clear()
+    if (videoPreviewUrlRef.current) URL.revokeObjectURL(videoPreviewUrlRef.current)
+  }, [])
+
+  const clearPhotoPreviews = () => {
+    photoPreviewUrls.current.forEach(url => URL.revokeObjectURL(url))
+    photoPreviewUrls.current.clear()
+    setPhotoPreviewUrlMap(new Map())
+  }
+
+  const clearVideoPreview = () => {
+    if (videoPreviewUrlRef.current) URL.revokeObjectURL(videoPreviewUrlRef.current)
+    videoPreviewUrlRef.current = ''
+    setVideoPreviewUrl('')
+  }
 
   async function handleSwitchToLandlord() {
     if (!user) return
@@ -339,7 +365,9 @@ function ListPageInner() {
     })
     setExistingPhotos(listing.images || [])
     setExistingVideoUrl(listing.video_url || null)
+    clearPhotoPreviews()
     setPhotoFiles([])
+    clearVideoPreview()
     setVideoFile(null)
     setVideoStatus('idle')
     setShowForm(true)
@@ -353,7 +381,9 @@ function ListPageInner() {
     setExistingPhotos([])
     setExistingVideoUrl(null)
     setFormData(emptyForm)
+    clearPhotoPreviews()
     setPhotoFiles([])
+    clearVideoPreview()
     setVideoFile(null)
     setVideoStatus('idle')
     setShowForm(false)
@@ -388,87 +418,126 @@ function ListPageInner() {
   }
 
   const handleVideoSelect = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-    if (file.size > 200 * 1024 * 1024) {
-      alert('Video must be under 200MB')
-      return
-    }
-    setVideoStatus('checking')
-    const videoEl = document.createElement('video')
-    videoEl.preload = 'metadata'
-    videoEl.onloadedmetadata = () => {
-      window.URL.revokeObjectURL(videoEl.src)
-      const dur = videoEl.duration
-      if (dur < 15) {
+    let metadataUrl = ''
+    let timeout
+    try {
+      setFormError('')
+      const file = e.target.files?.[0]
+      if (!file) return
+      if (file.size > 200 * 1024 * 1024) {
         setVideoStatus('error')
-        alert('Video is too short. Minimum is 15 seconds.')
+        setFormError('Video must be under 200MB.')
         return
       }
-      if (dur > 60) {
-        setVideoStatus('error')
-        alert('Video is too long. Maximum is 60 seconds.')
-        return
+
+      metadataUrl = URL.createObjectURL(file)
+      const videoEl = document.createElement('video')
+      videoEl.preload = 'metadata'
+      const stopMetadataCheck = () => {
+        clearTimeout(timeout)
+        videoEl.onloadedmetadata = null
+        videoEl.onerror = null
+        videoEl.removeAttribute('src')
+        videoEl.load()
       }
-      setVideoStatus('ready')
-      setVideoFile(file)
+      const acceptVideo = () => {
+        stopMetadataCheck()
+        clearVideoPreview()
+        videoPreviewUrlRef.current = metadataUrl
+        setVideoPreviewUrl(metadataUrl)
+        metadataUrl = ''
+        setVideoStatus('ready')
+        setVideoFile(file)
+      }
+
+      setVideoStatus('checking')
+      videoEl.onloadedmetadata = () => {
+        try {
+          const duration = videoEl.duration
+          if (duration < 15) {
+            stopMetadataCheck()
+            URL.revokeObjectURL(metadataUrl)
+            metadataUrl = ''
+            setVideoStatus('error')
+            setFormError('Video is too short. Minimum is 15 seconds.')
+            return
+          }
+          if (duration > 60) {
+            stopMetadataCheck()
+            URL.revokeObjectURL(metadataUrl)
+            metadataUrl = ''
+            setVideoStatus('error')
+            setFormError('Video is too long. Maximum is 60 seconds.')
+            return
+          }
+          acceptVideo()
+        } catch (err) {
+          stopMetadataCheck()
+          if (metadataUrl) URL.revokeObjectURL(metadataUrl)
+          metadataUrl = ''
+          setVideoStatus('error')
+          setFormError(err instanceof Error ? `Could not read the selected video: ${err.message}` : 'Could not read the selected video.')
+        }
+      }
+      videoEl.onerror = acceptVideo
+      timeout = setTimeout(() => {
+        if (videoEl.duration === 0 || Number.isNaN(videoEl.duration)) acceptVideo()
+      }, 3000)
+      videoEl.src = metadataUrl
+    } catch (err) {
+      if (timeout) clearTimeout(timeout)
+      if (metadataUrl) URL.revokeObjectURL(metadataUrl)
+      setVideoStatus('error')
+      setFormError(err instanceof Error ? `Could not load the selected video: ${err.message}` : 'Could not load the selected video.')
     }
-   videoEl.onerror = () => {
-  setVideoStatus('ready')
-  setVideoFile(file)
-}
-const timeout = setTimeout(() => {
-  if (videoEl.duration === 0 || isNaN(videoEl.duration)) {
-    setVideoStatus('ready')
-    setVideoFile(file)
-  }
-}, 3000)
-videoEl.onloadedmetadata = () => {
-  clearTimeout(timeout)
-  window.URL.revokeObjectURL(videoEl.src)
-  const dur = videoEl.duration
-  if (dur < 15) {
-    setVideoStatus('error')
-    alert('Video is too short. Minimum is 15 seconds.')
-    return
-  }
-  if (dur > 60) {
-    setVideoStatus('error')
-    alert('Video is too long. Maximum is 60 seconds.')
-    return
-  }
-  setVideoStatus('ready')
-  setVideoFile(file)
-}
-videoEl.src = URL.createObjectURL(file)
   }
 
   const handlePhotoSelect = (e) => {
-    const files = Array.from(e.target.files)
-    if (!files.length) return
-    const valid = files.filter(f => {
-      if (f.size > 10 * 1024 * 1024) {
-        alert(`${f.name} is over 10MB and was skipped.`)
-        return false
+    const createdUrls = []
+    try {
+      setFormError('')
+      const files = Array.from(e.target.files || [])
+      if (!files.length) return
+      const valid = files.filter(file => file.size <= 10 * 1024 * 1024)
+      const oversizedCount = files.length - valid.length
+      const combined = [...photoFiles, ...valid]
+      const accepted = combined.slice(0, 10)
+
+      for (const file of accepted.slice(photoFiles.length)) {
+        const url = URL.createObjectURL(file)
+        photoPreviewUrls.current.set(file, url)
+        createdUrls.push(url)
       }
-      return true
-    })
-    setPhotoFiles(prev => {
-      const combined = [...prev, ...valid]
-      if (combined.length > 10) {
-        alert('Maximum 10 photos allowed.')
-        return combined.slice(0, 10)
+
+      setPhotoFiles(accepted)
+      setPhotoPreviewUrlMap(new Map(photoPreviewUrls.current))
+      if (oversizedCount || combined.length > 10) {
+        setFormError([
+          oversizedCount ? `${oversizedCount} photo${oversizedCount === 1 ? '' : 's'} over 10MB skipped.` : '',
+          combined.length > 10 ? 'Maximum 10 photos allowed.' : '',
+        ].filter(Boolean).join(' '))
       }
-      return combined
-    })
+    } catch (err) {
+      createdUrls.forEach(url => URL.revokeObjectURL(url))
+      photoPreviewUrls.current.forEach((url, file) => {
+        if (createdUrls.includes(url)) photoPreviewUrls.current.delete(file)
+      })
+      setFormError(err instanceof Error ? `Could not load the selected photo: ${err.message}` : 'Could not load the selected photos.')
+    }
   }
 
   const removePhoto = (index) => {
+    const removedFile = photoFiles[index]
+    const previewUrl = photoPreviewUrls.current.get(removedFile)
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    photoPreviewUrls.current.delete(removedFile)
+    setPhotoPreviewUrlMap(new Map(photoPreviewUrls.current))
     setPhotoFiles(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setFormError('')
     if (!editingListing && !isSubscribed && monthlyCount >= FREE_MONTHLY_LIMIT) {
       alert('You have reached your free listing limit for this month. Subscribe to list more properties.')
       return
@@ -491,8 +560,7 @@ videoEl.src = URL.createObjectURL(file)
       if (photoFiles.length > 0) {
         for (let i = 0; i < photoFiles.length; i++) {
           const photo = photoFiles[i]
-          const ext = photo.name.split('.').pop()
-          const fileName = `${user.id}/${Date.now()}-${i}.${ext}`
+          const fileName = createUploadFileName(user.id, photo, `-${i}`)
           const { error: photoError } = await supabase.storage
             .from('property-images')
             .upload(fileName, photo, { contentType: photo.type })
@@ -508,8 +576,7 @@ videoEl.src = URL.createObjectURL(file)
       // Upload new video only if a new file was selected
       let video_url = existingVideoUrl
       if (videoFile) {
-        const ext = videoFile.name.split('.').pop()
-        const fileName = `${user.id}/${Date.now()}.${ext}`
+        const fileName = createUploadFileName(user.id, videoFile)
         setUploadProgress(30)
         const { error: uploadError } = await supabase.storage
           .from('property-video')
@@ -557,8 +624,10 @@ videoEl.src = URL.createObjectURL(file)
       if (!res.ok) throw new Error(result.error || 'Submission failed')
 
       setFormData(emptyForm)
+      clearVideoPreview()
       setVideoFile(null)
       setVideoStatus('idle')
+      clearPhotoPreviews()
       setPhotoFiles([])
       setPreview(false)
       setShowForm(false)
@@ -573,7 +642,11 @@ videoEl.src = URL.createObjectURL(file)
       setTimeout(() => setSuccessMsg(''), 5000)
       fetchListings(user.id)
     } catch (err) {
-      alert('Error: ' + err.message)
+      setFormError(
+        err instanceof Error
+          ? `Unable to upload media or submit the listing: ${err.message}`
+          : 'Unable to upload media or submit the listing. Please try again.'
+      )
     } finally {
       setSubmitting(false)
     }
@@ -676,6 +749,11 @@ videoEl.src = URL.createObjectURL(file)
       {showForm && (
         <div className="faim-form-card">
           <h2>{editingListing ? 'Edit Listing' : 'Create New Listing'}</h2>
+          {formError && (
+            <div role="alert" aria-live="assertive" style={{ background: '#fff0f0', color: '#c0392b', border: '1px solid #e74c3c', borderRadius: 8, padding: '0.75rem 1rem', marginBottom: '1rem' }}>
+              {formError}
+            </div>
+          )}
           <div className="faim-form-grid">
             <form onSubmit={handleSubmit} className="faim-form">
 
@@ -822,7 +900,7 @@ videoEl.src = URL.createObjectURL(file)
                     {photoFiles.map((photo, i) => (
                       <div key={i} style={{position:'relative',borderRadius:'8px',overflow:'hidden',height:'80px',background:'#eee'}}>
                         <Image
-                          src={URL.createObjectURL(photo)}
+                          src={photoPreviewUrlMap.get(photo)}
                           alt={`photo ${i+1}`}
                           fill
                           unoptimized
@@ -909,12 +987,12 @@ videoEl.src = URL.createObjectURL(file)
                       <div style={{background:'#f0fff4',border:'1.5px solid #27ae60',borderRadius:'10px',padding:'0.6rem 1rem',display:'flex',alignItems:'center',gap:'0.5rem',color:'#27ae60',fontWeight:700,fontSize:'0.85rem'}}>
                         ✅ Video ready — looks good!
                       </div>
-                      <video src={URL.createObjectURL(videoFile)} controls className="faim-video-player" />
+                      <video src={videoPreviewUrl} controls className="faim-video-player" />
                       <div className="faim-video-info">
                         <span>📹 {videoFile.name}</span>
                         <span>{(videoFile.size / (1024*1024)).toFixed(1)} MB</span>
                       </div>
-                      <button type="button" className="faim-remove-video" onClick={() => { setVideoFile(null); setVideoStatus('idle') }}>
+                      <button type="button" className="faim-remove-video" onClick={() => { clearVideoPreview(); setVideoFile(null); setVideoStatus('idle') }}>
                         ✕ Remove video
                       </button>
                     </div>
@@ -1007,7 +1085,7 @@ videoEl.src = URL.createObjectURL(file)
                     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'6px',marginBottom:'0.75rem'}}>
                       {photoFiles.slice(0,4).map((p,i) => (
                         <div key={i} style={{position:'relative',height:'70px',borderRadius:'6px',overflow:'hidden'}}>
-                          <Image src={URL.createObjectURL(p)} alt="" fill unoptimized style={{objectFit:'cover'}} />
+                          <Image src={photoPreviewUrlMap.get(p)} alt="" fill unoptimized style={{objectFit:'cover'}} />
                         </div>
                       ))}
                     </div>
@@ -1019,7 +1097,7 @@ videoEl.src = URL.createObjectURL(file)
                     </div>
                   )}
                   {videoFile && (
-                    <video src={URL.createObjectURL(videoFile)} controls style={{width:'100%',borderRadius:'8px',marginBottom:'0.75rem'}} />
+                    <video src={videoPreviewUrl} controls style={{width:'100%',borderRadius:'8px',marginBottom:'0.75rem'}} />
                   )}
                   <div className="faim-preview-cta">Contact Landlord — ₦5,000</div>
                 </div>
