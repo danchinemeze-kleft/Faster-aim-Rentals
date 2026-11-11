@@ -7,7 +7,7 @@ const config: CapacitorConfig = {
   server: {
     url: 'https://rent.fasteraim.com',
     cleartext: false,
-    allowNavigation: ['rent.fasteraim.com', '*.supabase.co'],
+    allowNavigation: ['rent.fasteraim.com', '*.supabase.co', 'accounts.google.com'],
   },
 };
 

@@ -6,10 +6,18 @@ export async function GET(request) {
   const code = searchParams.get("code");
   const redirectParam = searchParams.get("redirect");
 
+  const safeRedirect =
+    redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//")
+      ? redirectParam
+      : null;
+
   if (code) {
-    const destination = redirectParam
-      ? `/account?redirect=${encodeURIComponent(redirectParam)}`
-      : "/account";
+    const destination =
+      safeRedirect === "/account/reset-password"
+        ? "/account/reset-password"
+        : safeRedirect
+        ? `/account?redirect=${encodeURIComponent(safeRedirect)}`
+        : "/account";
 
     const response = NextResponse.redirect(`${origin}${destination}`);
 

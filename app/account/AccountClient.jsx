@@ -55,18 +55,18 @@ function AccountPageInner() {
     }
 
     // Incomplete profile (new OAuth user, or an existing user missing a phone)
-const phoneOk = /^\+?[0-9]{10,14}$/.test((profile?.phone || '').replace(/\s+/g, ''))
-if (!profile?.role || !profile?.full_name?.trim() || !phoneOk) {
-  const name =
-    profile?.full_name ||
-    user.user_metadata?.full_name ||
-    user.user_metadata?.name ||
-    ''
-  setOnboardingUser({ ...user, full_name: name })
-  setOnboardingName(name)
-  setOnboardingRole(profile?.role || '')
-  setOnboardingPhone(profile?.phone || '')
-  setMode('onboarding')
+    const phoneOk = /^\+?[0-9]{10,14}$/.test((profile?.phone || '').replace(/\s+/g, ''))
+    if (!profile?.role || !profile?.full_name?.trim() || !phoneOk) {
+      const name =
+        profile?.full_name ||
+        user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        ''
+      setOnboardingUser({ ...user, full_name: name })
+      setOnboardingName(name)
+      setOnboardingRole(profile?.role || '')
+      setOnboardingPhone(profile?.phone || '')
+      setMode('onboarding')
       setSessionChecking(false)
       setLoading(false)
       redirectHandled.current = false
@@ -211,8 +211,9 @@ if (!profile?.role || !profile?.full_name?.trim() || !phoneOk) {
     }
     setLoading(true)
     setError('')
+    setSuccessMsg('')
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/account/reset-password`,
+      redirectTo: `${window.location.origin}/account/callback?redirect=${encodeURIComponent('/account/reset-password')}`,
     })
     if (error) {
       setError(error.message)
@@ -270,7 +271,7 @@ if (!profile?.role || !profile?.full_name?.trim() || !phoneOk) {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--page-bg)', color: 'var(--text-1)', fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       <div style={{ width: '100%', padding: '12px 24px', boxSizing: 'border-box', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-       
+
         <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Login / Sign Up', href: '/account' }]} />
       </div>
       <main className="faim-account-page">
@@ -665,7 +666,7 @@ if (!profile?.role || !profile?.full_name?.trim() || !phoneOk) {
   )
 }
 
-export default function AccountPage() {
+export default function AccountClient() {
   return (
     <Suspense fallback={<div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center'}}>Loading...</div>}>
       <AccountPageInner />
