@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 import DownloadPopup from "./components/DownloadPopup";
 import DownloadButton from "./components/DownloadButton";
-import SplashScreen from "./components/SplashScreen";
+import SplashScreen from "./SplashScreen";
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
