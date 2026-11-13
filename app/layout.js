@@ -8,7 +8,8 @@ import { LoadingProvider } from "./context/LoadingContext";
 import RefCapture from "./components/RefCapture";
 import ThemeToggle from "./components/ThemeToggle";
 import Footer from "./components/Footer";
-import ConditionalBackArrow from "./components/ConditionalBackArrow"; // ← added
+import ConditionalBackArrow from "./components/ConditionalBackArrow";
+import SplashScreen from "./SplashScreen"; // ← added
 
 const SUPABASE_ORIGIN = "https://ojkhpishuqyeiwaopaty.supabase.co";
 
@@ -135,6 +136,29 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Mr. Rent" />
+
+        {/* ↓ added: splash styles (instant, no React needed) */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              #splash{display:none;position:fixed;inset:0;z-index:100000;
+                background:#d8d8d6 url(/splash.jpg) center/contain no-repeat;
+                transition:opacity .4s ease}
+              #splash.fade{opacity:0}
+              @media (display-mode: standalone){
+                html.splash-on #splash{display:block}
+                html.splash-on, html.splash-on body{background:#d8d8d6}
+              }
+            `,
+          }}
+        />
+        {/* ↓ added: decides before first paint whether to show splash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(!sessionStorage.getItem("mr-rent-splash-seen")){document.documentElement.classList.add("splash-on")}}catch(e){}`,
+          }}
+        />
+
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -163,6 +187,9 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-full flex flex-col">
+        {/* ↓ added: the splash itself */}
+        <div id="splash" aria-hidden="true" />
+
         {/* Brand frame */}
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, #0ef6cc 0%, #14B8A6 100%)", zIndex: 99999, pointerEvents: "none" }} />
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, #14B8A6 0%, #0ef6cc 100%)", zIndex: 99999, pointerEvents: "none" }} />
@@ -184,6 +211,7 @@ export default function RootLayout({ children }) {
         </LoadingProvider>
 
         <ThemeToggle />
+        <SplashScreen /> {/* ← added */}
 
         <Analytics />
         <SpeedInsights />
