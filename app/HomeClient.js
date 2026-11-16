@@ -204,7 +204,18 @@ const trustLink = { color: '#0080FF', textDecoration: 'underline' };
         .make-money-btn:hover {
           transform: translateY(-3px);
           box-shadow: 0 14px 26px -8px rgba(20, 184, 166, 0.65);
-        }
+      }
+          @keyframes spotlightGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.55); }
+  50% { box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
+}
+@keyframes spotlightShake {
+  0%, 100% { transform: translateY(-3px) rotate(0deg); }
+  25% { transform: translateY(-3px) rotate(-2deg); }
+  75% { transform: translateY(-3px) rotate(2deg); }
+}
+.spotlight-btn { animation: spotlightGlow 2.2s ease-in-out infinite; }
+.spotlight-btn:hover { animation: spotlightShake 0.4s ease; transform: translateY(-3px); }
         @keyframes bounceDown {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(6px); }
@@ -323,6 +334,7 @@ const trustLink = { color: '#0080FF', textDecoration: 'underline' };
 
   <div className="nav-menu-dropdown">
     <a href="/browse">Browse Rentals</a>
+    <a href="/shortlet">Short-lets</a>
     <a href="/list">List Property</a>
     <a href="/veryland">Verified Properties</a>
     <a href="/services">Our Services</a>
@@ -368,7 +380,12 @@ const trustLink = { color: '#0080FF', textDecoration: 'underline' };
                 </svg>
                 <span>Browse Rentals</span>
               </a>
-
+<a href="/shortlet" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+  <span>Short-let Stays</span>
+</a>
               {/* Support Us */}
               <a href="https://paystack.shop/pay/support-mr-rent?src=nav" title="Support Mr. Rent's mission, platform development, and growth" target="_blank" rel="noopener noreferrer" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mobile-menu-icon">
@@ -518,6 +535,11 @@ const trustLink = { color: '#0080FF', textDecoration: 'underline' };
                   <a href="/browse" style={s.btnCyan}>Browse Rentals</a>
                   <a href="/list" style={s.btnTeal}>List a Property</a>
                 </div>
+                <a href="/shortlet" style={s.spotlightBtn} className="spotlight-btn">
+  <span style={s.spotlightTag}>NEW</span>
+  <span>Short-let Stays</span>
+  <span aria-hidden="true">→</span>
+</a>
                 <div style={s.heroActionsSecondary}>
                   <a href="/search" style={s.secondaryLink}>AI Chat Assistant</a>
                   <a href="/veryland" style={s.secondaryLink}>Verify Documents</a>
@@ -927,6 +949,8 @@ const s = {
   heroActionsPrimary: { display: 'flex', gap: '1rem' },
   btnCyan: { textDecoration: 'none', backgroundColor: '#0ea5e9', color: '#ffffff', padding: '0.75rem 1.5rem', borderRadius: '12px', fontWeight: '600', textAlign: 'center' },
   btnTeal: { textDecoration: 'none', backgroundColor: '#14b8a6', color: '#ffffff', padding: '0.75rem 1.5rem', borderRadius: '12px', fontWeight: '600', textAlign: 'center' },
+  spotlightBtn: { alignSelf: 'flex-start', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.6rem', background: 'linear-gradient(135deg, #0f172a, #0ea5e9)', color: '#ffffff', padding: '0.7rem 1.3rem', borderRadius: '9999px', fontWeight: 600, fontSize: '0.95rem' },
+spotlightTag: { backgroundColor: '#0ef6cc', color: '#0f172a', fontSize: '0.65rem', fontWeight: 700, padding: '0.15rem 0.5rem', borderRadius: '9999px', letterSpacing: '0.05em' },
   heroActionsSecondary: { display: 'flex', flexWrap: 'wrap', gap: '1rem' },
   secondaryLink: { textDecoration: 'none', color: 'var(--text-2)', fontSize: '0.9rem', fontWeight: '600' },
   trustRow: { display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginTop: '0.5rem' },

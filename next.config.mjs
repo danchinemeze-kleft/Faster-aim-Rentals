@@ -77,12 +77,27 @@ const nextConfig = {
     ]
   },
 
+  // Show our own address instead of the Supabase project ID
+  async rewrites() {
+    return [
+      {
+        source: '/sb/:path*',
+        destination: 'https://ojkhpishuqyeiwaopaty.supabase.co/:path*',
+      },
+    ]
+  },
+
   // Image optimization
   images: {
     remotePatterns: [
       {
         protocol: 'https',
         hostname: '**.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'rent.fasteraim.com',
+        pathname: '/sb/**',
       },
     ],
     formats: ['image/avif', 'image/webp'],
