@@ -131,7 +131,7 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="preconnect" href={SUPABASE_ORIGIN} crossOrigin="anonymous" />
         <link rel="preconnect" href={SUPABASE_ORIGIN} />
-        <meta name="theme-color" content="#0ef6cc" />
+        <meta name="theme-color" content="0ef6cc" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -145,6 +145,13 @@ export default function RootLayout({ children }) {
                 background:#d8d8d6 url(/splash.jpg) center/contain no-repeat;
                 transition:opacity .4s ease}
               #splash.fade{opacity:0}
+              #splash .splash-line{position:absolute;left:50%;bottom:22%;
+  width:220px;height:4px;margin-left:-110px;
+  background:rgba(0,0,0,.12);border-radius:2px;overflow:hidden}
+#splash .splash-line span{display:block;height:100%;width:0;
+  background:linear-gradient(90deg,#0ef6cc,#14B8A6);border-radius:2px;
+  animation:splash-fill 1.8s ease-out forwards}
+@keyframes splash-fill{to{width:100%}}
               @media (display-mode: standalone){
                 html.splash-on #splash{display:block}
                 html.splash-on, html.splash-on body{background:#d8d8d6}
@@ -188,7 +195,9 @@ export default function RootLayout({ children }) {
       </head>
       <body className="min-h-full flex flex-col">
         {/* ↓ added: the splash itself */}
-        <div id="splash" aria-hidden="true" />
+       <div id="splash" aria-hidden="true">
+  <div className="splash-line"><span /></div>
+</div>
 
         {/* Brand frame */}
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, #0ef6cc 0%, #14B8A6 100%)", zIndex: 99999, pointerEvents: "none" }} />
