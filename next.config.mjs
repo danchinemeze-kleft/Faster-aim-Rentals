@@ -41,7 +41,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               // images: only the hosts you use, not all of https:
-              "img-src 'self' data: blob: https://*.supabase.co https://lh3.googleusercontent.com https://img.youtube.com https://i.ytimg.com https://www.google-analytics.com https://www.googletagmanager.com",
+              "img-src 'self' data: blob: https://*.supabase.co https://lh3.googleusercontent.com https://img.youtube.com https://i.ytimg.com https://www.google-analytics.com https://www.googletagmanager.com https://www.google.com https://www.google.com.ng https://stats.g.doubleclick.net",
               // added Supabase so uploaded listing videos can play
               "media-src 'self' blob: https://*.supabase.co",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.paystack.co https://generativelanguage.googleapis.com https://accounts.google.com https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://www.googletagmanager.com https://www.google.com https://www.google.com.ng",
