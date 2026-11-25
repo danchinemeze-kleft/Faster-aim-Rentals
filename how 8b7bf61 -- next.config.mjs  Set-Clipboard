@@ -1,0 +1,44 @@
+[33mcommit 8b7bf61d6aa162d110832be2279907c477bcfb9b[m[33m ([m[1;31morigin/csp-tighten[m[33m)[m
+Author: Daniel Igboke <danchinemeze@gmail.com>
+Date:   Tue Nov 24 11:37:39 2026 +0100
+
+    Tighten CSP
+
+[1mdiff --git a/next.config.mjs b/next.config.mjs[m
+[1mindex 0917d39..2f28a41 100644[m
+[1m--- a/next.config.mjs[m
+[1m+++ b/next.config.mjs[m
+[36m@@ -1,4 +1,6 @@[m
+ /** @type {import('next').NextConfig} */[m
+[32m+[m[32mconst isDev = process.env.NODE_ENV === 'development'[m
+[32m+[m
+ const nextConfig = {[m
+   // Security Headers[m
+   async headers() {[m
+[36m@@ -34,15 +36,22 @@[m [mconst nextConfig = {[m
+             key: 'Content-Security-Policy',[m
+             value: [[m
+               "default-src 'self'",[m
+[31m-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.paystack.co https://accounts.google.com https://apis.google.com https://www.gstatic.com https://www.googletagmanager.com https://www.google-analytics.com",[m
+[32m+[m[32m              // 'unsafe-eval' now only in development (Next.js dev mode needs it)[m
+[32m+[m[32m              `script-src 'self' ${isDev ? "'unsafe-eval' " : ''}'unsafe-inline' https://js.paystack.co https://accounts.google.com https://apis.google.com https://www.gstatic.com https://www.googletagmanager.com https://www.google-analytics.com`,[m
+               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",[m
+               "font-src 'self' https://fonts.gstatic.com",[m
+[31m-              "img-src 'self' data: blob: https:",[m
+[31m-              "media-src 'self' blob:",[m
+[32m+[m[32m              // images: only the hosts you use, not all of https:[m
+[32m+[m[32m              "img-src 'self' data: blob: https://*.supabase.co https://lh3.googleusercontent.com https://img.youtube.com https://i.ytimg.com https://www.google-analytics.com https://www.googletagmanager.com",[m
+[32m+[m[32m              // added Supabase so uploaded listing videos can play[m
+[32m+[m[32m              "media-src 'self' blob: https://*.supabase.co",[m
+               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.paystack.co https://generativelanguage.googleapis.com https://accounts.google.com https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://www.googletagmanager.com https://www.google.com https://www.google.com.ng",[m
+[31m-              "frame-src 'self' https://js.paystack.co https://checkout.paystack.com https://accounts.google.com",[m
+[32m+[m[32m              // added YouTube so listing video embeds work[m
+[32m+[m[32m              "frame-src 'self' https://js.paystack.co https://checkout.paystack.com https://accounts.google.com https://www.youtube.com https://www.youtube-nocookie.com",[m
+               "object-src 'none'",[m
+               "base-uri 'self'",[m
+[32m+[m[32m              // new: blocks other sites from framing yours, and limits where forms can post[m
+[32m+[m[32m              "frame-ancestors 'none'",[m
+[32m+[m[32m              "form-action 'self'",[m
+             ].join('; '),[m
+           },[m
+         ],[m
