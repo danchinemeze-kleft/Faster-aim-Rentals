@@ -1,19 +1,33 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { createClient } from '@supabase/supabase-js';
+
+// Browser Supabase client using public anon key for real Auth session
+const supabaseBrowser = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
+async function getAccessToken() {
+  const {
+    data: { session },
+  } = await supabaseBrowser.auth.getSession();
+  return session?.access_token || '';
+}
 
 // All write actions go through /api/admin-action, which uses the Supabase
-// service role key server-side. The admin panel's "login" is just a
-// password check (see /api/admin-auth) — there is no real Supabase auth
-// session in the browser, so any write done with the anon key here would
-// be silently blocked by RLS (0 rows affected, no error) even though the
-// button appears to "succeed". Routing through the server fixes that.
+// service role key server-side and verifies admin_users + logs to admin_audit_log.
 async function adminAction(action, payload) {
-  const pw = sessionStorage.getItem('mr_rent_admin_pw');
+  const token = await getAccessToken();
   const res = await fetch('/api/admin-action', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password: pw, action, payload }),
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ action, payload, accessToken: token }),
   });
   const json = await res.json();
   if (!res.ok) {
@@ -25,6 +39,7 @@ async function adminAction(action, payload) {
 
 export default function AdminDashboard() {
   const [authed, setAuthed] = useState(false);
+  const [emailInput, setEmailInput] = useState('agent-michael@rent.fasteraim.com');
   const [pwInput, setPwInput] = useState('');
   const [pwError, setPwError] = useState('');
   const [showPw, setShowPw] = useState(false);
@@ -51,11 +66,17 @@ export default function AdminDashboard() {
   const [saleRejectNotes, setSaleRejectNotes] = useState({});
 
   useEffect(() => {
-    const saved = sessionStorage.getItem('mr_rent_admin');
-    setTimeout(() => {
-      if (saved === 'true') setAuthed(true);
+    let active = true;
+    supabaseBrowser.auth.getSession().then(({ data: { session } }) => {
+      if (!active) return;
+      if (session?.access_token) {
+        setAuthed(true);
+      }
       setCheckingSession(false);
-    }, 0);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -65,21 +86,34 @@ export default function AdminDashboard() {
   async function fetchAll() {
     setLoading(true);
     try {
-      const pw = sessionStorage.getItem('mr_rent_admin_pw');
+      const token = await getAccessToken();
       const res = await fetch('/api/admin-data', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pw }),
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ accessToken: token }),
       });
 
       if (!res.ok) {
         const err = await res.json();
         console.error('Admin data fetch failed:', err.error);
+        if (res.status === 401 || res.status === 403) {
+          setPwError(err.error || 'Not authorized as admin.');
+          setAuthed(false);
+        }
         setLoading(false);
         return;
       }
 
-      const { listings: listingData, profiles: profileData, subscriptions: subData, verylandSubmissions: vData, saleListings: saleData } = await res.json();
+      const {
+        listings: listingData,
+        profiles: profileData,
+        subscriptions: subData,
+        verylandSubmissions: vData,
+        saleListings: saleData,
+      } = await res.json();
 
       if (listingData) {
         setListings(listingData);
@@ -194,27 +228,41 @@ export default function AdminDashboard() {
     e.preventDefault();
     setPwError('');
     try {
-      const res = await fetch('/api/admin-auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pwInput }),
+      const { data, error } = await supabaseBrowser.auth.signInWithPassword({
+        email: emailInput.trim(),
+        password: pwInput,
       });
-      if (res.ok) {
-        sessionStorage.setItem('mr_rent_admin', 'true');
-        sessionStorage.setItem('mr_rent_admin_pw', pwInput);
-        setAuthed(true);
-      } else {
-        const data = await res.json();
-        setPwError(data.error || 'Incorrect password.');
+
+      if (error || !data?.session?.access_token) {
+        setPwError(error?.message || 'Invalid email or password.');
+        return;
       }
+
+      // Confirm user is authorized in admin_users via /api/admin-data
+      const checkRes = await fetch('/api/admin-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${data.session.access_token}`,
+        },
+        body: JSON.stringify({ accessToken: data.session.access_token }),
+      });
+
+      if (!checkRes.ok) {
+        const errData = await checkRes.json().catch(() => ({}));
+        await supabaseBrowser.auth.signOut();
+        setPwError(errData.error || 'This account does not have admin access.');
+        return;
+      }
+
+      setAuthed(true);
     } catch {
       setPwError('Something went wrong. Try again.');
     }
   }
 
-  function logout() {
-    sessionStorage.removeItem('mr_rent_admin');
-    sessionStorage.removeItem('mr_rent_admin_pw');
+  async function logout() {
+    await supabaseBrowser.auth.signOut();
     setAuthed(false);
   }
 
@@ -274,6 +322,23 @@ export default function AdminDashboard() {
           <form onSubmit={handleLogin}>
             <div style={{ marginBottom: 12 }}>
               <label style={{ fontSize: 12, color: '#888', display: 'block', marginBottom: 6 }}>
+                Admin email
+              </label>
+              <input
+                type="email"
+                value={emailInput}
+                onChange={e => setEmailInput(e.target.value)}
+                placeholder="agent-michael@rent.fasteraim.com"
+                required
+                style={{
+                  width: '100%', padding: '10px 14px', background: '#1a1d24',
+                  border: pwError ? '1px solid #E24B4A' : '0.5px solid #333',
+                  borderRadius: 8, color: '#fff', fontSize: 14, boxSizing: 'border-box', outline: 'none'
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ fontSize: 12, color: '#888', display: 'block', marginBottom: 6 }}>
                 Admin password
               </label>
               <div style={{ position: 'relative' }}>
@@ -283,6 +348,7 @@ export default function AdminDashboard() {
                   onChange={e => setPwInput(e.target.value)}
                   placeholder="Enter password"
                   autoFocus
+                  required
                   style={{
                     width: '100%', padding: '10px 44px 10px 14px', background: '#1a1d24',
                     border: pwError ? '1px solid #E24B4A' : '0.5px solid #333',
@@ -347,11 +413,11 @@ export default function AdminDashboard() {
         justifyContent: 'space-between', height: 56
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <a href="/" style={{
+          <Link href="/" style={{
             color: '#888', fontSize: 13, textDecoration: 'none',
             border: '0.5px solid #333', borderRadius: 8, padding: '4px 10px',
             display: 'inline-flex', alignItems: 'center', gap: 4
-          }}>← Site</a>
+          }}>← Site</Link>
           <span style={{ color: '#444', fontSize: 14 }}>/</span>
           <span style={{ color: '#0ef6cc', fontWeight: 700, fontSize: 16 }}>Mr. Rent</span>
           <span style={{ color: '#444', fontSize: 14 }}>/</span>

@@ -37,35 +37,122 @@ const ACTIONS = {
   },
 };
 
-export async function POST(req) {
-  try {
-    const { password, action, payload } = await req.json();
+function getClientIp(req) {
+  const forwarded = req.headers.get('x-forwarded-for');
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+  return req.headers.get('x-real-ip') || 'unknown';
+}
 
-    if (!process.env.ADMIN_PASSWORD) {
-      return NextResponse.json({ error: 'Admin password not configured.' }, { status: 500 });
+export async function POST(req) {
+  const ip = getClientIp(req);
+
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceKey) {
+      return NextResponse.json(
+        { error: 'Supabase server environment variables not configured.' },
+        { status: 500 }
+      );
     }
-    if (password !== process.env.ADMIN_PASSWORD) {
-      return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+
+    // Service role key bypasses RLS — safe here because this route verifies
+    // the caller's Supabase JWT, checks admin_users, logs to admin_audit_log,
+    // and only exposes the whitelisted actions above.
+    const supabase = createClient(supabaseUrl, serviceKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+
+    const body = await req.json().catch(() => ({}));
+    const { action, payload, accessToken } = body || {};
+
+    const authHeader = req.headers.get('authorization') || '';
+    const token = authHeader.startsWith('Bearer ')
+      ? authHeader.slice(7).trim()
+      : accessToken
+        ? String(accessToken).trim()
+        : '';
+
+    const actionName = action ? `admin_action:${action}` : 'admin_action:unknown';
+
+    if (!token) {
+      await supabase.from('admin_audit_log').insert({
+        user_id: null,
+        email: null,
+        ip,
+        action: actionName,
+        success: false,
+      });
+      return NextResponse.json({ error: 'Missing authentication token.' }, { status: 401 });
+    }
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      await supabase.from('admin_audit_log').insert({
+        user_id: null,
+        email: null,
+        ip,
+        action: actionName,
+        success: false,
+      });
+      return NextResponse.json({ error: 'Invalid or expired session.' }, { status: 401 });
+    }
+
+    const { data: adminRecord, error: adminError } = await supabase
+      .from('admin_users')
+      .select('user_id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (adminError || !adminRecord) {
+      await supabase.from('admin_audit_log').insert({
+        user_id: user.id,
+        email: user.email || null,
+        ip,
+        action: actionName,
+        success: false,
+      });
+      return NextResponse.json({ error: 'Unauthorized.' }, { status: 403 });
     }
 
     const handler = ACTIONS[action];
     if (!handler) {
+      await supabase.from('admin_audit_log').insert({
+        user_id: user.id,
+        email: user.email || null,
+        ip,
+        action: actionName,
+        success: false,
+      });
       return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
 
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!serviceKey) {
-      return NextResponse.json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured on server.' }, { status: 500 });
-    }
-
-    // Service role key bypasses RLS — safe here because this route is
-    // password-gated and only exposes the whitelisted actions above.
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, serviceKey);
-
     const { error, data } = await handler(supabase, payload || {});
     if (error) {
+      await supabase.from('admin_audit_log').insert({
+        user_id: user.id,
+        email: user.email || null,
+        ip,
+        action: actionName,
+        success: false,
+      });
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
+
+    await supabase.from('admin_audit_log').insert({
+      user_id: user.id,
+      email: user.email || null,
+      ip,
+      action: actionName,
+      success: true,
+    });
 
     return NextResponse.json({ ok: true, data });
   } catch (err) {
