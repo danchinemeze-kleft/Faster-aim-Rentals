@@ -441,18 +441,23 @@ export async function POST(request) {
             }))
           while (history.length && history[0].role === 'model') history.shift()
 
-          // Spread attempts across models, with growing waits, for Google 503s
+          // Models to try, in order. gemini-2.5-flash returned 404 (no longer
+          // available to new users), so it is removed.
           const attempts = [
             'gemini-3.8-flash',
             'gemini-3.7-flash',
-            'gemini-2.5-flash',
             'gemini-3.1-flash-lite',
-            'gemini-2.5-flash-lite',
           ]
+          const FIRST_CHUNK_TIMEOUT_MS = 8000  // give up on a model that stays silent
+          const DEADLINE_MS = 24000            // stay under maxDuration (30s)
+          const startedAt = Date.now()
           let gotText = false
 
           for (let i = 0; i < attempts.length; i++) {
+            if (Date.now() - startedAt > DEADLINE_MS) break
             const model = attempts[i]
+            const ac = new AbortController()
+            let timer = setTimeout(() => ac.abort(), FIRST_CHUNK_TIMEOUT_MS)
             try {
               const result = await genAI.models.generateContentStream({
                 model,
@@ -460,22 +465,33 @@ export async function POST(request) {
                   ...history,
                   { role: 'user', parts: [{ text: lastMessage }] },
                 ],
-                config: { systemInstruction, maxOutputTokens: 2048, ...(useSearch ? { tools: [{ googleSearch: {} }] } : {}) },
+                config: {
+                  abortSignal: ac.signal,
+                  systemInstruction,
+                  maxOutputTokens: 2048,
+                  ...(useSearch ? { tools: [{ googleSearch: {} }] } : {}),
+                },
               })
               for await (const chunk of result) {
+                if (timer) { clearTimeout(timer); timer = null } // model is answering
                 if (chunk.text) {
                   gotText = true
                   send({ t: 'chunk', v: chunk.text })
                 }
               }
-              if (gotText) break
+              if (gotText) {
+                console.log('Gemini model used:', model)
+                break
+              }
               console.error('Gemini returned no text:', model)
             } catch (err) {
               console.error('Gemini error:', model, err?.status, err?.message)
               if (gotText) break // never retry after text has started streaming
+            } finally {
+              if (timer) clearTimeout(timer)
             }
             if (i < attempts.length - 1) {
-              await new Promise(r => setTimeout(r, 800 * (i + 1)))
+              await new Promise(r => setTimeout(r, 300)) // short pause, then next model
             }
           }
 
